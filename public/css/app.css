@@ -1,0 +1,157 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "DM Sans", sans-serif;
+}
+
+p {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 130%;
+}
+@media (max-width: 992px) {
+  h1 {
+    font-size: 42px;
+  }
+}
+h1 span {
+  color: #FFBE42;
+}
+
+h2 {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 130%;
+}
+@media (max-width: 992px) {
+  h2 {
+    font-size: 30px;
+  }
+}
+h2 span {
+  color: #FFBE42;
+}
+
+h3 {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 120%;
+}
+@media (max-width: 992px) {
+  h3 {
+    font-size: 20px;
+  }
+}
+h3 span {
+  color: #FFBE42;
+}
+
+.m-padding {
+  padding-inline: 2rem;
+}
+@media (max-width: 992px) {
+  .m-padding {
+    padding-inline: 1rem;
+  }
+}
+
+header {
+  width: 100%;
+}
+header .head-top {
+  width: 100%;
+  height: 2.8rem;
+  background-color: #151515;
+}
+header .header-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-block: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header .header-main .h-con-links {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
+header .header-main .h-con-links__divider {
+  width: 1px;
+  height: 28px;
+  background-color: #AFAFAF;
+}
+header .header-main .h-con-links ul {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  margin: 0;
+}
+header .header-main .h-con-links ul li a {
+  font-size: 14px;
+  color: #151515;
+  font-weight: 500;
+  text-decoration: none;
+}
+header .header-main .h-con-links ul li a svg {
+  margin-right: 5px;
+  color: #FFBE42;
+  margin-bottom: 1px;
+}
+header .header-main .h-cta-btns {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+}
+header .header-main .h-cta-btns .login--btn {
+  color: #151515;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.btn {
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  padding: 7px 17px;
+  text-transform: capitalize;
+  border-radius: 7px;
+}
+.btn--primary {
+  background-color: #151515;
+  color: #fff;
+  border: 1px solid #151515;
+}
+.btn--secondary {
+  color: #151515;
+  background-color: #fff;
+  border-color: #151515;
+}
+.btn--tertiary {
+  background-color: #FFBE42;
+  border-color: #FFBE42;
+  color: #fff;
+}
+.btn--tertiary:hover {
+  color: #fff;
+}
+
+.page--home .section--hero {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 30rem;
+  padding: 112px 1rem;
+}
+
+/*# sourceMappingURL=app.css.map */

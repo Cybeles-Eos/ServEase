@@ -1,0 +1,43 @@
+@import "typography";
+@import "colors";
+
+.btn {
+    // min-width: 150px;
+    font-family: $font-primary;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 7px 17px;
+    text-transform: capitalize;
+    border-radius: 7px;
+
+    &--primary {
+        background-color: $color-dark;
+        color: $color-white;
+        border: 1px solid $color-dark;
+        // &:hover {
+        //     background-color: initial;
+        //     color: $color-primary;
+        // }
+    }
+
+    &--secondary {
+        color: $color-dark;
+        background-color: $color-white;
+        border-color: $color-dark;
+        // &:hover {
+        //     background-color: $color-primary;
+        //     color: #fff;
+        // }
+    }
+    &--tertiary{
+        background-color: $color-primary;
+        border-color: $color-primary;
+        color: $color-white;
+        &:hover {
+            //background-color: $color-primary;
+            color: $color-white;
+        }
+
+    }
+}

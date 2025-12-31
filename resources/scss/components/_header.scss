@@ -1,0 +1,71 @@
+@import "typography";
+@import "colors";
+
+header{
+    width: 100%;
+    
+    .head-top{
+        width: 100%;
+        height: 2.8rem;
+        background-color: $color-dark;
+    }
+    .header-main{
+        max-width: 1400px;
+        margin: 0 auto;
+        // height: 4rem;
+        // background-color: #c0bdbd;
+        padding-block: 19px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .h-con-links{
+            display: flex;
+            align-items: center;
+            gap: 1.6rem;
+
+           
+            img{
+
+            }
+            &__divider{
+                width: 1px;
+                height: 28px;
+                background-color: $color-gray;
+            }
+            ul{
+                display: flex;
+                align-items: center;
+                gap: 1.8rem;
+                margin: 0;
+                li{
+                    a{
+
+                        font-size: 14px;
+                        color: $color-dark;
+                        font-weight: 500;
+                        text-decoration: none;
+
+                        svg{
+                            margin-right: 5px;
+                            color: $color-primary;
+                            margin-bottom: 1px;
+                        }
+                    }
+                }
+            }
+        }
+        .h-cta-btns{
+            display: flex;
+            gap: 26px;
+            align-items: center;
+
+            .login--btn{
+                color: $color-dark;
+                font-weight: 500;
+                font-size: 14px;
+                letter-spacing: .5px;
+            }
+        }
+    }
+}

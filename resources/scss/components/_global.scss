@@ -1,0 +1,66 @@
+@import "typography";
+@import "colors";
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    font-family: $font-primary;
+}
+
+
+// Text Global Style
+p{
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 140%;
+}
+h1{
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 130%;
+
+    @media(max-width: 992px) {
+        font-size: 42px;
+    }
+    span {
+        color: $color-primary;
+    }
+}
+h2{
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 130%;
+
+    @media(max-width: 992px) {
+        font-size: 30px;
+    }
+    span {
+        color: $color-primary;
+    }
+}
+h3{
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 120%;
+
+    @media(max-width: 992px) {
+        font-size: 20px;
+    }
+    span {
+        color: $color-primary;
+    }
+}
+
+
+.main-page{
+
+}
+.m-padding{
+    padding-inline: 2rem;
+
+    @media (max-width: 992px) {
+        padding-inline: 1rem;
+    }
+}
