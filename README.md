@@ -32,6 +32,62 @@ Hello! We are **Group 8** 👋 Servease is a collaborative project by Group 8, a
 [![Figma](https://img.shields.io/badge/Figma-Design_Tool-F24E1E.svg?logo=figma&logoColor=white)](https://figma.com/)
 [![Canva](https://img.shields.io/badge/Canva-Design-00C4CC.svg?logo=canva&logoColor=white)](https://www.canva.com/)
 
+<hr> 
 
+### How to Clone This Repository 
+Follow the steps below to clone the **ServEase** repository to your local machine.
 
+### 1️⃣ Copy the Repository URL
+You can clone the repository using either **HTTPS** or **SSH**.
 
+```bash
+HTTPS
+https://github.com/Cybeles-Eos/ServEase.git
+
+SSH
+git@github.com:Cybeles-Eos/ServEase.git
+```
+
+### 2️⃣ Open Your Terminal
+Navigate to the directory where you want to store the project.
+```
+cd path/to/your/projects
+```
+
+### 3️⃣ Clone the Repository
+Run one of the following commands:
+```
+Using HTTPS
+git clone https://github.com/Cybeles-Eos/ServEase.git
+
+Using SSH
+git clone git@github.com:Cybeles-Eos/ServEase.git
+```
+
+### 4️⃣ Install Dependencies
+Install PHP and Node.js dependencies.
+```
+composer install
+npm install
+```
+
+### 5️⃣ Create Environment File
+Copy the example environment file.
+```
+cp .env.example .env
+```
+
+### 6️⃣ Generate Application Key
+Generate the Laravel application key.
+```
+php artisan key:generate
+```
+
+### 7️⃣ Run Database Migrations
+Make sure your database is configured in the .env file before running this command.
+```
+php artisan migrate
+```
+
+### ✅ Done
+The project is now fully set up and ready for local development.
