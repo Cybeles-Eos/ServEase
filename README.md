@@ -31,8 +31,6 @@ Hello! We are **Group 8** 👋 Servease is a collaborative project by Group 8, a
 ### Tools
 [![Figma](https://img.shields.io/badge/Figma-Design_Tool-F24E1E.svg?logo=figma&logoColor=white)](https://figma.com/)
 [![Canva](https://img.shields.io/badge/Canva-Design-00C4CC.svg?logo=canva&logoColor=white)](https://www.canva.com/)
-[![Wix](https://img.shields.io/badge/Wix-Website_Builder-0C6EFC.svg?logo=wix&logoColor=white)](https://www.wix.com/)
-
 
 
 
