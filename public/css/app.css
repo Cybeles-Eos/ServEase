@@ -17,7 +17,8 @@ p {
 h1 {
   font-size: 50px;
   font-weight: 700;
-  line-height: 130%;
+  letter-spacing: 0.6px;
+  line-height: 100%;
 }
 @media (max-width: 992px) {
   h1 {
@@ -102,6 +103,7 @@ header {
   left: 0;
   right: 0;
   background-color: #ffffff;
+  z-index: 999;
 }
 header .header-main {
   margin: 0 auto;
@@ -136,6 +138,10 @@ header .header-main .h-con-links ul li a svg {
   margin-right: 5px;
   color: #FFBE42;
   margin-bottom: 1px;
+}
+header .header-main .h-con-links ul li a:hover {
+  color: #FFBE42;
+  opacity: 0.85;
 }
 header .header-main .h-cta-btns {
   display: flex;
@@ -179,9 +185,58 @@ header .header-main .h-cta-btns .login--btn {
 
 .page--home .section--hero {
   width: 100%;
-  height: 40rem;
-  background-color: #FFE4AF;
-  padding-block: 80px;
+  height: 38rem;
+  padding-block: 90px;
+  padding-top: 122px;
+  background-position: center;
+  background-size: cover;
+  background-image: url("../images/home-hero-img.png");
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.page--home .section--hero h1 {
+  text-align: center;
+  max-width: 850px;
+}
+@media (max-width: 992px) {
+  .page--home .section--hero h1 {
+    max-width: 660px;
+  }
+}
+.page--home .section--hero p {
+  text-align: center;
+}
+@media (max-width: 992px) {
+  .page--home .section--hero p {
+    max-width: 560px;
+  }
+}
+.page--home .section--hero__inp {
+  position: relative;
+}
+.page--home .section--hero__inp input {
+  width: 450px;
+  padding: 14px 105px 14px 20px;
+  font-size: 14px;
+  border-radius: 120px;
+}
+.page--home .section--hero__inp input::placeholder {
+  color: #AFAFAF;
+  font-size: 14px;
+}
+.page--home .section--hero__inp button {
+  position: absolute;
+  right: 5px;
+  transform: translateY(-50%);
+  top: 50%;
+  padding: 13px 22px 13px 22px;
+  font-size: 14px;
+  border-radius: 120px;
+  background-color: #FFBE42;
+  color: #151515;
+  font-weight: 500;
+  line-height: 100%;
 }
 
 .page--contact .section--hero {

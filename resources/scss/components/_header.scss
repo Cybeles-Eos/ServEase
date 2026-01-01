@@ -30,7 +30,7 @@ header{
     left: 0;
     right: 0;
     background-color: #ffffff;
-
+    z-index: 999;
 
     .header-main{
         margin: 0 auto;
@@ -72,6 +72,11 @@ header{
                             margin-right: 5px;
                             color: $color-primary;
                             margin-bottom: 1px;
+                        }
+
+                        &:hover{
+                            color: $color-primary;
+                            opacity: .85;
                         }
                     }
                 }
