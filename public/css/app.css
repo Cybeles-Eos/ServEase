@@ -220,6 +220,8 @@ header .header-main .h-cta-btns .login--btn {
   padding: 14px 105px 14px 20px;
   font-size: 14px;
   border-radius: 120px;
+  position: relative;
+  z-index: 2;
 }
 .page--home .section--hero__inp input::placeholder {
   color: #AFAFAF;
@@ -233,10 +235,39 @@ header .header-main .h-cta-btns .login--btn {
   padding: 13px 22px 13px 22px;
   font-size: 14px;
   border-radius: 120px;
+  z-index: 2;
   background-color: #FFBE42;
   color: #151515;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 100%;
+}
+.page--home .section--hero__inp .sh-inp-lists {
+  width: 450px;
+  height: 200px;
+  background-color: #fff;
+  position: absolute;
+  top: 21px;
+  z-index: 1;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding-top: 35px;
+}
+.page--home .section--hero__inp .sh-inp-lists ul {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.page--home .section--hero__inp .sh-inp-lists ul li {
+  width: 100%;
+}
+.page--home .section--hero__inp .sh-inp-lists ul li a {
+  display: block;
+  width: 100% !important;
+  background-color: #ffdede;
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #151515;
+  text-decoration: none;
 }
 
 .page--contact .section--hero {

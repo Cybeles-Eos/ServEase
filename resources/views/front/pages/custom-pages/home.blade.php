@@ -9,6 +9,13 @@
             <div class="section--hero__inp">
                 <input type="text" placeholder="What service are you looking for?" >
                 <button>Search</button>
+                <div class="sh-inp-lists">
+                    <ul>
+                        <li>
+                            <a href="#">Service Title - Plumber Sample #1</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             
 

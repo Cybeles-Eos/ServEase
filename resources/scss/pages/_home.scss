@@ -37,15 +37,13 @@
             &__inp{
                 position: relative;
                 
-
-
                 input{
                     width: 450px;
                     padding: 14px 105px 14px 20px;
                     font-size: 14px;
                     border-radius: 120px;
-
-
+                    position: relative;
+                    z-index: 2;
                     &::placeholder{
                         color: $color-gray;
                         font-size: 14px;
@@ -63,11 +61,41 @@
                     padding: 13px 22px 13px 22px;
                     font-size: 14px;
                     border-radius: 120px;
-
+                    z-index: 2;
                     background-color: $color-primary;
                     color: $color-dark;
-                    font-weight: 500;
+                    font-weight: 400;
                     line-height: 100%;
+                }
+                .sh-inp-lists{
+                    width: 450px;
+                    height: 200px;
+                    background-color: #fff;
+                    position: absolute;
+                    top: 21px;
+                    z-index: 1;
+                    border-bottom-left-radius: 12px;
+                    border-bottom-right-radius: 12px;
+                    padding-top: 35px;
+
+
+                    ul{
+                        display: flex;
+                        flex-direction: column;
+                        width: 100%;
+                        li{
+                            width: 100%;
+                            a{
+                                display: block;
+                                width: 100% !important;
+                                background-color: #ffdede;
+                                padding: 5px 10px;
+                                font-size: 14px;
+                                color: $color-dark;
+                                text-decoration: none;
+                            }
+                        }
+                    }
                 }
             }
         }
