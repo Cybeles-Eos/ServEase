@@ -8,11 +8,143 @@
             margin: 0 auto;
             display: flex;
             gap: 1rem;
-            .ps-sl-category{
-                width: 400px;
-                height: 160rem;
+            padding-top: 30px;
+            padding-bottom: 40px;
+            .ps-sl-category {
+                width: 400px; 
+                height: 160rem; 
 
-                background-color: rgb(149, 171, 236);
+                
+                &__head{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+
+                    a{
+                        font-size: 12px;
+                        color: $color-dark;
+                        font-weight: 400;
+                        // text-decoration: none;
+                        line-height: 110%;
+                    }
+                    .s-act-link{
+                        opacity: .55;
+                    }
+                }
+                &__count{
+                    padding: 10px 0px;
+                }
+                &__search{
+                    // width: 100%;
+                    position: relative;
+                    
+                    input{
+                        width: 100%;
+                        background-color: #F2F2F2;
+                        border-radius: 6px;
+                        padding: 11px 14px;
+                        padding-left: 37px;
+                        font-size: 14px;
+
+                        &::placeholder{
+                            color: $color-gray;
+                        }
+                    }
+                    svg{
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-58%);
+                        left: 12px;
+                    }
+                }
+                &__cat{
+                    margin-top: 23px;
+                    h4{
+                        font-weight: 7500;
+                    }
+                    .ps-sl-cc-main{
+                        margin-top: 15px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                        padding-left: 2px;
+                        &__box{
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+
+                            div{
+                                display: flex;
+                                align-items: center;
+                                gap: 9px;
+
+                                input[type="checkbox"] {
+                                    position: relative;
+                                    min-width: 10px;
+                                    min-height: 10px;
+                                    cursor: pointer;
+                                    border-radius: 2px;
+                                    border: 1px solid $color-dark;
+                                    appearance: none;
+                                    -webkit-appearance: none;
+                                    outline: none;
+
+                                    // unchecked (default)
+                                    &::before {
+                                        content: "";
+                                        position: absolute;
+                                        inset: 0;
+                                        border-radius: 2px;
+                                    }
+                                    // checked state → green fill
+                                    &:checked {
+                                        border-color: $color-primary; // your green variable
+                                        background-color: $color-primary;
+                                        
+                                    }
+                                    // checkmark
+                                    &:checked::after {
+                                        content: "";
+                                        position: absolute;
+                                        left: 4px;
+                                        top: 1px;
+                                        width: 4px;
+                                        height: 8px;
+                                        border: solid $color-primary;
+                                        border-width: 0 2px 2px 0;
+                                        transform: rotate(45deg);
+                                    }
+                                }
+                                .ps-category-title{
+                                    margin: 0;
+                                    line-height: 115%;
+                                    letter-spacing: .5px;
+                                    font-weight: 500;
+                                    margin-top: 1px;
+                                }
+                            }
+                            .ps-category-count{
+                                font-size: 12px;
+                                margin: 0;
+                                display: flex;
+                                align-items: center;
+                                color: $color-gray;
+                                gap: 7px;
+                                span{
+                                    width: 5px;
+                                    height: 5px;
+                                    border-radius: 10px;
+                                    background-color: #34C759;
+                                    display: inline-block;
+
+                                }
+                            }
+                        }
+                    }
+                }
+                hr{
+                    margin-block: 27px;
+                }
             }   
             .ps-sl-cards{
                 width: 100%;

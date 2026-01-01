@@ -1,0 +1,15 @@
+@import "../components/typography";
+@import "../components/colors";
+
+.page--about{
+    .section{
+        &--hero{
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 30rem;
+            background-color: $color-secondary;
+            padding: 80px 1rem;
+        }
+    }
+}
