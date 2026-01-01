@@ -1,10 +1,13 @@
 //Components
 @import "components/global";
+@import "components/typography";
 @import "components/header";
+// @import "components/header-mobile";
 @import "components/footer";
 @import "components/button";
 
 //Pages
 @import "pages/home";
 @import "pages/contact";
+@import "pages/services";
 

@@ -4,7 +4,7 @@
     width: 100%;
     padding-block: 10px;
     background-color: $color-dark;
-
+    
 
     section{
         display: flex;
@@ -21,9 +21,15 @@
         &:hover{
             color: $color-primary;
         }
+
+        @media (max-width: 492px) {
+            span{
+                display: none;
+            }
+        }
     }
 }
-header{
+.header-desktop{
     width: 100%;
     position: sticky;
     top: 0;
@@ -94,5 +100,156 @@ header{
                 letter-spacing: .5px;
             }
         }
+    }
+
+    @media (max-width: 992px) {
+        display: none;
+    }
+}
+.header-mobile{
+    width: 100%;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 999;
+
+    margin: 0 auto;
+    // height: 4rem;    
+    padding-block: 14px;
+    padding-inline: 1rem;
+
+    
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+
+    .main-mobile-menu{
+        width: 240px;
+        // height: 300px;
+        position:absolute;
+        right: 1rem;
+        top: 65px;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        // padding-bottom: 0px;
+        ul{
+			padding: 0;
+			margin: 0;
+			list-style: none;
+            li{
+				display: block;
+				padding-bottom: 11px;
+				margin-bottom: 13px;
+				border-bottom: 1px solid $color-gray;
+                a{
+                    text-decoration: none;
+					z-index: 12;
+					position: relative;
+					font-size: 14px;
+					color: $color-dark;
+					transition: all 300ms ease;
+					// &:hover {
+					// 	text-decoration: none;
+					// 	color: $color-primary;
+					// }
+					width: 100% !important;
+                }
+                &:hover{
+                    border-color: $color-primary !important;
+              
+                }
+                &:last-child{
+                    border: none !important;
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                }
+            }
+        }
+        transform: translateX(300px);
+        opacity: 0;
+        transition: ease 300ms;
+    }
+    .show-mob-men{
+        opacity: 1;
+        transform: translateX(0px);
+    }
+
+    .hamburger-menu {
+        z-index: 1234;
+        position: relative;
+        top: 0;
+        display: inline-block;
+        width: 28px;
+        height: 21px;
+        margin: -5px 0;
+        background-color: transparent !important;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        div {
+            z-index: 12;
+            position: relative;
+            margin-top: 9px;
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: $color-primary;
+            transition: all 0.2s ease-in-out;
+            -moz-transition: all 0.2s ease-in-out;
+            -webkit-transition: all 0.2s ease-in-out;
+            &:before {
+                display: block;
+                width: 100%;
+                height: 2px;
+                background-color: $color-primary;
+                transition: all 0.2s ease-in-out;
+                -moz-transition: all 0.2s ease-in-out;
+                -webkit-transition: all 0.2s ease-in-out;
+                content: "";
+                position: absolute;
+                left: 0;
+                top: -8px;
+            }
+            &:after {
+                display: block;
+                width: 100%;
+                height: 2px;
+                background-color: $color-primary;
+                transition: all 0.2s ease-in-out;
+                -moz-transition: all 0.2s ease-in-out;
+                -webkit-transition: all 0.2s ease-in-out;
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -8px;
+            }
+        }
+    }
+    .hamburger-menu-active {
+        div {
+            background-color: transparent;
+            &:after {
+                top: 1px;
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            &:before {
+                top: 1px;
+                -webkit-transform: rotate(-45deg);
+                transform: rotate(-45deg);
+            }
+        }
+    }
+
+ 
+    @media (max-width: 992px) {
+        display: flex;
     }
 }

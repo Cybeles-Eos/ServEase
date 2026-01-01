@@ -14,6 +14,13 @@ Route::get('/about-us', function () {
 /** 
  * 
  * Contact Routes
-*/
+ */
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
+/**
+ * 
+ * Dummy Route (Change on backend code)
+ */
+Route::get('/services', function () {
+    return view('front.pages.custom-pages.services');
+});

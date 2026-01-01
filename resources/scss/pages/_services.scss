@@ -1,0 +1,25 @@
+@import "../components/typography";
+@import "../components/colors";
+
+.page--services{
+    .section{
+        &--list{
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            .ps-sl-category{
+                width: 400px;
+                height: 160rem;
+
+                background-color: rgb(149, 171, 236);
+            }   
+            .ps-sl-cards{
+                width: 100%;
+                height: 30rem;
+
+                // background-color: aquamarine;
+            }
+        }
+    }
+}
