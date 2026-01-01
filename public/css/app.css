@@ -4,6 +4,8 @@
 
 body {
   font-family: "DM Sans", sans-serif;
+  position: relative;
+  height: fit-content;
 }
 
 p {
@@ -54,6 +56,14 @@ h3 span {
   color: #FFBE42;
 }
 
+.m-width {
+  max-width: 1400px;
+}
+
+.main-page {
+  margin-top: 0;
+}
+
 .m-padding {
   padding-inline: 2rem;
 }
@@ -63,18 +73,39 @@ h3 span {
   }
 }
 
-header {
+.head-top {
   width: 100%;
-}
-header .head-top {
-  width: 100%;
-  height: 2.8rem;
+  padding-block: 10px;
   background-color: #151515;
 }
-header .header-main {
-  max-width: 1400px;
+.head-top section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin: 0 auto;
-  padding-block: 19px;
+}
+.head-top a {
+  color: #fff;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 300;
+  text-decoration: none;
+}
+.head-top a:hover {
+  color: #FFBE42;
+}
+
+header {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+}
+header .header-main {
+  margin: 0 auto;
+  padding-block: 13px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -123,7 +154,7 @@ header .header-main .h-cta-btns .login--btn {
   font-size: 14px;
   font-weight: 500;
   line-height: 24px;
-  padding: 7px 17px;
+  padding: 7px 16px;
   text-transform: capitalize;
   border-radius: 7px;
 }
@@ -148,10 +179,18 @@ header .header-main .h-cta-btns .login--btn {
 
 .page--home .section--hero {
   width: 100%;
+  height: 40rem;
+  background-color: #FFE4AF;
+  padding-block: 80px;
+}
+
+.page--contact .section--hero {
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   height: 30rem;
-  padding: 112px 1rem;
+  background-color: #FFE4AF;
+  padding: 80px 1rem;
 }
 
 /*# sourceMappingURL=app.css.map */

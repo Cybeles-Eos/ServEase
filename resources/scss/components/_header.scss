@@ -1,20 +1,42 @@
 @import "typography";
 @import "colors";
+.head-top{
+    width: 100%;
+    padding-block: 10px;
+    background-color: $color-dark;
 
+
+    section{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 auto;
+    }
+    a{
+        color: $color-white;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 300;
+        text-decoration: none;
+        &:hover{
+            color: $color-primary;
+        }
+    }
+}
 header{
     width: 100%;
-    
-    .head-top{
-        width: 100%;
-        height: 2.8rem;
-        background-color: $color-dark;
-    }
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+
+
     .header-main{
-        max-width: 1400px;
         margin: 0 auto;
         // height: 4rem;
-        // background-color: #c0bdbd;
-        padding-block: 19px;
+        
+        padding-block: 13px;
         display: flex;
         align-items: center;
         justify-content: space-between;

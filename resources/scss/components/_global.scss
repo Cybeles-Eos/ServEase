@@ -7,6 +7,8 @@
 
 body{
     font-family: $font-primary;
+    position: relative;
+    height: fit-content;
 }
 
 
@@ -54,8 +56,13 @@ h3{
 }
 
 
-.main-page{
+.m-width{
+    max-width: 1400px;
+}
 
+.main-page{
+    //margin-top: 6.599rem;
+    margin-top: 0;
 }
 .m-padding{
     padding-inline: 2rem;

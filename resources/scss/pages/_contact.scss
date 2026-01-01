@@ -1,13 +1,15 @@
 @import "../components/typography";
 @import "../components/colors";
 
-.page--home{
+.page--contact{
     .section{
         &--hero{
             width: 100%;
-            height: 40rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 30rem;
             background-color: $color-secondary;
-            padding-block: 80px;
+            padding: 80px 1rem;
 
         }
     }
