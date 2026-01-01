@@ -39,7 +39,7 @@
                 
                 input{
                     width: 450px;
-                    padding: 14px 105px 14px 20px;
+                    padding: 14px 140px 14px 20px;
                     font-size: 14px;
                     border-radius: 120px;
                     position: relative;
@@ -69,7 +69,7 @@
                 }
                 .sh-inp-lists{
                     width: 450px;
-                    height: 200px;
+                    // max-height: 200px;
                     background-color: #fff;
                     position: absolute;
                     top: 21px;
@@ -77,23 +77,59 @@
                     border-bottom-left-radius: 12px;
                     border-bottom-right-radius: 12px;
                     padding-top: 35px;
-
+                    // padding-bottom: 10px;
+                    display:none;
 
                     ul{
                         display: flex;
                         flex-direction: column;
                         width: 100%;
+                        max-height: 180px;
+                        // padding-top: 40px;
+    
+                        overflow-y: auto;
+                        
+                        &::-webkit-scrollbar {
+                            width: 6px;
+                        }
+
+                        &::-webkit-scrollbar-track {
+                            background: transparent;
+                            
+                        }
+
+                        &::-webkit-scrollbar-thumb {
+                            background: $color-primary;
+                            border-radius: 6px;
+                        }
+
+                        &::-webkit-scrollbar-thumb:hover {
+                            background: $color-primary;
+                        }
+
+                        
                         li{
                             width: 100%;
                             a{
                                 display: block;
                                 width: 100% !important;
-                                background-color: #ffdede;
-                                padding: 5px 10px;
+                                // background-color: #ffdede;
+                                padding: 6px 10px;
                                 font-size: 14px;
                                 color: $color-dark;
                                 text-decoration: none;
+                                
+                                &:hover{
+                                    background-color: $color-secondary;
+                                    color: $color-dark;
+                                }
                             }
+                        }
+                        p{
+                            margin: 0;
+                            font-size: 12px;
+                            color: $color-gray;
+                            display: none;
                         }
                     }
                 }

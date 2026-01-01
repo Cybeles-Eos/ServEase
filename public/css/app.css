@@ -217,7 +217,7 @@ header .header-main .h-cta-btns .login--btn {
 }
 .page--home .section--hero__inp input {
   width: 450px;
-  padding: 14px 105px 14px 20px;
+  padding: 14px 140px 14px 20px;
   font-size: 14px;
   border-radius: 120px;
   position: relative;
@@ -243,7 +243,6 @@ header .header-main .h-cta-btns .login--btn {
 }
 .page--home .section--hero__inp .sh-inp-lists {
   width: 450px;
-  height: 200px;
   background-color: #fff;
   position: absolute;
   top: 21px;
@@ -251,11 +250,27 @@ header .header-main .h-cta-btns .login--btn {
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
   padding-top: 35px;
+  display: none;
 }
 .page--home .section--hero__inp .sh-inp-lists ul {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.page--home .section--hero__inp .sh-inp-lists ul::-webkit-scrollbar {
+  width: 6px;
+}
+.page--home .section--hero__inp .sh-inp-lists ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+.page--home .section--hero__inp .sh-inp-lists ul::-webkit-scrollbar-thumb {
+  background: #FFBE42;
+  border-radius: 6px;
+}
+.page--home .section--hero__inp .sh-inp-lists ul::-webkit-scrollbar-thumb:hover {
+  background: #FFBE42;
 }
 .page--home .section--hero__inp .sh-inp-lists ul li {
   width: 100%;
@@ -263,11 +278,20 @@ header .header-main .h-cta-btns .login--btn {
 .page--home .section--hero__inp .sh-inp-lists ul li a {
   display: block;
   width: 100% !important;
-  background-color: #ffdede;
-  padding: 5px 10px;
+  padding: 6px 10px;
   font-size: 14px;
   color: #151515;
   text-decoration: none;
+}
+.page--home .section--hero__inp .sh-inp-lists ul li a:hover {
+  background-color: #FFE4AF;
+  color: #151515;
+}
+.page--home .section--hero__inp .sh-inp-lists ul p {
+  margin: 0;
+  font-size: 12px;
+  color: #AFAFAF;
+  display: none;
 }
 
 .page--contact .section--hero {
