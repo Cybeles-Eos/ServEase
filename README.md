@@ -34,60 +34,76 @@ Hello! We are **Group 8** 👋 Servease is a collaborative project by Group 8, a
 
 <hr> 
 
-### How to Clone This Repository 
-Follow the steps below to clone the **ServEase** repository to your local machine.
+# 🧰 **ServEase System**
 
-### 1️⃣ Copy the Repository URL
-You can clone the repository using either **HTTPS** or **SSH**.
+Servease is a collaborative project by Group 8, aimed at delivering an efficient and user-friendly service management platform. The project combines innovative ideas and teamwork to create a functional solution that addresses real-world challenges. This repository contains the full source code, documentation, and resources for Servease.
 
-```bash
-HTTPS
-https://github.com/Cybeles-Eos/ServEase.git
 
-SSH
-git@github.com:Cybeles-Eos/ServEase.git
-```
+## 🔧 Prerequisites
 
-### 2️⃣ Open Your Terminal
-Navigate to the directory where you want to store the project.
-```
-cd path/to/your/projects
-```
+Ensure you have the following tools installed on your system:
 
-### 3️⃣ Clone the Repository
-Run one of the following commands:
-```
-Using HTTPS
-git clone https://github.com/Cybeles-Eos/ServEase.git
+1. **Git**: [Download Git](https://git-scm.com/)
+2. **Composer**: [Download Composer](https://getcomposer.org/)
+3. **Node.js and npm**: [Download Node.js](https://nodejs.org/) (npm is included with Node.js)
+4. **PHP development environment**: Use XAMPP.
 
-Using SSH
-git clone git@github.com:Cybeles-Eos/ServEase.git
-```
+## ⚙️ Installation & Setup
 
-### 4️⃣ Install Dependencies
-Install PHP and Node.js dependencies.
-```
-composer install
-npm install
-```
+Follow these steps to get the application up and running locally:
 
-### 5️⃣ Create Environment File
-Copy the example environment file.
-```
-cp .env.example .env
-```
+1. Clone the project repository
 
-### 6️⃣ Generate Application Key
-Generate the Laravel application key.
-```
-php artisan key:generate
-```
+   ```sh
+   git clone https://github.com/Cybeles-Eos/ServEase.git
+   cd servease
+   ```
 
-### 7️⃣ Run Database Migrations
-Make sure your database is configured in the .env file before running this command.
-```
-php artisan migrate
-```
+2. Run This Command In the Terminal
 
-### ✅ Done
-The project is now fully set up and ready for local development.
+   ```sh
+    git checkout -b <your-initials-plus-lastname>     #Ex. "dijcruz" "dbbarcelon"
+    git pull origin main
+    git pull origin staging
+   ```
+
+3. Install Backend and Frontend Dependencies
+
+   ```sh
+    composer install
+    npm install
+   ```
+
+4. Configure Environment Variables for applications
+
+   - Create .env files
+
+   ```sh
+    cp .env.example .env
+   ```
+
+   - Update the necessary variables based on your setup
+
+5. Generate Application Key
+
+   ```sh
+   php artisan key:generate
+   ```
+
+6. Run Database Migrations and Data Seeder
+
+   ```sh
+   php artisan migrate --seed
+   ```
+
+7. Start the Development Servers
+
+   ```sh
+   composer run dev
+   ```
+
+8. Access the applications
+   - http://127.0.0.1:8000
+
+   **Note:** You may change the application URL in the .env file if the default address is not available.
+
