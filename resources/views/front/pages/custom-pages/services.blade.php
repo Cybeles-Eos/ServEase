@@ -74,7 +74,7 @@
                             </div>
                             <p class="ps-category-count">
                                 <span></span>    
-                                15 Providerss
+                                15 Providers
                             </p>
                         </div>
 
