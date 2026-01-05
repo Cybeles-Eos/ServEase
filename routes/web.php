@@ -24,3 +24,6 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/services', function () {
     return view('front.pages.custom-pages.services');
 });
+Route::get('/login', function () {
+    return view('admin.auth.login');
+});
