@@ -71,7 +71,7 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="btn btn--secondary">Login</a>
+                <a href="{{url('login')}}" class="btn btn--secondary">Login</a>
             </li>
             <li>
                 <a href="#" class="btn btn--tertiary">Sign in</a>
