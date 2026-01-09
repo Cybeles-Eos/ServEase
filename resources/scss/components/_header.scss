@@ -134,7 +134,7 @@
         background-color: #fff;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         border-radius: 12px;
-        display: flex;
+        // display: flex;
         flex-direction: column;
         justify-content: space-between;
         padding: 20px;
@@ -172,13 +172,15 @@
                 }
             }
         }
-        transform: translateX(300px);
+        // transform: translateX(300px);
         // opacity: 0;
+        display: none;
         transition: ease 300ms;
     }
     .show-mob-men{
         opacity: 1;
-        transform: translateX(0px);
+        // transform: translateX(0px);
+        display: flex;
     }
 
     .hamburger-menu {
@@ -201,17 +203,17 @@
             width: 100%;
             height: 2px;
             background-color: $color-primary;
-            transition: all 0.2s ease-in-out;
-            -moz-transition: all 0.2s ease-in-out;
-            -webkit-transition: all 0.2s ease-in-out;
+            transition: all 0.1s ease-in-out;
+            -moz-transition: all 0.1s ease-in-out;
+            -webkit-transition: all 0.1s ease-in-out;
             &:before {
                 display: block;
                 width: 100%;
                 height: 2px;
                 background-color: $color-primary;
-                transition: all 0.2s ease-in-out;
-                -moz-transition: all 0.2s ease-in-out;
-                -webkit-transition: all 0.2s ease-in-out;
+                transition: all 0.1s ease-in-out;
+                -moz-transition: all 0.1s ease-in-out;
+                -webkit-transition: all 0.1s ease-in-out;
                 content: "";
                 position: absolute;
                 left: 0;
@@ -222,9 +224,9 @@
                 width: 100%;
                 height: 2px;
                 background-color: $color-primary;
-                transition: all 0.2s ease-in-out;
-                -moz-transition: all 0.2s ease-in-out;
-                -webkit-transition: all 0.2s ease-in-out;
+                transition: all 0.1s ease-in-out;
+                -moz-transition: all 0.1s ease-in-out;
+                -webkit-transition: all 0.1s ease-in-out;
                 content: "";
                 position: absolute;
                 left: 0;
