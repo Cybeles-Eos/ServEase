@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ServEase | Login</title>
-
+    <title>Customer Dashboard</title>
     {{-- Meta's --}}
     <meta property="og:title" content="ServEase | Hire Verified Local Services in Brgy. Batasan Hills" />
     <meta property="og:description" content="ServEase helps you find and hire verified local service providers in Barangay Batasan Hills. You post requests, review services, and connect with trusted workers in one secure platform." />
@@ -36,6 +35,7 @@
     <link rel="stylesheet" href="{{ asset('css/reset.custom.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/fontawesome-free-5.8.1-web/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slick.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slick-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('css/aos.css') }}">
@@ -49,9 +49,19 @@
     <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
     <script src="{{ asset('js/slick.min.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-    
 </head>
 <body>
-    
+    @yield('content')
+
+    {{-- <script>
+        var sBaseURI = '{{ url('/') }}';
+    </script> --}}
+    <script>
+        // Initialize Lenis
+        const lenis = new Lenis({
+            autoRaf: true,
+        });
+    </script>
+    @stack('extrascripts')
 </body>
 </html>

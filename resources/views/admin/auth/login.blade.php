@@ -4,7 +4,8 @@
     <main class="login-page">
         <div class="login-page__bg"></div>
         <section class="login-page__main-form">
-            <img src="{{asset('images/auth-logo.svg')}}" class="form-logo" alt="logo">
+            {{-- <img src="{{asset('images/auth-logo.svg')}}" class="form-logo" alt="logo"> --}}
+            <h3>ServEase Admin</h3>
             <form action="">
                 <div class="input-group">
                     <label for="email">Email Address</label>

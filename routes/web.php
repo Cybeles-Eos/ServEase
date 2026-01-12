@@ -24,6 +24,20 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/services', function () {
     return view('front.pages.custom-pages.services');
 });
-Route::get('/login', function () {
+
+// Admin Routes
+Route::get('/admin/login', function () {
     return view('admin.auth.login');
+});
+Route::redirect('/admin', '/admin/login');
+
+// Customer Routes
+Route::view('/customer/dashboard', 'customers.dashboard');
+
+// Provider Routes
+Route::get('/provider/login', function () {
+    return view('providers.auth.login');
+});
+Route::get('/provider/signin', function () {
+    return view('providers.auth.signin');
 });
