@@ -3,6 +3,107 @@
 
 .static-footer{
     width: 100%;
-    height: 25rem;
+    // height: 25rem;
     background-color: $color-dark;
+
+    &__main{
+        margin: 0 auto;
+        //background-color: rgba(255, 255, 255, 0.065);
+        // height: 21rem;
+        padding-block: 5rem;
+        display: flex;
+        
+        .sfoomain-info{
+            display: flex;
+            flex-direction: column;
+            width: 500px;
+            .img-cta-foo{
+                margin-bottom: 13px;
+                img{
+                    height: 40px;
+                }
+            }
+            p{
+                color: $color-white;
+                font-size: 14px;
+                line-height: 120%;
+                max-width: 300px;
+                font-weight: 300;
+            }
+            div{
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                a{
+                    text-decoration: none;
+                }
+            }
+        }
+        .sfoomain-links{
+            display: flex;
+            gap: 3rem;
+            width: 450px;
+            justify-content: space-between;
+            ul{
+                display: flex;
+                flex-direction: column;
+                margin: 0;
+                padding: 0;
+                
+
+                h4{
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: $color-white;
+                    margin-bottom: 15px;
+                }
+                li{
+                    list-style: none;
+                    margin-bottom: 8px;
+                    a{
+                        color: #C0C0C0;
+                        font-size: 15px;
+                        text-decoration: none;
+
+                        &:hover{
+                            color: $color-white;
+                        }
+                    }
+                }
+            
+            }
+        }
+    }
+    &__bot{
+        margin: 0 auto;
+        padding-block: 18px;
+        //background-color: rgb(96, 96, 96);
+        border-top: 1px solid #C0C0C0;
+        color: #C0C0C0;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        div{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            a{
+                color: #C0C0C0;
+                font-size: 14px;
+                text-decoration: none;
+                &:hover{
+                    color: $color-white;
+                }
+            }
+        }
+        p{
+            margin: 0;
+            font-size: 14px;
+
+        }
+        
+    }
 }
