@@ -517,6 +517,7 @@ h4 span {
   margin: 0 auto;
   padding-block: 5rem;
   display: flex;
+  padding-right: 4rem;
 }
 .static-footer__main .sfoomain-info {
   display: flex;
@@ -570,9 +571,40 @@ h4 span {
   color: #C0C0C0;
   font-size: 15px;
   text-decoration: none;
+  line-height: 100% !important;
 }
 .static-footer__main .sfoomain-links ul li a:hover {
   color: #fff;
+}
+@media (max-width: 792px) {
+  .static-footer__main {
+    flex-direction: column;
+    align-items: center;
+    padding-right: 0rem;
+  }
+  .static-footer__main .sfoomain-info {
+    margin-bottom: 3rem;
+    align-items: center;
+  }
+  .static-footer__main .sfoomain-info p {
+    text-align: center;
+  }
+  .static-footer__main .sfoomain-links {
+    flex-direction: column;
+    align-items: center;
+  }
+  .static-footer__main .sfoomain-links ul {
+    align-items: center;
+  }
+  .static-footer__main .sfoomain-links ul h4 {
+    text-align: center;
+  }
+  .static-footer__main .sfoomain-links ul li {
+    list-style: none;
+  }
+  .static-footer__main .sfoomain-links ul li a {
+    text-align: center;
+  }
 }
 .static-footer__bot {
   margin: 0 auto;
@@ -586,7 +618,7 @@ h4 span {
 .static-footer__bot div {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 18px;
 }
 .static-footer__bot div a {
   color: #C0C0C0;
@@ -599,6 +631,19 @@ h4 span {
 .static-footer__bot p {
   margin: 0;
   font-size: 14px;
+}
+@media (max-width: 650px) {
+  .static-footer__bot {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .static-footer__bot p {
+    text-align: center;
+  }
+  .static-footer__bot div a {
+    text-align: center;
+  }
 }
 
 p {

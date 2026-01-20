@@ -12,7 +12,7 @@
         // height: 21rem;
         padding-block: 5rem;
         display: flex;
-        
+        padding-right: 4rem;
         .sfoomain-info{
             display: flex;
             flex-direction: column;
@@ -65,13 +65,44 @@
                         color: #C0C0C0;
                         font-size: 15px;
                         text-decoration: none;
-
+                        line-height: 100% !important;
                         &:hover{
                             color: $color-white;
                         }
                     }
                 }
             
+            }
+        }
+
+        @media (max-width: 792px) {
+            flex-direction: column;
+            align-items: center;
+            padding-right: 0rem;
+            .sfoomain-info{
+                margin-bottom: 3rem;
+                align-items: center;
+                p{
+                    text-align: center;
+                }
+            }
+            .sfoomain-links{
+                flex-direction: column;
+                align-items: center;
+                ul{
+                    align-items: center;
+
+                    h4{
+                        text-align: center;
+                    }
+                    li{
+                        list-style: none;
+                        a{
+                            text-align: center;
+                        }
+                    }
+                
+                }
             }
         }
     }
@@ -89,11 +120,12 @@
         div{
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 18px;
             a{
                 color: #C0C0C0;
                 font-size: 14px;
                 text-decoration: none;
+                
                 &:hover{
                     color: $color-white;
                 }
@@ -104,6 +136,19 @@
             font-size: 14px;
 
         }
-        
+        @media (max-width: 650px) {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+
+            p{
+                text-align: center;   
+            }
+            div{
+                a{
+                    text-align: center;
+                }
+            }
+        }
     }
 }
