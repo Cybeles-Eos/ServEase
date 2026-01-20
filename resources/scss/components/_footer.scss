@@ -1,0 +1,8 @@
+@import "typography";
+@import "colors";
+
+.static-footer{
+    width: 100%;
+    height: 25rem;
+    background-color: $color-dark;
+}

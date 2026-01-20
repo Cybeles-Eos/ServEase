@@ -29,7 +29,7 @@
 
                         <div class="ps-sl-cc-main__box">
                             <div>
-                                <input type="checkbox">
+                                <input type="checkbox" value="Plumber">
                                 <p class="ps-category-title">Plumber</p>
                             </div>
                             <p class="ps-category-count">
@@ -39,7 +39,7 @@
                         </div>
                         <div class="ps-sl-cc-main__box">
                             <div>
-                                <input type="checkbox">
+                                <input type="checkbox" value="Electrician">
                                 <p class="ps-category-title">Electrician</p>
                             </div>
                             <p class="ps-category-count">
@@ -49,7 +49,7 @@
                         </div>
                         <div class="ps-sl-cc-main__box">
                             <div>
-                                <input type="checkbox">
+                                <input type="checkbox" value="Painter">
                                 <p class="ps-category-title">Painter</p>
                             </div>
                             <p class="ps-category-count">
@@ -59,7 +59,7 @@
                         </div>
                         <div class="ps-sl-cc-main__box">
                             <div>
-                                <input type="checkbox">
+                                <input type="checkbox" value="Gardener">
                                 <p class="ps-category-title">Gardener</p>
                             </div>
                             <p class="ps-category-count">
@@ -69,7 +69,7 @@
                         </div>
                         <div class="ps-sl-cc-main__box">
                             <div>
-                                <input type="checkbox">
+                                <input type="checkbox" value="Technician">
                                 <p class="ps-category-title">Technician</p>
                             </div>
                             <p class="ps-category-count">
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <hr>
-                <a href="{{ url('sign-in') }}" class="join-now-cta"><img src="{{ asset('images/cta-join.png') }}" alt=""></a>
+                <a href="{{ url('/provider/signin') }}" class="join-now-cta"><img src="{{ asset('images/cta-join.png') }}" alt=""></a>
             </div>
             <div class="ps-sl-cards">
 
@@ -96,10 +96,10 @@
                         <svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0.833008 0.833008H11.4997M2.83301 4.83301H9.49967M5.49967 8.83301H6.83301" stroke="#FDB932" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        Sort
+                        <span class="sort-label">Sort to Newest</span>
                     </button>
                 </div>
-                <div class="ps-sl-cards__list">
+                <div class="ps-sl-cards__list ps-sl-cards-conm">
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
                             <img src="{{asset('images/serv-bg.png')}}" alt="">
@@ -351,13 +351,416 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="ps-sl-view-more">
+                    <button id="viewMoreBtn">View More</button>
+                </div>
             </div>
         </section>
     </main>
 @endsection
 @push('extrascripts')
     <script>
+        const servicesData = [
+            {
+                id: 1,
+                title: '1Residential Pipe Repair Services',
+                category: 'Plumber',
+                provider: 'Daniella Barcelon',
+                description: 'Professional residential pipe repair services focused on fixing leaks, improving water flow, and ensuring long lasting plumbing safety.',
+                created_at: '2024-12-12',
+                jobs: 13,
+                rating: 4.9,
+                reviews: 128,
+                specialization: 'Pipe Repair'
+            },
+            {
+                id: 2,
+                title: 'Emergency Leak and Drain Repair',
+                category: 'Plumber',
+                provider: 'Mark Villanueva',
+                description: 'Fast response emergency plumbing services for leaks and clogged drains, providing immediate solutions to prevent further damage.',
+                created_at: '2024-11-25',
+                jobs: 21,
+                rating: 4.8,
+                reviews: 96,
+                specialization: 'Emergency Plumbing'
+            },
+            {
+                id: 3,
+                title: 'Home Wiring and Panel Upgrade',
+                category: 'Electrician',
+                provider: 'Alex Cruz',
+                description: 'Safe and reliable home wiring and electrical panel upgrades designed to improve system performance and meet modern safety standards.',
+                created_at: '2025-01-02',
+                jobs: 18,
+                rating: 4.7,
+                reviews: 82,
+                specialization: 'Electrical Wiring'
+            },
+            {
+                id: 4,
+                title: 'Interior and Exterior Wall Finishing',
+                category: 'Painter',
+                provider: 'Liam Santos',
+                description: 'Professional interior and exterior wall finishing services delivering clean paint application, smooth surfaces, and lasting results.',
+                created_at: '2024-10-18',
+                jobs: 9,
+                rating: 4.6,
+                reviews: 54,
+                specialization: 'Wall Finishing'
+            },
+            {
+                id: 5,
+                title: 'Lawn Care and Landscape Maintenance',
+                category: 'Gardener',
+                provider: 'Rose Mendoza',
+                description: 'Comprehensive lawn care and landscape maintenance services to keep outdoor spaces healthy, organized, and visually appealing.',
+                created_at: '2024-12-28',
+                jobs: 14,
+                rating: 4.8,
+                reviews: 73,
+                specialization: 'Landscape Maintenance'
+            },
+            {
+                id: 6,
+                title: 'Home Appliance Diagnostics and Repair',
+                category: 'Technician',
+                provider: 'John Reyes',
+                description: 'Expert home appliance diagnostics and repair services covering common household devices to restore performance efficiently.',
+                created_at: '2024-11-05',
+                jobs: 25,
+                rating: 4.9,
+                reviews: 141,
+                specialization: 'Appliance Repair'
+            },
+            {
+                id: 7,
+                title: 'Bathroom Fixture Installation and Repair',
+                category: 'Plumber',
+                provider: 'Carlos Mendoza',
+                description: 'Professional installation and repair of bathroom fixtures including sinks, toilets, and faucets to ensure proper function.',
+                created_at: '2024-09-22',
+                jobs: 17,
+                rating: 4.7,
+                reviews: 88,
+                specialization: 'Bathroom Fixtures'
+            },
+            {
+                id: 8,
+                title: 'Ceiling Fan and Lighting Installation',
+                category: 'Electrician',
+                provider: 'Ryan Bautista',
+                description: 'Reliable ceiling fan and lighting installation services focused on safety, correct wiring, and optimal home illumination.',
+                created_at: '2024-12-05',
+                jobs: 20,
+                rating: 4.8,
+                reviews: 101,
+                specialization: 'Lighting Installation'
+            },
+            {
+                id: 9,
+                title: 'Residential House Repainting Services',
+                category: 'Painter',
+                provider: 'Angela Flores',
+                description: 'Complete residential house repainting services offering professional color application for both interior and exterior spaces.',
+                created_at: '2024-11-14',
+                jobs: 11,
+                rating: 4.6,
+                reviews: 67,
+                specialization: 'House Repainting'
+            },
+            {
+                id: 10,
+                title: 'Garden Design and Plant Arrangement',
+                category: 'Gardener',
+                provider: 'Miguel Navarro',
+                description: 'Creative garden design and plant arrangement services that enhance outdoor aesthetics and promote healthy plant growth.',
+                created_at: '2024-10-30',
+                jobs: 8,
+                rating: 4.5,
+                reviews: 39,
+                specialization: 'Garden Design'
+            },
+            {
+                id: 11,
+                title: 'Washing Machine and Dryer Repair',
+                category: 'Technician',
+                provider: 'Patrick Lim',
+                description: 'Professional washing machine and dryer repair services ensuring appliances are restored to proper working condition.',
+                created_at: '2024-12-18',
+                jobs: 22,
+                rating: 4.9,
+                reviews: 119,
+                specialization: 'Laundry Appliance Repair'
+            },
+            {
+                id: 12,
+                title: 'Circuit Breaker Troubleshooting Services',
+                category: 'Electrician',
+                provider: 'Noel Ramos',
+                description: 'Accurate circuit breaker troubleshooting services to diagnose electrical issues and restore safe power distribution.',
+                created_at: '2025-01-08',
+                jobs: 16,
+                rating: 4.8,
+                reviews: 74,
+                specialization: 'Circuit Troubleshooting'
+            },
+            {
+                id: 13,
+                title: 'Pipe Leak Detection and Assessment',
+                category: 'Plumber',
+                provider: 'Jerome Castillo',
+                description: 'Advanced pipe leak detection and assessment services designed to identify hidden leaks and prevent costly water damage.',
+                created_at: '2024-12-02',
+                jobs: 19,
+                rating: 4.7,
+                reviews: 91,
+                specialization: 'Leak Detection'
+            },
+            {
+                id: 14,
+                title: 'Wall Texture and Decorative Painting',
+                category: 'Painter',
+                provider: 'Sophia Reyes',
+                description: 'Decorative wall texture and custom painting services that add style, depth, and character to interior spaces.',
+                created_at: '2024-11-09',
+                jobs: 10,
+                rating: 4.6,
+                reviews: 58,
+                specialization: 'Decorative Painting'
+            },
+            {
+                id: 15,
+                title: 'Outdoor Lawn Cleanup and Maintenance',
+                category: 'Gardener',
+                provider: 'Benito Cruz',
+                description: 'Seasonal outdoor lawn cleanup and maintenance services to keep yards clean, organized, and well maintained year round.',
+                created_at: '2024-12-20',
+                jobs: 12,
+                rating: 4.8,
+                reviews: 69,
+                specialization: 'Lawn Maintenance'
+            },
+            {
+                id: 16,
+                title: 'Outdoor Lawn Cleanup and Maintenance',
+                category: 'Vendor',
+                provider: 'Benito Cruz',
+                description: 'Seasonal outdoor lawn cleanup and maintenance services to keep yards clean, organized, and well maintained year round.',
+                created_at: '2024-12-20',
+                jobs: 12,
+                rating: 4.8,
+                reviews: 69,
+                specialization: 'Lawn Maintenance'
+            }
+        ];
+        function updateCategoryCounts(data) {
+            $('.ps-sl-cc-main__box').each(function () {
+                const category = $(this).find('input[type="checkbox"]').val();
+
+                const count = data.filter(service =>
+                    service.category === category
+                ).length;
+
+                $(this).find('.ps-category-count')
+                    .html(`<span></span> ${count} Providers`);
+            });
+        }
+        function renderServices(data) {
+            const $wrap = $('.ps-sl-cards-conm');
+            $wrap.empty();
+
+            const visibleData = data.slice(0, visibleCount);
+
+            $('.ps-sl-category__count h4')
+                .text(`${data.length} Services Available`);
+
+            $.each(visibleData, function (_, service) {
+                $wrap.append(`
+                    <div class="ps-sl-c-box">
+                        <div class="ps-sl-c-box__head">
+                            <img src="images/serv-bg.png" alt="">
+                            <span class="ps-sl-c-box__head--cat">${service.category}</span>
+                        </div>
+
+                        <div class="ps-sl-c-box__body">
+                            <h3>${service.title}</h3>
+
+                            <p class="ps-sl-c-box__body--label">
+                                ${service.description}
+                            </p>
+
+                            <div class="ps-sl-c-box__body--info">
+
+                                <div>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.99984 7.99967C9.84079 7.99967 11.3332 6.50729 11.3332 4.66634C11.3332 2.82539 9.84079 1.33301 7.99984 1.33301C6.15889 1.33301 4.6665 2.82539 4.6665 4.66634C4.6665 6.50729 6.15889 7.99967 7.99984 7.99967Z" stroke="#FFBE42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13.7268 14.6667C13.7268 12.0867 11.1601 10 8.0001 10C4.8401 10 2.27344 12.0867 2.27344 14.6667" stroke="#FFBE42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Provider: ${service.provider}
+                                </div>
+
+                                <div>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1.3335 5.99967V4.66634C1.3335 2.66634 2.66683 1.33301 4.66683 1.33301H11.3335C13.3335 1.33301 14.6668 2.66634 14.6668 4.66634V5.99967" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M1.3335 10V11.3333C1.3335 13.3333 2.66683 14.6667 4.66683 14.6667H11.3335C13.3335 14.6667 14.6668 13.3333 14.6668 11.3333V10" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4.4668 6.17383L8.00013 8.2205L11.5068 6.18717" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M8 11.8472V8.21387" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M7.17348 4.19305L5.04015 5.37973C4.56015 5.6464 4.16016 6.31973 4.16016 6.87306V9.13307C4.16016 9.6864 4.55348 10.3597 5.04015 10.6264L7.17348 11.813C7.62682 12.0664 8.37349 12.0664 8.83349 11.813L10.9668 10.6264C11.4468 10.3597 11.8468 9.6864 11.8468 9.13307V6.87306C11.8468 6.31973 11.4535 5.6464 10.9668 5.37973L8.83349 4.19305C8.37349 3.93305 7.62682 3.93305 7.17348 4.19305Z" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Specialization: ${service.specialization || service.category}
+                                </div>
+
+                                <div>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.00016 12.1331C9.47292 12.1331 10.6668 10.9392 10.6668 9.46647C10.6668 7.99371 9.47292 6.7998 8.00016 6.7998C6.5274 6.7998 5.3335 7.99371 5.3335 9.46647C5.3335 10.9392 6.5274 12.1331 8.00016 12.1331Z" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M6.95996 9.53322L7.39329 9.96655C7.51996 10.0932 7.72663 10.0932 7.85329 9.97322L9.03996 8.87988" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.33338 14.6667H10.6667C13.3467 14.6667 13.8267 13.5933 13.9667 12.2867L14.4667 6.95333C14.6467 5.32667 14.18 4 11.3334 4H4.66671C1.82005 4 1.35338 5.32667 1.53338 6.95333L2.03338 12.2867C2.17338 13.5933 2.65338 14.6667 5.33338 14.6667Z" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.3335 3.99967V3.46634C5.3335 2.28634 5.3335 1.33301 7.46683 1.33301H8.5335C10.6668 1.33301 10.6668 2.28634 10.6668 3.46634V3.99967" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M14.4333 7.33301C13.28 8.17301 12 8.75967 10.6733 9.09301" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M1.74658 7.51367C2.85992 8.27367 4.07325 8.81367 5.33325 9.12034" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    Job Completed: ${service.jobs}
+                                </div>
+
+                            </div>
+
+                            <div class="ps-sl-c-box__body--cta">
+                                <a href="#">Learn more</a>
+
+                                <p>
+                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z"
+                                            fill="#FFBE42" stroke="#FFBE42"
+                                            stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    ${service.rating} <span>(${service.reviews || 0} reviews)</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
+
+            // Toggle button text
+            if (visibleCount >= data.length) {
+                $('#viewMoreBtn').text('View Less');
+            } else {
+                $('#viewMoreBtn').text('View More');
+            }
+
+            // Hide button if not needed
+            if (data.length <= STEP) {
+                $('#viewMoreBtn').hide();
+            } else {
+                $('#viewMoreBtn').show();
+            }
+        }
+
+        // Remove this part if you want category is base on admin
+        //--------------------------------------------------------
+        function renderCategories(data) {
+            const $container = $('.ps-sl-cc-main');
+            $container.empty();
+
+            // Count services per category
+            const categoryMap = {};
+
+            $.each(data, function (_, service) {
+                categoryMap[service.category] =
+                    (categoryMap[service.category] || 0) + 1;
+            });
+
+            // Render checkboxes
+            $.each(categoryMap, function (category, count) {
+                $container.append(`
+                    <div class="ps-sl-cc-main__box">
+                        <div>
+                            <input type="checkbox" value="${category}">
+                            <p class="ps-category-title">${category}</p>
+                        </div>
+                        <p class="ps-category-count">
+                            <span></span>
+                            ${count} Providers
+                        </p>
+                    </div>
+                `);
+            });
+        }
+        renderCategories(servicesData);
+        //--------------------------------------------------------
+
+        let currentData = [...servicesData];
+        let sortNewest = true;
+        let visibleCount = 9; // Change How Many Cards To Show
+        const STEP = 9; // Change How Many Cards To Show
+        renderServices(currentData);
+        updateCategoryCounts(servicesData);
+
+        $('.ps-serv-btn-sort-m').on('click', function () {
+            sortNewest = !sortNewest;
+
+            currentData.sort(function (a, b) {
+                return sortNewest
+                    ? new Date(b.created_at) - new Date(a.created_at)
+                    : new Date(a.created_at) - new Date(b.created_at);
+            });
+
+            // Update label text
+            $(this).find('.sort-label').text(
+                sortNewest ? 'Sort to Newest' : 'Sort to Oldest'
+            );
+
+            visibleCount = STEP;
+            renderServices(currentData);
+        });
+
+        $('.ps-sl-category__search input').on('keyup', function () {
+
+            const keyword = $(this).val().toLowerCase().trim();
+
+            currentData = servicesData
+                .filter(service =>
+                    service.title.toLowerCase().includes(keyword)
+                )
+                .sort((a, b) => a.title.localeCompare(b.title));
+
+            visibleCount = STEP;
+            renderServices(currentData);
+        });
+
+        $('.ps-sl-cc-main input[type="checkbox"]').on('change', function () {
+            const selected = $('.ps-sl-cc-main input:checked')
+                .map(function () {
+                    return this.value;
+                }).get();
+
+            if (selected.length === 0) {
+                currentData = [...servicesData];
+            } else {
+                currentData = servicesData.filter(service =>
+                    selected.includes(service.category)
+                );
+            }
+
+            visibleCount = STEP;
+            renderServices(currentData);
+        });
+
+        $('#viewMoreBtn').on('click', function () {
+
+            if (visibleCount >= currentData.length) {
+                // Reset back to 9
+                visibleCount = STEP;
+            } else {
+                // Show next batch
+                visibleCount += STEP;
+            }
+
+            renderServices(currentData);
+        });
+
 
     </script>
 @endpush

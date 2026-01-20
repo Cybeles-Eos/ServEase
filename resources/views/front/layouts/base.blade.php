@@ -64,9 +64,9 @@
     </script>
     <script>
         // Initialize Lenis
-        const lenis = new Lenis({
-            autoRaf: true,
-        });
+        // const lenis = new Lenis({
+        //     autoRaf: true,
+        // });
     </script>
     @stack('extrascripts')
 </body>
