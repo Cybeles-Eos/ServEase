@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Auth\AuthManagerController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -25,19 +26,18 @@ Route::get('/services', function () {
     return view('front.pages.custom-pages.services');
 });
 
-// Admin Routes
-Route::get('/admin/login', function () {
-    return view('admin.auth.login');
-});
-Route::redirect('/admin', '/admin/login');
 
-// Customer Routes
-Route::view('/customer/dashboard', 'customers.dashboard');
 
-// Provider Routes
-Route::get('/provider/login', function () {
-    return view('providers.auth.login');
-});
-Route::get('/provider/signin', function () {
-    return view('providers.auth.signin');
-});
+
+/**
+ * 
+ * Admin Routes
+ */
+
+Route::get('/login', [AuthManagerController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthManagerController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthManagerController::class, 'logout'])->name('logout');
+Route::get('/signup', [AuthManagerController::class, 'showSignup'])->name('signup');
+Route::post('/register', [AuthManagerController::class, 'signup'])->name('signup.post');
+
+Route::get('/dashboard', [AuthManagerController::class, 'showDashboard'])->name('dashboard');

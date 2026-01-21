@@ -38,8 +38,8 @@
             </ul>
         </div>
         <div class="h-cta-btns">
-            <a href="{{ url('/login') }}" class="login--btn">Login</a>
-            <a href="{{ url('/sign-in') }}" class="btn btn--tertiary">Sign up</a>
+            <a href="{{ route('login') }}" class="login--btn">Login</a>
+            <a href="{{ route('signup') }}" class="btn btn--tertiary">Sign up</a>
         </div>
     </div>
 </header>
@@ -71,10 +71,10 @@
                 </a>
             </li>
             <li>
-                <a href="{{url('login')}}" class="btn btn--secondary">Login</a>
+                <a href="{{ route('login')}}" class="btn btn--secondary">Login</a>
             </li>
             <li>
-                <a href="{{ url('/sign-in') }}" class="btn btn--tertiary">Sign in</a>
+                <a href="{{ route('signup') }}" class="btn btn--tertiary">Sign in</a>
             </li>
         </ul>
     </div>

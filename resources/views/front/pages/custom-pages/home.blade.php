@@ -3,6 +3,10 @@
 @section('content')
     <main class="main-page page--home">
         <section class="section--hero m-padding">
+            {{-- <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit">logoout</button>
+            </form> --}}
             <h1>Find reliable local experts fast with our smart service hub</h1>
             <p>A smart platform that connects people who need help with locals who can get the job done anytime.</p>
 
