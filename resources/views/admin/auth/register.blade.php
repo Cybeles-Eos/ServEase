@@ -17,7 +17,7 @@
                     <div class="plm-ff-group">
                         <label for="email">Email Address</label>
                         <input type="text" placeholder="e. g. name@gmail.com" name="email" value="{{ old('email') }}" required autocomplete="off">
-                        @error('email') <small>{{ $message }}</small> @enderror
+                        @error('email') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                     </div>
                     <div class="plm-ff-group">
                         <label for="password">Password</label>

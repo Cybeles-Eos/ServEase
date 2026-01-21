@@ -19,10 +19,11 @@ class AuthManagerController extends Controller
         return view('admin.auth.login');
     }
 
-    public function showDashboard()
-    {
-        return view('admin.dashboard');
-    }
+    // public function showDashboard()
+    // {
+
+    //     return view('admin.dashboard');
+    // }
     /**
      * Handle login request
      */
@@ -41,14 +42,14 @@ class AuthManagerController extends Controller
             $user = Auth::user();
 
             if ($user->isAdmin()) {
-                return redirect('/dashboard');
+                return redirect('/admin/dashboard');
             }
 
             if ($user->isProvider()) {
                 return redirect('/provider/dashboard');
             }
 
-            return redirect('/'); // customer
+            return redirect('/dashboard'); // customer
         }
 
         throw ValidationException::withMessages([

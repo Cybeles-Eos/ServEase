@@ -45,9 +45,10 @@
                 margin-top: 1.3rem;
                 padding-inline: 2rem;
                 .plm-ff-group{
-                    margin-bottom: 10px;
+                    margin-bottom: 20px;
                     display: flex;
                     flex-direction: column;
+                    position: relative;
                     a{
                         font-size: 14px;
                         color: $color-primary;
@@ -57,12 +58,16 @@
                         user-select: none;
                     }
 
+                    small{
+                        font-size: 12px;
+                        color: red;
+                        position: absolute;
+                        right: 0;
+                        bottom: -18px;    
+                    }
 
                 }
-                    small{
-                        font-size: 10px;
-                        color: red;
-                    }
+
                 label{
                     font-size: 14px;
                     font-weight: 500;
