@@ -146,11 +146,29 @@
                             }
                         }
                     }
+                    @media (max-width: 992px) {
+                        position: absolute;
+                        top: 18rem;
+                        right: 2rem;
+                        width: 300px;
+                        background-color: $color-white !important;
+                        z-index: 2;
+                        padding: 1.2rem;
+                        border: 1px solid #DADADA;
+                        border-radius: 8px;
+                    }
+                    @media (max-width: 392px) {
+                        right: 1rem;
+                    }
                 }
                 hr{
                     margin-block: 27px;
                 }
+                
                 @media (max-width: 992px) {
+                    .active-mobile-cat{
+                        display: block;
+                    }
                     .join-now-cta,
                     &__cat,
                     hr{
@@ -160,10 +178,6 @@
             }   
             .ps-sl-cards{
                 width: 100%;
-                // padding-top: 4.2rem;
-                // height: 40rem;
-                // border: 1px solid #34C759;
-                // background-color: aquamarine;
                 height: fit-content;
                 
                 &__head{
@@ -172,7 +186,7 @@
                     justify-content: flex-end;
                     gap: 10px;
                     padding: 17px 0;
-
+                    position: relative;
                     button{
                         outline: none !important;
                         padding: 7px 10px;
@@ -189,6 +203,7 @@
                     .ps-serv-btn-cat-m{
                         display: none;
                     }
+
                     @media (max-width: 992px) {
                         .ps-serv-btn-cat-m{
                             display: block;

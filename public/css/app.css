@@ -1200,10 +1200,31 @@ h4 span {
   background-color: #34C759;
   display: inline-block;
 }
+@media (max-width: 992px) {
+  .page--services .section--list .ps-sl-category__cat {
+    position: absolute;
+    top: 18rem;
+    right: 2rem;
+    width: 300px;
+    background-color: #fff !important;
+    z-index: 2;
+    padding: 1.2rem;
+    border: 1px solid #DADADA;
+    border-radius: 8px;
+  }
+}
+@media (max-width: 392px) {
+  .page--services .section--list .ps-sl-category__cat {
+    right: 1rem;
+  }
+}
 .page--services .section--list .ps-sl-category hr {
   margin-block: 27px;
 }
 @media (max-width: 992px) {
+  .page--services .section--list .ps-sl-category .active-mobile-cat {
+    display: block;
+  }
   .page--services .section--list .ps-sl-category .join-now-cta, .page--services .section--list .ps-sl-category__cat,
   .page--services .section--list .ps-sl-category hr {
     display: none;
@@ -1219,6 +1240,7 @@ h4 span {
   justify-content: flex-end;
   gap: 10px;
   padding: 17px 0;
+  position: relative;
 }
 .page--services .section--list .ps-sl-cards__head button {
   outline: none !important;
