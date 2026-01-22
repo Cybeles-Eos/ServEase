@@ -137,7 +137,8 @@
                         .replace(/(^-|-$)/g, '');
 
                     // window.location.href = `/services/${slug}`;
-                    window.location.href = `/services/${slug}`;
+                    // window.location.href = `/services/${slug}`;
+                    window.location.href = `/service-detail`;
 
                 } else {
                     // service does NOT exist → contact page

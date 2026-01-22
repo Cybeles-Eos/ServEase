@@ -11,13 +11,11 @@
             margin-bottom: 3rem;
             padding-top: 30px;
             padding-bottom: 40px;
-            height: 100vh;
+            // height: 100vh;
             // height: fit-content;
             .psd-sl-category {
-                width: 370px; 
+                min-width: 370px; 
                 // height: 160rem; 
-
-                
                 &__head{
                     display: flex;
                     align-items: center;
@@ -29,37 +27,386 @@
                         font-weight: 400;
                         // text-decoration: none;
                         line-height: 110%;
+                        &:hover{
+                            text-decoration: underline;
+                        }
                     }
                     .s-act-link{
                         opacity: .55;
+                    }
+                    @media (max-width: 992px) {
+                        margin-bottom: 1rem;
                     }
                 }
                 &__side{
                     padding: 10px 0px;
                     // margin-top: 3px;
+                    @media (max-width: 992px) {
+                        display: none;
+                    }
                 }
                 &__rcon{
                     display: flex;
                     flex-direction: column;
-                    gap: 10px;
+                    gap: 17px;
 
                     .psdslcr-box{
                         width: 100%;
-                        height: 90px;
+                        // height: 90px;
                         border: 1px solid #DADADA;
                         border-radius: 6px;
-                        padding: 12px;
-
+                        padding: 10px 12px;
+                        text-decoration: none;
                         &__head{
-
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid #DADADA;
+                            div{
+                                font-size: 12px;
+                                font-weight: 500;
+                                padding: 3px 10px ;
+                                border-radius: 4px;
+                                color: $color-primary;
+                                background-color: #FFBE422d;
+                            }
+                            p{
+                                margin: 0;
+                                font-size: 12px;
+                                font-weight: 500;
+                                color: #1515158d;
+                                span{
+                                    font-size: 10px;
+                                    
+                                }
+                            }
                         }
                         &__text{
+                            margin-top: 10px;
+                            h3,p{
+                                margin: 0;
+                            }
+                            h3{
+                                font-size: 16px;
+                                margin-bottom: 4px;
+                                color: $color-dark;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;   /* number of lines */
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
+                            }
+                            p{
+                                color: $color-dark;
+                                font-size: 14px;
+                                line-height: 120%;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 2;   /* number of lines */
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
+                            }
+                        }   
+                        &:hover{
+                            border-color: $color-primary;
 
+                            *{
+                                border-color: $color-primary !important;
+                            }
                         }
+                    }
+                    @media (max-width: 992px) {
+                        display: none;
+                    }
+                }
+                hr{
+                    margin-block: 27px;
+                    @media (max-width: 992px) {
+                        display: none;
+                    }
+                }
+                .join-now-cta-sd{
+                    width: 100%;
+                    img{
+                        width: 100%;
+                        user-select: none;
+                    }
+                    @media (max-width: 992px) {
+                        display: none;
+                    }
+                }
+                @media (max-width: 992px) {
+                    hr{
+                        display: none;
                     }
                 }
             }   
             .psd-sl-sdetail{
+                // margin-top: 35px;
+                width: 100%;
+                &__img{
+                    width: 100%;
+                    height: 34vw;
+
+                    img{
+                        width: 100%;
+                        height: 100%;
+                        display: block;
+                        border-radius: 8px;
+                        object-fit: cover;
+                        object-position: center;
+                        user-select: none;
+                        
+                    }
+                    @media (max-width: 592px) {
+                        height: auto !important;
+                    }
+                }
+                &__info{
+                    width: 100%;
+                    // height: 20rem;
+                    // background-color: antiquewhite;
+                    display: flex;
+                    gap:30px;
+                    justify-content: space-between;
+                    padding-top: 2rem;
+                    .psd-sl-sdetaili-description{
+                        width: 60%;
+                        // background-color: aqua;
+                        // height: 10rem;
+
+                        p,h3,h2{
+                            margin: 0;
+                        }
+                        &__prt{
+                            color: $color-primary;
+                            font-size: 16px;
+                            font-weight: 600;
+                            margin-bottom: 5px;
+                        }
+                        .psd-sl-sdetaili-relateds{
+                            width: 100%;
+                            height: 30rem;
+                            //background-color: antiquewhite;
+                            margin-top: 4rem;
+                            display: none;
+                            flex-direction: column;
+
+
+                            h4{
+                                font-size: 20px !important;
+                                font-weight: 600;
+                                margin-bottom: 15px;
+                            }
+                            &__bc{
+                                width: 100%;
+                                // height: 90px;
+                                border: 1px solid #DADADA;
+                                border-radius: 6px;
+                                padding: 12px 13px;
+                                text-decoration: none;
+                                margin-bottom: 18px;
+                                &__head{
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                                    padding-bottom: 10px;
+                                    border-bottom: 1px solid #DADADA;
+                                    div{
+                                        font-size: 12px;
+                                        font-weight: 500;
+                                        padding: 3px 10px ;
+                                        border-radius: 4px;
+                                        color: $color-primary;
+                                        background-color: #FFBE422d;
+                                    }
+                                    p{
+                                        margin: 0;
+                                        font-size: 12px;
+                                        font-weight: 500;
+                                        color: #1515158d;
+                                        span{
+                                            font-size: 10px;
+                                            
+                                        }
+                                    }
+                                }
+                                &__text{
+                                    margin-top: 10px;
+                                    h3,p{
+                                        margin: 0;
+                                    }
+                                    h3{
+                                        font-size: 16px;
+                                        margin-bottom: 4px;
+                                        color: $color-dark;
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 2;   /* number of lines */
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                    }
+                                    p{
+                                        color: $color-dark;
+                                        font-size: 14px;
+                                        line-height: 120%;
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 2;   /* number of lines */
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;
+                                    }
+                                }   
+                                &:hover{
+                                    border-color: $color-primary;
+
+                                    *{
+                                        border-color: $color-primary !important;
+                                    }
+                                }
+                            }
+
+                            @media (max-width: 992px) {
+                                display: flex;
+                            }
+                        }
+                    }
+                    .psd-sl-sdetaili-details{
+                        width: 30%;
+                        
+                        a{
+                            width: 100%;
+                            color: $color-dark !important;
+                        }
+                        .psd-sl-sdetaili-d-provider{
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-end;
+                            margin-top: 25px;
+                            border-bottom: 1px solid #DADADA;
+                            padding-bottom: 1rem;
+                            
+                            &__con{
+                                display: flex;
+                                gap: 10px;
+
+                                img{
+                                    width: 50px;
+                                    height: 50px;
+                                    border-radius: 8px;
+                                    object-fit: cover;
+                                    object-position: center;
+                                }
+                                div{
+                                    padding-top: 5px;
+                                    h4{
+                                        font-size: 16px;
+                                        margin-bottom: 2px;
+                                        font-weight: 600;
+                                    }
+                                    p{
+                                        margin: 0;
+                                        font-size: 14px;
+                                        font-weight: 500;
+                                        color: #1515158d;
+                                        span{
+                                            font-size: 12px;
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .psd-sl-sdetaili-d-service-info{
+                            margin-top: 15px;
+                            &__prc{
+                                margin: 0;
+                                color: #1515154d;
+                                font-weight: 400;
+                                font-size: 16px;
+                                font-family: 'Rubik', sans-serif;
+                                span{
+                                    color: $color-dark;
+                                    margin-left: 3px;
+                                }
+                            }
+                            h4{
+                                font-size: 16px;
+                                font-weight: 600;
+                                // font-family: 'Rubik', sans-serif;
+
+                            }
+                            ul{
+                                margin-top: 13px;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 14px;
+
+                                li{
+                                    line-height: 100%;
+
+                                    display: flex;
+                                    gap: 7px;
+
+                                    p{
+                                        line-height: 110%;
+                                        margin: 0;
+
+                                        span{
+                                            color: $color-primary;
+                                        }
+                                    }
+                                }
+                            }
+                            hr{
+                                margin-block: 1.7rem;
+                                display: none;
+                                @media (max-width: 992px) {
+                                    display: block;
+                                }
+                                @media (max-width: 592px) {
+                                    margin-bottom: .5rem;
+                                }
+                            }
+                            &__cta{
+                                width: 100%;
+                                display: none;
+                                img{
+                                    width: 100%;
+                                }
+                                @media (max-width: 992px) {
+                                    display: block;
+                                }
+                                @media (max-width: 592px) {
+                                    display: none;
+                                }  
+                            }
+
+                        }
+
+                    }
+                    @media (max-width: 592px) {
+                        flex-direction: column-reverse;
+                        .psd-sl-sdetaili-description{
+                            width: 100% !important;
+                        }
+                        .psd-sl-sdetaili-details{
+                            width: 100% !important;
+                        }
+                    }
+                }
+
+                @media (min-width: 1400px) {
+                    &__img { height: 450px; }
+                }
+                @media (max-width: 1280px) {
+                    &__info{
+                        .psd-sl-sdetaili-description{
+                            width: 70%;
+                        }
+                        .psd-sl-sdetaili-details{
+                            width: 270px;
+                        }
+                    }
+                    
+                }
 
             }
             @media (max-width: 992px) {

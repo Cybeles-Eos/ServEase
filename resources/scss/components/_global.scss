@@ -4,13 +4,24 @@
 *{
     box-sizing: border-box;
 }
-
+::selection {
+    background: rgb(255, 215, 141);
+    color: #000000;
+}
 body{
     font-family: $font-primary;
     position: relative;
     height: fit-content;
     // width: fit-content;
     overflow-x: hidden !important;
+}
+
+ul{
+    padding: 0;
+}
+a{text-decoration: none;}
+hr{
+    color:  #959595;
 }
 
 .m-width{

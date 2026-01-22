@@ -32,24 +32,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> --}}
     {{-- Css Styles --}}
     <link rel="stylesheet" href="{{ asset('css/reset.custom.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/fontawesome-free-5.8.1-web/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap/bootstrap.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/slick.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slick-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('css/aos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('extrastylesheets')
-
-    {{-- Scripts --}}
-    <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script> 
-    {{-- <script src="{{asset('js/modernizr.min.js')}}"></script> --}}
-    <script src="{{ asset('js/modernizr-custom.js') }}"></script>
-    <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
-    <script src="{{ asset('js/slick.min.js') }}"></script>
-    <script src="{{ asset('js/main.js') }}"></script>
     
 </head>
 <body>
@@ -67,7 +60,18 @@
         // const lenis = new Lenis({
         //     autoRaf: true,
         // });
+        
     </script>
+    {{-- Scripts --}}
+    <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script> 
+    {{-- <script src="{{asset('js/modernizr.min.js')}}"></script> --}}
+    {{-- <script src="{{ asset('js/modernizr-custom.js') }}"></script> --}}
+    <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ asset('js/slick.min.js') }}"></script>
+    {{-- <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script> --}}
+    <script src="{{ asset('js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    {{-- <script src="{{ asset('js/popper.min.js') }}"></script> --}}
+    <script src="{{ asset('js/main.js') }}"></script>
     @stack('extrascripts')
 </body>
 </html>

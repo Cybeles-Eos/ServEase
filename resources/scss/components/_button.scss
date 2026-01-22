@@ -15,10 +15,10 @@
         background-color: $color-dark;
         color: $color-white;
         border: 1px solid $color-dark;
-        // &:hover {
-        //     background-color: initial;
-        //     color: $color-primary;
-        // }
+        &:hover, &:active {
+            background-color: $color-dark !important;
+            color: $color-white !important;
+        }
     }
 
     &--secondary {
@@ -34,8 +34,10 @@
         background-color: $color-primary;
         border-color: $color-primary;
         color: $color-white;
-        &:hover {
-            //background-color: $color-primary;
+        &:hover, 
+        &:active {
+            background-color: $color-primary;
+            border-color: $color-primary;
             color: $color-white;
         }
 

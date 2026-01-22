@@ -28,6 +28,9 @@
                         font-weight: 400;
                         // text-decoration: none;
                         line-height: 110%;
+                        &:hover{
+                            text-decoration: underline;
+                        }
                     }
                     .s-act-link{
                         opacity: .55;
