@@ -25,10 +25,11 @@
         color: $color-dark;
         background-color: $color-white;
         border-color: $color-dark;
-        // &:hover {
-        //     background-color: $color-primary;
-        //     color: #fff;
-        // }
+        &:hover {
+        color: $color-dark;
+        background-color: $color-white;
+        border-color: $color-dark;  
+        }
     }
     &--tertiary{
         background-color: $color-primary;
@@ -37,7 +38,7 @@
         &:hover, 
         &:active {
             background-color: $color-primary;
-            border-color: $color-primary;
+            border-color: $color-primary !important;
             color: $color-white;
         }
 

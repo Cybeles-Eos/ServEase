@@ -759,6 +759,11 @@ h4 span {
   background-color: #fff;
   border-color: #171515;
 }
+.btn--secondary:hover {
+  color: #171515;
+  background-color: #fff;
+  border-color: #171515;
+}
 .btn--tertiary {
   background-color: #FFBE42;
   border-color: #FFBE42;
@@ -766,7 +771,7 @@ h4 span {
 }
 .btn--tertiary:hover, .btn--tertiary:active {
   background-color: #FFBE42;
-  border-color: #FFBE42;
+  border-color: #FFBE42 !important;
   color: #fff;
 }
 
@@ -1893,6 +1898,7 @@ h4 span {
   transform: translateX(-50%);
   left: 50%;
   padding: 30px;
+  padding-bottom: 35px;
 }
 .page--services-detail .booking-modal .booking-con-main__pre-title {
   font-size: 15px;
@@ -1909,6 +1915,11 @@ h4 span {
   display: flex;
   gap: 1rem;
   width: 100%;
+}
+@media (max-width: 492px) {
+  .page--services-detail .booking-modal .booking-con-main .sbf-field-group-con {
+    flex-direction: column;
+  }
 }
 .page--services-detail .booking-modal .booking-con-main .sbf-field-group {
   width: 100%;
@@ -1937,6 +1948,20 @@ h4 span {
 }
 .page--services-detail .booking-modal .booking-con-main button {
   margin-top: 1rem;
+}
+.page--services-detail .booking-modal .booking-con-main .glb-btn-a {
+  background-color: #FFBE42;
+  color: #171515;
+  border-radius: 4px;
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+}
+@media (max-width: 665px) {
+  .page--services-detail .booking-modal .booking-con-main {
+    width: 90% !important;
+  }
 }
 .page--services-detail .confirm-modal {
   width: 100%;
@@ -1976,6 +2001,11 @@ h4 span {
 .page--services-detail .confirm-modal__content .btn--ses {
   background-color: transparent !important;
   border: 1px solid #FFBE42;
+}
+@media (max-width: 665px) {
+  .page--services-detail .confirm-modal__content {
+    width: 90% !important;
+  }
 }
 
 p {

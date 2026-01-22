@@ -159,7 +159,14 @@
                         </div>
                     </div>
                     <div class="psd-sl-sdetaili-details">
-                        <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                        @guest
+                            <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                        @endguest
+                        @auth
+                            @if(auth()->user()->isCustomer())
+                                <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                            @endif
+                        @endauth
                         <div class="psd-sl-sdetaili-d-provider">
                             <div class="psd-sl-sdetaili-d-provider__con">
                                 <img src="{{ asset('images/user.png') }}" alt="">
@@ -272,7 +279,7 @@
                             <input type="text" name="number" required placeholder="Enter your last name...">
                         </div>
                     </div>
-                    <div class="sbf-field-group-con">
+                    <div class="sbf-field-group-con mb-2">
                         <div class="sbf-field-group">
                             <label for="number">Preferred Date <span>*</span></label>
                             <input type="date" required name="date" id="date">
@@ -282,7 +289,14 @@
                             <input type="time" required name="time" id="time">
                         </div>
                     </div>
-                    <button class="glb-btn" id="open-confirm" type="button">Send Book Request</button>
+                    @guest
+                        <a href="{{url('login')}}" class="glb-btn-a">Send Book Request</a>
+                    @endguest
+                    @auth
+                        @if(auth()->user()->isCustomer())
+                            <button class="glb-btn" id="open-confirm" type="button">Send Book Request</button>
+                        @endif
+                    @endauth
                 </form>
             </div>
         </div>
