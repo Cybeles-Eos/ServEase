@@ -28,7 +28,9 @@ Route::get('/services', function () {
 Route::get('/service-detail', function () {
     return view('front.pages.custom-pages.service-detail');
 });
-
+// Route::get('/booking', function () {
+//     return view('front.pages.custom-pages.book');
+// });
 
 
 

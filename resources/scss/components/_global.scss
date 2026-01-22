@@ -39,3 +39,14 @@ hr{
         padding-inline: 1rem;
     }
 }
+
+.glb-btn{
+    background-color: $color-primary;
+    color: $color-dark;
+    border-radius: 4px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: $font-primary;
+
+}

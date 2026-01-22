@@ -1,8 +1,11 @@
 @extends('front.layouts.base')
 
+{{-- Metas --}}
+@section('title', 'Services - Servease services')
+
 @section('content')
     <main class="main-page page--services">
-        <section class="section--list m-padding">
+        <section class="section--list m-padding m-width">
             <div class="ps-sl-category">
                 <div class="ps-sl-category__head">
                     <a href="{{ url('/') }}" class="{{ Request::is('/') ? 's-act-link' : '' }}">Home</a>
@@ -813,12 +816,12 @@
             renderServices(currentData);
         });
 
-$(document).ready(function () {
-  $('#shw-catmob').on('click', function (e) {
-    e.preventDefault();
-    $('#mobile-catside').toggleClass('active-mobile-cat');
-  });
-});
+        // Mobile Category
+        $('#shw-catmob').on('click', function (e) {
+            e.preventDefault();
+            $('#mobile-catside').toggleClass('active-mobile-cat');
+        });
+
 
 
 

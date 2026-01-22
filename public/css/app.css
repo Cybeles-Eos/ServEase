@@ -107,6 +107,16 @@ hr {
   }
 }
 
+.glb-btn {
+  background-color: #FFBE42;
+  color: #171515;
+  border-radius: 4px;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+}
+
 p {
   font-size: 15px;
   font-weight: 400;
@@ -1072,12 +1082,11 @@ h4 span {
 }
 
 .page--services .section--list {
-  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   gap: 3rem;
   margin-bottom: 3rem;
-  padding-top: 30px;
+  padding-top: 40px;
   padding-bottom: 40px;
 }
 .page--services .section--list .ps-sl-category {
@@ -1462,14 +1471,18 @@ h4 span {
   color: #FFBE42;
 }
 
+.page--services-detail {
+  position: relative;
+}
+.page--services-detail .section {
+  margin-bottom: 0 !important;
+}
 .page--services-detail .section--list {
-  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   gap: 3rem;
-  margin-bottom: 3rem;
-  padding-top: 30px;
-  padding-bottom: 40px;
+  padding-top: 40px;
+  padding-bottom: 100px;
 }
 .page--services-detail .section--list .psd-sl-category {
   min-width: 370px;
@@ -1722,7 +1735,7 @@ h4 span {
 .page--services-detail .section--list .psd-sl-sdetail__info .psd-sl-sdetaili-details {
   width: 30%;
 }
-.page--services-detail .section--list .psd-sl-sdetail__info .psd-sl-sdetaili-details a {
+.page--services-detail .section--list .psd-sl-sdetail__info .psd-sl-sdetaili-details button {
   width: 100%;
   color: #171515 !important;
 }
@@ -1858,6 +1871,236 @@ h4 span {
     flex-direction: column;
     gap: 10px;
   }
+}
+.page--services-detail .booking-modal {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2392156863);
+  padding: 1rem;
+  z-index: 2;
+  display: none;
+}
+.page--services-detail .booking-modal .booking-con-main {
+  width: 600px;
+  position: absolute;
+  top: 5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  transform: translateX(-50%);
+  left: 50%;
+  padding: 30px;
+}
+.page--services-detail .booking-modal .booking-con-main__pre-title {
+  font-size: 15px;
+  color: #FFBE42;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.page--services-detail .booking-modal .booking-con-main h2 {
+  margin-bottom: 1.6rem;
+  font-size: 24px;
+  line-height: 120%;
+}
+.page--services-detail .booking-modal .booking-con-main .sbf-field-group-con {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+.page--services-detail .booking-modal .booking-con-main .sbf-field-group {
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+.page--services-detail .booking-modal .booking-con-main label {
+  font-size: 14px;
+  line-height: 110%;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.page--services-detail .booking-modal .booking-con-main label span {
+  color: #f60000;
+  margin-top: 3px;
+}
+.page--services-detail .booking-modal .booking-con-main input {
+  width: 100% !important;
+  height: 43px;
+  border-radius: 6px;
+  border: 1px solid #DADADA;
+  padding: 5px 13px;
+  font-size: 14px;
+}
+.page--services-detail .booking-modal .booking-con-main input::placeholder {
+  color: rgba(23, 21, 21, 0.2392156863);
+}
+.page--services-detail .booking-modal .booking-con-main button {
+  margin-top: 1rem;
+}
+.page--services-detail .confirm-modal {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: none;
+  background-color: rgba(0, 0, 0, 0.3019607843);
+}
+.page--services-detail .confirm-modal__content {
+  height: 280px;
+  width: 540px;
+  position: absolute;
+  top: 5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  transform: translateX(-50%);
+  left: 50%;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.page--services-detail .confirm-modal__content p {
+  text-align: center;
+  max-width: 450px;
+}
+.page--services-detail .confirm-modal__content h3 {
+  margin-top: 10px;
+}
+.page--services-detail .confirm-modal__content .confirm-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.page--services-detail .confirm-modal__content .btn--ses {
+  background-color: transparent !important;
+  border: 1px solid #FFBE42;
+}
+
+p {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 100%;
+}
+@media (max-width: 992px) {
+  h1 {
+    font-size: 42px;
+  }
+}
+h1 span {
+  color: #FFBE42;
+}
+
+h2 {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 130%;
+}
+@media (max-width: 992px) {
+  h2 {
+    font-size: 30px;
+  }
+}
+h2 span {
+  color: #FFBE42;
+}
+
+h3 {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 120%;
+}
+@media (max-width: 992px) {
+  h3 {
+    font-size: 20px;
+  }
+}
+h3 span {
+  color: #FFBE42;
+}
+
+h4 {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 120%;
+  color: #171515;
+}
+@media (max-width: 992px) {
+  h4 {
+    font-size: 18px;
+  }
+}
+h4 span {
+  color: #FFBE42;
+}
+
+.page--book .section--book {
+  margin: 0 auto;
+  display: flex;
+  gap: 50px;
+  padding-top: 90px;
+  padding-bottom: 122px;
+  max-width: 1300px;
+  justify-content: space-between;
+}
+.page--book .section--book__fields {
+  width: 560px;
+}
+.page--book .section--book__fields h2 {
+  line-height: 110% !important;
+}
+.page--book .section--book__fields--pre-title {
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+.page--book .section--book__fields .sbf-field-group-con {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+.page--book .section--book__fields .sbf-field-group {
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+.page--book .section--book__fields label {
+  font-size: 14px;
+  line-height: 110%;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.page--book .section--book__fields label span {
+  color: #f60000;
+  margin-top: 3px;
+}
+.page--book .section--book__fields input {
+  width: 100% !important;
+  height: 43px;
+  border-radius: 6px;
+  border: 1px solid #DADADA;
+  padding: 5px 13px;
+  font-size: 14px;
+}
+.page--book .section--book__fields input::placeholder {
+  color: rgba(23, 21, 21, 0.2392156863);
+}
+.page--book .section--book__fields button {
+  margin-top: 1rem;
+}
+.page--book .section--book__detail {
+  width: 600px;
+  height: 150px;
+}
+.page--book .section--book__detail img {
+  width: 100%;
+  border-radius: 12px;
 }
 
 p {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>ServEase | Hire Verified Local Services in Brgy. Batasan Hills</title>
+    <title>@yield('title', 'ServEase | Hire Verified Local Services in Brgy. Batasan Hills')</title>
 
     {{-- Meta's --}}
     <meta property="og:title" content="ServEase | Hire Verified Local Services in Brgy. Batasan Hills" />

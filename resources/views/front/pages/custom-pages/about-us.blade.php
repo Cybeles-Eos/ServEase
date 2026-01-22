@@ -1,5 +1,8 @@
 @extends('front.layouts.base')
 
+{{-- Metas --}}
+@section('title', 'About - Servease services')
+
 @section('content')
     <main class="main-page page--about">
         <section class="section--hero">

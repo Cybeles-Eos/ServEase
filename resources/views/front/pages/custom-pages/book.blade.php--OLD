@@ -1,0 +1,58 @@
+@extends('front.layouts.base')
+
+@section('content')
+    <main class="main-page page--book">
+        <section class="section--book m-padding">
+            <div class="section--book__fields">
+                <h2>Book a Service Appointment</h2>
+                <p class="section--book__fields--pre-title">Tell us a few details, and we’ll arrange the right professional for your service request. Complete the form below to schedule your booking.</p>
+
+                <form action="">
+                    <div class="sbf-field-group-con">
+                        <div class="sbf-field-group">
+                            <label for="fname">First Name <span>*</span></label>
+                            <input type="text" name="fname" required placeholder="Enter your first name...">
+                        </div>
+                        <div class="sbf-field-group">
+                            <label for="lname">Last Name <span>*</span></label>
+                            <input type="text" name="lname" required placeholder="Enter your last name...">
+                        </div>
+                    </div>
+                    <div class="sbf-field-group">
+                        <label for="address">Complete Address <span>*</span></label>
+                        <input type="text" name="address" required placeholder="Enter your address...">
+                    </div>
+                    <div class="sbf-field-group-con">
+                        <div class="sbf-field-group">
+                            <label for="email">Email <span>*</span></label>
+                            <input type="text" name="email" required placeholder="Enter your first name...">
+                        </div>
+                        <div class="sbf-field-group">
+                            <label for="number">Contact Number <span>*</span></label>
+                            <input type="text" name="number" required placeholder="Enter your last name...">
+                        </div>
+                    </div>
+                    <div class="sbf-field-group-con">
+                        <div class="sbf-field-group">
+                            <label for="number">Preferred Date <span>*</span></label>
+                            <input type="date" required name="date" id="date">
+                        </div>
+                        <div class="sbf-field-group">
+                            <label for="number">Preferred Time <span>*</span></label>
+                            <input type="time" required name="time" id="time">
+                        </div>
+                    </div>
+                    <button class="glb-btn" type="submit">Send Book Request</button>
+                </form>
+            </div>
+            <div class="section--book__detail">
+                <img src="{{ asset('images/service-detail-img.png') }}" alt="service-image">
+                
+
+            </div>
+        </section>
+    </main>
+@endsection
+@push('extrascripts')
+
+@endpush

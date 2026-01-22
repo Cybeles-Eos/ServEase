@@ -1,0 +1,76 @@
+@import "../components/typography";
+@import "../components/colors";
+
+.page--book{
+    .section{
+        &--book{
+            // height: 39rem;
+            margin: 0 auto;
+            display: flex;
+            gap: 50px;
+            padding-top: 90px;
+            padding-bottom:122px;
+            max-width: 1300px;
+            justify-content: space-between;
+
+            &__fields{
+                width: 560px;
+                // height: 150px;
+                // background-color: aquamarine;
+                h2{
+                    line-height: 110% !important;
+                }
+                &--pre-title{
+                    max-width: 500px;
+                    margin-bottom: 2rem;
+                }
+
+                .sbf-field-group-con{
+                    display: flex;
+                    gap: 1rem;
+                    width: 100%;
+                }
+                .sbf-field-group{
+                    width: 100%;
+                    margin-bottom: 1.2rem;
+                }
+                label{
+                    font-size: 14px;
+                    line-height: 110%;
+                    margin-bottom: 5px;
+                    font-weight: 500;
+
+                    span{
+                        color: #f60000;
+                        margin-top: 3px;
+                    }
+                }
+                input{
+                    width: 100% !important;
+                    height: 43px;
+                    border-radius: 6px;
+                    border: 1px solid #DADADA;
+                    padding: 5px 13px;
+                    font-size: 14px;
+
+                    &::placeholder{
+                        color: #1715153d;
+                    }
+                }
+                button{
+                    margin-top: 1rem;
+                }
+            }
+            &__detail{
+                width: 600px;
+                height: 150px;
+                // background-color: aquamarine;
+                img{
+                    width: 100%;
+                    border-radius: 12px;
+                    
+                }
+            }
+        }
+    }
+}

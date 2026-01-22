@@ -2,7 +2,7 @@
 
 @section('content')
     <main class="main-page page--services-detail">
-        <section class="section--list m-padding">
+        <section class="section--list m-padding m-width">
             <div class="psd-sl-category">
                 <div class="psd-sl-category__head">
                     <a href="{{ url('/') }}" class="{{ Request::is('/') ? 's-act-link' : '' }}">Home</a>
@@ -159,7 +159,7 @@
                         </div>
                     </div>
                     <div class="psd-sl-sdetaili-details">
-                        <a href="#" class="btn btn--tertiary">Book Now</a>
+                        <button id="open-book" class="btn btn--tertiary">Book Now</button>
                         <div class="psd-sl-sdetaili-d-provider">
                             <div class="psd-sl-sdetaili-d-provider__con">
                                 <img src="{{ asset('images/user.png') }}" alt="">
@@ -243,8 +243,134 @@
                 </div>
             </div>
         </section>
+        <div class="booking-modal">
+            <div class="booking-con-main">
+                <p class="booking-con-main__pre-title">Pluming</p>
+                <h2>Reliable Plumbing Solutions for Every Home and Business</h2>
+                <form action="" id="bookingForm">
+                    <div class="sbf-field-group-con">
+                        <div class="sbf-field-group">
+                            <label for="fname">First Name <span>*</span></label>
+                            <input type="text" name="fname" required placeholder="Enter your first name...">
+                        </div>
+                        <div class="sbf-field-group">
+                            <label for="lname">Last Name <span>*</span></label>
+                            <input type="text" name="lname" required placeholder="Enter your last name...">
+                        </div>
+                    </div>
+                    <div class="sbf-field-group">
+                        <label for="address">Complete Address <span>*</span></label>
+                        <input type="text" name="address" required placeholder="Enter your address...">
+                    </div>
+                    <div class="sbf-field-group-con">
+                        <div class="sbf-field-group">
+                            <label for="email">Email <span>*</span></label>
+                            <input type="text" name="email" required placeholder="Enter your first name...">
+                        </div>
+                        <div class="sbf-field-group">
+                            <label for="number">Contact Number <span>*</span></label>
+                            <input type="text" name="number" required placeholder="Enter your last name...">
+                        </div>
+                    </div>
+                    <div class="sbf-field-group-con">
+                        <div class="sbf-field-group">
+                            <label for="number">Preferred Date <span>*</span></label>
+                            <input type="date" required name="date" id="date">
+                        </div>
+                        <div class="sbf-field-group">
+                            <label for="number">Preferred Time <span>*</span></label>
+                            <input type="time" required name="time" id="time">
+                        </div>
+                    </div>
+                    <button class="glb-btn" id="open-confirm" type="button">Send Book Request</button>
+                </form>
+            </div>
+        </div>
+        <div class="confirm-modal">
+            <div class="confirm-modal__content">
+                <svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M29.0003 21.7494V33.8328M29.0003 51.7403H14.3553C5.96945 51.7403 2.46529 45.7469 6.52529 38.4244L14.0653 24.8428L21.1703 12.0828C25.472 4.32527 32.5286 4.32527 36.8303 12.0828L43.9353 24.8669L51.4753 38.4486C55.5353 45.7711 52.007 51.7644 43.6453 51.7644H29.0003V51.7403Z" stroke="#FFBE42" stroke-width="2.65263" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M28.9873 41.084H29.0102" stroke="#FFBE42" stroke-width="2.65263" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h3>Confirm Booking</h3>
+                <p>
+                    Once confirmed, cancellation is strictly prohibited
+                    and may result in penalties.
+                </p>
+
+                <div class="confirm-actions">
+                    <button id="confirm-booking" type="button" class="glb-btn">
+                        Confirm
+                    </button>
+                    <button id="cancel-confirm" type="button" class="glb-btn btn--ses">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
+
 @endsection
 @push('extrascripts')
+<script>
+$(document).ready(function () {
 
+    /* ------------------------
+       OPEN BOOKING MODAL
+    ------------------------- */
+    $('#open-book').on('click', function () {
+        $('.booking-modal').fadeIn(200);
+    });
+
+    /* ------------------------
+       OPEN CONFIRM MODAL
+    ------------------------- */
+    $('#open-confirm').on('click', function () {
+
+        // optional: simple form validation
+        if (!$('#bookingForm')[0].checkValidity()) {
+            $('#bookingForm')[0].reportValidity();
+            return;
+        }
+
+        $('.booking-modal').hide();
+        $('.confirm-modal').fadeIn(200);
+    });
+
+    /* ------------------------
+       CONFIRM BOOKING
+    ------------------------- */
+    $('#confirm-booking').on('click', function () {
+
+        // submit form via normal POST
+        $('#bookingForm').submit();
+
+        // OR AJAX submit (optional)
+        // $.post('/booking', $('#bookingForm').serialize());
+
+    });
+
+    /* ------------------------
+       CANCEL CONFIRMATION
+    ------------------------- */
+    $('#cancel-confirm').on('click', function () {
+        $('.confirm-modal').hide();
+        $('.booking-modal').fadeIn(200);
+    });
+
+    /* ------------------------
+       CLICK OUTSIDE CLOSE
+    ------------------------- */
+    $('.booking-modal, .confirm-modal').on('click', function (e) {
+        if ($(e.target).is(this)) {
+            $(this).fadeOut(200);
+        }
+    });
+
+});
+
+
+
+
+</script>
 @endpush
