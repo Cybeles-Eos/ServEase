@@ -8,11 +8,11 @@
     
 
     <main class="provider--dashboard dash-sp">
-        <section class="provider--dashboard__head">
+        <div class="provider--dashboard__head">
             @auth
-                <p>Hello {{ auth()->user()->name }} manage you bookings today!</p>
+                <p>Hello {{ auth()->user()->name }}, manage you bookings today!</p>
             @endauth
-        </section>
+        </div>
         {{-- <h3>Provider Dashboard</h3> --}}
 
         {{-- Only Show When Someone is login --}}
