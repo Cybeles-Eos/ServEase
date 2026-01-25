@@ -5,7 +5,8 @@
 
 
 @section('content')
-    
+    @include('admin.layouts.header')
+    @include('admin.layouts.sidebar')
 
     <main class="provider--dashboard dash-sp">
         <div class="provider--dashboard__head">
