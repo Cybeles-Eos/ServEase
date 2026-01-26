@@ -1,9 +1,9 @@
 .provider--dashboard{
     width: 100%;
-    height: calc(100vh - 60px);
+    // height: calc(100vh - 60px);
     background-color: #F5F7FA;
     padding: 10px 15px;
-
+    padding-bottom: 25px;
 
     &__head{
         width: 100%;
@@ -88,27 +88,252 @@
         }
 
     }
-    &__charts-con{
-        width: 100%;
-        margin-top:15px;
-        background-color: $color-white;
-        height: 20rem;
-        border: 1px solid #E0E2E7;
-        border-radius: 6px;
+    &__holder{
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr 30%;
         gap: 15px;
-        padding: 15px;
+        margin-top: 15px;
 
-        &--ch1{
-            padding: 15px;
-            height: 100%;
-            background-color: #1A9882;
+        .pdhldr--left{
+            display: flex;
+            flex-direction: column;
+            row-gap: 15px;
+            width: 100%;
+            &__charts-con{
+                width: 100%;
+                background-color: $color-white;
+                // height: 24rem;
+                border: 1px solid #E0E2E7;
+                border-radius: 6px;
+                padding: 15px;
+
+                &--ch1{
+                    padding: 5px;
+                    height: 100%;
+                    // background-color: #f3fdfb;
+                    position: relative;
+                    .pdccch1-top{
+                        display: flex;
+                        align-self: start;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+
+                        &__title{
+                            h3{
+                                margin: 0;
+                                font-size: 20px;
+                            }
+                            p{
+                                font-size: 12px;
+                                color: #7779808d;
+                            }
+                        }
+                        &__info{
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+
+                            &--p1{
+                                font-size: 12px;
+                                color: #7779808d;
+                                font-weight: 600;
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                span{
+                                    display: inline-block;
+                                    width: 6px;
+                                    height: 6px;
+                                    margin-bottom: 2px;
+                                    background-color: #0088FF;
+                                    border-radius: 50%;
+                                }
+                            }
+                            &--p2{
+                                font-size: 12px;
+                                color: #7779808d;
+                                font-weight: 600;
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+
+                                span{
+                                    display: inline-block;
+                                    width: 6px;
+                                    height: 6px;
+                                    margin-bottom: 2px;
+                                    background-color: #FDB932;
+                                    border-radius: 50%;
+                                }
+                            }
+                        }
+                    }
+                    .pdccch1-box{
+                        width: 100%;
+                        height: 17rem;
+                        position: relative;
+
+                        canvas {
+                            max-width: 100%;
+                            // width: 100% !important;
+                            // height: 100% !important;
+                        }
+                    }
+                }
+
+            }
+            &__board{
+                background-color: $color-white;
+                // height: 24rem;
+                border: 1px solid #E0E2E7;
+                border-radius: 6px;
+                padding: 15px;
+            }
         }
-        &--ch2{
-            padding: 15px;
-            height: 100%;
-            background-color: #1A9882;
+        .pdhldr--right{
+            display: flex;
+            flex-direction: column;
+            row-gap: 15px;
+            width: 100%;
+
+            &__pie{
+                background-color: $color-white;
+                // height: 50rem;
+                border: 1px solid #E0E2E7;
+                border-radius: 6px;
+                padding: 20px;
+                &__title{
+                    h3{
+                        margin: 0;
+                        font-size: 20px;
+                    }
+                    p{
+                        font-size: 12px;
+                        color: #7779808d;
+                    }
+                }
+                .pdhldr-rp-pie{
+                    width: 100%;
+                    // height: 200px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+
+                    canvas {
+                        max-width: 100%;
+                        max-height: 260px;
+                    }
+                }
+                .pdhldr-rp-legend{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                    margin-top: 1rem;
+                    &--item{
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+
+                        p{
+                            font-size: 14px;
+                            color: #777980;
+                            margin: 0;
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                            line-height: 100%;
+                            
+                            span{
+                                display: inline-block;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 10px;
+                                background-color: $color-primary;
+                            }
+                        }
+                        h4{
+                            font-size: 12px;
+                            font-weight: 500;
+                            color: $color-dark;
+                            margin: 0;
+                            font-family: $font-secondary;
+                        }
+                    }
+                }
+            }
+
+            &__topserv{
+                background-color: $color-white;
+                // height: 50rem;
+                border: 1px solid #E0E2E7;
+                border-radius: 6px;
+                padding: 20px;
+
+                &__title{
+                    h3{
+                        margin: 0;
+                        font-size: 20px;
+                    }
+                    p{
+                        font-size: 12px;
+                        color: #7779808d;
+                    }
+                }
+                &__con{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+
+                    .pdhldr-rtsci-item{
+                        width: 100%;
+                        display: flex;
+                        align-items: start;
+                        justify-content: space-between;
+                        padding-block: 10px;
+                        border-bottom: 1px solid #E0E2E7;    
+                        
+                        &__info{
+                            display: flex;
+                            align-items: center;
+                            gap: 7px;
+                            
+                            &__icon{
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 6px;
+                                background-color: $color-primary;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                            &__txt{
+                                h4{
+                                    font-size: 16px;
+                                    font-weight: 600;
+                                    color: $color-dark;
+                                    margin: 0;
+                                }
+                                p{
+                                    font-size: 12px;
+                                    color: #777980;
+                                    margin: 0;
+                                }
+                            }
+                        }
+                        &__price{
+                            font-size: 12px !important;
+                            font-weight: 600;
+                            color: #777980;
+                            margin: 0;
+                        }
+                        &:last-child{
+                            border-bottom: none;
+                        }
+                    }
+                }
+            }
         }
     }
+
 }

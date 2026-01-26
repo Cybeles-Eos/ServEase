@@ -103,18 +103,110 @@
 
 
         </div>
-        <div class="provider--dashboard__charts-con">
-            <div class="provider--dashboard__charts-con--ch1">
-                <h3></h3>
-                <p></p>
-                <div class="pdccch1-box">
+        <div class="provider--dashboard__holder">
+            <div class="pdhldr--left">
+                <div class="pdhldr--left__charts-con">
+                    <div class="pdhldr--left__charts-con--ch1">
+                        <div class="pdccch1-top">
+                            <div class="pdccch1-top__title">
+                                <h3>Monthly Bookings Overview</h3>
+                                <p>Earnings & Bookings Performance This Year 2026</p>
+                            </div>
+                            <div class="pdccch1-top__info">
+                                <p class="pdccch1-top__info--p1"><span></span>Earnings</p>
+                                <p class="pdccch1-top__info--p2"><span></span>Bookings</p>
+                            </div>
+                        </div>
+
+                        <div class="pdccch1-box">
+                            <canvas id="monthlyBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="pdhldr--left__board">
 
                 </div>
             </div>
-            <div class="provider--dashboard__charts-con--ch2">
+            <div class="pdhldr--right">
+                <div class="pdhldr--right__pie">
+                    <div class="pdhldr--right__pie__title">
+                        <h3>Your Earnings</h3>
+                        <p>Based on Categories</p>
+                    </div>
+                    <div class="pdhldr-rp-pie">
+                        <canvas id="earningsPieChart"></canvas>
+                    </div>
+                    {{-- <div class="pdhldr-rp-legend">
+                        <div class="pdhldr-rp-legend--item">
+                            <p><span></span>Plumber</p>
+                            <h4>₱6,231</h4>
+                        </div>
+                        <div class="pdhldr-rp-legend--item">
+                            <p><span></span>Electrician</p>
+                            <h4>₱6,231</h4>
+                        </div>
+                        <div class="pdhldr-rp-legend--item">
+                            <p><span></span>Vendor</p>
+                            <h4>₱6,231</h4>
+                        </div>
+                        <div class="pdhldr-rp-legend--item">
+                            <p><span></span>Graphic Design</p>
+                            <h4>₱6,231</h4>
+                        </div>
+                    </div> --}}
+                </div>
 
+                <div class="pdhldr--right__topserv">
+                    <div class="pdhldr--right__topserv__title">
+                        <h3>Top Category</h3>
+                        <p>Top category in a period of time</p>
+                    </div>
+                    <div class="pdhldr--right__topserv__con">
+                        <div class="pdhldr-rtsci-item">
+                            <div class="pdhldr-rtsci-item__info">
+                                <div class="pdhldr-rtsci-item__info__icon"></div>
+                                <div class="pdhldr-rtsci-item__info__txt">
+                                    <h4>Housekeeper</h4>
+                                    <p>₱17,678</p>
+                                </div>
+                            </div>
+                            <p class="pdhldr-rtsci-item__price">20 Bookings</p>
+                        </div>
+                        <div class="pdhldr-rtsci-item">
+                            <div class="pdhldr-rtsci-item__info">
+                                <div class="pdhldr-rtsci-item__info__icon"></div>
+                                <div class="pdhldr-rtsci-item__info__txt">
+                                    <h4>Plumber</h4>
+                                    <p>₱15,678</p>
+                                </div>
+                            </div>
+                            <p class="pdhldr-rtsci-item__price">17 Bookings</p>
+                        </div>
+                        <div class="pdhldr-rtsci-item">
+                            <div class="pdhldr-rtsci-item__info">
+                                <div class="pdhldr-rtsci-item__info__icon"></div>
+                                <div class="pdhldr-rtsci-item__info__txt">
+                                    <h4>Electrician</h4>
+                                    <p>₱12,678</p>
+                                </div>
+                            </div>
+                            <p class="pdhldr-rtsci-item__price">13 Bookings</p>
+                        </div>
+                        <div class="pdhldr-rtsci-item">
+                            <div class="pdhldr-rtsci-item__info">
+                                <div class="pdhldr-rtsci-item__info__icon"></div>
+                                <div class="pdhldr-rtsci-item__info__txt">
+                                    <h4>Aircon Repair</h4>
+                                    <p>₱12,678</p>
+                                </div>
+                            </div>
+                            <p class="pdhldr-rtsci-item__price">9 Bookings</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
 
 
     </main>
@@ -122,5 +214,149 @@
     
 @endsection
 @push('extrascripts')
-    
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const ctx = document.getElementById('monthlyBarChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Jan','Feb','Mar','Apr','May','Jun',
+                    'Jul','Aug','Sep','Oct','Nov','Dec'
+                ],
+                datasets: [
+                    {
+                        label: 'Earnings',
+                        data: [650, 2550, 3030, 1200, 5180, 4140, 1820, 1360, 650, 650, 4040, 5650],
+                        backgroundColor: '#2563EB',
+                        borderRadius: 6,
+                        barThickness: 10,
+                        yAxisID: 'yEarnings'
+                    },
+                    {
+                        label: 'Bookings',
+                        data: [1, 3, 4, 2, 8, 11, 7, 2, 1, 1, 4, 5],
+                        backgroundColor: '#FBBF24',
+                        borderRadius: 6,
+                        barThickness: 10,
+                        yAxisID: 'yBookings'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                if (ctx.dataset.label === 'Earnings') {
+                                    return 'Earnings: ₱' + ctx.raw.toLocaleString();
+                                }
+                                return 'Bookings: ' + ctx.raw;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    yEarnings: {
+                        type: 'linear',
+                        position: 'left',
+                        beginAtZero: true,
+                        grid: {
+                            borderDash: [4, 4],
+                            color: '#E5E7EB'
+                        },
+                        ticks: {
+                            callback: value => '₱' + value
+                        }
+                    },
+                    yBookings: {
+                        type: 'linear',
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false // 👈 important
+                        },
+                        ticks: {
+                            callback: value => value
+                        }
+                    }
+                }
+            }
+        });
+
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const ctx = document.getElementById('earningsPieChart');
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    'Plumber',
+                    'Electrician',
+                    'Vendor',
+                    'Aircon Repair'
+                ],
+                datasets: [{
+                    data: [3231, 21123, 5321, 6320],
+                    backgroundColor: [
+                        '#6366F1', // purple
+                        '#FB923C', // orange
+                        '#3B82F6', // blue
+                        '#22C55E'  // green
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                //cutout: '70%', // donut thickness
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',          // 👈 move legend to bottom
+                        align: 'center',
+                        labels: {
+                            usePointStyle: true,      // 👈 enables circle markers
+                            pointStyle: 'circle',     // 👈 force circle
+                            boxWidth: 8,
+                            boxHeight: 8,
+                            padding: 16,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                return ctx.label + ': ₱' + ctx.raw.toLocaleString();
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+
+    });
+</script>
 @endpush
