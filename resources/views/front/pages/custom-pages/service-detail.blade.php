@@ -159,8 +159,11 @@
                         </div>
                     </div>
                     <div class="psd-sl-sdetaili-details">
-                        @guest
+                        {{-- @guest
                             <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                        @endguest --}}
+                        @guest
+                            <a href="{{url('login')}}" class="btn btn--tertiary-d">Book Now</a>
                         @endguest
                         @auth
                             @if(auth()->user()->isCustomer())

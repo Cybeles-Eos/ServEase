@@ -41,6 +41,18 @@
             border-color: $color-primary !important;
             color: $color-white;
         }
-
+    }
+    &--tertiary-d{
+        background-color: $color-primary;
+        border-color: $color-primary;
+        color: $color-dark;
+        width: 100%;
+        font-weight: 500 !important; 
+        &:hover, 
+        &:active {
+            background-color: $color-primary;
+            border-color: $color-primary !important;
+            color: $color-dark;
+        }
     }
 }

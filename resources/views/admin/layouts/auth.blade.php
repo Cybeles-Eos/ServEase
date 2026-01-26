@@ -51,7 +51,8 @@
     <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
     <script src="{{ asset('js/slick.min.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     {{-- @include('admin.layouts.header')
