@@ -1,4 +1,4 @@
-<div class="sidebar-dashboard">
+<div class="main-sidebar-uix sidebar-dashboard">
     <div class="sidebar-dashboard--logo">
         <img src="{{ asset('images/dashboard-logo.svg') }}" alt="logo" class="sdl-d">
         <img src="{{ asset('images/dashboard-logo-m.svg') }}" alt="logo" class="sdl-m">

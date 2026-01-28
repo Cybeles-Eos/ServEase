@@ -52,6 +52,7 @@ hr{
 }
 
 .dash-sp{
+    transition: 300ms ease;
     padding-left: 215px !important;
     @media (max-width: 792px) {
         padding-left: 65px !important;
@@ -66,6 +67,7 @@ hr{
     position: absolute;
     top: 0;
     left: 0;
+    transition: 300ms ease;
 
     &--logo{
         width: 100%;
@@ -167,12 +169,24 @@ hr{
     height: 60px;
     background-color: $color-white;
     border-bottom: 1px solid #E0E2E7;
-    padding-left: 200px;
+    padding-left: 210px;
     padding-right: 20px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-
+    justify-content: space-between;
+    transition: 300ms ease;
+    @media (max-width: 792px) {
+        padding-left: 65px !important;
+    }
+    .hdb-a-menu{
+        background-color: transparent;
+        border: none;
+        // padding: 3px;
+        outline: none;
+        &:hover{
+            color: $color-primary;
+        }
+    }
     &__profile{
         display: flex;
         align-items: center;
@@ -212,4 +226,18 @@ hr{
             }
         }
     }
+}
+
+.hide-side-bar-a{
+    // width: 0px !important;
+    transform: translateX(-240px);
+
+}
+.hide-side-bar-a-maindash{
+    padding-left: 15px !important;
+
+}
+.hide-side-bar-a-headerdash{
+    padding-left: 15px !important;
+    
 }

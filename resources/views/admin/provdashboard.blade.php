@@ -8,7 +8,7 @@
     @include('admin.layouts.header')
     @include('admin.layouts.sidebar')
 
-    <main class="provider--dashboard dash-sp">
+    <main class="main-dash-uix provider--dashboard dash-sp">
         <div class="provider--dashboard__head">
             @auth
                 <p>Hello {{ auth()->user()->name }}, manage you bookings today!</p>

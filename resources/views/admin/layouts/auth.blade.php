@@ -60,5 +60,14 @@
     @yield('content')
 
     @stack('extrascripts')
+    <script>
+        $(document).ready(function () {
+            $('#hdb-a-menu').on('click', function () {
+                $('.main-dash-uix').toggleClass('hide-side-bar-a-maindash');
+                $('.main-sidebar-uix').toggleClass('hide-side-bar-a');
+                $('.main-headerdash-uix').toggleClass('hide-side-bar-a-headerdash');
+            });
+        });
+    </script>
 </body>
 </html>

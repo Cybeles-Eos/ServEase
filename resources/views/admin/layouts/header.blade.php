@@ -1,13 +1,17 @@
-<div class="header--dashboard">
+<div class="main-headerdash-uix header--dashboard">
 
     {{-- <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button type="submit" class="btn-sm">logout</button>
     </form> --}}
+    <button class="hdb-a-menu" id="hdb-a-menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.75 4.5C9.75 3.257 10.757 2.25 12 2.25C13.243 2.25 14.25 3.257 14.25 4.5C14.25 5.743 13.243 6.75 12 6.75C10.757 6.75 9.75 5.743 9.75 4.5ZM9.75 12C9.75 10.757 10.757 9.75 12 9.75C13.243 9.75 14.25 10.757 14.25 12C14.25 13.243 13.243 14.25 12 14.25C10.757 14.25 9.75 13.243 9.75 12ZM12 21.75C10.757 21.75 9.75 20.743 9.75 19.5C9.75 18.257 10.757 17.25 12 17.25C13.243 17.25 14.25 18.257 14.25 19.5C14.25 20.743 13.243 21.75 12 21.75ZM12 5.25C12.414 5.25 12.75 4.914 12.75 4.5C12.75 4.086 12.414 3.75 12 3.75C11.586 3.75 11.25 4.086 11.25 4.5C11.25 4.914 11.586 5.25 12 5.25ZM12 12.75C12.414 12.75 12.75 12.414 12.75 12C12.75 11.586 12.414 11.25 12 11.25C11.586 11.25 11.25 11.586 11.25 12C11.25 12.414 11.586 12.75 12 12.75ZM11.25 19.5C11.25 19.914 11.586 20.25 12 20.25C12.414 20.25 12.75 19.914 12.75 19.5C12.75 19.086 12.414 18.75 12 18.75C11.586 18.75 11.25 19.086 11.25 19.5Z" fill="currentColor"/>
+        </svg>
+    </button>
     <div class="header--dashboard__profile">
         <div class="header--dashboard__profile--info">
              <div>
-
                 <button id="phd-inbox">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2 6L7.18477 9.13358C9.0962 10.2888 9.9038 10.2888 11.8152 9.13358L17 6" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -16,7 +20,6 @@
                 </button>
              </div>
              <div>
-
                 <button id="phd-notif">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13 15C13 16.6569 11.6569 18 10 18C8.34314 18 7 16.6569 7 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
