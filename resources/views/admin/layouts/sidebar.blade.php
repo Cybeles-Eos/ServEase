@@ -1,6 +1,7 @@
 <div class="sidebar-dashboard">
     <div class="sidebar-dashboard--logo">
-        <img src="{{ asset('images/dashboard-logo.svg') }}" alt="">
+        <img src="{{ asset('images/dashboard-logo.svg') }}" alt="logo" class="sdl-d">
+        <img src="{{ asset('images/dashboard-logo-m.svg') }}" alt="logo" class="sdl-m">
     </div>
     <div class="sidebar-dashboard--links">
         <ul>

@@ -53,6 +53,9 @@ hr{
 
 .dash-sp{
     padding-left: 215px !important;
+    @media (max-width: 792px) {
+        padding-left: 65px !important;
+    }
 }
 
 .sidebar-dashboard{
@@ -72,8 +75,21 @@ hr{
         display: flex;
         align-items: center;
         border-bottom: 1px solid rgb(48, 48, 48);
-        img{
+        .sdl-d{
             height: 32px;
+            @media (max-width: 792px) {
+                display: none;
+            }
+        }
+        .sdl-m{
+            display: none;
+            height: 27px;
+            @media (max-width: 792px) {
+                display: block;
+            }
+        }
+        @media (max-width: 792px) {
+            padding-left: 10px;
         }
     }
     &--links{
@@ -118,8 +134,13 @@ hr{
                         svg{
                             
                         }
+                        @media (max-width: 792px) {
+                            margin-right: 25px;
+                        }
                     }
-
+                    @media (max-width: 792px) {
+                        padding-left: 12px;
+                    }
 
                     &:hover{
                         // color: $color-dark;
@@ -135,6 +156,10 @@ hr{
                 }
             }
         }
+    }
+    @media (max-width: 792px) {
+        width: 50px;
+        overflow: hidden;
     }
 }
 .header--dashboard{
