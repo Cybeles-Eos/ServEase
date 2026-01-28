@@ -124,7 +124,89 @@
                     </div>
                 </div>
                 <div class="pdhldr--left__board">
-
+                    <div class="pdhldr-lb"> 
+                        <div class="pdhldr-lb--head">
+                            <h3>Booking Overview</h3>
+                            <a href="#">View All</a>
+                        </div>
+                        <div class="pdhldr-lb--bar">
+                            <div class="center-div">
+                                Booking ID
+                            </div>
+                            <div>
+                                Client Name
+                            </div>
+                            <div>
+                                Service Type
+                            </div>
+                            <div>
+                                Date
+                            </div>
+                            <div>
+                                Status
+                            </div>
+                        </div>
+                        <div class="pdhldr-lb--data">
+                            <div class="center-div txt-div-d">
+                                #12003
+                            </div>
+                            <div>
+                                <img src="{{asset('images/user.png')}}" alt="">
+                                Daniella Barcelon
+                            </div>
+                            <div class="txt-div-d">
+                                Plumbing
+                            </div>
+                            <div class="txt-div-d">
+                                Dec 10, 2025
+                            </div>
+                            <div class="">
+                                <div class="status-box pending-sbox">
+                                    Pending
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pdhldr-lb--data">
+                            <div class="center-div txt-div-d">
+                                #12003
+                            </div>
+                            <div>
+                                <img src="{{asset('images/user.png')}}" alt="">
+                                Daniella Barcelon
+                            </div>
+                            <div class="txt-div-d">
+                                Plumbing
+                            </div>
+                            <div class="txt-div-d">
+                                Dec 10, 2025
+                            </div>
+                            <div class="">
+                                <div class="status-box accepted-sbox">
+                                    Accepted
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pdhldr-lb--data">
+                            <div class="center-div txt-div-d">
+                                #12003
+                            </div>
+                            <div>
+                                <img src="{{asset('images/user.png')}}" alt="">
+                                Daniella Barcelon
+                            </div>
+                            <div class="txt-div-d">
+                                Plumbing
+                            </div>
+                            <div class="txt-div-d">
+                                Dec 10, 2025
+                            </div>
+                            <div class="">
+                                <div class="status-box completed-sbox">
+                                    Completed
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="pdhldr--right">
