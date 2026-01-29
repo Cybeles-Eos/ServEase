@@ -93,30 +93,153 @@
             background-color: #FFFFFF;
             margin-top: 1rem;
 
-            .pbft-header{
-                width: 100%;
-                height: 50px;
-                border-bottom: 1px solid #E5E7EB;
-                display: grid;
-                grid-template-columns: 160px 15% 15% 15% 15% 1fr 1fr;
+            
+            &--main{
                 
-                
-                div{
-                    display: flex;
-                    align-items: center;
+
+                .pbft-header{
+                    width: 100%;
+                    height: 50px;
+                    border-bottom: 1px solid #E5E7EB;
+                    display: grid;
+                    grid-template-columns: 140px 15% 15% 17% 17% 9% 1fr;
                     
-                    font-size: 14px;
-                    font-weight: 600;
-                    color:$color-dark;
-                    height: 100%;
                     
+                    div{
+                        display: flex;
+                        align-items: center;
+                        padding: 0px 10px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        color:$color-dark;
+                        height: 100%;
+                        line-height: 110%;
+                    }
+                    
+                    &--id{
+                        justify-content: center;
+                    }
+
                 }
-                
-                &--id{
-                    justify-content: center;
+                .pbft-body{
+                    width: 100%;
+                    height: 63px;
+                    border-bottom: 1px solid #E5E7EB;
+                    display: grid;
+                    grid-template-columns: 140px 15% 15% 17% 17% 9% 1fr;
+                    
+                    div{
+                        display: flex;
+                        align-items: center;
+                        padding: 0px 10px;
+                        font-size: 14px;
+                        color:hsla(43, 64%, 2%, 0.502);
+                        height: 100%;
+                        line-height: 110%;
+                        p{
+                            font-size: 14px;
+                            margin: 0;
+                            display: inline-block;
+
+                            line-height: 110%;
+                        }
+                    }
+                    &--id{
+                        justify-content: center;
+                    }
+                    &--client-name{
+                        color: #090702 !important;
+                        font-weight: 500;
+                        img{
+                            width: 35px;
+                            height: 35px;
+                            border-radius: 50%;
+                            margin-right: 10px;
+                        }
+                    }
+                    &--des{
+                        justify-content: center;
+                        align-items: flex-start !important;
+                        flex-direction: column;
+                        gap: 3px;
+
+                        p{
+                            &:last-child{
+                                color: #717275;
+                                font-weight: 600;
+
+                                max-width: 90%;        /* or set a fixed width like 250px */
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                display: block;         /* or inline-block */
+                            }
+                        }
+                    }
+                    &--status{
+
+                        span{
+                            display: block;
+                            font-size: 12px;
+                            padding: 6px 10px;
+                            border-radius: 4px;
+                        }
+                    } 
+                    .pending-sbox{
+                        background-color: #ff8c283d;
+                        color: #FF8D28;
+                    }
+                    .accepted-sbox{
+                        background-color: #0088FF3d;
+                        color: #0088FF;
+                    }
+                    .completed-sbox{
+                        background-color: #34C7593d;
+                        color: #34C759;
+                    }
+                    .cancel-sbox{
+                        background-color: #FF383C3d;
+                        color: #FF383C;
+                    }
+
+                    &--actions{
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+
+                        button{
+                            border: 1px solid transparent;
+                            font-size: 12px;
+                            padding: 5px 8px;
+                            border-radius: 4px;
+                            display: flex;
+                            align-items: center;
+                            gap: 3px;
+                            outline-color: #0088ff53 !important;
+                        }
+                        .btn-confirm{
+                            background-color: #11B411;
+                            color: #FFF;
+                            border: 1px solid #11B411;
+                        }
+                        .btn-cancel{
+                            background-color: #D74646;
+                            color: #FFF;
+                            border: 1px solid #D74646;
+                        }
+
+                    }
                 }
 
+                @media (max-width: 1320px) {
+                    width: 1320px;
+                }
             }
+
+            @media (max-width: 1380px) {
+                overflow-x: scroll;
+            }
+
         }
 
     }

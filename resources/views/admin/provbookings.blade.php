@@ -41,6 +41,8 @@
             </div>
         </div>
         <div class="provider--bookings__filters--tables">
+
+            <div class="provider--bookings__filters--tables--main">
             <div class="pbft-header">
                 <div class="pbft-header--id">
                     Booking ID
@@ -64,6 +66,218 @@
                     Actions
                 </div>
             </div>
+            <div class="pbft-body">
+                <div class="pbft-body--id">
+                    #SB-00123
+                </div>
+                <div class="pbft-body--client-name">
+                    <img src="{{asset('images/user.png')}}" alt="pfp">
+                    Juan Dela Cruz
+                </div>
+                <div class="pbft-body--des">
+                    <p>Plumbing</p>
+                    <p>Water Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater Expert</p>
+                </div>
+                <div>
+                    June 25, 2024 - 10:00 AM
+                </div>
+                <div>
+                    12 Completed • 3 Cancelled
+                </div>
+                <div class="pbft-body--status">
+                    <span class="pending-sbox">Pending</span>
+                </div>
+                <div class="pbft-body--actions">
+                    <button class="btn-confirm">
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.52564 5.85L9.17564 0.2C9.30897 0.0666668 9.46453 0 9.64231 0C9.82009 0 9.97564 0.0666668 10.109 0.2C10.2423 0.333333 10.309 0.491778 10.309 0.675333C10.309 0.858889 10.2423 1.01711 10.109 1.15L3.99231 7.28333C3.85897 7.41667 3.70342 7.48333 3.52564 7.48333C3.34786 7.48333 3.19231 7.41667 3.05897 7.28333L0.192308 4.41667C0.0589744 4.28333 -0.00502564 4.12511 0.000307692 3.942C0.00564103 3.75889 0.0751964 3.60044 0.208974 3.46667C0.342752 3.33289 0.501197 3.26622 0.684308 3.26667C0.867419 3.26711 1.02564 3.33378 1.15897 3.46667L3.52564 5.85Z" fill="white"/>
+                        </svg>
+                        Accept</button>
+                    <button class="btn-cancel">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 7.49067L3.99533 3.99533L7.49067 7.49067M7.49067 0.5L3.99467 3.99533L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Decline</button>
+                </div>
+
+            </div>
+            <div class="pbft-body">
+                <div class="pbft-body--id">
+                    #SB-00123
+                </div>
+                <div class="pbft-body--client-name">
+                    <img src="{{asset('images/user.png')}}" alt="pfp">
+                    Juan Dela Cruz
+                </div>
+                <div class="pbft-body--des">
+                    <p>Plumbing</p>
+                    <p>Water Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater Expert</p>
+                </div>
+                <div>
+                    June 25, 2024 - 10:00 AM
+                </div>
+                <div>
+                    12 Completed • 3 Cancelled
+                </div>
+                <div class="pbft-body--status">
+                    <span class="pending-sbox">Pending</span>
+                </div>
+                <div class="pbft-body--actions">
+                    <button class="btn-confirm">
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.52564 5.85L9.17564 0.2C9.30897 0.0666668 9.46453 0 9.64231 0C9.82009 0 9.97564 0.0666668 10.109 0.2C10.2423 0.333333 10.309 0.491778 10.309 0.675333C10.309 0.858889 10.2423 1.01711 10.109 1.15L3.99231 7.28333C3.85897 7.41667 3.70342 7.48333 3.52564 7.48333C3.34786 7.48333 3.19231 7.41667 3.05897 7.28333L0.192308 4.41667C0.0589744 4.28333 -0.00502564 4.12511 0.000307692 3.942C0.00564103 3.75889 0.0751964 3.60044 0.208974 3.46667C0.342752 3.33289 0.501197 3.26622 0.684308 3.26667C0.867419 3.26711 1.02564 3.33378 1.15897 3.46667L3.52564 5.85Z" fill="white"/>
+                        </svg>
+                        Accept</button>
+                    <button class="btn-cancel">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 7.49067L3.99533 3.99533L7.49067 7.49067M7.49067 0.5L3.99467 3.99533L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Decline</button>
+                </div>
+
+            </div>
+            <div class="pbft-body">
+                <div class="pbft-body--id">
+                    #SB-00123
+                </div>
+                <div class="pbft-body--client-name">
+                    <img src="{{asset('images/user.png')}}" alt="pfp">
+                    Juan Dela Cruz
+                </div>
+                <div class="pbft-body--des">
+                    <p>Plumbing</p>
+                    <p>Water Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater Expert</p>
+                </div>
+                <div>
+                    June 25, 2024 - 10:00 AM
+                </div>
+                <div>
+                    12 Completed • 3 Cancelled
+                </div>
+                <div class="pbft-body--status">
+                    <span class="pending-sbox">Pending</span>
+                </div>
+                <div class="pbft-body--actions">
+                    <button class="btn-confirm">
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.52564 5.85L9.17564 0.2C9.30897 0.0666668 9.46453 0 9.64231 0C9.82009 0 9.97564 0.0666668 10.109 0.2C10.2423 0.333333 10.309 0.491778 10.309 0.675333C10.309 0.858889 10.2423 1.01711 10.109 1.15L3.99231 7.28333C3.85897 7.41667 3.70342 7.48333 3.52564 7.48333C3.34786 7.48333 3.19231 7.41667 3.05897 7.28333L0.192308 4.41667C0.0589744 4.28333 -0.00502564 4.12511 0.000307692 3.942C0.00564103 3.75889 0.0751964 3.60044 0.208974 3.46667C0.342752 3.33289 0.501197 3.26622 0.684308 3.26667C0.867419 3.26711 1.02564 3.33378 1.15897 3.46667L3.52564 5.85Z" fill="white"/>
+                        </svg>
+                        Accept</button>
+                    <button class="btn-cancel">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 7.49067L3.99533 3.99533L7.49067 7.49067M7.49067 0.5L3.99467 3.99533L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Decline</button>
+                </div>
+
+            </div>
+            <div class="pbft-body">
+                <div class="pbft-body--id">
+                    #SB-00123
+                </div>
+                <div class="pbft-body--client-name">
+                    <img src="{{asset('images/user.png')}}" alt="pfp">
+                    Juan Dela Cruz
+                </div>
+                <div class="pbft-body--des">
+                    <p>Plumbing</p>
+                    <p>Water Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater Expert</p>
+                </div>
+                <div>
+                    June 25, 2024 - 10:00 AM
+                </div>
+                <div>
+                    12 Completed • 3 Cancelled
+                </div>
+                <div class="pbft-body--status">
+                    <span class="pending-sbox">Pending</span>
+                </div>
+                <div class="pbft-body--actions">
+                    <button class="btn-confirm">
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.52564 5.85L9.17564 0.2C9.30897 0.0666668 9.46453 0 9.64231 0C9.82009 0 9.97564 0.0666668 10.109 0.2C10.2423 0.333333 10.309 0.491778 10.309 0.675333C10.309 0.858889 10.2423 1.01711 10.109 1.15L3.99231 7.28333C3.85897 7.41667 3.70342 7.48333 3.52564 7.48333C3.34786 7.48333 3.19231 7.41667 3.05897 7.28333L0.192308 4.41667C0.0589744 4.28333 -0.00502564 4.12511 0.000307692 3.942C0.00564103 3.75889 0.0751964 3.60044 0.208974 3.46667C0.342752 3.33289 0.501197 3.26622 0.684308 3.26667C0.867419 3.26711 1.02564 3.33378 1.15897 3.46667L3.52564 5.85Z" fill="white"/>
+                        </svg>
+                        Accept</button>
+                    <button class="btn-cancel">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 7.49067L3.99533 3.99533L7.49067 7.49067M7.49067 0.5L3.99467 3.99533L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Decline</button>
+                </div>
+
+            </div>
+            <div class="pbft-body">
+                <div class="pbft-body--id">
+                    #SB-00123
+                </div>
+                <div class="pbft-body--client-name">
+                    <img src="{{asset('images/user.png')}}" alt="pfp">
+                    Juan Dela Cruz
+                </div>
+                <div class="pbft-body--des">
+                    <p>Plumbing</p>
+                    <p>Water Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater Expert</p>
+                </div>
+                <div>
+                    June 25, 2024 - 10:00 AM
+                </div>
+                <div>
+                    12 Completed • 3 Cancelled
+                </div>
+                <div class="pbft-body--status">
+                    <span class="pending-sbox">Pending</span>
+                </div>
+                <div class="pbft-body--actions">
+                    <button class="btn-confirm">
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.52564 5.85L9.17564 0.2C9.30897 0.0666668 9.46453 0 9.64231 0C9.82009 0 9.97564 0.0666668 10.109 0.2C10.2423 0.333333 10.309 0.491778 10.309 0.675333C10.309 0.858889 10.2423 1.01711 10.109 1.15L3.99231 7.28333C3.85897 7.41667 3.70342 7.48333 3.52564 7.48333C3.34786 7.48333 3.19231 7.41667 3.05897 7.28333L0.192308 4.41667C0.0589744 4.28333 -0.00502564 4.12511 0.000307692 3.942C0.00564103 3.75889 0.0751964 3.60044 0.208974 3.46667C0.342752 3.33289 0.501197 3.26622 0.684308 3.26667C0.867419 3.26711 1.02564 3.33378 1.15897 3.46667L3.52564 5.85Z" fill="white"/>
+                        </svg>
+                        Accept</button>
+                    <button class="btn-cancel">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 7.49067L3.99533 3.99533L7.49067 7.49067M7.49067 0.5L3.99467 3.99533L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Decline</button>
+                </div>
+
+            </div>
+            <div class="pbft-body">
+                <div class="pbft-body--id">
+                    #SB-00123
+                </div>
+                <div class="pbft-body--client-name">
+                    <img src="{{asset('images/user.png')}}" alt="pfp">
+                    Juan Dela Cruz
+                </div>
+                <div class="pbft-body--des">
+                    <p>Plumbing</p>
+                    <p>Water Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater ExpertWater Heater Expert</p>
+                </div>
+                <div>
+                    June 25, 2024 - 10:00 AM
+                </div>
+                <div>
+                    12 Completed • 3 Cancelled
+                </div>
+                <div class="pbft-body--status">
+                    <span class="pending-sbox">Pending</span>
+                </div>
+                <div class="pbft-body--actions">
+                    <button class="btn-confirm">
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.52564 5.85L9.17564 0.2C9.30897 0.0666668 9.46453 0 9.64231 0C9.82009 0 9.97564 0.0666668 10.109 0.2C10.2423 0.333333 10.309 0.491778 10.309 0.675333C10.309 0.858889 10.2423 1.01711 10.109 1.15L3.99231 7.28333C3.85897 7.41667 3.70342 7.48333 3.52564 7.48333C3.34786 7.48333 3.19231 7.41667 3.05897 7.28333L0.192308 4.41667C0.0589744 4.28333 -0.00502564 4.12511 0.000307692 3.942C0.00564103 3.75889 0.0751964 3.60044 0.208974 3.46667C0.342752 3.33289 0.501197 3.26622 0.684308 3.26667C0.867419 3.26711 1.02564 3.33378 1.15897 3.46667L3.52564 5.85Z" fill="white"/>
+                        </svg>
+                        Accept</button>
+                    <button class="btn-cancel">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 7.49067L3.99533 3.99533L7.49067 7.49067M7.49067 0.5L3.99467 3.99533L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Decline</button>
+                </div>
+
+            </div>
+            </div>
+
         </div>
 
     </main>
