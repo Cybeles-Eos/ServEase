@@ -40,9 +40,9 @@
                 </svg>
             </div>
         </div>
-        <div class="provider--bookings__filters--tables">
+        <div class="provider--bookings--tables">
 
-            <div class="provider--bookings__filters--tables--main">
+            <div class="provider--bookings--tables--main">
             <div class="pbft-header">
                 <div class="pbft-header--id">
                     Booking ID
