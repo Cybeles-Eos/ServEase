@@ -6,7 +6,7 @@
     <div class="sidebar-dashboard--links">
         <ul>
             <li>
-                <a href="#" class="active">
+                <a href="{{url('/provider/dashboard')}}" class="{{ Request::is('provider/dashboard') ? 'active' : '' }}">
                     <div>
                     <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7.875 6.5625V5.0625C7.875 3.82969 7.875 3.21329 7.5345 2.79841C7.47218 2.72246 7.40254 2.65282 7.32659 2.59048C6.91171 2.25 6.29531 2.25 5.0625 2.25C3.82969 2.25 3.21329 2.25 2.79841 2.59048C2.72246 2.65282 2.65282 2.72246 2.59048 2.79841C2.25 3.21329 2.25 3.82969 2.25 5.0625V6.5625C2.25 7.79528 2.25 8.4117 2.59048 8.8266C2.65282 8.90257 2.72246 8.97217 2.79841 9.0345C3.21329 9.375 3.82969 9.375 5.0625 9.375C6.29531 9.375 6.91171 9.375 7.32659 9.0345C7.40254 8.97217 7.47218 8.90257 7.5345 8.8266C7.875 8.4117 7.875 7.79528 7.875 6.5625Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
@@ -29,7 +29,7 @@
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="{{url('/provider/bookings')}}" class="{{ Request::is('provider/bookings') ? 'active' : '' }}">
                     <div >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15 8H9.00084M12.4281 11H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

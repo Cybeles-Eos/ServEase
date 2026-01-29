@@ -51,10 +51,22 @@ Route::middleware('auth')->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    Route::middleware('role:provider')->get('/provider/dashboard', function () {
-        return view('admin.provdashboard');
-    })->name('provider.dashboard');
+    // Provider
+    Route::middleware('role:provider')->group(function () {
 
+        // Redirect /provider → /provider/dashboard
+        Route::redirect('/provider', '/provider/dashboard');
+
+        Route::get('/provider/dashboard', function () {
+            return view('admin.provdashboard');
+        })->name('provider.dashboard');
+
+        Route::get('/provider/bookings', function () {
+            return view('admin.provbookings');
+        })->name('provider.bookings');
+    });
+
+    // Customer Route
     Route::middleware('role:customer')->get('/dashboard', function () {
         return view('admin.cusdashboard');
     })->name('customer.dashboard');

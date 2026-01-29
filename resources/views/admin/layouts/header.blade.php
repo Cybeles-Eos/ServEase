@@ -30,6 +30,54 @@
         </div>
         <div class="header--dashboard__profile--img">
             <img src="{{asset('images/user.png')}}" alt="user_profile">
+            <button id="btn-menu">
+                <svg class="menu-icon" width="10" height="9" viewBox="0 0 5 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.449219 0.450195L2.44922 2.4502L4.44922 0.450195" stroke="black" stroke-width="0.9" stroke-linecap="round"/>
+                </svg>
+            </button>
         </div>
     </div>
 </div>
+<div id="user-menu">
+    <ul>
+        {{-- <li><a href="{{ route('admin.profile') }}">Profile</a></li> --}}
+        <div>
+            <p>{{ auth()->user()->name }}</p>
+        </div>
+
+        <li><a href="">Profile Setting</a></li>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn-logout">
+                <svg width="12" height="13" class="mr-1" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.58333 1.66669H5.75992C6.86942 1.66669 7.42417 1.66669 7.76833 2.00852C7.96083 2.19869 8.046 2.45419 8.08333 2.83336M4.58333 11H5.75992C6.86942 11 7.42417 11 7.76833 10.6582C7.96083 10.468 8.046 10.2125 8.08333 9.83336M10.4167 6.33336H6.33333M9.54167 4.87502C9.54167 4.87502 11 5.94836 11 6.33336C11 6.71836 9.54167 7.79169 9.54167 7.79169M0.72925 1.66669C0.5 2.0266 0.5 2.49094 0.5 3.41902V9.24886C0.5 10.1769 0.5 10.6413 0.72925 11C0.770083 11.0642 0.815778 11.1249 0.866333 11.182C1.14808 11.5005 1.59492 11.6283 2.488 11.8832C3.38225 12.1387 3.82967 12.2664 4.154 12.0751C4.21015 12.0418 4.26239 12.0022 4.30975 11.9573C4.58333 11.6977 4.58333 11.2334 4.58333 10.3018V2.36494C4.58333 1.43394 4.58333 0.969022 4.30975 0.710022C4.26239 0.665055 4.21015 0.625531 4.154 0.592188C3.83025 0.400855 3.38225 0.528022 2.48742 0.784105C1.59492 1.03902 1.14808 1.16677 0.86575 1.48527C0.81558 1.54229 0.769941 1.60256 0.72925 1.66669Z" stroke="#D74646" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Logout
+            </button>
+        </form>
+
+    </ul>
+</div>
+@push('extrascripts')
+    <script>
+        $(document).ready(function () {
+            $('#btn-menu').on('click', function (e) {
+                e.stopPropagation();
+
+                $('#user-menu').toggleClass('is-open');
+                $('.menu-icon').toggleClass('is-rotated'); // 👈 rotate SVG
+            });
+
+            // click outside to close
+            $(document).on('click', function () {
+                $('#user-menu').removeClass('is-open');
+                $('.menu-icon').removeClass('is-rotated'); // reset rotation
+            });
+
+            // prevent closing when clicking inside menu
+            $('#user-menu').on('click', function (e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+@endpush
