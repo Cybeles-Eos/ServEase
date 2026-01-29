@@ -3200,7 +3200,6 @@ h4 span {
 }
 .provider--bookings--tables {
   width: 100%;
-  height: 30rem;
   border: 1px solid #D1D5DB;
   border-radius: 6px;
   background-color: #FFFFFF;
@@ -3232,6 +3231,9 @@ h4 span {
   border-bottom: 1px solid #E5E7EB;
   display: grid;
   grid-template-columns: 140px 15% 15% 17% 17% 9% 1fr;
+}
+.provider--bookings--tables--main .pbft-body:last-child {
+  border-bottom: none;
 }
 .provider--bookings--tables--main .pbft-body div {
   display: flex;
@@ -3333,7 +3335,7 @@ h4 span {
     overflow-x: scroll;
   }
 }
-@media (min-height: 709px) {
+@media (min-height: 660px) {
   .provider--bookings {
     height: 100vh;
   }
