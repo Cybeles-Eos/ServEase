@@ -418,7 +418,7 @@
         const servicesData = [
             {
                 id: 1,
-                title: '1Residential Pipe Repair Services',
+                title: 'Residential Pipe Repair Services',
                 category: 'Plumber',
                 provider: 'Daniella Barcelon',
                 description: 'Professional residential pipe repair services focused on fixing leaks, improving water flow, and ensuring long lasting plumbing safety.',

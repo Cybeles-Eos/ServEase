@@ -1,15 +1,15 @@
 @extends('admin.layouts.auth')
 
 {{-- Meta Section --}}
-@section('title', 'Customer Servease Dashboard')
+@section('title', 'Customer Servease Bookings')
 
 {{-- Page Content --}}
 @section('content')
     @include('admin.layouts.header')
     @include('admin.layouts.sidebar')
 
-    <main class="main-dash-uix dash-sp customer--dash">
-        <h1>Customer Dashboard</h1>
+    <main class="main-dash-uix dash-sp customer--bookings">
+        <h1>Customer Bookings</h1>
 
         @auth
             <h2>welcome {{ auth()->user()->name }}</h2>
@@ -19,9 +19,6 @@
             <button type="submit">logoout</button>
         </form>
     </main>
-
-
-    {{-- Only Show When Someone is login --}}
 
     
 @endsection

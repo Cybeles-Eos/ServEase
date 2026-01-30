@@ -54,7 +54,6 @@ Route::middleware('auth')->group(function () {
     // Provider
     Route::middleware('role:provider')->group(function () {
 
-        // Redirect /provider → /provider/dashboard
         Route::redirect('/provider', '/provider/dashboard');
 
         Route::get('/provider/dashboard', function () {
@@ -67,7 +66,18 @@ Route::middleware('auth')->group(function () {
     });
 
     // Customer Route
-    Route::middleware('role:customer')->get('/dashboard', function () {
-        return view('admin.cusdashboard');
-    })->name('customer.dashboard');
+    Route::middleware('role:customer')->group(function () {
+        
+        Route::redirect('/customer', '/customer/dashboard');
+
+        Route::get('/customer/dashboard', function () {
+            return view('admin.cusdashboard');
+        })->name('customer.dashboard');
+
+        Route::get('/customer/bookings', function () {
+            return view('admin.cusbookings');
+        })->name('customer.bookings');
+    
+    });
+
 });

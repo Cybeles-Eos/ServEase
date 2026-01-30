@@ -50,6 +50,12 @@ hr{
     font-family: $font-primary;
 
 }
+.plain-link{
+    color: $color-dark;
+    font-size: 15px;
+    margin-right: 1.3rem;
+    line-height: 100%;
+}
 
 .dash-sp{
     transition: 300ms ease;
@@ -338,9 +344,7 @@ hr{
 }
 .hide-side-bar-a-maindash{
     padding-left: 15px !important;
-
 }
 .hide-side-bar-a-headerdash{
     padding-left: 15px !important;
-    
 }

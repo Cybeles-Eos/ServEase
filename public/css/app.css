@@ -117,6 +117,13 @@ hr {
   font-family: "DM Sans", sans-serif;
 }
 
+.plain-link {
+  color: #171515;
+  font-size: 15px;
+  margin-right: 1.3rem;
+  line-height: 100%;
+}
+
 .dash-sp {
   transition: 300ms ease;
   padding-left: 215px !important;
@@ -3339,6 +3346,22 @@ h4 span {
   .provider--bookings {
     height: 100vh;
   }
+}
+
+.customer--bookings {
+  width: 100%;
+  height: calc(100vh - 60px);
+  background-color: #F5F7FA;
+  padding: 10px 15px;
+  padding-bottom: 25px;
+}
+
+.customer--dash {
+  width: 100%;
+  height: calc(100vh - 60px);
+  background-color: #F5F7FA;
+  padding: 10px 15px;
+  padding-bottom: 25px;
 }
 
 /*# sourceMappingURL=app.css.map */
