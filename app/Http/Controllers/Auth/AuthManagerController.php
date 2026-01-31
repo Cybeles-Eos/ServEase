@@ -49,7 +49,7 @@ class AuthManagerController extends Controller
                 return redirect('/provider/dashboard');
             }
 
-            return redirect('/dashboard'); // customer
+            return redirect('customer/dashboard'); // customer
         }
 
         throw ValidationException::withMessages([

@@ -45,7 +45,7 @@
             <p>{{ auth()->user()->name }}</p>
         </div>
 
-        <li><a href="">Profile Setting</a></li>
+        {{-- <li><a href="">Profile Setting</a></li> --}}
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="btn-logout">
