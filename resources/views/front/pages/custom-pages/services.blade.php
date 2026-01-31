@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <hr>
-                <a href="{{ url('/provider/signin') }}" class="join-now-cta"><img src="{{ asset('images/cta-join.png') }}" alt=""></a>
+                <a href="{{ url('provider-signup') }}" class="join-now-cta"><img src="{{ asset('images/cta-join.png') }}" alt=""></a>
             </div>
             <div class="ps-sl-cards">
 

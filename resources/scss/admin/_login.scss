@@ -16,7 +16,6 @@
         gap: 1rem;
         
         //background-color: rgb(255, 239, 217);
-
         &__form{
             width: 50%;
             padding: 1rem;
@@ -122,6 +121,17 @@
                     }
                 }
             }
+            @media (max-width: 492px) {
+                &__logo{
+                    margin-inline: 10px;
+                }
+                &--head{
+                    padding-inline: 10px;
+                }
+                &--fields{
+                    padding-inline: 10px;
+                }
+            }
         }
         &__image{
             width: 50%;
@@ -139,6 +149,18 @@
                 user-select: none;
                 -webkit-user-drag: none;
             }
+
+        }
+        @media (max-width: 992px) {
+            width: 500px;
+            &__form{
+                width: 100%;
+                margin: 0 auto;
+            }
+            &__image{
+                display: none;
+            }
+            
         }
     }
 

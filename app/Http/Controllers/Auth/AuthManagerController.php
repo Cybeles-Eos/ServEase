@@ -75,6 +75,11 @@ class AuthManagerController extends Controller
         return view('admin.auth.register');
     }
 
+    public function showProvReg()
+    {
+        return view('admin.auth.provider-register');
+    }
+
     public function signup(Request $request)
     {
         $validated = $request->validate([

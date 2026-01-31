@@ -79,7 +79,7 @@
                     </a>
                 </div>
                 <hr>
-                <a href="{{ url('/provider/signin') }}" class="join-now-cta-sd">
+                <a href="{{ url('provider-signup') }}" class="join-now-cta-sd">
                     <img src="{{ asset('images/cta-join.png') }}" alt="cta-image">
                 </a>
             </div>
@@ -245,7 +245,7 @@
                                 </li>
                             </ul>
                             <hr>
-                            <a href="{{ url('/provider/signin') }}" class="psd-sl-sdetaili-d-service-info__cta">
+                            <a href="{{ url('provider-signup') }}" class="psd-sl-sdetaili-d-service-info__cta">
                                 <img src="{{ asset('images/cta-join.png') }}" alt="cta-image">
                             </a>
                         </div>
@@ -253,6 +253,8 @@
                 </div>
             </div>
         </section>
+
+        {{-- Modals --}}
         <div class="booking-modal">
             <div class="booking-con-main">
                 <p class="booking-con-main__pre-title">Pluming</p>

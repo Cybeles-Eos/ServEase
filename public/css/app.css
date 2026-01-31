@@ -2677,6 +2677,17 @@ h4 span {
 .provider-login .provider-login-main__form--fields .plm-ff-cta a {
   color: #FFBE42;
 }
+@media (max-width: 492px) {
+  .provider-login .provider-login-main__form__logo {
+    margin-inline: 10px;
+  }
+  .provider-login .provider-login-main__form--head {
+    padding-inline: 10px;
+  }
+  .provider-login .provider-login-main__form--fields {
+    padding-inline: 10px;
+  }
+}
 .provider-login .provider-login-main__image {
   width: 50%;
   background-color: #fff;
@@ -2691,6 +2702,87 @@ h4 span {
   border-radius: 12px;
   user-select: none;
   -webkit-user-drag: none;
+}
+@media (max-width: 992px) {
+  .provider-login .provider-login-main {
+    width: 500px;
+  }
+  .provider-login .provider-login-main__form {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .provider-login .provider-login-main__image {
+    display: none;
+  }
+}
+
+p {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+h1 {
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 100%;
+}
+@media (max-width: 992px) {
+  h1 {
+    font-size: 42px;
+  }
+}
+h1 span {
+  color: #FFBE42;
+}
+
+h2 {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 130%;
+}
+@media (max-width: 992px) {
+  h2 {
+    font-size: 30px;
+  }
+}
+h2 span {
+  color: #FFBE42;
+}
+
+h3 {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 120%;
+}
+@media (max-width: 992px) {
+  h3 {
+    font-size: 20px;
+  }
+}
+h3 span {
+  color: #FFBE42;
+}
+
+h4 {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 120%;
+  color: #171515;
+}
+@media (max-width: 992px) {
+  h4 {
+    font-size: 18px;
+  }
+}
+h4 span {
+  color: #FFBE42;
+}
+
+.provider-register {
+  width: 100%;
+  height: 100vh;
 }
 
 .provider--dashboard {

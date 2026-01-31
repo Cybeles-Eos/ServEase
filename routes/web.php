@@ -45,6 +45,9 @@ Route::post('/logout', [AuthManagerController::class, 'logout'])->name('logout')
 Route::get('/signup', [AuthManagerController::class, 'showSignup'])->name('signup');
 Route::post('/register', [AuthManagerController::class, 'signup'])->name('signup.post');
 
+Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup');
+Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup.post');
+
 Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->get('/admin/dashboard', function () {
