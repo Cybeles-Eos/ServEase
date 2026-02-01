@@ -9,11 +9,19 @@
                 </div>
                 <form method="POST" action="{{route('signup.post')}}" class="provider-login-main__form--fields">
                     @csrf
-                    <div class="plm-ff-group">
-                        <label for="name">Name</label>
-                        <input type="text" placeholder="e. g. Juan Cruz" name="name" value="{{ old('name') }}" required autocomplete="off">
-                        @error('name') <small>{{ $message }}</small> @enderror
+                    <div class="plm-ff-con">
+                        <div class="plm-ff-group">
+                            <label for="fname">Firsts Name</label>
+                            <input type="text" placeholder="e. g. Juan Cruz" name="fname" value="{{ old('fname') }}" required autocomplete="off">
+                            @error('fname') <small>{{ $message }}</small> @enderror
+                        </div>
+                        <div class="plm-ff-group">
+                            <label for="lname">Last Name</label>
+                            <input type="text" placeholder="e. g. name@gmail.com" name="lname" value="{{ old('lname') }}" required autocomplete="off">
+                            @error('lname') <small style="align-self: flex-end">{{ $message }}</small> @enderror
+                        </div>
                     </div>
+                    
                     <div class="plm-ff-group">
                         <label for="email">Email Address</label>
                         <input type="text" placeholder="e. g. name@gmail.com" name="email" value="{{ old('email') }}" required autocomplete="off">
