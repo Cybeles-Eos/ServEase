@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\AuthManagerController;
@@ -22,12 +23,9 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
  * 
  * Dummy Route (Change on backend code)
  */
-Route::get('/services', function () {
-    return view('front.pages.custom-pages.services');
-});
-Route::get('/service-detail', function () {
-    return view('front.pages.custom-pages.service-detail');
-});
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+
+Route::get('/services/{id}', [ServiceController::class, 'show'])->name('services.show');
 // Route::get('/booking', function () {
 //     return view('front.pages.custom-pages.book');
 // });
@@ -46,7 +44,7 @@ Route::get('/signup', [AuthManagerController::class, 'showSignup'])->name('signu
 Route::post('/register', [AuthManagerController::class, 'signup'])->name('signup.post');
 
 Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup');
-Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup.post');
+Route::post('/provider-signup', [AuthManagerController::class, 'signupProvider'])->name('provider-signup.post');
 
 Route::middleware('auth')->group(function () {
 

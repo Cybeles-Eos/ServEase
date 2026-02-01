@@ -82,22 +82,64 @@ class AuthManagerController extends Controller
 
     public function signup(Request $request)
     {
+        // Customer Creation Account
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'fname' => ['required', 'string', 'max:255'],
+            'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::create([
-            'name'     => $validated['name'],
+        $user = User::create([ 
+            'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => 'customer', // default role
-            // Later you can allow provider signup: 'role' => 'provider'
+            'role'     => 'customer', 
+        ]);
+        $user->customer()->create([
+            'first_name' => $validated['fname'],
+            'last_name' => $validated['lname'],
         ]);
 
-        // Auth::login($user);
         return redirect('/login');
+    }
+
+    public function signupProvider(Request $request)
+    {
+        $validated = $request->validate([
+            'fname'      => ['required', 'string', 'max:255'],
+            'lname'      => ['required', 'string', 'max:255'],
+            'email'      => ['required', 'email', 'unique:users,email'],
+            'number'     => ['required', 'string'], // phone_num
+            'address'    => ['required', 'string'], // home_address
+            'province'   => ['required', 'string'],
+            'zipcode'    => ['required', 'string'], // zip
+            'profession' => ['required', 'string'],
+            'experience' => ['required', 'integer'], // year_exp
+            'password'   => ['required', 'min:8', 'confirmed'],
+        ]);
+        
+        // Create the Base User Account
+        $user = User::create([
+            'name'     => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
+            'email'    => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role'     => 'provider', // Set role to provider
+        ]);
+
+        // Create the Provider Profile
+        $user->provider()->create([
+            'first_name' => $validated['fname'],
+            'last_name' => $validated['lname'],
+            'phone_num'    => $validated['number'],
+            'home_address' => $validated['address'],
+            'province'     => $validated['province'],
+            'zip'          => $validated['zipcode'],
+            'profession'   => $validated['profession'],
+            'year_exp'     => $validated['experience'],
+        ]);
+
+        return redirect('/login')->with('success', 'Provider account created successfully!');
     }
 
 }
