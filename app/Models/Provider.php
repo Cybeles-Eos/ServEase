@@ -10,6 +10,8 @@ class Provider extends Model
     protected $table = 'tbl_providers';
     protected $fillable = [
         'user_id', 
+        'first_name',
+        'last_name',
         'phone_num', 
         'home_address', 
         'province', 

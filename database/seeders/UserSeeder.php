@@ -31,6 +31,8 @@ class UserSeeder extends Seeder
             'password' => Hash::make('test123'),
         ]);
         $providerUser->provider()->create([
+            'first_name' => 'Provider',
+            'last_name' => 'User',
             'phone_num' => '09123456789',
             'profession' => 'Software Engineer',
             'year_exp' => 3
