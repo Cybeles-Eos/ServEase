@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         // Other Seeder
         $this->call([
             UserSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }
