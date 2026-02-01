@@ -2612,6 +2612,7 @@ h4 span {
   display: flex;
   flex-direction: column;
   position: relative;
+  width: 100%;
 }
 .provider-login .provider-login-main__form--fields .plm-ff-group a {
   font-size: 14px;
@@ -2627,6 +2628,11 @@ h4 span {
   position: absolute;
   right: 0;
   bottom: -18px;
+}
+.provider-login .provider-login-main__form--fields .plm-ff-con {
+  display: flex;
+  width: 100%;
+  gap: 15px;
 }
 .provider-login .provider-login-main__form--fields label {
   font-size: 14px;
