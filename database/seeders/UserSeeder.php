@@ -14,17 +14,39 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = ['customer', 'provider', 'admin'];
+        // Dummy Admin 
+        User::create([
+            'name' => 'System Admin',
+            'email' => 'admin@example.com',
+            'role' => 'admin',
+            'password' => Hash::make('test123'),
+        ]);
 
-        foreach ($roles as $role) {
-            User::create([
-                'name'              => "Test " . ucfirst($role),
-                'email'             => "{$role}@example.com",
-                'role'              => $role,
-                'email_verified_at' => now(),
-                'password'          => Hash::make('test123'),
-                'remember_token'    => \Illuminate\Support\Str::random(10),
-            ]);
-        }
+
+        // Dummy Provider
+        $providerUser = User::create([
+            'name' => 'Provider User',
+            'email' => 'provider@example.com',
+            'role' => 'provider',
+            'password' => Hash::make('test123'),
+        ]);
+        $providerUser->provider()->create([
+            'phone_num' => '09123456789',
+            'profession' => 'Software Engineer',
+            'year_exp' => 3
+        ]);
+
+
+        // Dummy Customer
+        $customerUser = User::create([
+            'name' => 'Customer User',
+            'email' => 'customer@example.com',
+            'role' => 'customer',
+            'password' => Hash::make('test123'),
+        ]);
+        $customerUser->customer()->create([
+            'first_name' => 'Customer',
+            'last_name' => 'User'
+        ]);
     }
 }
