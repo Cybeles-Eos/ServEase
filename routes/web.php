@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\AuthManagerController;
@@ -22,9 +23,8 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
  * 
  * Dummy Route (Change on backend code)
  */
-Route::get('/services', function () {
-    return view('front.pages.custom-pages.services');
-});
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+
 Route::get('/service-detail', function () {
     return view('front.pages.custom-pages.service-detail');
 });
