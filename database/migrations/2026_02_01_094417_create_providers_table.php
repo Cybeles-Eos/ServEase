@@ -26,6 +26,9 @@ return new class extends Migration
             // Can be normalize further in the future (temporary only)
             $table->string('profession')->nullable();
             $table->integer('year_exp')->default(0);
+
+            // flag for admin verification of the provider
+            $table->date('verified_at')->nullable();
             $table->timestamps();
         });
     }
