@@ -127,7 +127,7 @@
                     <div class="pdhldr-lb"> 
                         <div class="pdhldr-lb--head">
                             <h3>Booking Overview</h3>
-                            <a href="#">View All</a>
+                            <a href="{{url('/provider/bookings')}}">View All</a>
                         </div>
                         <div class="pdhldr-lb--bar">
                             <div class="center-div">
@@ -140,7 +140,7 @@
                                 Service Type
                             </div>
                             <div>
-                                Date
+                                Booking Date & Time
                             </div>
                             <div>
                                 Status
@@ -158,7 +158,7 @@
                                 Plumbing
                             </div>
                             <div class="txt-div-d">
-                                Dec 10, 2025
+                                June 25, 2024 - 10:00 AM
                             </div>
                             <div class="">
                                 <div class="status-box pending-sbox">
@@ -178,7 +178,7 @@
                                 Plumbing
                             </div>
                             <div class="txt-div-d">
-                                Dec 10, 2025
+                                June 25, 2024 - 10:00 AM
                             </div>
                             <div class="">
                                 <div class="status-box accepted-sbox">
@@ -198,7 +198,7 @@
                                 Plumbing
                             </div>
                             <div class="txt-div-d">
-                                Dec 10, 2025
+                                June 25, 2024 - 10:00 AM
                             </div>
                             <div class="">
                                 <div class="status-box completed-sbox">
