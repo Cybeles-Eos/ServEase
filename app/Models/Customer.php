@@ -8,5 +8,8 @@ class Customer extends Model
 {
     protected $table = 'tbl_customers';
 
-    public $timestamps = false;
+    protected $fillable = [
+        'first_name', 
+        'last_name', 
+    ];
 }

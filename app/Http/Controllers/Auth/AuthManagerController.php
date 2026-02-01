@@ -82,21 +82,25 @@ class AuthManagerController extends Controller
 
     public function signup(Request $request)
     {
+        // Customer Creation Account
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'fname' => ['required', 'string', 'max:255'],
+            'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
-        $user = User::create([
-            'name'     => $validated['name'],
+        $user = User::create([ 
+            'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => 'customer', // default role
-            // Later you can allow provider signup: 'role' => 'provider'
+            'role'     => 'customer', 
+        ]);
+        $user->customer()->create([
+            'first_name' => $validated['fname'],
+            'last_name' => $validated['lname'],
         ]);
 
-        // Auth::login($user);
         return redirect('/login');
     }
 

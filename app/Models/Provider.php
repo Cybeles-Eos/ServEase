@@ -8,7 +8,6 @@ class Provider extends Model
 {
     
     protected $table = 'tbl_providers';
-    public $timestamps = false;
     protected $fillable = [
         'user_id', 
         'phone_num', 
