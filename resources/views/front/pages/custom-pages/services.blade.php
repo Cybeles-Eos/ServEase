@@ -490,7 +490,7 @@
                             </div>
 
                             <div class="ps-sl-c-box__body--cta">
-                                <a href="{{url('service-detail')}}">Learn more</a>
+                                <a href="/services/${service.id}">Learn more</a>
 
                                 <p>
                                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none"

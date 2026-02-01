@@ -25,9 +25,7 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
  */
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 
-Route::get('/service-detail', function () {
-    return view('front.pages.custom-pages.service-detail');
-});
+Route::get('/services/{id}', [ServiceController::class, 'show'])->name('services.show');
 // Route::get('/booking', function () {
 //     return view('front.pages.custom-pages.book');
 // });

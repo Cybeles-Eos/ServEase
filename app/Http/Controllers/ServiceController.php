@@ -57,7 +57,40 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // dd($id);
+
+        // DATA 1: Fetch primary service
+        $service = Service::with('provider.user')->findOrFail($id);
+
+        // DATA 2: Fetch Related Services
+        $relatedServices = Service::where('category', $service->category)
+            ->where('id', '!=', $service->id)
+            ->limit(3)
+            ->get();
+
+        // Flatten primary data
+        $data = [
+            'id'             => $service->id,
+            'title'          => $service->title,
+            'category'       => $service->category,
+            'description'    => $service->description,
+            'jobs'           => $service->jobs,
+            'rating'         => $service->rating,
+            'reviews'        => $service->reviews,
+            'specialization' => $service->specialization,
+            'created_at'     => $service->created_at->format('M d, Y'),
+            // Provider specific flattened data
+            'provider_name'  => $service->provider->first_name . ' ' . $service->provider->last_name,
+            'provider_exp'   => $service->provider->year_exp,
+            'provider_area'  => $service->provider->province . ' & nearby', // Using fixed location logic
+        ];
+
+        // dd($data);
+
+        return view('front.pages.custom-pages.service-detail', [
+            'service' => (object) $data,
+            'related' => $relatedServices
+        ]);
     }
 
     /**
