@@ -18,4 +18,3 @@ function custom_flash($title = null, $message = null) {
     // Just return a regular flash->info message
     return $flash->info($title, $message);
 }
-

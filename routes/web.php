@@ -66,6 +66,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/provider/bookings', function () {
             return view('admin.provbookings');
         })->name('provider.bookings');
+
+        Route::get('/provider/service', function () {
+            return view('admin.provserv');
+        })->name('provider.service');
     });
 
     // Customer Route
