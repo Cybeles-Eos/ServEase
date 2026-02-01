@@ -47,6 +47,22 @@ class User extends Authenticatable
         ];
     }
 
+    // ---------------------
+    // Relationship
+    // ---------------------
+    public function provider() 
+    { 
+        return $this->hasOne(Provider::class); 
+    }
+    public function customer() 
+    { 
+        return $this->hasOne(Customer::class); 
+    }
+
+
+    // ---------------------
+    // Helpers
+    // ---------------------
     public function isAdmin()
     {
         return $this->role === 'admin';
