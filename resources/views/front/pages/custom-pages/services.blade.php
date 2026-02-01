@@ -609,6 +609,7 @@
                 specialization: 'Lawn Maintenance'
             }
         ];
+        
         function updateCategoryCounts(data) {
             $('.ps-sl-cc-main__box').each(function () {
                 const category = $(this).find('input[type="checkbox"]').val();
