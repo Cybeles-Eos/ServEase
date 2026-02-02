@@ -33,7 +33,7 @@
                         </button>
                     </div>
 
-                    <form action="{{ route('provider-signup.post') }}" method="POST" class="provreg-mm-con--fields">
+                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields">
                         @csrf
 
                         <div class="provreg-mmcf-firstpage">

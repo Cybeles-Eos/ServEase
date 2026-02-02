@@ -3032,6 +3032,14 @@ h4 span {
   top: -25rem;
   right: -18rem;
 }
+@media (max-width: 992px) {
+  .provider-register__img {
+    display: none;
+  }
+  .provider-register__main {
+    padding-left: 0rem;
+  }
+}
 
 .provider--dashboard {
   width: 100%;

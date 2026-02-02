@@ -44,7 +44,7 @@ Route::get('/signup', [AuthManagerController::class, 'showSignup'])->name('signu
 Route::post('/register', [AuthManagerController::class, 'signup'])->name('signup.post');
 
 Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup');
-Route::post('/provider-signup', [AuthManagerController::class, 'signupProvider'])->name('provider-signup.post');
+Route::post('/provider-signup-c', [AuthManagerController::class, 'signupProvider'])->name('provider-signup.post');
 
 Route::middleware('auth')->group(function () {
 

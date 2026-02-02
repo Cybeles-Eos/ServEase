@@ -272,4 +272,12 @@
             
         }
     }
+    @media (max-width: 992px) {
+        &__img{
+            display: none;
+        }
+        &__main{
+            padding-left: 0rem;
+        }
+    }
 }
