@@ -9,7 +9,7 @@
     @include('admin.layouts.sidebar')
 
     <main class="main-dash-uix provider--service dash-sp">
-        <a href="{{url('/provider/service/create')}}" class="provider--service__btn">
+        <a href="{{route('create-service')}}" class="provider--service__btn">
             <div>
                 Add New Service
             </div>

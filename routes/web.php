@@ -68,6 +68,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/provider/service', function () {
             return view('admin.provserv');
         })->name('provider.service');
+
+
+        // Provider Service Creation
+        Route::get('/provider/service/create', [ServiceController::class, 'create'])->name('create-service');
+        
     });
 
     // Customer Route
