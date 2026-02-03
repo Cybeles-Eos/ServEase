@@ -555,3 +555,124 @@ hr{
 
 
 }
+
+
+// CTA Style
+
+.global-cta{
+    width: 100%;
+    // height: 30rem;
+    // background-color: #000000;
+    padding: 1.6rem;
+
+    &__main{
+        overflow: hidden;
+        max-width: 1350px;
+        margin: 0 auto;
+        height: 22rem;
+        border-radius: 12px;
+        background: linear-gradient(
+            90deg,
+            #FFE4AF,
+            #FFEECC
+        );
+        
+
+        display: flex;
+        
+        &--txt{
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            width: 55%;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+            h2{
+                max-width: 650px;
+                line-height: 110%;
+                margin-bottom: 10px;
+            }
+            p{
+                max-width: 630px;
+            }
+            @media (max-width: 392px) {
+                padding: 1rem 1.5rem;
+            }
+        }
+        &--img{
+            width: 45%;
+            height: 100%;
+            // background-color: #000000;
+            position: relative;
+            &__vec{
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                right: -5rem;
+            }
+            &__img{
+                position: absolute;
+                top: 60%;
+                transform: translateY(-50%);
+                // right: -5rem;
+                right: 8.5rem;
+                z-index: 2;
+                @media (max-width: 392px) {
+                    width: 90%;
+                    top: 20% !important;
+                }
+            }
+        }
+        @media (max-width: 992px) {
+            flex-direction: column;
+            align-items: center;
+            height: fit-content;
+            background: linear-gradient(
+                0deg,
+                #fbce73,
+                #FFEECC
+            );
+            &--txt{
+                align-items:center;
+                width: 100%;
+                height: fit-content;
+                padding-block: 4rem;
+                padding-bottom: 2rem;
+                h2{
+                    max-width: 750px;
+                    text-align: center;
+                }
+                p{
+                    text-align: center;
+                    max-width: 690px;
+                }
+            }
+            &--img{
+                width: 100%;
+                height: 21rem;
+                // background-color: #000000;
+                position: relative;
+                &__vec{
+                    left: 50%;
+                    top: 0;
+                    transform: translate(-50%);
+                    display: none;
+                }
+                &__img{
+                    left: 50%;
+                    top: 10%;
+                    transform: translate(-50%);
+                    // right: -5rem;
+                    right: auto;
+                }
+            }
+        }
+    
+    }
+
+}
+
+

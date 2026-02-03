@@ -55,4 +55,15 @@
             color: $color-dark;
         }
     }
+    &--tertiary-n{
+        background-color: $color-primary;
+        border-color: $color-primary;
+        color: $color-dark;
+        &:hover, 
+        &:active {
+            background-color: $color-primary;
+            border-color: $color-primary !important;
+            color: $color-dark;
+        }
+    }
 }

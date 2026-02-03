@@ -39,6 +39,9 @@
                     text-decoration: none;
                 }
             }
+            @media (max-width: 592px) {
+                width: 100%;
+            }
         }
         .sfoomain-links{
             display: flex;
@@ -72,6 +75,9 @@
                     }
                 }
             
+            }
+            @media (max-width: 592px) {
+                width: 100%;
             }
         }
 

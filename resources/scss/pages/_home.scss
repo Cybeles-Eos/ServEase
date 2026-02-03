@@ -133,6 +133,20 @@
                         }
                     }
                 }
+                @media (max-width: 592px) {
+                    input, .sh-inp-lists{
+                        width: 350px;
+                    }
+
+                }
+                @media (max-width: 392px) {
+                    input, .sh-inp-lists{
+                        width: 300px;
+                    }
+                }
+            }
+            @media (max-width: 392px) {
+                height: 45rem;
             }
         }
     }

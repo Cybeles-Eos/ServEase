@@ -411,6 +411,7 @@
                 </div>
             </div>
         </section>
+        @include('front.layouts.sections.cta')
     </main>
 @endsection
 @push('extrascripts')

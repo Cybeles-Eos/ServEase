@@ -30,6 +30,7 @@
         <section style="width: 100%; height: 100vh">
 
         </section>
+        @include('front.layouts.sections.cta')
     </main>
 @endsection
 @push('extrascripts')
