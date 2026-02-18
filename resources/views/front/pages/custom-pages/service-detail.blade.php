@@ -5,19 +5,19 @@
         <section class="section--list m-padding m-width">
             <div class="psd-sl-category">
                 <div class="psd-sl-category__head">
-                    <a href="{{ url('/') }}" class="{{ Request::is('/') ? 's-act-link' : '' }}">Home</a>
+                    <a href="{{ url('/') }}" class="">Home</a>
 
                     <svg width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0.384033 0.320312L2.88403 3.32031L0.384033 6.32031" stroke="#FDB932"/>
                     </svg>
 
-                    <a href="{{ url('services') }}" class="{{ Request::is('services') ? 's-act-link' : '' }}">Services</a>
+                    <a href="{{ url('services') }}" class="">Services</a>
 
                     <svg width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0.384033 0.320312L2.88403 3.32031L0.384033 6.32031" stroke="#FDB932"/>
                     </svg>
 
-                    <a href="{{ url('service-detail') }}" class="{{ Request::is('service-detail') ? 's-act-link' : '' }}">Residential Pipe Repair Services</a>
+                    <a href="{{ url('service-detail') }}" class="s-act-link">Residential Pipe Repair Services</a>
                 </div>
                 <div class="psd-sl-category__side">
                     <h4>Related Services</h4>
@@ -55,16 +55,12 @@
                 </div>
                 <div class="psd-sl-sdetail__info">
                     <div class="psd-sl-sdetaili-description">
-                        <p class="psd-sl-sdetaili-description__prt">Pluming</p>
+                        <p class="psd-sl-sdetaili-description__prt">{{ $service->category }}</p>
                         <h3>{{ $service->title }}</h3>
                         <br>
 
                         {{-- Content: Soon to be resolved --}}
-                        <p>From minor leaks to major pipe repairs, our trusted Filipino plumbers deliver fast, safe, and professional service right at your doorstep. Whether it’s an emergency fix or routine maintenance, we make sure your water system runs smoothly and efficiently.</p>
-                        <br>
-                        <p>From minor leaks to major pipe repairs, our trusted Filipino plumbers deliver fast, safe, and professional service right at your doorstep. Whether it’s an emergency fix or routine maintenance, we make sure your water system runs smoothly and efficiently.</p>
-                        <br>
-                        <p>From minor leaks to major pipe repairs, our trusted Filipino plumbers deliver fast, safe, and professional service right at your doorstep. Whether it’s an emergency fix or routine maintenance, we make sure your water system runs smoothly and efficiently.</p>
+                        {!! $service->content !!}
                     
                         <div class="psd-sl-sdetaili-relateds">
                             <h4>Related Services</h4>

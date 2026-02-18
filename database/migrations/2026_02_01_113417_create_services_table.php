@@ -6,33 +6,39 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tbl_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('provider_id')->constrained('tbl_providers')->cascadeOnDelete();
 
-            // Major details
+            // Relationship
+            $table->foreignId('provider_id')
+                  ->constrained('tbl_providers')
+                  ->cascadeOnDelete();
+
+            // Main Service Info
             $table->string('title');
+            $table->string('slug')->unique();
             $table->string('category');
-            $table->text('description');
-            $table->string('specialization');
+            $table->text('description')->nullable();
+            $table->text('content')->nullable();
+            $table->string('specialization')->nullable();
 
-            // Minor details
-            $table->unsignedInteger('jobs')->default(0);
+            // Pricing
+            $table->decimal('price', 10, 2)->nullable();
+
+            // Image (store file path only)
+            $table->string('image')->nullable();
+
+            // Stats
+            // $table->unsignedInteger('jobs')->default(0);
             $table->decimal('rating', 3, 2)->default(0.00);
-            $table->unsignedInteger('reviews')->default(0);
+            // $table->unsignedInteger('reviews')->default(0);
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tbl_services');

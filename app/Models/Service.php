@@ -11,24 +11,37 @@ class Service extends Model
     
     protected $table = 'tbl_services';
 
+    // protected $fillable = [
+    //     'provider_id',
+    //     'title',
+    //     'slug',
+    //     'description',
+    //     'content',
+    //     'category',
+    //     'price',
+    //     'image',
+    //     'jobs',---
+    //     'rating',---
+    //     'reviews',---
+    //     'specialization',
+    // ];
     protected $fillable = [
-        'user_id', 
-        'first_name', 
-        'last_name', 
-        'phone_num', 
-        'home_address', 
-        'province', 
-        'zip', 
-        'profession', 
-        'year_exp', 
-        'verified_at'
+        'provider_id',
+        'title',
+        'slug',
+        'description',
+        'content',
+        'category',
+        'price',
+        'image',
+        'specialization',
     ];
-    
+
     // ---------------------
     // Relationship
     // ---------------------
     public function provider()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->belongsTo(Provider::class, 'provider_id');
     }
 }

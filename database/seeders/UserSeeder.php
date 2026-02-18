@@ -38,6 +38,20 @@ class UserSeeder extends Seeder
             'year_exp' => 3
         ]);
 
+        $providerUser1 = User::create([
+            'name' => 'Dawn Izach',
+            'email' => 'dawnzach10@gmail.com',
+            'role' => 'provider',
+            'password' => Hash::make('P@ssword1'),
+        ]);
+        $providerUser1->provider()->create([
+            'first_name' => 'Dawn',
+            'last_name' => 'Izach',
+            'phone_num' => '09123456781',
+            'profession' => 'Software Engineer',
+            'year_exp' => 3
+        ]);
+
 
         // Dummy Customer
         $customerUser = User::create([

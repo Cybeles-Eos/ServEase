@@ -53,6 +53,17 @@
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
+
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <body>
     {{-- @include('admin.layouts.header')
@@ -69,5 +80,16 @@
             });
         });
     </script>
+    
+    @if(session('flash_message'))
+        <script>
+            Swal.fire({
+                icon: '{{ session("flash_message.type") }}',
+                title: '{{ session("flash_message.title") }}',
+                text: '{{ session("flash_message.message") }}',
+                confirmButtonColor: '#FDB932'
+            });
+        </script>
+    @endif
 </body>
 </html>

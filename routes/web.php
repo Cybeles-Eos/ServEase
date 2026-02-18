@@ -25,7 +25,7 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
  */
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 
-Route::get('/services/{id}', [ServiceController::class, 'show'])->name('services.show');
+Route::get('/services/{slug}', [ServiceController::class, 'show'])->name('services.show');
 // Route::get('/booking', function () {
 //     return view('front.pages.custom-pages.book');
 // });
@@ -65,13 +65,12 @@ Route::middleware('auth')->group(function () {
             return view('admin.provbookings');
         })->name('provider.bookings');
 
-        Route::get('/provider/service', function () {
-            return view('admin.provserv');
-        })->name('provider.service');
+        Route::get('/provider/service', [ServiceController::class, 'indexProvider'])->name('provider.service');
 
 
         // Provider Service Creation
         Route::get('/provider/service/create', [ServiceController::class, 'create'])->name('create-service');
+        Route::post('/provider/service/store', [ServiceController::class, 'store'])->name('provider.service.store');
         
     });
 

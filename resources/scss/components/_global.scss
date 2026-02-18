@@ -352,14 +352,14 @@ hr{
 
 .provider--create{
     width: 100%;
-    height: calc(100vh - 60px);
+    // height: calc(100vh - 60px);
     background-color: #F5F7FA;
     padding: 10px 15px;
     padding-bottom: 25px;
 
     &__main{
         width: 100%;
-        height: 30rem;
+        // height: 30rem;
         background-color: $color-white;
         border: 1px solid $color-border-soft;
         border-radius: 2px;
@@ -401,6 +401,10 @@ hr{
                         color: red;
                     }
                 }
+                textarea{
+                    resize: none;
+                }
+                textarea,
                 input[type="text"],
                 input[type="email"],
                 input[type="password"],
@@ -552,8 +556,10 @@ hr{
 
 
     }
-
-
+    //1187
+    @media (min-height: 1187px) {
+        height: calc(100vh - 60px);
+    }
 }
 
 
@@ -676,3 +682,18 @@ hr{
 }
 
 
+// Filepond CDN redesign
+.filepond--credits{
+    display: none !important;
+}
+.filepond--drop-label{
+    label{
+        font-family: $font-primary !important;
+        opacity: .5;
+    }
+}
+
+.filepond--root, .filepond--drop-label{
+    // height: 110px;
+    // min-height: 110px !important;
+}

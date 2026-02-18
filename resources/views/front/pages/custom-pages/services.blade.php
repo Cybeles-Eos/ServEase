@@ -444,15 +444,18 @@
                 $wrap.append(`
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="images/serv-bg.png" alt="">
+                            <img src="${service.image}" alt="">
                             <span class="ps-sl-c-box__head--cat">${service.category}</span>
                         </div>
 
                         <div class="ps-sl-c-box__body">
-                            <h3>${service.title}</h3>
+                            <h3>${service.title.length > 40 
+                                    ? service.title.substring(0, 40) + '...' 
+                                    : service.title}
+                            </h3>
 
                             <p class="ps-sl-c-box__body--label">
-                                ${service.description}
+                                ${service.description ?? 'No description available.'}
                             </p>
 
                             <div class="ps-sl-c-box__body--info">
@@ -462,7 +465,11 @@
                                         <path d="M7.99984 7.99967C9.84079 7.99967 11.3332 6.50729 11.3332 4.66634C11.3332 2.82539 9.84079 1.33301 7.99984 1.33301C6.15889 1.33301 4.6665 2.82539 4.6665 4.66634C4.6665 6.50729 6.15889 7.99967 7.99984 7.99967Z" stroke="#FFBE42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M13.7268 14.6667C13.7268 12.0867 11.1601 10 8.0001 10C4.8401 10 2.27344 12.0867 2.27344 14.6667" stroke="#FFBE42" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    Provider: ${service.provider}
+                                    Provider: ${
+                                        service.provider
+                                            ? service.provider.first_name + ' ' + service.provider.last_name
+                                            : 'Unknown Provider'
+                                    }
                                 </div>
 
                                 <div>
@@ -473,7 +480,7 @@
                                         <path d="M8 11.8472V8.21387" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M7.17348 4.19305L5.04015 5.37973C4.56015 5.6464 4.16016 6.31973 4.16016 6.87306V9.13307C4.16016 9.6864 4.55348 10.3597 5.04015 10.6264L7.17348 11.813C7.62682 12.0664 8.37349 12.0664 8.83349 11.813L10.9668 10.6264C11.4468 10.3597 11.8468 9.6864 11.8468 9.13307V6.87306C11.8468 6.31973 11.4535 5.6464 10.9668 5.37973L8.83349 4.19305C8.37349 3.93305 7.62682 3.93305 7.17348 4.19305Z" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    Specialization: ${service.specialization || service.category}
+                                    Specialization: ${service.specialization ?? service.category}
                                 </div>
 
                                 <div>
@@ -491,7 +498,7 @@
                             </div>
 
                             <div class="ps-sl-c-box__body--cta">
-                                <a href="/services/${service.id}">Learn more</a>
+                                <a href="/services/${service.slug}">Learn more</a>
 
                                 <p>
                                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
@@ -500,7 +507,7 @@
                                             fill="#FFBE42" stroke="#FFBE42"
                                             stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    ${service.rating} <span>(${service.reviews || 0} reviews)</span>
+                                    ${service.rating ?? 0} <span>(${service.reviews || 0} reviews)</span>
                                 </p>
                             </div>
                         </div>
@@ -587,7 +594,9 @@
 
             currentData = servicesData
                 .filter(service =>
-                    service.title.toLowerCase().includes(keyword)
+                    service.title.toLowerCase().includes(keyword) ||
+                    service.category.toLowerCase().includes(keyword) ||
+                    (service.description && service.description.toLowerCase().includes(keyword))
                 )
                 .sort((a, b) => a.title.localeCompare(b.title));
 
