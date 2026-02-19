@@ -20,6 +20,15 @@
             color: $color-white !important;
         }
     }
+    &--transparent {
+        background-color: $color-white;
+        color: $color-dark;
+        border: 1px solid $color-dark;
+        &:hover, &:active {
+            background-color: $color-white !important;
+            color: $color-dark !important;border: 1px solid $color-dark;
+        }
+    }
 
     &--secondary {
         color: $color-dark;

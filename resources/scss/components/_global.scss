@@ -24,6 +24,14 @@ hr{
     color:  #959595;
 }
 
+h2{
+    font-size: 35px !important;
+    font-family:$font-inter;
+    @media (max-width: 692px) {
+       font-size: 30px !important; 
+    }
+}   
+
 .m-width{
     max-width: 1400px;
 }
@@ -39,7 +47,10 @@ hr{
         padding-inline: 1rem;
     }
 }
-
+.btn-space{
+    display: flex;
+    gap: 13px;
+}
 .glb-btn{
     background-color: $color-primary;
     color: $color-dark;
@@ -348,6 +359,7 @@ hr{
 .hide-side-bar-a-headerdash{
     padding-left: 15px !important;
 }
+
 
 
 .provider--create{
@@ -696,4 +708,46 @@ hr{
 .filepond--root, .filepond--drop-label{
     // height: 110px;
     // min-height: 110px !important;
+}
+
+
+.glb-testimonial{
+    display: flex;
+    margin-top: 1.8rem;
+    gap: 10px;
+
+    &__d{
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        img{
+            width: 45px;
+            height: 45px;
+            border-radius: 55px;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        div{
+
+            h4{
+                font-size: 14px;
+                font-weight: 700;
+                margin-bottom: 5px;
+                color: $color-dark;
+            }
+            p{
+                max-width: 370px;
+                line-height: 130%;
+                font-size: 14px;
+                font-weight: 400;
+                opacity: .8;
+                @media (max-width: 992px) {
+                    max-width: 900px;
+                }
+            }
+        }
+
+    }
+
 }
