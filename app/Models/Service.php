@@ -26,6 +26,7 @@ class Service extends Model
     //     'specialization',
     // ];
     protected $fillable = [
+        'service_id',
         'provider_id',
         'title',
         'slug',

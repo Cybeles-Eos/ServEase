@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('tbl_services', function (Blueprint $table) {
             $table->id();
+            $table->string('service_id')->unique()->nullable();
 
             // Relationship
             $table->foreignId('provider_id')

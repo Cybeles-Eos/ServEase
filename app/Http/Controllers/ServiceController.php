@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use File;
-
+use Carbon\Carbon;
 
 class ServiceController extends Controller
 {
@@ -62,12 +62,17 @@ class ServiceController extends Controller
             return back()->with('error', 'Only providers can create services.');
         }
 
-        $slug = $request->slug 
-            ? Str::slug($request->slug) 
+        $slug = $request->slug
+            ? Str::slug($request->slug)
             : Str::slug($request->title) . '-' . uniqid();
 
-        // Create service FIRST
+        // ✅ Generate Short Unique ID: SE-2026-ABCDE
+        do {
+            $serviceId = 'SE-' . now()->year . '-' . strtoupper(Str::random(5));
+        } while (Service::where('service_id', $serviceId)->exists());
+
         $service = Service::create([
+            'service_id'     => $serviceId,
             'provider_id'    => $provider->id,
             'title'          => $request->title,
             'slug'           => $slug,
@@ -79,7 +84,6 @@ class ServiceController extends Controller
             'image'          => null,
         ]);
 
-        // Then upload image if exists
         if ($request->hasFile('image')) {
             $file_upload_path = $this->uploadFile($request->file('image'), null, 'service_images');
             $service->update(['image' => $file_upload_path]);
@@ -91,7 +95,6 @@ class ServiceController extends Controller
             'type' => 'success'
         ]);
     }
-
 
     public function uploadFile($file, $type = null, $path)
     {

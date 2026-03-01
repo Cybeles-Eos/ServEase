@@ -5,77 +5,76 @@
 
 @push('extrastylesheets')
     <style>
-    .filepond--root {
-        font-family: inherit;
-    }
+        .filepond--root {
+            font-family: inherit;
+        }
 
-    .filepond--panel-root {
-        background-color: #ffffff !important;
-        border: 2px dashed #ddd;
-    }
+        .filepond--panel-root {
+            background-color: #ffffff !important;
+            border: 2px dashed #ddd;
+        }
 
-    .filepond--drop-label {
-        color: #666;
-    }
+        .filepond--drop-label {
+            color: #666;
+        }
 
-    .filepond--file {
-        background: #f9f9f9 !important;
-    }
+        .filepond--file {
+            background: #f9f9f9 !important;
+        }
 
-    .filepond--file-action-button {
-        background-color: #ff4d4f !important;
-        color: #fff !important;
-    }
+        .filepond--file-action-button {
+            background-color: #ff4d4f !important;
+            color: #fff !important;
+        }
 
-    .filepond--image-preview-overlay {
-        background: transparent !important;
-    }
-    /* Remove weird red oval background */
-    .filepond--file-action-button {
-        background: transparent !important;
-        box-shadow: none !important;
-    }
+        .filepond--image-preview-overlay {
+            background: transparent !important;
+        }
+        /* Remove weird red oval background */
+        .filepond--file-action-button {
+            background: transparent !important;
+            box-shadow: none !important;
+        }
 
-    /* Style remove button */
-    /* Remove default circular look */
-    .filepond--file-action-button {
-        background: none !important;
-        box-shadow: none !important;
-    }
+        /* Style remove button */
+        /* Remove default circular look */
+        .filepond--file-action-button {
+            background: none !important;
+            box-shadow: none !important;
+        }
 
-    /* Style remove as real button */
-    .filepond--action-remove-item {
-        position: absolute !important;
-        top: 10px !important;
-        right: 10px !important;
+        /* Style remove as real button */
+        .filepond--action-remove-item {
+            position: absolute !important;
+            top: 10px !important;
+            right: 10px !important;
 
-        width: 30px !important;
-        height: 10px !important;
+            width: 20px !important;
+            height: 3px !important;
 
-        padding: 6px 12px !important;
+            padding: 1.5px 6px !important;
 
-        background-color: #ff0004 !important;
-        color: #fff !important;
+            background-color: #ff0004 !important;
+            color: #fff !important;
 
-        border-radius: 6px !important;
-        border: none !important;
+            border-radius: 6px !important;
+            border: none !important;
 
-        font-size: 13px !important;
-        font-weight: 500 !important;
-    }
+            font-size: 13px !important;
+            font-weight: 500 !important;
+        }
 
-    /* Hide default icon */
-    .filepond--action-remove-item svg {
-        display: none !important;
-    }
+        /* Hide default icon */
+        .filepond--action-remove-item svg {
+            display: none !important;
+        }
 
-    /* Add text instead */
-    .filepond--action-remove-item::after {
-        content: "Remove";
-    }
+        /* Add text instead */
+        .filepond--action-remove-item::after {
+            content: "Remove";
+        }
 
     </style>
-
 @endpush
 
 @section('content')

@@ -4,6 +4,7 @@ use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\AuthManagerController;
+use App\Http\Controllers\CustomerController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -87,6 +88,7 @@ Route::middleware('auth')->group(function () {
             return view('admin.cusbookings');
         })->name('customer.bookings');
     
+        Route::get('/customer/setting', [CustomerController::class, 'setting'])->name('customer.setting');
     });
 
 });

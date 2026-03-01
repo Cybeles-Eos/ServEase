@@ -11,7 +11,8 @@ class ServiceTableSeeder extends Seeder
     public function run(): void
     {
         Service::create([
-            'provider_id'   => 1,
+            'provider_id'   => 2,
+            'service_id'   => 'SE-2026-PCOIL',
             'title'         => 'Residential Pipe Repair Services',
             'slug'          => Str::slug('Residential Pipe Repair Services') . '-1',
             'category'      => 'Plumber',
@@ -44,7 +45,8 @@ class ServiceTableSeeder extends Seeder
         ]);
 
         Service::create([
-            'provider_id'   => 1,
+            'provider_id'   => 2,
+            'service_id'   => 'SE-2026-PCOZK',
             'title'         => 'Home Wiring and Panel Upgrade',
             'slug'          => Str::slug('Home Wiring and Panel Upgrade') . '-2',
             'category'      => 'Electrician',
@@ -77,7 +79,8 @@ class ServiceTableSeeder extends Seeder
         ]);
 
         Service::create([
-            'provider_id'   => 1,
+            'provider_id'   => 2,
+            'service_id'   => 'SE-2026-PTHZK',
             'title'         => 'Interior and Exterior Wall Finishings',
             'slug'          => Str::slug('Interior and Exterior Wall Finishing') . '-3',
             'category'      => 'Painter',

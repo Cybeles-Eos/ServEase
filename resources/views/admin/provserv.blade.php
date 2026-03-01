@@ -26,7 +26,7 @@
             <div class="provider-stbl-main">
                 <div class="provider-stbl-main-c">
                     <div class="provider-stbl-main-c__head">
-                        <div>ID</div>
+                        <div>Service ID</div>
                         <div>Name
                         </div>
                         <div>Service Category</div>
@@ -41,7 +41,7 @@
                     @else
                         @foreach ($services as $service)
                             <div class="provider-stbl-main-c__tbody">
-                                <div class="prvstble-mctb-id">{{$service->id}}</div>
+                                <div class="prvstble-mctb-id">{{$service->service_id}}</div>
                                 <div class="prvstble-mctb-name">{{ Str::limit($service->title, 60) }}</div>
                                 <div class="prvstble-mctb-serv">{{$service->category}}</div>
                                 <div class="prvstble-mctb-slug"><a href="{{url('services/'. $service->slug)}}">{{url('services/'.$service->slug)}}</a></div>

@@ -1,6 +1,7 @@
 .customer--dash{
     width: 100%;
     // height: calc(100vh - 60px);
+    height: fit-content;
     background-color: #F5F7FA;
     padding: 10px 15px;
     padding-bottom: 25px;
@@ -10,7 +11,7 @@
 
     .cusdash-left{
         width: 400px;
-        height: 30rem;
+        // height: 30rem;
         //background-color: rgba(65, 105, 225, 0.326);
         display: flex;
         flex-direction: column;
@@ -432,7 +433,7 @@
     @media(max-width: 1280px) {
         height: fit-content !important;
     }
-    @media (min-height: 730px) {
+    @media (min-height: 837px) {
         height: 100vh;
     }
 }

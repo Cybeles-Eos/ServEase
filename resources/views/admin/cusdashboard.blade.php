@@ -12,6 +12,22 @@
 
 
         <section class="cusdash-left">
+            <div class="alert alert-danger mb-0" role="alert">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>Complete Your Account Information</strong>
+                        <ul class="mb-0 mt-2 pl-3" style="list-style: disc">
+                            <li>Full Address</li>
+                            <li>Contact Number</li>
+                            <li>Business Details</li>
+                            <li>Required Profile Information</li>
+                        </ul>
+                    </div>
+                    <i class="fa fa-exclamation-circle mt-1"></i>
+                </div>
+            </div>
+
+
             <div class="cusdash-left--total">
                 <div>
                     <p>Total Bookings</p>
@@ -61,6 +77,7 @@
 
             </div>
         </section>
+        
         <section class="cusdash-right">
             <div class="cusdash-right__head">
                 <h4>Bookings <span>(3)</span></h4>
