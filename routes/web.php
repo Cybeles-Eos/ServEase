@@ -87,6 +87,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/customer/bookings', function () {
             return view('admin.cusbookings');
         })->name('customer.bookings');
+
+        Route::post('/customer/setting/update', [CustomerController::class, 'updateSetting'])->name('customer.setting.update');
     
         Route::get('/customer/setting', [CustomerController::class, 'setting'])->name('customer.setting');
     });

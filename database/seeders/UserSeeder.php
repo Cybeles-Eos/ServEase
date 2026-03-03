@@ -62,7 +62,13 @@ class UserSeeder extends Seeder
         ]);
         $customerUser->customer()->create([
             'first_name' => 'Customer',
-            'last_name' => 'User'
+            'last_name' => 'User',
+            'phone_number' => '09123456789',
+            'street_address' => '123 Main St',
+            'profile_image' => '/uploads/customer_profiles/user.png',
+            'city' => 'Sample City',
+            'barangay' => 'Sample Barangay',
+            'zipcode' => '1807'
         ]);
     }
 }

@@ -1,6 +1,7 @@
 .customer--setting{
     width: 100%;
-    height: calc(100vh - 60px);
+    // height: calc(100vh - 60px);
+    height: fit-content;
     background-color: #F5F7FA;
     padding: 10px 15px;
     padding-top: 15px;
@@ -9,11 +10,13 @@
 
     &--main{
         width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
         // height: 26rem;
         background-color: $color-white;
         border: 1px solid #E0E2E7;
         border-radius: 2px;
-        padding: 20px;
+        padding: 25px;
         display: flex;
         gap: 1.5rem;
         // justify-content: space-between;
@@ -226,7 +229,7 @@
     // @media(max-width: 1280px) {
     //     height: fit-content !important;
     // }
-    // @media (min-height: 837px) {
-    //     height: 100vh;
-    // }
+    @media (min-height: 728px) {
+        height: calc(100vh - 60px);
+    }
 }

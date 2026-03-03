@@ -12,7 +12,7 @@
 
 
         <section class="cusdash-left">
-            <div class="alert alert-danger mb-0" role="alert">
+            {{-- <div class="alert alert-danger mb-0" role="alert">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <strong>Complete Your Account Information</strong>
@@ -25,7 +25,7 @@
                     </div>
                     <i class="fa fa-exclamation-circle mt-1"></i>
                 </div>
-            </div>
+            </div> --}}
 
 
             <div class="cusdash-left--total">
@@ -65,7 +65,7 @@
                     <p>Note: Frequent cancellations may result in penalties or account restrictions.</p>
                 </div>
             </div>
-            <hr>
+            {{-- <hr> --}}
             <div class="cusdash-left--reminders">
                 <p class="cusdash-left--reminders__title">Reminders:</p>
                 <p class="cusdash-left--reminders__label">After you book a service, the provider will be notified and may call you to confirm details.</p>

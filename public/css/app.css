@@ -100,6 +100,11 @@ h2 {
   }
 }
 
+h5 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
 .m-width {
   max-width: 1400px;
 }
@@ -4579,9 +4584,7 @@ h4 span {
 .customer--dash .cusdash-left--total {
   width: 100%;
   padding: 20px 15px;
-  border: 1px solid #E0E2E7;
-  border-radius: 6px;
-  background-color: #fff;
+  border-bottom: 1px solid #E0E2E7;
   display: flex;
   justify-content: space-between;
 }
@@ -4599,9 +4602,7 @@ h4 span {
 }
 .customer--dash .cusdash-left--canceled {
   padding: 20px 15px;
-  border: 1px solid #E0E2E7;
-  border-radius: 6px;
-  background-color: #fff;
+  border-bottom: 1px solid #E0E2E7;
 }
 .customer--dash .cusdash-left--canceled__top {
   display: flex;
@@ -4957,7 +4958,7 @@ h4 span {
 
 .customer--setting {
   width: 100%;
-  height: calc(100vh - 60px);
+  height: fit-content;
   background-color: #F5F7FA;
   padding: 10px 15px;
   padding-top: 15px;
@@ -4965,10 +4966,12 @@ h4 span {
 }
 .customer--setting--main {
   width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
   background-color: #fff;
   border: 1px solid #E0E2E7;
   border-radius: 2px;
-  padding: 20px;
+  padding: 25px;
   display: flex;
   gap: 1.5rem;
 }
@@ -5152,6 +5155,11 @@ h4 span {
 }
 .customer--setting--main .csm-right {
   width: 60%;
+}
+@media (min-height: 728px) {
+  .customer--setting {
+    height: calc(100vh - 60px);
+  }
 }
 
 /*# sourceMappingURL=app.css.map */

@@ -20,10 +20,10 @@
             width: 100%;
             // height: 100px;
             padding: 20px 15px;
-            border: 1px solid #E0E2E7;
-            border-radius: 6px;
-            background-color: $color-white;
-
+            // border: 1px solid #E0E2E7;
+            // border-radius: 6px;
+            // background-color: $color-white;
+            border-bottom: 1px solid #E0E2E7;
             display: flex;
             justify-content: space-between;
             // align-items: center;
@@ -47,9 +47,10 @@
         }
         &--canceled{
             padding: 20px 15px;
-            border: 1px solid #E0E2E7;
-            border-radius: 6px;
-            background-color: $color-white;
+            border-bottom: 1px solid #E0E2E7;
+            // border: 1px solid #E0E2E7;
+            // border-radius: 6px;
+            // background-color: $color-white;
 
             &__top{
                 display: flex;
