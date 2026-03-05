@@ -5156,6 +5156,16 @@ h4 span {
 .customer--setting--main .csm-right {
   width: 60%;
 }
+@media (max-width: 692px) {
+  .customer--setting--main {
+    flex-direction: column;
+    height: fit-content !important;
+  }
+  .customer--setting--main .csm-right,
+  .customer--setting--main .csm-left {
+    width: 100%;
+  }
+}
 @media (min-height: 728px) {
   .customer--setting {
     height: calc(100vh - 60px);

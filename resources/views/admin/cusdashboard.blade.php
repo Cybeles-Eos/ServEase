@@ -12,20 +12,38 @@
 
 
         <section class="cusdash-left">
-            {{-- <div class="alert alert-danger mb-0" role="alert">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <strong>Complete Your Account Information</strong>
-                        <ul class="mb-0 mt-2 pl-3" style="list-style: disc">
-                            <li>Full Address</li>
-                            <li>Contact Number</li>
-                            <li>Business Details</li>
-                            <li>Required Profile Information</li>
-                        </ul>
+            {{-- Account Information Needed For Customers --}}
+            @php
+                $user = auth()->user()->customer;
+            @endphp
+            @if ($user->street_address === null || $user->city === null || $user->barangay === null || $user->zipcode === null || $user->phone_number === null)
+                <div class="alert alert-danger mb-0" role="alert">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>Complete Your Account Information</strong>
+                            <ul class="mb-0 mt-2 pl-3" style="list-style: disc">
+                                @if (!$user->street_address)
+                                    <li>Street Address</li>
+                                @endif
+                                @if (!$user->city)
+                                    <li>City</li>
+                                @endif
+                                @if (!$user->barangay)
+                                    <li>Barangay</li>
+                                @endif
+                                @if (!$user->zipcode)
+                                    <li>Zip Code</li>
+                                @endif
+                                @if (!$user->phone_number)
+                                    <li>Phone Number</li>
+                                @endif
+                            </ul>
+                        </div>
+                        <i class="fa fa-exclamation-circle mt-1"></i>
                     </div>
-                    <i class="fa fa-exclamation-circle mt-1"></i>
                 </div>
-            </div> --}}
+            @endif
+
 
 
             <div class="cusdash-left--total">

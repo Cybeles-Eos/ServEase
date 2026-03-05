@@ -29,7 +29,23 @@
              </div>
         </div>
         <div class="header--dashboard__profile--img">
-            <img src="{{asset('images/user.png')}}" alt="user_profile">
+            @php
+                $user = auth()->user();
+                $fname = explode(' ', $user->customer->first_name)[0] ?? '';
+                $lname = explode(' ', $user->customer->last_name)[0] ?? '';
+                if($user->role === 'customer') {
+                    $profileImage = $user->customer->profile_image ?? null;
+                } else if ($user->role === 'provider') {
+                    $profileImage = $user->provider->profile_image ?? null;
+                }
+            @endphp
+            @if ($profileImage)
+                <img src="{{asset($profileImage)}}" alt="user_profile">
+            @else
+                <div style="background-color: #FDB932; display: block; object-position: center; object-fit: cover; border-radius: 55px; width: 40px; height: 40px;">
+                    <p style="color: white; margin: 0 !important; margin-top: 0px !important; font-size: 14px; line-height: 100%; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">{{ strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1)) }}</p>
+                </div>
+            @endif
             <button id="btn-menu">
                 <svg class="menu-icon" width="10" height="9" viewBox="0 0 5 4" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.449219 0.450195L2.44922 2.4502L4.44922 0.450195" stroke="black" stroke-width="0.9" stroke-linecap="round"/>

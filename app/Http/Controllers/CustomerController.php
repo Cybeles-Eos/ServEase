@@ -11,6 +11,7 @@ use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
+    // Index Settings
     public function setting()
     {
         $user = User::with('customer')->find(auth()->id());

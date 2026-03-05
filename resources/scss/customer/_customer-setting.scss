@@ -223,6 +223,15 @@
             // width: 600px;
             width: 60%;
         }
+        @media (max-width: 692px) {
+            flex-direction: column; 
+            height: fit-content !important;
+
+            .csm-right,
+            .csm-left{
+                width: 100%;
+            }
+        }
     }
 
 
