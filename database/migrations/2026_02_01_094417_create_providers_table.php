@@ -16,12 +16,14 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('phone_num')->nullable();
+            $table->string('profile_image')->nullable();
+            $table->string('phone_number')->nullable();
 
             // Can be normalize further in the future (temporary only)
             $table->string('home_address')->nullable();
             $table->string('province')->nullable();
-            $table->string('zip')->nullable();
+            $table->string('zipcode')->nullable();
+            $table->string('barangay')->nullable();
 
             // Can be normalize further in the future (temporary only)
             $table->string('profession')->nullable();

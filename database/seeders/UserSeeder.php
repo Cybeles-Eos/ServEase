@@ -33,8 +33,12 @@ class UserSeeder extends Seeder
         $providerUser->provider()->create([
             'first_name' => 'Provider',
             'last_name' => 'User',
-            'phone_num' => '09123456789',
+            'phone_number' => '09123456789',
             'profession' => 'Software Engineer',
+            'home_address' => 'Test Antipolo City',
+            'province' => 'Rizal',
+            'barangay' => 'Mambugan',
+            'zipcode' => '1870',
             'year_exp' => 3
         ]);
 
@@ -42,13 +46,17 @@ class UserSeeder extends Seeder
             'name' => 'Dawn Izach',
             'email' => 'dawnzach10@gmail.com',
             'role' => 'provider',
-            'password' => Hash::make('P@ssword1'),
+            'password' => Hash::make('test123'),
         ]);
         $providerUser1->provider()->create([
             'first_name' => 'Dawn',
             'last_name' => 'Izach',
-            'phone_num' => '09123456781',
+            'phone_number' => '09123456781',
             'profession' => 'Software Engineer',
+            'home_address' => 'Test Antipolo City',
+            'province' => 'Rizal',
+            'barangay' => 'Mambugan',
+            'zipcode' => '1870',
             'year_exp' => 3
         ]);
 
