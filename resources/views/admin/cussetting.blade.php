@@ -118,7 +118,7 @@
                         <input type="file" id="imageUpload" name="image" class="d-none" accept="image/*">
                     </div> --}}
                     <div class="">
-                        <label>Profile Image</label>
+                        <label>Profile Image<small>(2MB max)</small></label>
                         @push('extrastylesheets')
                             <style>
                                 #profile{

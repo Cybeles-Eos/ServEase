@@ -104,7 +104,7 @@
             </div>
             <div class="csm-right">
                 <div class="">
-                        <label>Profile Image</label>
+                        <label>Profile Image <small>(2MB max)</small></label>
                         @push('extrastylesheets')
                             <style>
                                 #profile{

@@ -102,7 +102,22 @@
                         @endauth
                         <div class="psd-sl-sdetaili-d-provider">
                             <div class="psd-sl-sdetaili-d-provider__con">
-                                <img src="{{ asset('images/user.png') }}" alt="">
+                                @php
+                                    $user = auth()->user();
+                                    if ($user->role === 'provider') {
+                                        $fname = explode(' ', $user->provider->first_name)[0] ?? '';
+                                        $lname = explode(' ', $user->provider->last_name)[0] ?? '';
+                                        $profileImage = $user->provider->profile_image ?? null;
+                                    }
+                                @endphp
+                                @if ($profileImage)
+                                    <img src="{{asset($profileImage)}}" alt="user_profile">
+                                @else
+                                    <div style="background-color: #FDB932; display: block; object-position: center; object-fit: cover; border-radius: 12px; min-width: 50px; min-height: 50px;">
+                                        <p style="color: white; margin: 0 !important; margin-top: 0px !important; font-size: 17px; letter-spacing: 3%; line-height: 100%; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">{{ strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1)) }}</p>
+                                    </div>
+                                @endif
+                                {{-- <img src="{{ asset('images/user.png') }}" alt=""> --}}
                                 <div>
                                     <h4>{{ $service->provider_name }}</h4>
                                     <p>
@@ -121,7 +136,7 @@
                         </div>
                         <div class="psd-sl-sdetaili-d-service-info">
                             <p class="psd-sl-sdetaili-d-service-info__prc">
-                                Service Price: <span>₱ 1,200.00</span>
+                                Service Price: <span>₱ {{ number_format($service->price, 2) }}</span>
                             </p>
                             <br>
                             <h4>More Details</h4>

@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
     use HasFactory;
-    
-    protected $table = 'tbl_services';
+    use SoftDeletes;
 
+    protected $table = 'tbl_services';
+    protected $dates = ['deleted_at'];
     // protected $fillable = [
     //     'provider_id',
     //     'title',
@@ -36,6 +38,7 @@ class Service extends Model
         'price',
         'image',
         'specialization',
+        'is_active',
     ];
 
     // ---------------------

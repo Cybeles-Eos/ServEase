@@ -66,6 +66,9 @@ Route::middleware('auth')->group(function () {
         // Provider Service Creation
         Route::get('/provider/service/create', [ServiceController::class, 'create'])->name('create-service');
         Route::post('/provider/service/store', [ServiceController::class, 'store'])->name('provider.service.store');
+        Route::get('/provider/service/edit/{id}', [ServiceController::class, 'edit'])->name('edit-service');
+        Route::put('/provider/service/update/{id}', [ServiceController::class, 'update'])->name('provider.service.update');
+        Route::delete('/provider/service/delete/{id}', [ServiceController::class, 'destroy'])->name('provider.service.delete');
 
         // Provider Setting
         Route::post('/provider/setting/update', [ProviderController::class, 'updateSetting'])->name('provider.setting.update');

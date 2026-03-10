@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'Login Your ServEase Account')</title>
-
-
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     {{-- Meta's --}}
     <meta property="og:title" content="ServEase | Hire Verified Local Services in Brgy. Batasan Hills" />
     <meta property="og:description" content="ServEase helps you find and hire verified local service providers in Barangay Batasan Hills. You post requests, review services, and connect with trusted workers in one secure platform." />

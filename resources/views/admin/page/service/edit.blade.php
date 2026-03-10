@@ -117,8 +117,6 @@
         .switch input:checked + .slider:before {
             transform: translateX(24px);
         }
-
-
     </style>
 @endpush
 
@@ -126,36 +124,39 @@
     @include('admin.layouts.header')
     @include('admin.layouts.sidebar')
 
-    <main class="main-dash-uix provider--create dash-sp">
-        <div class="provider--create__main">
+    <main class="main-dash-uix provider--edit dash-sp">
+        <div class="provider--edit__main">
             <div class="provserv-c-head">
-                <h4>Service Create</h4>
+                <h4>Service Edit</h4>
             </div>
             <div class="provserv-c-body">
                 <div class="provserv-c-body--fields">
-                    <form action="{{ route('provider.service.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('provider.service.update', $service->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
 
                         <div class="prg-mm-group">
                             <label>Service Name</label>
-                            <input type="text" name="title" value="{{ old('title') }}">
+                            <input type="text" name="title" value="{{ old('title', $service->title) }}">
                             @error('title') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Slug</label>
-                            <input type="text" name="slug" value="{{ old('slug') }}" required>
+                            <input type="text" name="slug" value="{{ old('slug', $service->slug) }}" required>
                             @error('slug') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Short Description</label>
-                            <textarea name="description" rows="3">{{ old('description') }}</textarea>
+                            <textarea name="description" rows="3">{{ old('description', $service->description) }}</textarea>
+                            @error('description') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Full Content</label>
-                            <textarea name="content" rows="6">{{ old('content') }}</textarea>
+                            <textarea name="content" rows="6">{{ old('content', $service->content) }}</textarea>
+                            @error('content') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
@@ -163,9 +164,9 @@
                             <div class="provserv-c-body--fields--dropdowns">
                                 <select name="category" class="provserv-c-body--fields--dropdowns--sort" id="">
                                     <option value="">-- Choose Category --</option>
-                                    <option value="Plumber">Plumber</option>
-                                    <option value="Electrician">Electrician</option>
-                                    <option value="Vendor">Vendor</option>
+                                    <option value="Plumber" {{ old('category', $service->category) == 'Plumber' ? 'selected' : '' }}>Plumber</option>
+                                    <option value="Electrician" {{ old('category', $service->category) == 'Electrician' ? 'selected' : '' }}>Electrician</option>
+                                    <option value="Vendor" {{ old('category', $service->category) == 'Vendor' ? 'selected' : '' }}>Vendor</option>
                                 </select>
                                 <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
@@ -176,21 +177,21 @@
 
                         <div class="prg-mm-group">
                             <label>Specialization</label>
-                            <input type="text" name="specialization" value="{{ old('specialization') }}">
+                            <input type="text" name="specialization" value="{{ old('specialization', $service->specialization) }}">
+                            @error('specialization') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Price</label>
-                            <input type="number" step="0.01" name="price" value="{{ old('price') }}">
+                            <input type="number" step="0.01" name="price" value="{{ old('price', $service->price) }}">
                             @error('price') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Banner Image<small>(2MB max)</small></label>
-                            <input type="file" name="image" id="serviceImage" accept="image/*" required />
+                            <input type="file" name="image" id="serviceImage" accept="image/*" />
                             @error('image') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
-
 
                         <div class="prg-mm-group">
                             <label>Is Active?</label>
@@ -198,7 +199,7 @@
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <label class="switch">
                                     <input type="hidden" name="is_active" value="0">
-                                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', 1) == 1 ? 'checked' : '' }}>
+                                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $service->is_active) == 1 ? 'checked' : '' }}>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -207,36 +208,43 @@
                                 <small style="align-self: flex-end; color: red">{{ $message }}</small>
                             @enderror
                         </div>
-
-                        <button type="submit" style="align-self: flex-end;" class="btn btn--primary">Create Service</button>
+                        
+                        <button type="submit" style="align-self: flex-end;" class="btn btn--primary">Update Service</button>
                     </form>
-
-
                 </div>
             </div>
         </div>
     </main>
     
 @endsection
+
 @push('extrascripts')
 
-    <script>
-        FilePond.registerPlugin(
-            FilePondPluginImagePreview,
-            FilePondPluginFileValidateType,
-            FilePondPluginFileValidateSize
-        );
+<script>
+    const existingImage = @json(!empty($service->image) 
+        ? asset($service->image) 
+        : null);
 
-        const pond = FilePond.create(document.querySelector('#serviceImage'), {
-            allowMultiple: false,
-            maxFiles: 1,
-            storeAsFile: true, 
-            acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
-            maxFileSize: '2MB',
-            labelIdle: '<span style="color: #53a3ed">Upload</span> or Drop your image',
-        });
+    FilePond.registerPlugin(
+        FilePondPluginImagePreview,
+        FilePondPluginFileValidateType,
+        FilePondPluginFileValidateSize
+    );
 
-        
-    </script>
+    const pond = FilePond.create(document.querySelector('#serviceImage'), {
+        allowMultiple: false,
+        maxFiles: 1,
+        storeAsFile: true,
+        acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
+        maxFileSize: '2MB',
+        labelIdle: '<span style="color: #53a3ed">Upload</span> or Drop your image',
+        files: existingImage ? [
+            {
+                source: existingImage,
+                options: { type: 'remote' }
+            }
+        ] : []
+    });
+</script>
 
 @endpush

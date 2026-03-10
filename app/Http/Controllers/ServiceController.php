@@ -17,6 +17,7 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::with('provider')
+            ->where('is_active',1)
             ->latest()
             ->get();
 
@@ -53,7 +54,8 @@ class ServiceController extends Controller
             'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
             'price'          => 'nullable|numeric',
-            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image'          => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'is_active' => 'required|in:0,1',
         ]);
 
         $provider = auth()->user()->provider;
@@ -82,6 +84,7 @@ class ServiceController extends Controller
             'specialization' => $request->specialization,
             'price'          => $request->price,
             'image'          => null,
+            'is_active'      => $request->is_active,
         ]);
 
         if ($request->hasFile('image')) {
@@ -95,6 +98,7 @@ class ServiceController extends Controller
             'type' => 'success'
         ]);
     }
+    
 
     public function uploadFile($file, $type = null, $path)
     {
@@ -138,6 +142,7 @@ class ServiceController extends Controller
             'content'           => $service->content,
             'image'          => $service->image ? asset($service->image) : asset('images/serv-bg.png'),
             'jobs'           => '0',
+            'price'           => $service->price,
             'rating'         => $service->rating,
             'reviews'        => '0',
             'specialization' => $service->specialization,
@@ -164,7 +169,8 @@ class ServiceController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $service = Service::findOrFail($id);
+        return view('admin.page.service.edit', compact('service'));
     }
 
     /**
@@ -172,7 +178,47 @@ class ServiceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $service = Service::findOrFail($id);
+
+        $request->validate([
+            'title'          => 'required|string|max:255',
+            'slug'           => 'nullable|string|max:255|unique:tbl_services,slug,' . $id,
+            'description'    => 'nullable|string',
+            'content'        => 'nullable|string',
+            'category'       => 'required|string',
+            'specialization' => 'nullable|string|max:255',
+            'price'          => 'nullable|numeric',
+            'image'          => $service->image
+                ? 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
+                : 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'is_active' => 'required|in:0,1',
+        ]);
+
+        $slug = $request->slug
+            ? \Illuminate\Support\Str::slug($request->slug)
+            : \Illuminate\Support\Str::slug($request->title);
+
+        $service->update([
+            'title'          => $request->title,
+            'slug'           => $slug,
+            'description'    => $request->description,
+            'content'        => $request->content,
+            'category'       => $request->category,
+            'specialization' => $request->specialization,
+            'price'          => $request->price,
+            'is_active'      => $request->is_active
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file_upload_path = $this->uploadFile($request->file('image'), null, 'service_images');
+            $service->update(['image' => $file_upload_path]);
+        }
+
+        return redirect()->route('provider.service')->with('flash_message', [
+            'title' => '',
+            'message' => 'Service updated successfully.',
+            'type' => 'success'
+        ]);
     }
 
     /**
@@ -180,6 +226,14 @@ class ServiceController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $service = Service::findOrFail($id);
+
+        $service->delete(); // soft delete
+
+        return redirect()->route('provider.service')->with('flash_message', [
+            'title' => '',
+            'message' => 'Service deleted successfully.',
+            'type' => 'success'
+        ]);
     }
 }
