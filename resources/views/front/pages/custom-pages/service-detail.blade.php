@@ -92,23 +92,52 @@
                         {{-- @guest
                             <button id="open-book" class="btn btn--tertiary">Book Now</button>
                         @endguest --}}
-                        @guest
+                        {{-- @guest
                             <a href="{{url('login')}}" class="btn btn--tertiary-d">Book Now</a>
                         @endguest
                         @auth
                             @if(auth()->user()->isCustomer())
-                                <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                                @php
+                                    $user = auth()->user()->customer;
+                                @endphp
+                                @if ($user->street_address === null || $user->city === null || $user->barangay === null || $user->zipcode === null || $user->phone_number === null)
+                                    <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                                ...
+                            @endif
+                        @endauth --}}
+                        @guest
+                            <a href="{{ url('login') }}" class="btn btn--tertiary-d">Book Now</a>
+                        @endguest
+
+                        @auth
+                            @if(auth()->user()->isCustomer())
+                                @php
+                                    $customer = auth()->user()->customer;
+
+                                    $hasIncompleteDetails =
+                                        !$customer ||
+                                        empty($customer->street_address) ||
+                                        empty($customer->city) ||
+                                        empty($customer->barangay) ||
+                                        empty($customer->zipcode) ||
+                                        empty($customer->phone_number);
+                                @endphp
+
+                                @if($hasIncompleteDetails)
+                                    <button type="button" id="open-book-alert" class="btn btn--tertiary">
+                                        Book Now
+                                    </button>
+                                @else
+                                    <button id="open-book" class="btn btn--tertiary">Book Now</button>
+                                @endif
                             @endif
                         @endauth
                         <div class="psd-sl-sdetaili-d-provider">
                             <div class="psd-sl-sdetaili-d-provider__con">
                                 @php
-                                    $user = auth()->user();
-                                    if ($user->role === 'provider') {
-                                        $fname = explode(' ', $user->provider->first_name)[0] ?? '';
-                                        $lname = explode(' ', $user->provider->last_name)[0] ?? '';
-                                        $profileImage = $user->provider->profile_image ?? null;
-                                    }
+                                    $fname = explode(' ', $service->provider_fname)[0] ?? '';
+                                    $lname = explode(' ', $service->provider_lname)[0] ?? '';
+                                    $profileImage = $service->provider_profile ?? null;
                                 @endphp
                                 @if ($profileImage)
                                     <img src="{{asset($profileImage)}}" alt="user_profile">
@@ -139,7 +168,7 @@
                                 Service Price: <span>₱ {{ number_format($service->price, 2) }}</span>
                             </p>
                             <br>
-                            <h4>More Details</h4>
+                            <h4>More Details {{ $service->provider_name }}</h4>
                             <ul>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -204,26 +233,48 @@
             <div class="booking-con-main">
                 <p class="booking-con-main__pre-title">{{ $service->category }}</p>
                 <h2>{{ $service->title }}</h2>
-                
+
+                @php
+                    $activeUserFname = '';
+                    $activeUserLname = '';
+                    $activeUserAddress = '';
+                    $activeUserEmail = '';
+
+                    if (auth()->check() && auth()->user()->isCustomer()) {
+                        $activeCustomer = auth()->user()->customer;
+
+                        if ($activeCustomer) {
+                            $activeUserFname = $activeCustomer->first_name ?? '';
+                            $activeUserLname = $activeCustomer->last_name ?? '';
+                            $activeUserAddress = trim(
+                                ($activeCustomer->street_address ?? '') . ', ' .
+                                ($activeCustomer->barangay ?? '') . ', ' .
+                                ($activeCustomer->city ?? ''),
+                                ', '
+                            );
+                            $activeUserEmail = $activeCustomer->user->email ?? '';
+                        }
+                    }
+                @endphp
                 <form action="" id="bookingForm">
                     <div class="sbf-field-group-con">
                         <div class="sbf-field-group">
                             <label for="fname">First Name <span>*</span></label>
-                            <input type="text" name="fname" required placeholder="Enter your first name...">
+                            <input type="text" name="fname" value="{{ $activeUserFname }}" required placeholder="Enter your first name...">
                         </div>
                         <div class="sbf-field-group">
                             <label for="lname">Last Name <span>*</span></label>
-                            <input type="text" name="lname" required placeholder="Enter your last name...">
+                            <input type="text" name="lname" value="{{ $activeUserLname }}" required placeholder="Enter your last name...">
                         </div>
                     </div>
                     <div class="sbf-field-group">
                         <label for="address">Complete Address <span>*</span></label>
-                        <input type="text" name="address" required placeholder="Enter your address...">
+                        <input type="text" name="address" value="{{ $activeUserAddress }}" required placeholder="Enter your address...">
                     </div>
                     <div class="sbf-field-group-con">
                         <div class="sbf-field-group">
                             <label for="email">Email <span>*</span></label>
-                            <input type="text" name="email" required placeholder="Enter your first name...">
+                            <input type="text" name="email" value="{{ $activeUserEmail }}" required placeholder="Enter your first name...">
                         </div>
                         <div class="sbf-field-group">
                             <label for="number">Contact Number <span>*</span></label>
@@ -278,64 +329,84 @@
 @endsection
 @push('extrascripts')
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
 
-    /* ------------------------
-       OPEN BOOKING MODAL
-    ------------------------- */
-    $('#open-book').on('click', function () {
-        $('.booking-modal').fadeIn(200);
+        /* ------------------------
+        OPEN BOOKING MODAL
+        ------------------------- */
+        $('#open-book').on('click', function () {
+            $('.booking-modal').fadeIn(200);
+        });
+
+        /* ------------------------
+        OPEN CONFIRM MODAL
+        ------------------------- */
+        $('#open-confirm').on('click', function () {
+
+            // optional: simple form validation
+            if (!$('#bookingForm')[0].checkValidity()) {
+                $('#bookingForm')[0].reportValidity();
+                return;
+            }
+
+            $('.booking-modal').hide();
+            $('.confirm-modal').fadeIn(200);
+        });
+
+        /* ------------------------
+        CONFIRM BOOKING
+        ------------------------- */
+        $('#confirm-booking').on('click', function () {
+
+            // submit form via normal POST
+            $('#bookingForm').submit();
+
+            // OR AJAX submit (optional)
+            // $.post('/booking', $('#bookingForm').serialize());
+
+        });
+
+        /* ------------------------
+        CANCEL CONFIRMATION
+        ------------------------- */
+        $('#cancel-confirm').on('click', function () {
+            $('.confirm-modal').hide();
+            $('.booking-modal').fadeIn(200);
+        });
+
+        /* ------------------------
+        CLICK OUTSIDE CLOSE
+        ------------------------- */
+        $('.booking-modal, .confirm-modal').on('click', function (e) {
+            if ($(e.target).is(this)) {
+                $(this).fadeOut(200);
+            }
+        });
+
     });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const alertButton = document.getElementById('open-book-alert');
 
-    /* ------------------------
-       OPEN CONFIRM MODAL
-    ------------------------- */
-    $('#open-confirm').on('click', function () {
-
-        // optional: simple form validation
-        if (!$('#bookingForm')[0].checkValidity()) {
-            $('#bookingForm')[0].reportValidity();
-            return;
+        if (alertButton) {
+            alertButton.addEventListener('click', function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Details',
+                    text: 'Please complete your details first before booking.',
+                    confirmButtonText: 'Go to Profile',
+                    showCancelButton: true,
+                    confirmButtonColor: '#FFBE42',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "{{ route('customer.setting') }}";
+                    }
+                });
+            });
         }
-
-        $('.booking-modal').hide();
-        $('.confirm-modal').fadeIn(200);
     });
-
-    /* ------------------------
-       CONFIRM BOOKING
-    ------------------------- */
-    $('#confirm-booking').on('click', function () {
-
-        // submit form via normal POST
-        $('#bookingForm').submit();
-
-        // OR AJAX submit (optional)
-        // $.post('/booking', $('#bookingForm').serialize());
-
-    });
-
-    /* ------------------------
-       CANCEL CONFIRMATION
-    ------------------------- */
-    $('#cancel-confirm').on('click', function () {
-        $('.confirm-modal').hide();
-        $('.booking-modal').fadeIn(200);
-    });
-
-    /* ------------------------
-       CLICK OUTSIDE CLOSE
-    ------------------------- */
-    $('.booking-modal, .confirm-modal').on('click', function (e) {
-        if ($(e.target).is(this)) {
-            $(this).fadeOut(200);
-        }
-    });
-
-});
-
-
-
-
 </script>
 @endpush

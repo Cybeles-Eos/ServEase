@@ -134,7 +134,7 @@ class AuthManagerController extends Controller
             'phone_num'    => $validated['number'],
             'home_address' => $validated['address'],
             'province'     => $validated['province'],
-            'zip'          => $validated['zipcode'],
+            'zipcode'          => $validated['zipcode'],
             'profession'   => $validated['profession'],
             'year_exp'     => $validated['experience'],
         ]);

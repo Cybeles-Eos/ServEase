@@ -18,4 +18,9 @@ class Customer extends Model
         'barangay',
         'zipcode',
     ];
+
+    public function user() 
+    { 
+        return $this->belongsTo(User::class); 
+    }
 }

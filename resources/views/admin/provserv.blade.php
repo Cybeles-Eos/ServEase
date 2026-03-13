@@ -98,6 +98,7 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, delete it',
+            confirmButtonColor: '#FFBE42',
             cancelButtonText: 'Cancel',
             reverseButtons: true
         }).then((result) => {
