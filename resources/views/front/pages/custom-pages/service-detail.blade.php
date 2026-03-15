@@ -239,6 +239,7 @@
                     $activeUserLname = '';
                     $activeUserAddress = '';
                     $activeUserEmail = '';
+                    $activeUserPhone = '';
 
                     if (auth()->check() && auth()->user()->isCustomer()) {
                         $activeCustomer = auth()->user()->customer;
@@ -253,6 +254,7 @@
                                 ', '
                             );
                             $activeUserEmail = $activeCustomer->user->email ?? '';
+                            $activeUserPhone = $activeCustomer->phone_number ?? '';
                         }
                     }
                 @endphp
@@ -278,7 +280,7 @@
                         </div>
                         <div class="sbf-field-group">
                             <label for="number">Contact Number <span>*</span></label>
-                            <input type="text" name="number" required placeholder="Enter your last name...">
+                            <input type="text" name="number" value="{{ $activeUserPhone }}" required placeholder="Enter your last name...">
                         </div>
                     </div>
                     <div class="sbf-field-group-con mb-2">

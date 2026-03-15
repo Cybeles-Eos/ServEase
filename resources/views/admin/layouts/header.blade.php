@@ -11,6 +11,13 @@
     </button>
     <div class="header--dashboard__profile">
         <div class="header--dashboard__profile--info">
+                    @php
+                        $user = auth()->user();
+                        if($user->role === 'customer') {
+                            
+                        }
+
+                    @endphp
              <div>
                 <button id="phd-inbox">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

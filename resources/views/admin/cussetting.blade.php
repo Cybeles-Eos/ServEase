@@ -141,51 +141,51 @@
 
                     <div class="cms-mm-group-con">
                         <div class="cms-mm-group">
-                            <label>First Name</label>
+                            <label>First Name <span>*</span></label>
                             <input type="text" name="first_name" value="{{ old('first_name', $user->customer->first_name ?? '') }}" required>
                             @error('first_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="cms-mm-group">
-                            <label>Last Name</label>
+                            <label>Last Name <span>*</span></label>
                             <input type="text" name="last_name" value="{{ old('last_name', $user->customer->last_name ?? '') }}" required>
                             @error('last_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
                     </div>
                     <div class="cms-mm-group">
-                        <label>Phone Number</label>
-                        <input type="number" name="phone_number" value="{{ old('phone_number', $user->customer->phone_number ?? '') }}">
+                        <label>Phone Number <span>*</span></label>
+                        <input type="number" name="phone_number" value="{{ old('phone_number', $user->customer->phone_number ?? '') }}" required>
                         @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                     <div class="cms-mm-group">
-                        <label>Your Email Address</label>
-                        <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}">
+                        <label>Your Email Address <span>*</span></label>
+                        <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
                         @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                     <br>
                     <h5>Permanent home address</h5>
                     <div class="cms-mm-group-con">
                         <div class="cms-mm-group">
-                            <label>Street Address</label>
-                            <input type="text" name="street_address" value="{{ old('street_address', $user->customer->street_address ?? '') }}">
+                            <label>Street Address <span>*</span></label>
+                            <input type="text" name="street_address" value="{{ old('street_address', $user->customer->street_address ?? '') }}" required>
                             @error('street_address') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="cms-mm-group">
-                            <label>City</label>
+                            <label>City <span>*</span></label>
                             <input type="text" name="city" value="{{ old('city', $user->customer->city ?? '') }}" required>
                             @error('city') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
                     </div>
                     <div class="cms-mm-group-con">
                         <div class="cms-mm-group">
-                            <label>Barangay</label>
-                            <input type="text" name="barangay" value="{{ old('barangay', $user->customer->barangay ?? '') }}">
+                            <label>Barangay <span>*</span></label>
+                            <input type="text" name="barangay" value="{{ old('barangay', $user->customer->barangay ?? '') }}" required>
                             @error('barangay') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="cms-mm-group">
-                            <label>Zipcode</label>
+                            <label>Zipcode <span>*</span></label>
                             <input type="text" name="zipcode" value="{{ old('zipcode', $user->customer->zipcode ?? '') }}" required>
                             @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>

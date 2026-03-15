@@ -137,24 +137,24 @@
                         @csrf
 
                         <div class="prg-mm-group">
-                            <label>Service Name</label>
-                            <input type="text" name="title" value="{{ old('title') }}">
+                            <label>Service Name <span>*</span></label>
+                            <input type="text" name="title" id="title" value="{{ old('title') }}">
                             @error('title') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
-                            <label>Slug</label>
-                            <input type="text" name="slug" value="{{ old('slug') }}" required>
+                            <label>Slug <span>*</span></label>
+                            <input type="text" name="slug" id="slug" value="{{ old('slug') }}" required>
                             @error('slug') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
-                            <label>Short Description</label>
+                            <label>Short Description <span>*</span></label>
                             <textarea name="description" rows="3">{{ old('description') }}</textarea>
                         </div>
 
                         <div class="prg-mm-group">
-                            <label>Full Content</label>
+                            <label>Full Content <span>*</span></label>
                             <textarea name="content" rows="6">{{ old('content') }}</textarea>
                         </div>
 
@@ -181,7 +181,7 @@
 
                         <div class="prg-mm-group">
                             <label>Price</label>
-                            <input type="number" step="0.01" name="price" value="{{ old('price') }}">
+                            <input type="number" step="0.01" min="0" max="100000" name="price" value="{{ old('price') }}">
                             @error('price') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
@@ -237,6 +237,36 @@
         });
 
         
+    </script>
+
+    <script>
+        (function() {
+            var titleInput = document.getElementById('title');
+            var slugInput = document.getElementById('slug');
+
+            if (!titleInput || !slugInput) {
+                return;
+            }
+
+            var slugTouched = slugInput.value.trim() !== '';
+
+            function slugify(text) {
+                return text.toString().toLowerCase().trim()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-');
+            }
+
+            slugInput.addEventListener('input', function() {
+                slugTouched = slugInput.value.trim() !== '';
+            });
+
+            titleInput.addEventListener('input', function() {
+                if (!slugTouched || slugInput.value.trim() === '') {
+                    slugInput.value = slugify(titleInput.value);
+                }
+            });
+        })();
     </script>
 
 @endpush

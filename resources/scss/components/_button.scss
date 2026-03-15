@@ -44,11 +44,10 @@
         background-color: $color-primary;
         border-color: $color-primary;
         color: $color-white;
-        &:hover, 
-        &:active {
-            background-color: $color-primary;
+        &:hover{
+            background-color: $color-primary !important;
             border-color: $color-primary !important;
-            color: $color-white;
+            color: $color-white !important;
         }
     }
     &--tertiary-d{

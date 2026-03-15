@@ -9,16 +9,30 @@
     @include('admin.layouts.sidebar')
 
     <main class="main-dash-uix provider--service dash-sp">
-        <a href="{{route('create-service')}}" class="provider--service__btn">
-            <div>
-                Add New Service
-            </div>
-            <div>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.5 10H10V17.5H7.5V10H0V7.5H7.5V0H10V7.5H17.5V10Z" fill="black"/>
-                </svg>
-            </div>
-        </a>
+        @php
+
+            $activeProvider = auth()->user()->provider;
+
+        @endphp
+        @if (empty($activeProvider->profile_image))
+            <button class="">Clear</button>
+        @else
+            <a href="{{route('create-service')}}" class="provider--service__btn">
+                <div>
+                    Add New Service
+                </div>
+                <div>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.5 10H10V17.5H7.5V10H0V7.5H7.5V0H10V7.5H17.5V10Z" fill="black"/>
+                    </svg>
+                </div>
+            </a>
+        @endif
+
+
+
+
+
         <section class="provider--service__table">
             <h4>Services</h4>
             <p class="provider--service__table--label">Service creation is limited to 5. Please manage or remove existing services before adding new ones.</p>

@@ -53,7 +53,7 @@ class ServiceController extends Controller
             'content'        => 'nullable|string',
             'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
-            'price'          => 'nullable|numeric',
+            'price'          => 'required|numeric|max:30000',
             'image'          => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'is_active' => 'required|in:0,1',
         ]);

@@ -7,10 +7,6 @@
 @section('content')
     <main class="main-page page--home">
         <section class="section--hero m-padding">
-            {{-- <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">logoout</button>
-            </form> --}}
             <h1>Find reliable local experts fast with our smart service hub</h1>
             <p>A smart platform that connects people who need help with locals who can get the job done anytime.</p>
 
@@ -27,7 +23,22 @@
             
 
         </section>
-        <section class="section--about">
+        <section class="section--about m-width m-padding">  
+            <div class="section--about__img">
+                <img src="{{asset('images/abt-2.png')}}" alt="about-img">
+            </div>
+            <div class="section--about__detail">
+                <p class="section--about__detail--pret">Why Choose Brgy BATAsan for local services</p>
+                <h2>Trusted Local Services for Any Problem You Face</h2>
+                <p>
+                    We’re a trusted local services platform connecting customers with skilled and verified providers through a seamless, secure, and dependable booking experience designed for everyday convenience.
+                    <br><br>
+                    Servease bridges customers and providers using smart technology, ensuring efficient service, clear communication, full transparency, and peace of mind from booking to job completion.
+                </p>
+                <a href="{{url('/services')}}" class="btn btn--tertiary">Explore Services</a>
+            </div>
+        </section>
+        {{-- <section class="section--about">
             <div class="section-about-main m-width m-padding">
                 <div class="section-about-main__badge"><span></span> About</div>
                 <div class="sec-abtm-main">
@@ -57,15 +68,15 @@
                 </div>
                 <img src="{{asset('images/vector.svg')}}" alt="vector" loading="lazy" decoding="async">
             </div>
-        </section>
+        </section> --}}
         <section class="section--req">
             <div class="section--req--main m-width m-padding">
                 <div class="sec-rm-left">   
                     <h2>Grow and Scale Your Service Business by Joining Servease Today</h2>
                     <p class="sec-rm-left__p">Join a trusted local services platform designed to help providers attract more clients, manage bookings efficiently, and grow their income. With our seamless system and expanding customer base, you can focus on delivering quality service while we handle the rest.</p>
                     <div class="btn-space">
-                        <a href="" class="btn btn--primary">Become A Provider</a>
-                        <a href="" class="btn btn--transparent">Bok Services</a>
+                        <a href="{{url('/provider-signup')}}" class="btn btn--tertiary">Become A Provider</a>
+                        <a href="{{url('/services')}}" class="btn btn--transparent">Book Services</a>
                     </div>
                     <div class="glb-testimonial">
                         <svg width="27" height="20" viewBox="0 0 30 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,34 +102,98 @@
             <p class="section--services__p">Get quick, reliable help from verified Filipino professionals anytime you need repairs, cleaning, installations, or daily support.</p>
             <div class="section--services__box">
                 <div class="section-ser-bb">
-                    <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
-                    <h3>Home Repairs</h3>
-                    <p>Fix leaks, wiring issues, broken fixtures, and other home concerns with skilled professionals you can trust. Our reliable workers provide fast and efficient repair services anytime you need help.</p>
+                    <div>
+                        <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
+                        <h3>Home Repairs</h3>
+                        <p>Fix leaks, wiring issues, broken fixtures, and other home concerns with skilled professionals you can trust. Our reliable workers provide fast and efficient repair services anytime you need help.</p>
+                    </div>
                     <br>
-                    <a href="#">Explore Service</a>
+                    <a href="{{url('/services')}}">Explore Service</a>
                 </div>
                 <div class="section-ser-bb">
-                    <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
-                    <h3>Home Repairs</h3>
-                    <p>Fix leaks, wiring issues, broken fixtures, and other home concerns with skilled professionals you can trust. Our reliable workers provide fast and efficient repair services anytime you need help.</p>
+                    <div>
+                        <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
+                        <h3>Cleaning Services</h3>
+                        <p>Keep your home or office spotless with trained cleaners who deliver deep cleaning, general upkeep, and routine maintenance. Enjoy a fresh and hygienic space with service you can rely on.</p>
+                    </div>
                     <br>
-                    <a href="#">Explore Service</a>
+                    <a href="{{url('/services')}}">Explore Service</a>
                 </div>
                 <div class="section-ser-bb">
-                    <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
-                    <h3>Home Repairs</h3>
-                    <p>Fix leaks, wiring issues, broken fixtures, and other home concerns with skilled professionals you can trust. Our reliable workers provide fast and efficient repair services anytime you need help.</p>
+                    <div>
+                        <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
+                        <h3>Appliance Services</h3>
+                        <p>From aircon inspections to full appliance repairs, our experts ensure everything functions safely and smoothly. Get dependable installation and repair services for all your household devices.</p>
+                    </div>
                     <br>
-                    <a href="#">Explore Service</a>
+                    <a href="{{url('/services')}}">Explore Service</a>
                 </div>
                 <div class="section-ser-bb">
-                    <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
-                    <h3>Home Repairs</h3>
-                    <p>Fix leaks, wiring issues, broken fixtures, and other home concerns with skilled professionals you can trust. Our reliable workers provide fast and efficient repair services anytime you need help.</p>
+                    <div>
+                        <img src="{{asset('images/sys-vec.svg')}}" alt="icon">
+                        <h3>Personal Help</h3>
+                        <p>For daily tasks, simple errands, or small jobs at home, find dependable helpers ready to assist. Enjoy quick, convenient, and stress-free support from trusted local service providers.</p>
+                    </div>
                     <br>
-                    <a href="#">Explore Service</a>
+                    <a href="{{url('/services')}}">Explore Service</a>
                 </div>
             </div>
+        </section>
+        <section class="section--guide m-padding">
+            <div class="section--guide__head">
+                <h2>Fast Guide to Booking Services in Community</h2>
+                <p> Makes it simple to find trusted local professionals for plumbing, aircon repair, electrical work, and more. Just browse services, book a provider, and pay face to face when they arrive fast, reliable, and hassle free.</p>
+            </div>
+            <div class="section--guide__guide">
+
+                <div class="section--guide__guide--box">
+                    <img src="{{asset('images/guide-icon-1.svg')}}" alt="icon-guide">
+                    <div>
+                        <h3>Create Your Account</h3>
+                        <p>Sign up using your email or mobile number. Complete your profile to make booking services easier and faster.</p>
+                    </div>
+                </div>
+                <div class="section--guide__guide--box">
+                    <img src="{{asset('images/guide-icon-1.svg')}}" alt="icon-guide">
+                    <div>
+                        <h3>Book a Service</h3>
+                        <p>Select the service you need, choose a professional, and schedule a time that works for you. Your service is confirmed once booked.</p>
+                    </div>
+                </div>
+                <div class="section--guide__guide--box">
+                    <img src="{{asset('images/guide-icon-1.svg')}}" alt="icon-guide">
+                    <div>
+                        <h3>Browse Local Services</h3>
+                        <p>Explore a wide range of trusted local services like plumbing, aircon repair, electrical work, and more—all available in your area.</p>
+                    </div>
+                </div>
+                <div class="section--guide__guide--box">
+                    <img src="{{asset('images/guide-icon-1.svg')}}" alt="icon-guide">
+                    <div>
+                        <h3>Rate and Review</h3>
+                        <p>After the service is completed, leave a rating and review to help others choose trusted local professionals.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <section class="section--closing m-width m-padding">
+            <div class="section--closing__img">
+                <img src="{{asset('images/closing-1.png')}}" alt="closing-img">
+            </div>
+            <div class="section--closing__detail">
+                <h2>Your Trusted Partner for Local Services</h2>
+                <p>
+                    Find reliable Filipino professionals for any task—big or small. From plumbing and electrical work to cleaning and maintenance, we make it easy to book the right expert. 
+                    <br><br>
+                    We verify every service provider to ensure quality, safety, and a smooth experience. Convenience is just one click away.
+                </p>
+                <div class="btn-space">
+                    <a href="{{url('/provider-signup')}}" class="btn btn--tertiary">Become A Provider</a>
+                    <a href="{{url('/services')}}" class="btn btn--transparent">Book Services</a>
+                </div>
+            </div>
+
         </section>
 
 
@@ -133,8 +208,7 @@
 
 
 
-
-        <section style="width: 100%; height: 100vh"></section>
+        {{-- <section style="width: 100%; height: 100vh"></section> --}}
         @include('front.layouts.sections.cta')
     </main>
 @endsection

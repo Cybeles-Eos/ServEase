@@ -104,7 +104,7 @@
             </div>
             <div class="csm-right">
                 <div class="">
-                        <label>Profile Image <small>(2MB max)</small></label>
+                        <label>Profile Image <span>*</span> <small>(2MB max)</small></label>
                         @push('extrastylesheets')
                             <style>
                                 #profile{
@@ -121,57 +121,57 @@
                             </style>
                         @endpush
                         <input type="hidden" name="remove_profile_image" id="remove_profile_image" value="0">
-                        <input type="file" name="profile_image" id="profile" accept="image/*"/>
+                        <input type="file" name="profile_image" id="profile" accept="image/*" required/>
                         @error('profile_image') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div>
 
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
-                        <label>First Name</label>
+                        <label>First Name <span>*</span></label>
                         <input type="text" name="first_name" value="{{ old('first_name', $user->provider->first_name ?? '') }}" required>
                         @error('first_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
 
                     <div class="cms-mm-group">
-                        <label>Last Name</label>
+                        <label>Last Name <span>*</span></label>
                         <input type="text" name="last_name" value="{{ old('last_name', $user->provider->last_name ?? '') }}" required>
                         @error('last_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                 </div>
                 <div class="cms-mm-group">
-                    <label>Phone Number</label>
-                    <input type="number" name="phone_number" value="{{ old('phone_number', $user->provider->phone_number ?? '') }}">
+                    <label>Phone Number <span>*</span></label>
+                    <input type="number" name="phone_number" value="{{ old('phone_number', $user->provider->phone_number ?? '') }}" required>
                     @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div>
                 <div class="cms-mm-group">
-                    <label>Your Email Address</label>
-                    <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}">
+                    <label>Your Email Address <span>*</span></label>
+                    <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
                     @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div>
                 <br>
                 <h5>Personal Home Address</h5>
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
-                        <label>Home Address</label>
+                        <label>Home Address <span>*</span></label>
                         <input type="text" name="home_address" value="{{ old('home_address', $user->provider->home_address ?? '') }}">
                         @error('home_address') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
 
                     <div class="cms-mm-group">
-                        <label>Province</label>
+                        <label>Province <span>*</span></label>
                         <input type="text" name="province" value="{{ old('province', $user->provider->province ?? '') }}" required>
                         @error('province') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                 </div>
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
-                        <label>Barangay</label>
-                        <input type="text" name="barangay" value="{{ old('barangay', $user->provider->barangay ?? '') }}">
+                        <label>Barangay <span>*</span></label>
+                        <input type="text" name="barangay" value="{{ old('barangay', $user->provider->barangay ?? '') }}" required>
                         @error('barangay') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
 
                     <div class="cms-mm-group">
-                        <label>Zipcode</label>
+                        <label>Zipcode <span>*</span></label>
                         <input type="text" name="zipcode" value="{{ old('zipcode', $user->provider->zipcode ?? '') }}" required>
                         @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>

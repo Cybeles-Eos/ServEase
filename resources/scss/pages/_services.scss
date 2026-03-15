@@ -175,6 +175,9 @@
                         display: none;
                     }
                 }
+                @media (max-width: 492px) {
+                    width: 100%; 
+                }
             }   
             .ps-sl-cards{
                 width: 100%;
@@ -249,10 +252,10 @@
                             h3{
                                 line-height: 100%;
                                 margin-bottom: 5px;
-                                // display: -webkit-box;
-                                // -webkit-line-clamp: 2;   /* number of lines */
-                                // -webkit-box-orient: vertical;
-                                // overflow: hidden;
+                                display: -webkit-box;
+                                -webkit-line-clamp: 1;   /* number of lines */
+                                -webkit-box-orient: vertical;
+                                overflow: hidden;
                                 font-size: 20px !important;
                             }
                             &--label{
