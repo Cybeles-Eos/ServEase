@@ -439,12 +439,12 @@
 
             $('.ps-sl-category__count h4')
                 .text(`${data.length} Services Available`);
-
+            let assetBase = "{{ asset('') }}";
             $.each(visibleData, function (_, service) {
                 $wrap.append(`
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="${service.image}" alt="">
+                            <img src="${assetBase}${service.image ?? 'images/default_service_banner.png'}" alt="${service.title}">
                             <span class="ps-sl-c-box__head--cat">${service.category}</span>
                         </div>
 

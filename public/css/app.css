@@ -2407,7 +2407,7 @@ h4 span {
 @media (max-width: 992px) {
   .page--services .section--list .ps-sl-category__cat {
     position: absolute;
-    top: 18rem;
+    top: 14.5rem;
     right: 2rem;
     width: 300px;
     background-color: #fff !important;

@@ -188,7 +188,7 @@
                         </div>
 
                         <div class="prg-mm-group">
-                            <label>Banner Image<small>(2MB max)</small></label>
+                            <label>Banner Image<small>(5MB max)</small></label>
                             <input type="file" name="image" id="serviceImage" accept="image/*" />
                             @error('image') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
@@ -236,7 +236,7 @@
         maxFiles: 1,
         storeAsFile: true,
         acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
-        maxFileSize: '2MB',
+        maxFileSize: '5MB',
         labelIdle: '<span style="color: #53a3ed">Upload</span> or Drop your image',
         files: existingImage ? [
             {

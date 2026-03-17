@@ -54,7 +54,7 @@ class ServiceController extends Controller
             'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
             'price'          => 'required|numeric|max:30000',
-            'image'          => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image'          => 'image|mimes:jpg,jpeg,png,webp|max:5048',
             'is_active' => 'required|in:0,1',
         ]);
 
@@ -194,7 +194,7 @@ class ServiceController extends Controller
             'price'          => 'nullable|numeric',
             'image'          => $service->image
                 ? 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
-                : 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+                : 'image|mimes:jpg,jpeg,png,webp|max:5048',
             'is_active' => 'required|in:0,1',
         ]);
 
