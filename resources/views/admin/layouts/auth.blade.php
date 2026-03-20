@@ -65,12 +65,18 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <style>
+        .ck-editor__editable {
+            min-height: 300px !important; /* For CK */
+        }
+    </style>
 </head>
 <body>
     {{-- @include('admin.layouts.header')
     @include('admin.layouts.sidebar') --}}
     @yield('content')
 
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     @stack('extrascripts')
     <script>
         $(document).ready(function () {
@@ -92,5 +98,7 @@
             });
         </script>
     @endif
+    
+
 </body>
 </html>

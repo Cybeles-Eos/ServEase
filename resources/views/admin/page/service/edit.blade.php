@@ -155,7 +155,7 @@
 
                         <div class="prg-mm-group">
                             <label>Full Content</label>
-                            <textarea name="content" rows="6">{{ old('content', $service->content) }}</textarea>
+                            <textarea name="content" id="content" rows="20">{{ old('content', $service->content) }}</textarea>
                             @error('content') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
@@ -219,7 +219,18 @@
 @endsection
 
 @push('extrascripts')
-
+<script>
+    ClassicEditor
+        .create(document.querySelector('#content'), {
+            height: '400px' // 👈 adjust this
+        })
+        .then(editor => {
+            console.log('CKEditor loaded');
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
 <script>
     const existingImage = @json(!empty($service->image) 
         ? asset($service->image) 

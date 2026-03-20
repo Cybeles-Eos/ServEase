@@ -64,6 +64,14 @@ class ServiceController extends Controller
             return back()->with('error', 'Only providers can create services.');
         }
 
+        if ($provider->service()->count() >= 5) {
+            return back()->with('flash_message', [
+                'title' => 'Limit Reached',
+                'message' => 'Service limit reached. You can only create up to 5 services.',
+                'type' => 'error'
+            ]);
+        }
+
         $slug = $request->slug
             ? Str::slug($request->slug)
             : Str::slug($request->title) . '-' . uniqid();
@@ -140,7 +148,7 @@ class ServiceController extends Controller
             'category'       => $service->category,
             'description'    => $service->description,
             'content'           => $service->content,
-            'image'          => $service->image ? asset($service->image) : asset('images/serv-bg.png'),
+            'image'          => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
             'jobs'           => '0',
             'price'           => $service->price,
             'rating'         => $service->rating,

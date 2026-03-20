@@ -51,7 +51,7 @@
             </div>
             <div class="psd-sl-sdetail">
                 <div class="psd-sl-sdetail__img">
-                    <img src="{{ asset($service->image ?? 'images/service-detail-img.png') }}"  alt="image-detail">
+                    <img src="{{ asset($service->image ?? 'images/default_service_banner.png') }}"  alt="image-detail">
                 </div>
                 <div class="psd-sl-sdetail__info">
                     <div class="psd-sl-sdetaili-description">

@@ -155,8 +155,9 @@
 
                         <div class="prg-mm-group">
                             <label>Full Content <span>*</span></label>
-                            <textarea name="content" rows="6">{{ old('content') }}</textarea>
+                            <textarea name="content" id="content" rows="20"></textarea>
                         </div>
+
 
                         <div class="prg-mm-group">
                             <label for="lname">Service Category</label>
@@ -219,7 +220,18 @@
     
 @endsection
 @push('extrascripts')
-
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#content'), {
+                height: '400px' // 👈 adjust this
+            })
+            .then(editor => {
+                console.log('CKEditor loaded');
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
     <script>
         FilePond.registerPlugin(
             FilePondPluginImagePreview,
