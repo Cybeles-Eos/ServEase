@@ -6,6 +6,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\AuthManagerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\BookingInfoController;
+use App\Http\Controllers\BookingRequestController;
 
 
 Route::get('/', function () {
@@ -60,7 +62,11 @@ Route::middleware('auth')->group(function () {
 
         Route::redirect('/provider', '/provider/dashboard');
         Route::get('/provider/dashboard', function () {return view('admin.provdashboard');})->name('provider.dashboard');
-        Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
+        
+        // Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
+        Route::get('/provider/bookings', [BookingRequestController::class, 'providerRequests'])->name('provider.bookings');
+        
+        
         Route::get('/provider/service', [ServiceController::class, 'indexProvider'])->name('provider.service');
 
         // Provider Service Creation
@@ -86,6 +92,9 @@ Route::middleware('auth')->group(function () {
         // Customer Setting
         Route::post('/customer/setting/update', [CustomerController::class, 'updateSetting'])->name('customer.setting.update');
         Route::get('/customer/setting', [CustomerController::class, 'setting'])->name('customer.setting');
+
+        Route::post('/customer/book', [BookingInfoController::class, 'store'])->name('customer.book');
+           
     });
 
 });

@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="{{ asset('css/slick-theme.css') }}">
     <link rel="stylesheet" href="{{ asset('css/aos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
     @stack('extrastylesheets')
 
     {{-- Scripts --}}
@@ -54,7 +55,7 @@
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
+    {{-- CDN Links --}}
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
 
@@ -65,11 +66,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <style>
-        .ck-editor__editable {
-            min-height: 300px !important; /* For CK */
-        }
-    </style>
 </head>
 <body>
     {{-- @include('admin.layouts.header')
@@ -87,7 +83,6 @@
             });
         });
     </script>
-    
     @if(session('flash_message'))
         <script>
             Swal.fire({
@@ -98,7 +93,6 @@
             });
         </script>
     @endif
-    
 
 </body>
 </html>

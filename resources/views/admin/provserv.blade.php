@@ -15,7 +15,14 @@
 
         @endphp
         @if (empty($activeProvider->profile_image))
-            <button class="">Clear</button>
+            <div style="background: #fff3cd;color: #856404;border: 1px solid #ffeeba;padding: 15px;border-radius: 8px;margin-bottom: 15px;display: flex;justify-content: space-between;align-items: flex-start;flex-wrap: wrap;row-gap: 10px;">
+                <div>
+                    <strong>⚠️ Profile Setup Required</strong>
+                    <p style="margin: 5px 0 0px;">Your profile is incomplete. Please upload a profile image to continue creating service.</p>
+                </div>
+
+                <a href="{{url('/provider/setting')}}" style="display: inline-block;background: #F37B32;color: #fff;padding: 5px 10px;border-radius: 5px;font-size: 14px;text-decoration: none;">Upload Profile</a>
+            </div>
         @else
             <a href="{{route('create-service')}}" class="provider--service__btn">
                 <div>
@@ -29,13 +36,9 @@
             </a>
         @endif
 
-
-
-
-
         <section class="provider--service__table">
             <h4>Services</h4>
-            <p class="provider--service__table--label">Service creation is limited to 5. Please manage or remove existing services before adding new ones.</p>
+            <p class="provider--service__table--label">Service creation is limited to 5.</p>
             
             <div class="provider-stbl-main">
                 <div class="provider-stbl-main-c">

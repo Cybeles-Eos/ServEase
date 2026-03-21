@@ -258,7 +258,8 @@
                         }
                     }
                 @endphp
-                <form action="" id="bookingForm">
+                <form action="{{ route('customer.book') }}" method="POST" id="bookingForm">
+                    @csrf
                     <div class="sbf-field-group-con">
                         <div class="sbf-field-group">
                             <label for="fname">First Name <span>*</span></label>
@@ -293,6 +294,7 @@
                             <input type="time" required name="time" id="time">
                         </div>
                     </div>
+                    <input type="number" name="service_id" value="{{$service->id}}" hidden>
                     @guest
                         <a href="{{url('login')}}" class="glb-btn-a">Send Book Request</a>
                     @endguest
@@ -330,6 +332,7 @@
 
 @endsection
 @push('extrascripts')
+{{-- For Booking Modal --}}
 <script>
     $(document).ready(function () {
 
@@ -387,6 +390,7 @@
 
     });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

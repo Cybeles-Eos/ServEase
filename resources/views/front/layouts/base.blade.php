@@ -44,6 +44,7 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('extrastylesheets')
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     @include('front.layouts.sections.header')
@@ -139,5 +140,15 @@
     {{-- <script src="{{ asset('js/popper.min.js') }}"></script> --}}
     <script src="{{ asset('js/main.js') }}"></script>
     @stack('extrascripts')
+    @if(session('flash_message'))
+        <script>
+            Swal.fire({
+                icon: '{{ session("flash_message.type") }}',
+                title: '{{ session("flash_message.title") }}',
+                text: '{{ session("flash_message.message") }}',
+                confirmButtonColor: '#FDB932'
+            });
+        </script>
+    @endif
 </body>
 </html>

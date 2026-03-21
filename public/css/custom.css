@@ -1,0 +1,33 @@
+.ck-content ul,
+.editor-content ul,
+.service-content ul {
+    list-style: disc !important;
+    padding-left: 20px !important;
+    margin-left: 0 !important;
+}
+
+.ck-content ol,
+.editor-content ol,
+.service-content ol {
+    list-style: decimal !important;
+    padding-left: 20px !important;
+}
+
+.ck-content li,
+.editor-content li,
+.service-content li {
+    display: list-item !important;
+}
+
+
+.ck-editor__editable {
+    min-height: 300px !important; /* For CK */
+}
+
+
+
+
+
+
+
+

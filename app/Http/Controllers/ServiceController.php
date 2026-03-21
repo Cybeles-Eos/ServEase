@@ -161,6 +161,7 @@ class ServiceController extends Controller
                                     ? $service->provider->first_name . ' ' . $service->provider->last_name
                                     : 'Unknown Provider',
 
+            'provider_id' => $service->provider->id,
             'provider_fname' => $service->provider->first_name,
             'provider_lname' => $service->provider->last_name,
             'provider_profile' => $service->provider->profile_image,

@@ -223,7 +223,7 @@
     <script>
         ClassicEditor
             .create(document.querySelector('#content'), {
-                height: '400px' // 👈 adjust this
+                // height: '400px' 
             })
             .then(editor => {
                 console.log('CKEditor loaded');
