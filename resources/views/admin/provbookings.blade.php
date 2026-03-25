@@ -18,7 +18,126 @@
             <h3>Pending Site Bookings</h3>
             <p>Review and manage your booking request</p>
         </div>
-        <div class="provider--bookings__filters">
+
+        <div class="provider--bookings--main-d">
+            <div class="pb-md-left">
+                <div class="pb-md-left__head">
+                    <h3>Scheduled Bookings</h3>
+                    <p>Accepted <span style="color: #A6A6A6">(<span>3</span>)</span></p>
+                </div>
+
+                <div class="pb-md-left__accepted-body">
+                    <div class="pb-md-left__accepted-body--main">
+                        <div class="boxss-sd">
+                            
+                            <div class="boxss-sd-bking">
+                                <img src="{{asset('images/user.png')}}" class="boxss-sd-bking__pfp" alt="profile-image">
+                                <div class="boxss-sd-bking__pfp-d">
+                                    <p class="boxss-sd-bking__pfp-d__name">Spenzer Corporalli</p>
+                                    <a href="#" class="boxss-sd-bking__pfp-d__num">09125240151</a>
+                                    <a href="#" class="boxss-sd-bking__pfp-d__email">spen@gmail.com</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="boxss-sd-bking-info">
+                                <div>
+                                    <p class="boxss-sd-bking-label">Plumbing</p>
+                                    <p class="boxss-sd-bking-info-serv-title"> {{ \Illuminate\Support\Str::limit('Water Heater Expert', 20, '...') }}</p>
+                                </div>
+                                <div>
+                                    <p class="boxss-sd-bking-label">Date: <span class="">Dec 10, 2025</span></p>
+                                    <p class="boxss-sd-bking-label">Water Heater Expert</p>
+                                </div>
+                                <div>
+                                    <p class="boxss-sd-bking-info-serv-head">Address:</p>
+                                    <p class="boxss-sd-bking-label">21, 4th St Virginia summerville Mambugan Antipolo City</p>
+                                </div>
+                            </div>
+
+                            <div class="boxss-sd-bking-foo">
+                                <p>Fixed Rate: <span>₱1,200.00</span></p>
+                                <button class="btn-sm btn-danger" style="border-radius: 5px">Cancel</button>
+                            </div>
+
+                        </div>
+                        <div class="boxss-sd">
+                            
+                            <div class="boxss-sd-bking">
+                                <img src="{{asset('images/user.png')}}" class="boxss-sd-bking__pfp" alt="profile-image">
+                                <div class="boxss-sd-bking__pfp-d">
+                                    <p class="boxss-sd-bking__pfp-d__name">Spenzer Corporalli</p>
+                                    <a href="#" class="boxss-sd-bking__pfp-d__num">09125240151</a>
+                                    <a href="#" class="boxss-sd-bking__pfp-d__email">spen@gmail.com</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="boxss-sd-bking-info">
+                                <div>
+                                    <p class="boxss-sd-bking-label">Plumbing</p>
+                                    <p class="boxss-sd-bking-info-serv-title"> {{ \Illuminate\Support\Str::limit('Water Heater Expert', 20, '...') }}</p>
+                                </div>
+                                <div>
+                                    <p class="boxss-sd-bking-label">Date: <span class="">Dec 10, 2025</span></p>
+                                    <p class="boxss-sd-bking-label">Water Heater Expert</p>
+                                </div>
+                                <div>
+                                    <p class="boxss-sd-bking-info-serv-head">Address:</p>
+                                    <p class="boxss-sd-bking-label">21, 4th St Virginia summerville Mambugan Antipolo City</p>
+                                </div>
+                            </div>
+
+                            <div class="boxss-sd-bking-foo">
+                                <p>Fixed Rate: <span>₱1,200.00</span></p>
+                                <button class="btn-sm btn-danger" style="border-radius: 5px">Cancel</button>
+                            </div>
+
+                        </div>
+                        <div class="boxss-sd">
+                            
+                            <div class="boxss-sd-bking">
+                                <img src="{{asset('images/user.png')}}" class="boxss-sd-bking__pfp" alt="profile-image">
+                                <div class="boxss-sd-bking__pfp-d">
+                                    <p class="boxss-sd-bking__pfp-d__name">Spenzer Corporalli</p>
+                                    <a href="#" class="boxss-sd-bking__pfp-d__num">09125240151</a>
+                                    <a href="#" class="boxss-sd-bking__pfp-d__email">spen@gmail.com</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="boxss-sd-bking-info">
+                                <div>
+                                    <p class="boxss-sd-bking-label">Plumbing</p>
+                                    <p class="boxss-sd-bking-info-serv-title"> {{ \Illuminate\Support\Str::limit('Water Heater Expert', 20, '...') }}</p>
+                                </div>
+                                <div>
+                                    <p class="boxss-sd-bking-label">Date: <span class="">Dec 10, 2025</span></p>
+                                    <p class="boxss-sd-bking-label">Water Heater Expert</p>
+                                </div>
+                                <div>
+                                    <p class="boxss-sd-bking-info-serv-head">Address:</p>
+                                    <p class="boxss-sd-bking-label">21, 4th St Virginia summerville Mambugan Antipolo City</p>
+                                </div>
+                            </div>
+
+                            <div class="boxss-sd-bking-foo">
+                                <p>Fixed Rate: <span>₱1,200.00</span></p>
+                                <button class="btn-sm btn-danger" style="border-radius: 5px">Cancel</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                
+                <div class="pb-md-left__head-req">
+                    {{-- s --}}
+                </div>
+
+                <h3>Scheduled Bookings</h3>
+                
+            </div>
+
+        </div>
+        {{-- <div class="provider--bookings__filters">
             <div class="provider--bookings__filters--search-bar">
                 <input type="text" placeholder="Search by customer name or service...">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -136,11 +255,13 @@
                     </div>
 
                 </div>
+
+      
             </div>
             <script>
                 console.log(@json($bookRequests));
             </script>
-        </div>
+        </div> --}}
         
     </main>     
 
