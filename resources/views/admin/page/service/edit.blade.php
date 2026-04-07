@@ -187,7 +187,7 @@
                             @error('price') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
-                        <div class="prg-mm-group">
+                        <div class="prg-mm-group banner-img-crtedt--glb">
                             <label>Banner Image<small>(5MB max)</small></label>
                             <input type="file" name="image" id="serviceImage" accept="image/*" />
                             @error('image') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
@@ -222,7 +222,13 @@
 <script>
     ClassicEditor
         .create(document.querySelector('#content'), {
-            // height: '400px' 
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', 'link', '|',
+                'bulletedList', 'numberedList', '|',
+                'blockQuote', 'insertTable', '|',
+                'undo', 'redo'
+            ]
         })
         .then(editor => {
             console.log('CKEditor loaded');

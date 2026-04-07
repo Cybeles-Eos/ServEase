@@ -20,7 +20,6 @@
                     </ul>
                 </div>
             </div>
-            
 
         </section>
         <section class="section--about m-width m-padding">  
@@ -38,37 +37,6 @@
                 <a href="{{url('/services')}}" class="btn btn--tertiary">Explore Services</a>
             </div>
         </section>
-        {{-- <section class="section--about">
-            <div class="section-about-main m-width m-padding">
-                <div class="section-about-main__badge"><span></span> About</div>
-                <div class="sec-abtm-main">
-                    <h2>Connecting You with Verified Local Providers Through a Seamless Booking Experience</h2>
-                    <div class="sec-abtm-main__con">
-                        <p>We’re a trusted local services platform connecting customers with skilled and verified providers through a seamless, secure, and dependable booking experience designed for everyday convenience.</p>
-                        <p>Servease bridges customers and providers using smart technology, ensuring efficient service, clear communication, full transparency, and peace of mind from booking to job completion.</p>
-                    </div>
-                    <div class="sec-abtm-main__bsc">
-                        <div class="abt-h-box">
-                            <h2>500+</h2>
-                            <p>SUCCESSFUL BOOKINGS COMPLETED NATIONWIDE</p>
-                        </div>
-                        <div class="abt-h-box">
-                            <h2>98%</h2>
-                            <p>OVERALL CUSTOMER SATISFACTION RATE</p>
-                        </div>
-                        <div class="abt-h-box">
-                            <h2>₱100k+</h2>
-                            <p>TOTAL SERVICE VALUE TRANSACTED</p>
-                        </div>
-                        <div class="abt-h-box">
-                            <h2>15+</h2>
-                            <p>ACTIVE SERVICE CATEGORIES AVAILABLE</p>
-                        </div>
-                    </div>
-                </div>
-                <img src="{{asset('images/vector.svg')}}" alt="vector" loading="lazy" decoding="async">
-            </div>
-        </section> --}}
         <section class="section--req">
             <div class="section--req--main m-width m-padding">
                 <div class="sec-rm-left">   
@@ -196,147 +164,146 @@
 
         </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
         {{-- <section style="width: 100%; height: 100vh"></section> --}}
         @include('front.layouts.sections.cta')
     </main>
 @endsection
+
+@php
+    $servicesJson = services()->map(function ($service) {
+        return [
+            'title' => $service->title,
+            'slug' => $service->slug,
+            'category' => $service->category,
+        ];
+    })->values()->toJson();
+@endphp
+
 @push('extrascripts')
-    <script>
-        $(document).ready(function () {
+<script>
+    $(document).ready(function () {
+        const services = {!! $servicesJson !!};
 
-            const services = [
-                'Plumber - Residential Pipe Repair Services',
-                'Plumber - Emergency Leak and Drain Repair',
-                'Electrician - Home Wiring and Panel Upgrade',
-                'Electrician - Lighting Installation and Repair',
-                'Painter - Interior and Exterior Wall Finishing',
-                'Painter - Residential Repainting Services',
-                'Carpenter - Custom Furniture and Wood Repair',
-                'Carpenter - Door Cabinet and Shelf Installation',
-                'Aircon - Installation Maintenance and Repair',
-                'Aircon - Residential Cooling System Services',
-                'Cleaner - Deep House Cleaning and Sanitizing',
-                'Cleaner - Move In and Move Out Cleaning',
-                'Technician - Appliance Diagnostics and Repair',
-                'Technician - Home Device Maintenance Services',
-                'Gardener - Lawn Care and Landscape Maintenance',
-                'Gardener - Outdoor Planting and Trimming',
-                'Mechanic - Vehicle Repair and Maintenance',
-                'Mechanic - Engine Check and Tune Up',
-                'Pest Control - Termite and Insect Treatment',
-                'Pest Control - Home Protection Services'
-            ];
+        let selectedService = null;
 
-            let selectedService = '';
+        const $input = $('#serviceSearch');
+        const $listBox = $('.sh-inp-lists');
+        const $list = $('#serviceList');
+        const $notFound = $('.serv-not-found');
+        const $btn = $('#view');
 
-            const $input = $('#serviceSearch');
-            const $listBox = $('.sh-inp-lists');
-            const $list = $('#serviceList');
-            const $notFound = $('.serv-not-found');
-            const $btn = $('#view');
+        function renderServices(items) {
+            $list.find('li').remove();
 
-            // Filter services on typing
-            $input.on('keyup', function () {
-                const keyword = $(this).val().toLowerCase().trim();
-                if ($(this).val().trim().length === 0) {
-                    $btn.text('Search');
-                }
-                
-                selectedService = ''; // reset selection
-                //$btn.prop('disabled', true);
-                $list.find('li').remove();
-
-                if (!keyword) {
-                    $listBox.hide();
-                    return;
-                }   
-
-                const matches = services.filter(service =>
-                    service.toLowerCase().includes(keyword)
-                );
-
-                if (matches.length) {
-                    $notFound.hide();
-
-                    matches.forEach(service => {
-                        $list.append(`
-                            <li>
-                                <a href="#" data-service="${service}">
-                                    ${service}
-                                </a>
-                            </li>
-                        `);
-                    });
-
-                } else {
-                    $notFound.show();
-                }
-
+            if (!items.length) {
+                $notFound.show();
                 $listBox.show();
+                return;
+            }
+
+            $notFound.hide();
+
+            items.forEach(service => {
+                $list.append(`
+                    <li>
+                        <a href="/services/${service.slug}"
+                           data-title="${service.title}"
+                           data-slug="${service.slug}"
+                           data-category="${service.category}">
+                            ${service.category} - ${service.title}
+                        </a>
+                    </li>
+                `);
             });
 
-            // Click service → fill input
-            $(document).on('click', '.sh-inp-lists a', function (e) {
-                e.preventDefault();
+            $listBox.show();
+        }
 
-                selectedService = $(this).data('service');
-                $input.val(selectedService);
-                $listBox.hide();
+        // Show all services when input is focused or clicked
+        $input.on('focus click', function () {
+            const keyword = $(this).val().toLowerCase().trim();
 
-                $btn.prop('disabled', false);
-                $btn.text('Get Started');
-            });
+            if (!keyword) {
+                renderServices(services);
+                return;
+            }
 
-            // Search button → redirect
-            $('#view').on('click', function () {
-                const inputValue = $input.val().trim();
+            const matches = services.filter(service =>
+                `${service.category} - ${service.title}`.toLowerCase().includes(keyword) ||
+                service.title.toLowerCase().includes(keyword) ||
+                service.category.toLowerCase().includes(keyword)
+            );
 
-                if (!inputValue) return;
-
-                // normalize input for comparison
-                const normalizedInput = inputValue.toLowerCase();
-
-                // check if input exists in services
-                const matchedService = services.find(service =>
-                    service.toLowerCase() === normalizedInput
-                );
-
-                if (matchedService) {
-                    // service exists → service detail
-                    const slug = matchedService
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/(^-|-$)/g, '');
-
-                    // window.location.href = `/services/${slug}`;
-                    // window.location.href = `/services/${slug}`;
-                    window.location.href = `/service-detail`;
-
-                } else {
-                    // service does NOT exist → contact page
-                    window.location.href = `/contact`;
-                }
-            });
-
-            // Hide dropdown when clicking outside
-            $(document).on('click', function (e) {
-                if (!$(e.target).closest('.section--hero__inp').length) {
-                    $listBox.hide();
-                }
-            });
-
+            renderServices(matches);
         });
-    </script>
+
+        // Filter services while typing
+        $input.on('keyup', function () {
+            const keyword = $(this).val().toLowerCase().trim();
+
+            selectedService = null;
+            $btn.text('Search');
+
+            if (!keyword) {
+                renderServices(services);
+                return;
+            }
+
+            const matches = services.filter(service =>
+                `${service.category} - ${service.title}`.toLowerCase().includes(keyword) ||
+                service.title.toLowerCase().includes(keyword) ||
+                service.category.toLowerCase().includes(keyword)
+            );
+
+            renderServices(matches);
+        });
+
+        // Select service from dropdown
+        $(document).on('click', '.sh-inp-lists a', function (e) {
+            e.preventDefault();
+
+            selectedService = {
+                title: $(this).data('title'),
+                slug: $(this).data('slug'),
+                category: $(this).data('category')
+            };
+
+            $input.val(`${selectedService.category} - ${selectedService.title}`);
+            $listBox.hide();
+            $btn.text('Get Started');
+        });
+
+        // Search button action
+        $btn.on('click', function () {
+            const inputValue = $input.val().trim();
+
+            if (!inputValue) return;
+
+            if (selectedService) {
+                window.location.href = `/services/${selectedService.slug}`;
+                return;
+            }
+
+            const normalizedInput = inputValue.toLowerCase();
+
+            const matchedService = services.find(service =>
+                `${service.category} - ${service.title}`.toLowerCase() === normalizedInput ||
+                service.title.toLowerCase() === normalizedInput
+            );
+
+            if (matchedService) {
+                window.location.href = `/services/${matchedService.slug}`;
+            } else {
+                window.location.href = `/contact`;
+            }
+        });
+
+        // Hide dropdown when clicking outside
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.section--hero__inp').length) {
+                $listBox.hide();
+            }
+        });
+    });
+</script>
 @endpush

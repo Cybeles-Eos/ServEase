@@ -175,9 +175,15 @@
                         width: 60%;
                         // background-color: aqua;
                         // height: 10rem;
-
-                        p,h3,h2{
+                        min-width: 0;
+                        p{
                             margin: 0;
+                        }
+
+                        h1,h2,h3,h4,h5{
+                            font-size: 25px !important;
+                            font-weight: 600;
+                            margin-bottom: 10px;
                         }
                         ul{
                             padding-left: 1.05rem;
@@ -275,10 +281,37 @@
                                 display: flex;
                             }
                         }
+
+
+                        figure.table {
+                            display: block;
+                            max-width: 100%;
+                            margin: 16px 0;
+                            overflow-x: auto;
+                            overflow-y: hidden;
+                            -webkit-overflow-scrolling: touch;
+                        }
+                        figure.table table {
+                            border-collapse: collapse;
+                            width: max-content;
+                            min-width: 100%;
+                        }
+                        figure.table th,
+                        figure.table td {
+                            border: 1px solid #ddd;
+                            padding: 10px 12px;
+                            text-align: left;
+                            vertical-align: top;
+                            white-space: nowrap;
+                        }
+                        figure.table th {
+                            background: #f8f8f8;
+                            font-weight: 600;
+                        }
                     }
                     .psd-sl-sdetaili-details{
                         width: 30%;
-                        
+                        flex-shrink: 0;
                         button{
                             width: 100%;
                             color: $color-dark !important;
@@ -405,14 +438,14 @@
                     &__img { height: 450px; }
                 }
                 @media (max-width: 1280px) {
-                    &__info{
-                        .psd-sl-sdetaili-description{
-                            width: 70%;
-                        }
-                        .psd-sl-sdetaili-details{
-                            width: 270px;
-                        }
-                    }
+                    // &__info{
+                    //     .psd-sl-sdetaili-description{
+                    //         width: 70%;
+                    //     }
+                    //     .psd-sl-sdetaili-details{
+                    //         width: 270px;
+                    //     }
+                    // }
                     
                 }
 

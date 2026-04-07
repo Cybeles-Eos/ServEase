@@ -132,10 +132,133 @@
                     {{-- s --}}
                 </div>
 
-                <h3>Scheduled Bookings</h3>
+                <div class="pb-md-left__table-c">
+                    <h3>Booking Request</h3> 
+
+                    <div class="pb-md-left-tblc-main">
+                        <div class="pb-md-left-tblc-main-c">
+                            <div class="pb-md-left-tblc-main-c__head">
+                                <div style="justify-content: center">ID</div>
+                                <div>Name</div>
+                                <div>Service</div>
+                                <div>Date & Time</div>
+                                <div>Actions</div>
+                            </div>
+
+                            <div class="pb-md-left-tblc-main-c__tbody">
+                                <div class="pb-md-left-tblc-main-id" style="justify-content: center">#R123</div>
+                                <div class="pb-md-left-tblc-main-name">
+                                    <p>Spenzer Corporalli</p>
+                                    <small>21, 4th St Virginia summerville Mambugan Antipolo City</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-serv">
+                                    <small>Plumber</small>
+                                    <p>{{ \Illuminate\Support\Str::limit('Water Heater Expert...', 40) }}</p>
+                                    <small>₱1,200.00</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-date">
+                                    <p style="font-size: 14px">Dec 10, 2025</p>
+                                    <small>1: 25 PM</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-act">
+                                    <a href="#" class="pb-md-left-tblc-main-act__actp">
+                                        <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2.64423 4.3875L6.88173 0.15C6.98173 0.0500001 7.0984 0 7.23173 0C7.36507 0 7.48173 0.0500001 7.58173 0.15C7.68173 0.25 7.73173 0.368833 7.73173 0.5065C7.73173 0.644167 7.68173 0.762834 7.58173 0.8625L2.99423 5.4625C2.89423 5.5625 2.77756 5.6125 2.64423 5.6125C2.5109 5.6125 2.39423 5.5625 2.29423 5.4625L0.144231 3.3125C0.0442308 3.2125 -0.00376923 3.09383 0.000230769 2.9565C0.00423077 2.81917 0.0563973 2.70033 0.156731 2.6C0.257064 2.49967 0.375898 2.44967 0.513231 2.45C0.650564 2.45033 0.769231 2.50033 0.869231 2.6L2.64423 4.3875Z" fill="white"/>
+                                        </svg>
+                                        Accept
+                                    </a>
+                                    <a href="#" class="pb-md-left-tblc-main-act__remove">
+                                        <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.5 5.743L3.1215 3.1215L5.743 5.743M5.743 0.5L3.121 3.1215L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Decline
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                            <div class="pb-md-left-tblc-main-c__tbody">
+                                <div class="pb-md-left-tblc-main-id" style="justify-content: center">#R123</div>
+                                <div class="pb-md-left-tblc-main-name">
+                                    <p>Spenzer Corporalli</p>
+                                    <small>21, 4th St Virginia summerville Mambugan Antipolo City</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-serv">
+                                    <small>Plumber</small>
+                                    <p>{{ \Illuminate\Support\Str::limit('Water Heater Expert...', 40) }}</p>
+                                    <small>₱1,200.00</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-date">
+                                    <p style="font-size: 14px">Dec 10, 2025</p>
+                                    <small>1: 25 PM</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-act">
+                                    <a href="#" class="pb-md-left-tblc-main-act__actp">
+                                        <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2.64423 4.3875L6.88173 0.15C6.98173 0.0500001 7.0984 0 7.23173 0C7.36507 0 7.48173 0.0500001 7.58173 0.15C7.68173 0.25 7.73173 0.368833 7.73173 0.5065C7.73173 0.644167 7.68173 0.762834 7.58173 0.8625L2.99423 5.4625C2.89423 5.5625 2.77756 5.6125 2.64423 5.6125C2.5109 5.6125 2.39423 5.5625 2.29423 5.4625L0.144231 3.3125C0.0442308 3.2125 -0.00376923 3.09383 0.000230769 2.9565C0.00423077 2.81917 0.0563973 2.70033 0.156731 2.6C0.257064 2.49967 0.375898 2.44967 0.513231 2.45C0.650564 2.45033 0.769231 2.50033 0.869231 2.6L2.64423 4.3875Z" fill="white"/>
+                                        </svg>
+                                        Accept
+                                    </a>
+                                    <a href="#" class="pb-md-left-tblc-main-act__remove">
+                                        <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.5 5.743L3.1215 3.1215L5.743 5.743M5.743 0.5L3.121 3.1215L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Decline
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                            <div class="pb-md-left-tblc-main-c__tbody">
+                                <div class="pb-md-left-tblc-main-id" style="justify-content: center">#R123</div>
+                                <div class="pb-md-left-tblc-main-name">
+                                    <p>Spenzer Corporalli</p>
+                                    <small>21, 4th St Virginia summerville Mambugan Antipolo City</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-serv">
+                                    <small>Plumber</small>
+                                    <p>{{ \Illuminate\Support\Str::limit('Water Heater Expert...', 40) }}</p>
+                                    <small>₱1,200.00</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-date">
+                                    <p style="font-size: 14px">Dec 10, 2025</p>
+                                    <small>1: 25 PM</small>
+                                </div>
+                                <div class="pb-md-left-tblc-main-act">
+                                    <a href="#" class="pb-md-left-tblc-main-act__actp">
+                                        <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2.64423 4.3875L6.88173 0.15C6.98173 0.0500001 7.0984 0 7.23173 0C7.36507 0 7.48173 0.0500001 7.58173 0.15C7.68173 0.25 7.73173 0.368833 7.73173 0.5065C7.73173 0.644167 7.68173 0.762834 7.58173 0.8625L2.99423 5.4625C2.89423 5.5625 2.77756 5.6125 2.64423 5.6125C2.5109 5.6125 2.39423 5.5625 2.29423 5.4625L0.144231 3.3125C0.0442308 3.2125 -0.00376923 3.09383 0.000230769 2.9565C0.00423077 2.81917 0.0563973 2.70033 0.156731 2.6C0.257064 2.49967 0.375898 2.44967 0.513231 2.45C0.650564 2.45033 0.769231 2.50033 0.869231 2.6L2.64423 4.3875Z" fill="white"/>
+                                        </svg>
+                                        Accept
+                                    </a>
+                                    <a href="#" class="pb-md-left-tblc-main-act__remove">
+                                        <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.5 5.743L3.1215 3.1215L5.743 5.743M5.743 0.5L3.121 3.1215L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Decline
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
             </div>
+            <div class="pb-md-right">
+                <div class="pb-md-right-active">
+                    <div class="pb-md-right-active__head">
+                        <h3>Todays Ongoing Book </h3>
+                    </div>
+                    <div class="pb-md-right-active__body">
+                        <h3>Reminders:</h3>
+                         
+                    </div>
+                </div>
 
+
+
+
+                
+            </div>
         </div>
         {{-- <div class="provider--bookings__filters">
             <div class="provider--bookings__filters--search-bar">

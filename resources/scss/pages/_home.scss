@@ -7,11 +7,11 @@
             width: 100%;
             height: 38rem;
             padding-block: 90px;
-            padding-top: 122px;
+            padding-top: 140px;
 
             background-position: center;
             background-size: cover;
-            background-image: url('../images/hero-background.png');
+            background-image: url('../images/new-hero-background.png');
             // background-attachment: fixed;
 
             display: flex;
@@ -22,14 +22,14 @@
             h1{
                 text-align: center;
                 max-width: 850px;
-
+                color: #fff;
                 @media(max-width: 992px) {
                     max-width: 660px;
                 }
             }
             p{
                 text-align: center;
-
+                color: #fff;
                 @media(max-width: 992px) {
                     max-width: 560px;
                 }
@@ -147,6 +147,7 @@
             }
             @media (max-width: 392px) {
                 height: 45rem;
+                padding-top: 190px;
             }
         }
         &--about{
