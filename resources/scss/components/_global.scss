@@ -78,13 +78,15 @@ h5{
         padding-left: 65px !important;
     }
 }
-
+.dashboard-bg-un-ds{
+    background-color: #F5F7FA;
+}
 .sidebar-dashboard{
     width: 200px;
     height: 100%;
 
     background-color: #202020;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     transition: 300ms ease;

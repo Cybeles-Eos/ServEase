@@ -1,7 +1,7 @@
 .provider--dashboard{
     width: 100%;
     // height: calc(100vh - 60px);
-    background-color: #F5F7FA;
+    // background-color: #F5F7FA;
     padding: 10px 15px;
     padding-bottom: 25px;
 
@@ -463,10 +463,10 @@
             grid-template-columns: 1fr;
         }
     }
-    @media (max-width: 992px) {
-        height: fit-content !important;
-    }
-    @media (min-height: 993px) {
-        height: 100vh;
-    }
+    // @media (max-width: 992px) {
+    //     height: fit-content !important;
+    // }
+    // @media (min-height: 993px) {
+    //     height: 100vh;
+    // }
 }

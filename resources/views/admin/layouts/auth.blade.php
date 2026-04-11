@@ -67,9 +67,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
-<body>
+<body class="dashboard-bg-un-ds">
     {{-- @include('admin.layouts.header')
     @include('admin.layouts.sidebar') --}}
+    @if (!Request::is('login', 'signup', 'provider-signup'))
+        @include('admin.layouts.sidebar')
+    @endif
     @yield('content')
 
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>

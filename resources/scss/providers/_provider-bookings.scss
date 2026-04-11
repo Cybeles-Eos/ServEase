@@ -4,7 +4,8 @@ $fitcont: fit-content;
     width: 100%;
     // height: calc(100vh - 60px);
     height: $fitcont;
-    background-color: #F5F7FA;
+    // background-color: #F5F7FA;
+    // background-color: #0088FF;
     padding: 10px 15px;
     padding-bottom: 25px;
 
@@ -604,6 +605,6 @@ $fitcont: fit-content;
     // }
 
     @media (min-height: 660px) {
-        height: 100vh;
+        // height: 100vh;
     }
 }

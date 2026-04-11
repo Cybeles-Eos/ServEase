@@ -6,7 +6,7 @@
 {{-- Page Content --}}
 @section('content')
     @include('admin.layouts.header')
-    @include('admin.layouts.sidebar')
+    
 
     <main class="main-dash-uix provider--bookings dash-sp">
         {{-- <div class="provider--bookings__head">

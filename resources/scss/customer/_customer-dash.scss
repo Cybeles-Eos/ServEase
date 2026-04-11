@@ -2,7 +2,6 @@
     width: 100%;
     // height: calc(100vh - 60px);
     height: fit-content;
-    background-color: #F5F7FA;
     padding: 10px 15px;
     padding-bottom: 25px;
     padding-top: 25px;
@@ -431,10 +430,10 @@
     }
 
 
-    @media(max-width: 1280px) {
-        height: fit-content !important;
-    }
-    @media (min-height: 837px) {
-        height: 100vh;
-    }
+    // @media(max-width: 1280px) {
+    //     height: fit-content !important;
+    // }
+    // @media (min-height: 837px) {
+    //     height: 100vh;
+    // }
 }

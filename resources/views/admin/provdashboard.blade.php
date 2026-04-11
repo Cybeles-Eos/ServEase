@@ -6,7 +6,7 @@
 
 @section('content')
     @include('admin.layouts.header')
-    @include('admin.layouts.sidebar')
+    {{-- @include('admin.layouts.sidebar') --}}
 
     <main class="main-dash-uix provider--dashboard dash-sp">
         <div class="provider--dashboard__head">

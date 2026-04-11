@@ -154,11 +154,15 @@ h5 {
   }
 }
 
+.dashboard-bg-un-ds {
+  background-color: #F5F7FA;
+}
+
 .sidebar-dashboard {
   width: 200px;
   height: 100%;
   background-color: #202020;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   transition: 300ms ease;
@@ -3985,7 +3989,6 @@ h4 span {
 
 .provider--dashboard {
   width: 100%;
-  background-color: #F5F7FA;
   padding: 10px 15px;
   padding-bottom: 25px;
 }
@@ -4408,21 +4411,10 @@ h4 span {
     grid-template-columns: 1fr;
   }
 }
-@media (max-width: 992px) {
-  .provider--dashboard {
-    height: fit-content !important;
-  }
-}
-@media (min-height: 993px) {
-  .provider--dashboard {
-    height: 100vh;
-  }
-}
 
 .provider--bookings {
   width: 100%;
   height: fit-content;
-  background-color: #F5F7FA;
   padding: 10px 15px;
   padding-bottom: 25px;
 }
@@ -4733,12 +4725,6 @@ h4 span {
   padding: 18px;
   padding-bottom: 15px;
 }
-@media (min-height: 660px) {
-  .provider--bookings {
-    height: 100vh;
-  }
-}
-
 p {
   font-size: 15px;
   font-weight: 400;
@@ -4805,7 +4791,6 @@ h4 span {
 
 .provider--service {
   width: 100%;
-  height: calc(100vh - 60px);
   background-color: #F5F7FA;
   padding: 10px 15px;
   padding-top: 15px;
@@ -5167,11 +5152,6 @@ h4 span {
     width: 100%;
   }
 }
-@media (min-height: 728px) {
-  .provider--setting {
-    height: calc(100vh - 60px);
-  }
-}
 
 .customer--bookings {
   width: 100%;
@@ -5184,7 +5164,6 @@ h4 span {
 .customer--dash {
   width: 100%;
   height: fit-content;
-  background-color: #F5F7FA;
   padding: 10px 15px;
   padding-bottom: 25px;
   padding-top: 25px;
@@ -5561,16 +5540,6 @@ h4 span {
     height: fit-content;
   }
 }
-@media (max-width: 1280px) {
-  .customer--dash {
-    height: fit-content !important;
-  }
-}
-@media (min-height: 837px) {
-  .customer--dash {
-    height: 100vh;
-  }
-}
 
 .customer--setting {
   width: 100%;
@@ -5780,11 +5749,6 @@ h4 span {
   .customer--setting--main .csm-right,
   .customer--setting--main .csm-left {
     width: 100%;
-  }
-}
-@media (min-height: 728px) {
-  .customer--setting {
-    height: calc(100vh - 60px);
   }
 }
 
