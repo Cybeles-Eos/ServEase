@@ -38,7 +38,7 @@ $fitcont: fit-content;
             border-radius: 8px;
             border: 1px solid #E0E2E7;
             // padding: 15px;
-
+            height: fit-content;
             
 
             &__head{
@@ -127,7 +127,7 @@ $fitcont: fit-content;
                     .boxss-sd-bking-info{
                         display: grid;
                         grid-template-columns: 1fr 1fr;
-                        gap: 10px;
+                        gap: 25px;
                         row-gap: 10px;
 
                         div{
@@ -210,7 +210,7 @@ $fitcont: fit-content;
                             // height: 40px;
                             border-bottom: 1px solid #E0E2E7;
                             display: grid;
-                            grid-template-columns: 70px 1fr 1fr 17% 15%;
+                            grid-template-columns: 50px 1fr 1fr 17% 15%;
 
                             div{
                                 height: 40px;
@@ -233,7 +233,7 @@ $fitcont: fit-content;
                             // height: 40px;
                             border-bottom: 1px solid #E0E2E7;
                             display: grid;
-                            grid-template-columns: 70px 1fr 1fr 17% 15%;
+                            grid-template-columns: 50px 1fr 1fr 17% 15%;
 
                             div{
                                 height: 100%;
@@ -282,6 +282,9 @@ $fitcont: fit-content;
                                 word-break: break-all;
                             }
                             .pb-md-left-tblc-main-act{
+                                // display: flex;
+                                // flex-wrap: wrap;
+                                // flex-direction: row;
                                 gap: 4px;
                                 a{
                                     width: fit-content;

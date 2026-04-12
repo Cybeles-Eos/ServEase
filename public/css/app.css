@@ -4445,6 +4445,7 @@ h4 span {
   background-color: #fff;
   border-radius: 8px;
   border: 1px solid #E0E2E7;
+  height: fit-content;
 }
 .provider--bookings--main-d .pb-md-left__head {
   display: flex;
@@ -4520,7 +4521,7 @@ h4 span {
 .provider--bookings--main-d .pb-md-left__accepted-body .boxss-sd .boxss-sd-bking-info {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 25px;
   row-gap: 10px;
 }
 .provider--bookings--main-d .pb-md-left__accepted-body .boxss-sd .boxss-sd-bking-info div p {
@@ -4588,7 +4589,7 @@ h4 span {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   display: grid;
-  grid-template-columns: 70px 1fr 1fr 17% 15%;
+  grid-template-columns: 50px 1fr 1fr 17% 15%;
 }
 .provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__head div {
   height: 40px;
@@ -4608,7 +4609,7 @@ h4 span {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   display: grid;
-  grid-template-columns: 70px 1fr 1fr 17% 15%;
+  grid-template-columns: 50px 1fr 1fr 17% 15%;
 }
 .provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody div {
   height: 100%;
