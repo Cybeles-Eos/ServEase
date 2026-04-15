@@ -14,7 +14,6 @@ class BookingInfoController extends Controller
     public function store(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            // 'service_id' => ['required', 'exists:tbl_services,id'],
             'fname' => ['required', 'max:255'],
             'lname' => ['required', 'max:255'],
             'address' => ['nullable'],
@@ -53,13 +52,13 @@ class BookingInfoController extends Controller
             'number' => $request->number,
             'date' => $request->date,
             'time' => $request->time,
-            'status' => 'pending',
+            'status' => 'PENDING',
         ]);
 
         BookingRequest::create([
             'booking_info_id' => $bookingInfo->id,
             'provider_id' => $serviceOwner->provider_id,
-            'status' => 'pending',
+            'status' => 'PENDING',
             'responded_at' => null,
         ]);
 
@@ -70,26 +69,5 @@ class BookingInfoController extends Controller
         ]);
     }
 
-    // public function show($id)
-    // {
-    //     $bookingInfo = BookingInfo::with(['service.provider', 'customer', 'bookingRequest'])->findOrFail($id);
 
-    //     return view('booking-info.show', compact('bookingInfo'));
-    // }
-
-    // public function customerBookings()
-    // {
-    //     $customer = auth()->user()->customer ?? null;
-
-    //     if (!$customer) {
-    //         abort(403);
-    //     }
-
-    //     $bookingInfos = BookingInfo::with(['service.provider', 'bookingRequest'])
-    //         ->where('customer_id', $customer->id)
-    //         ->latest()
-    //         ->get();
-
-    //     return view('booking-info.customer-bookings', compact('bookingInfos'));
-    // }
 }

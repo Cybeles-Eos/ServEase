@@ -79,6 +79,12 @@ Route::middleware('auth')->group(function () {
         // Provider Setting
         Route::post('/provider/setting/update', [ProviderController::class, 'updateSetting'])->name('provider.setting.update');
         Route::get('/provider/setting', [ProviderController::class, 'setting'])->name('provider.setting');
+
+        // Provider Booking Actions
+        Route::post('/provider/booking-request/{id}/accept', [BookingRequestController::class, 'accept'])->name('provider.booking-request.accept');
+        Route::post('/provider/booking-request/{id}/decline', [BookingRequestController::class, 'decline'])->name('provider.booking-request.decline');
+        Route::post('/provider/booking-request/{id}/cancel', [BookingRequestController::class, 'cancel'])->name('provider.booking-request.cancel');
+        Route::post('/provider/booking-request/{id}/complete', [BookingRequestController::class, 'markComplete'])->name('provider.booking-request.complete');
         
     });
 

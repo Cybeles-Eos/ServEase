@@ -4648,7 +4648,7 @@ h4 span {
 .provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act {
   gap: 4px;
 }
-.provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act a {
+.provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act a, .provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act button {
   width: fit-content;
   height: 22px;
   border-radius: 4px;
@@ -4658,8 +4658,9 @@ h4 span {
   padding: 0px 5px;
   padding-right: 7px;
   text-decoration: none;
+  outline: none;
 }
-.provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act a svg {
+.provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act a svg, .provider--bookings--main-d .pb-md-left__table-c .pb-md-left-tblc-main .pb-md-left-tblc-main-c__tbody .pb-md-left-tblc-main-act button svg {
   width: 11px;
   height: 10px;
   margin-right: 5px;
@@ -4892,7 +4893,7 @@ h4 span {
 }
 .provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__det {
   display: flex;
-  gap: 15px;
+  gap: 25px;
   border-bottom: 1px solid #E0E2E7;
   padding-bottom: 10px;
   position: relative;

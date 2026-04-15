@@ -32,7 +32,7 @@
                             if ($providerId) {
                                 $scheduleRequests = $bookRequests
                                     ->where('provider_id', $providerId)
-                                    ->where('status', 'schedule');
+                                    ->where('status', 'ACCEPTED');
                             }
                         @endphp
                         @forelse($scheduleRequests as $request)
@@ -63,7 +63,12 @@
                                 </div>
                                 <div class="boxss-sd-bking-foo">
                                     <p>Fixed Rate: <span>₱{{ number_format($request->bookingInfo->service['price'], 2) }}</span></p>
-                                    <button class="btn-sm btn-danger" style="border-radius: 5px">Cancel</button>
+                                    <form action="{{ route('provider.booking-request.cancel', $request->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn-sm btn-danger" style="border-radius: 5px">
+                                            Cancel
+                                        </button>
+                                    </form>
                                 </div>
 
                             </div>
@@ -119,7 +124,7 @@
                                 if ($providerId) {
                                     $pendingRequests = $bookRequests
                                         ->where('provider_id', $providerId)
-                                        ->where('status', 'pending');
+                                        ->where('status', 'PENDING');
                                 }
                             @endphp
                             @forelse($pendingRequests as $request)
@@ -138,7 +143,7 @@
                                         <p style="font-size: 14px">{{ \Carbon\Carbon::parse($request->bookingInfo['date'] ?? null)->format('M d, Y') }}</p>
                                         <small>{{ $request->bookingInfo['time'] ? \Carbon\Carbon::parse($request->bookingInfo['time'])->format('g:i A') : '' }}</small>
                                     </div>
-                                    <div class="pb-md-left-tblc-main-act">
+                                    {{-- <div class="pb-md-left-tblc-main-act">
                                         <a href="#" class="pb-md-left-tblc-main-act__actp">
                                             <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M2.64423 4.3875L6.88173 0.15C6.98173 0.0500001 7.0984 0 7.23173 0C7.36507 0 7.48173 0.0500001 7.58173 0.15C7.68173 0.25 7.73173 0.368833 7.73173 0.5065C7.73173 0.644167 7.68173 0.762834 7.58173 0.8625L2.99423 5.4625C2.89423 5.5625 2.77756 5.6125 2.64423 5.6125C2.5109 5.6125 2.39423 5.5625 2.29423 5.4625L0.144231 3.3125C0.0442308 3.2125 -0.00376923 3.09383 0.000230769 2.9565C0.00423077 2.81917 0.0563973 2.70033 0.156731 2.6C0.257064 2.49967 0.375898 2.44967 0.513231 2.45C0.650564 2.45033 0.769231 2.50033 0.869231 2.6L2.64423 4.3875Z" fill="white"/>
@@ -152,6 +157,27 @@
                                             Decline
                                         </a>
                                         
+                                    </div> --}}
+                                    <div class="pb-md-left-tblc-main-act" style="display:flex; gap:8px; align-items:center;">
+                                        <form action="{{ route('provider.booking-request.accept', $request->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="pb-md-left-tblc-main-act__actp" style="border:none;">
+                                                <svg width="8" height="6" viewBox="0 0 8 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M2.64423 4.3875L6.88173 0.15C6.98173 0.0500001 7.0984 0 7.23173 0C7.36507 0 7.48173 0.0500001 7.58173 0.15C7.68173 0.25 7.73173 0.368833 7.73173 0.5065C7.73173 0.644167 7.68173 0.762834 7.58173 0.8625L2.99423 5.4625C2.89423 5.5625 2.77756 5.6125 2.64423 5.6125C2.5109 5.6125 2.39423 5.5625 2.29423 5.4625L0.144231 3.3125C0.0442308 3.2125 -0.00376923 3.09383 0.000230769 2.9565C0.00423077 2.81917 0.0563973 2.70033 0.156731 2.6C0.257064 2.49967 0.375898 2.44967 0.513231 2.45C0.650564 2.45033 0.769231 2.50033 0.869231 2.6L2.64423 4.3875Z" fill="white"/>
+                                                </svg>
+                                                Accept
+                                            </button>
+                                        </form>
+
+                                        <form action="{{ route('provider.booking-request.decline', $request->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="pb-md-left-tblc-main-act__remove" style="border:none;">
+                                                <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M0.5 5.743L3.1215 3.1215L5.743 5.743M5.743 0.5L3.121 3.1215L0.5 0.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                                Decline
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             @empty
@@ -189,40 +215,93 @@
                         if ($providerId) {
                             $pendingRequests = $bookRequests
                                 ->where('provider_id', $providerId)
-                                ->where('status', 'ongoing');
+                                ->where('status', 'ONGOING');
                         }
                     @endphp
                     @forelse($pendingRequests as $request)
-                    <div class="pb-md-right-active__body">
-                        <div class="pb-md-right-active__body__head">
-                            <div class="pbmd-rabh-box">
-                                <img src="{{asset('images/user.png')}}" class="pbmd-rabh-box__pfp" alt="profile-image">
-                                <div class="pbmd-rabh-box__pfp-d">
-                                    <p class="pbmd-rabh-box__pfp-d__name">Spenzer Corporalli</p>
-                                    <a href="#" class="pbmd-rabh-box__pfp-d__num">09125240151</a>
-                                    <a href="#" class="pbmd-rabh-box__pfp-d__email">spen@gmail.com</a>
+                        {{-- <div class="pb-md-right-active__body">
+                            <div class="pb-md-right-active__body__head">
+                                <div class="pbmd-rabh-box">
+                                    <img src="{{asset('images/user.png')}}" class="pbmd-rabh-box__pfp" alt="profile-image">
+                                    <div class="pbmd-rabh-box__pfp-d">
+                                        <p class="pbmd-rabh-box__pfp-d__name">Spenzer Corporalli</p>
+                                        <a href="#" class="pbmd-rabh-box__pfp-d__num">09125240151</a>
+                                        <a href="#" class="pbmd-rabh-box__pfp-d__email">spen@gmail.com</a>
+                                    </div>
+                                </div>
+
+                                <p class="pb-md-right-active__body__head__rate">Fixed Rate: <span>₱1,200.00</span></p>
+                            </div>
+                            <hr>
+                            <div class="pb-md-right-active__body__details">
+                                <div>
+                                    <p class="pdmdrabd-label">Plumbing</p>
+                                    <p class="pdmdrabd-title">Water Heater Expert</p>
+                                </div>
+                                <div>
+                                    <p>Date: Dec 10, 2025</p>
+                                    <p>Time: 1: 25 PM</p>
+                                </div>
+                                <div>
+                                    <p>Address:</p>
+                                    <p>21, 4th St Virginia summerville Mambugan Antipolo City</p>
+                                </div>
+                            </div>
+                            <button >Mark as complete</button>
+                        </div> --}}
+                        <div class="pb-md-right-active__body">
+                            <div class="pb-md-right-active__body__head">
+                                <div class="pbmd-rabh-box">
+                                    <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
+                                        class="pbmd-rabh-box__pfp" alt="profile-image">
+
+                                    <div class="pbmd-rabh-box__pfp-d">
+                                        <p class="pbmd-rabh-box__pfp-d__name">
+                                            {{ $request->bookingInfo['lname'] ?? '' }} {{ $request->bookingInfo['fname'] ?? '' }}
+                                        </p>
+                                        <a href="#" class="pbmd-rabh-box__pfp-d__num">
+                                            {{ $request->bookingInfo['number'] ?? '' }}
+                                        </a>
+                                        <a href="#" class="pbmd-rabh-box__pfp-d__email">
+                                            {{ $request->bookingInfo['email'] ?? '' }}
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <p class="pb-md-right-active__body__head__rate">
+                                    Fixed Rate:
+                                    <span>₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}</span>
+                                </p>
+                            </div>
+
+                            <hr>
+
+                            <div class="pb-md-right-active__body__details">
+                                <div>
+                                    <p class="pdmdrabd-label">{{ $request->bookingInfo->service['category'] ?? '' }}</p>
+                                    <p class="pdmdrabd-title">
+                                        {{ \Illuminate\Support\Str::limit($request->bookingInfo->service['title'] ?? '', 40) }}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p>Date: {{ !empty($request->bookingInfo['date']) ? \Carbon\Carbon::parse($request->bookingInfo['date'])->format('M d, Y') : '' }}</p>
+                                    <p>Time: {{ !empty($request->bookingInfo['time']) ? \Carbon\Carbon::parse($request->bookingInfo['time'])->format('g:i A') : '' }}</p>
+                                </div>
+
+                                <div>
+                                    <p>Address:</p>
+                                    <p>{{ $request->bookingInfo['address'] ?? '' }}</p>
                                 </div>
                             </div>
 
-                            <p class="pb-md-right-active__body__head__rate">Fixed Rate: <span>₱1,200.00</span></p>
+                            <form action="{{ route('provider.booking-request.complete', $request->id) }}" method="POST" style="margin-top: 10px; width: 100%">
+                                @csrf
+                                <button type="submit" class="btn-sm btn-success" style="border-radius: 5px; border: none;  width: 100%">
+                                    Mark as Complete
+                                </button>
+                            </form>
                         </div>
-                        <hr>
-                        <div class="pb-md-right-active__body__details">
-                            <div>
-                                <p class="pdmdrabd-label">Plumbing</p>
-                                <p class="pdmdrabd-title">Water Heater Expert</p>
-                            </div>
-                            <div>
-                                <p>Date: Dec 10, 2025</p>
-                                <p>Time: 1: 25 PM</p>
-                            </div>
-                            <div>
-                                <p>Address:</p>
-                                <p>21, 4th St Virginia summerville Mambugan Antipolo City</p>
-                            </div>
-                        </div>
-                        <button >Mark as complete</button>
-                    </div>
                     @empty
                         <div style="width: 100%; height: 256px; background-color: #fff; display: flex; justify-content: center; align-items: center;">
                             <svg width="134" height="130" viewBox="0 0 134 130" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -252,8 +331,8 @@
                 <div class="pb-md-right-completed">
 
                     <div class="pb-md-right-completed__head">
-                        <h3>Completed Services</h3>
-                        <p>Completed <span style="color: #A6A6A6">(<span>{{ $bookRequests->where('status', 'complete')->where('provider_id', auth()->user()->provider->id)->count() }}</span>)</span></p>
+                        <h3>Service History</h3>
+                        {{-- <p>Completed <span style="color: #A6A6A6">(<span>{{ $bookRequests->where('status', 'complete')->where('provider_id', auth()->user()->provider->id)->count() }}</span>)</span></p> --}}
                     </div>
 
                     {{-- Sample Complete Card --}}
@@ -264,11 +343,11 @@
                         if ($providerId) {
                             $completedRequests = $bookRequests
                                 ->where('provider_id', $providerId)
-                                ->where('status', 'complete');
+                                ->where('status', 'COMPLETED');
                         }
                     @endphp
                     @forelse($completedRequests as $request)
-                        <div class="pb-md-right-completed__body">
+                        {{-- <div class="pb-md-right-completed__body">
                             <div class="pbmdr-cb-box">
                                 <img src="{{asset('images/complete-book.svg')}}" class="icon-cb-book" alt="icon">
                                 <div class="pbmdr-cb-box__det">
@@ -296,6 +375,68 @@
                                             <path d="M3 3.5H7V4.5H3V3.5ZM3 5.5H7V6.5H3V5.5ZM5.5 7.5H7V8.5H5.5V7.5Z" fill="#656565"/>
                                         </svg>
 
+                                        Download Receipt
+                                    </button>
+                                </div>
+                            </div>
+                        </div> --}}
+                        <div class="pb-md-right-completed__body">
+                            <div class="pbmdr-cb-box">
+                                <img src="{{ asset('images/complete-book.svg') }}" class="icon-cb-book" alt="icon">
+
+                                <div class="pbmdr-cb-box__det">
+                                    <div class="pbmdr-cb-boxdet-p">
+                                        <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
+                                            class="pbmdr-cb-boxdet-p__pfp" alt="profile-image">
+
+                                        <div class="pbmdr-cb-boxdet-p__pfp-d">
+                                            <p class="pbmdr-cb-boxdet-p__pfp-d__name">
+                                                {{ $request->bookingInfo['lname'] ?? '' }} {{ $request->bookingInfo['fname'] ?? '' }}
+                                            </p>
+                                            <a href="#" class="pbmdr-cb-boxdet-p__pfp-d__num">
+                                                {{ $request->bookingInfo['number'] ?? '' }}
+                                            </a>
+                                            <a href="#" class="pbmdr-cb-boxdet-p__pfp-d__email">
+                                                {{ $request->bookingInfo['email'] ?? '' }}
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 0px;">
+                                        <p style="margin: 0; font-size: 12px; color: #656565;">
+                                            {{ $request->bookingInfo->service['category'] ?? '' }}
+                                        </p>
+                                        <p style="margin: 0; font-weight: 600;">
+                                            {{ \Illuminate\Support\Str::limit($request->bookingInfo->service['title'] ?? '', 40) }}
+                                        </p>
+                                        <p style="margin: 0; font-size: 12px; color: #656565;">
+                                            {{ !empty($request->bookingInfo['date']) ? \Carbon\Carbon::parse($request->bookingInfo['date'])->format('M d, Y') : '' }}
+                                            @if(!empty($request->bookingInfo['time']))
+                                                • {{ \Carbon\Carbon::parse($request->bookingInfo['time'])->format('g:i A') }}
+                                            @endif
+                                        </p>
+                                        <p style="margin: 0; font-size: 12px; color: #656565;">
+                                            {{ $request->bookingInfo['address'] ?? '' }}
+                                        </p>
+                                        <p style="margin: 5px 0 0; font-size: 12px; font-weight: 600;">
+                                            Fixed Rate: ₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="pbmdr-cb-box__foo">
+                                    <p>
+                                        Rated:
+                                        <span><i class="fa fa-star" style="font-size: 12px; color: #FFBE42; margin-right: -1.8px; margin-bottom: 2px"></i></span>
+                                        <span><i class="fa fa-star" style="font-size: 12px; color: #FFBE42; margin-right: -1.8px; margin-bottom: 2px"></i></span>
+                                        <span><i class="fa fa-star" style="font-size: 12px; color: #FFBE42; margin-right: -1.8px; margin-bottom: 2px"></i></span>
+                                    </p>
+
+                                    <button type="button">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M10.5 5.5H9V2.5C9 1.95 8.55 1.5 8 1.5H2C1.45 1.5 1 1.95 1 2.5V9C1 9.825 1.675 10.5 2.5 10.5H9.5C10.325 10.5 11 9.825 11 9V6C11 5.725 10.775 5.5 10.5 5.5ZM2.5 9.5C2.225 9.5 2 9.275 2 9V2.5H8V9C7.99975 9.17028 8.02849 9.33937 8.085 9.5H2.5ZM10 9C10 9.275 9.775 9.5 9.5 9.5C9.225 9.5 9 9.275 9 9V6.5H10V9Z" fill="#656565"/>
+                                            <path d="M3 3.5H7V4.5H3V3.5ZM3 5.5H7V6.5H3V5.5ZM5.5 7.5H7V8.5H5.5V7.5Z" fill="#656565"/>
+                                        </svg>
                                         Download Receipt
                                     </button>
                                 </div>
