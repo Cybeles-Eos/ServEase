@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 class BookingRequestController extends Controller
 {
+    //    1        2       3        4       5         6
+    // PENDING ACCEPTED ONGOING DECLINED CANCELLED COMPLETED
+
     public function providerRequests()
     {
         $user = auth()->user();

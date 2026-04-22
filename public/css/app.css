@@ -1909,7 +1909,7 @@ h4 span {
 }
 .page--home .section--about {
   width: 100%;
-  padding-block: 122px;
+  padding-block: 100px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
@@ -5512,7 +5512,7 @@ h4 span {
 .customer--dash .cusdash-right__head {
   width: 100%;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
   padding-top: 5px;
@@ -5574,6 +5574,11 @@ h4 span {
   object-position: center;
   display: block;
 }
+@media (max-width: 1280px) {
+  .customer--dash .cusdash-right__cards-con .cdrcc-ordbox--img img {
+    width: 250px;
+  }
+}
 .customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info {
   width: 100%;
   padding: 16px;
@@ -5619,12 +5624,15 @@ h4 span {
   font-weight: 500;
   margin: 0;
 }
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--profile__dtl--con a {
+  color: #777980;
+}
 .customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status button {
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty {
   border: 1px solid #D1D5DB;
   background-color: transparent;
   padding: 6px 13px;
@@ -5634,20 +5642,59 @@ h4 span {
   align-items: center;
   gap: 8px;
 }
-.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status button span {
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__pending {
+  background-color: rgba(245, 158, 11, 0.12);
+  border-color: #F59E0B;
+  color: #B45309;
+}
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__pending span {
   min-width: 5px;
   min-height: 5px;
   border-radius: 10px;
-  background-color: #FFBE42;
+  background-color: #F59E0B;
 }
-.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status button .cdrcc-btn-b {
-  background-color: #0088FF;
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__sceduled {
+  background-color: rgba(59, 130, 246, 0.12);
+  border-color: #3B82F6;
+  color: #1D4ED8;
 }
-.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status button .cdrcc-btn-p {
-  background-color: #FFBE42;
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__sceduled span {
+  min-width: 5px;
+  min-height: 5px;
+  border-radius: 10px;
+  background-color: #3B82F6;
 }
-.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status button .cdrcc-btn-g {
-  background-color: #34C759;
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__ongoing {
+  background-color: rgba(139, 92, 246, 0.12);
+  border-color: #8B5CF6;
+  color: #6D28D9;
+}
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__ongoing span {
+  min-width: 5px;
+  min-height: 5px;
+  border-radius: 10px;
+  background-color: #8B5CF6;
+}
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__cancelled {
+  background-color: rgba(239, 68, 68, 0.12);
+  border-color: #EF4444;
+  color: #B91C1C;
+}
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__cancelled span {
+  min-width: 5px;
+  min-height: 5px;
+  border-radius: 10px;
+  background-color: #EF4444;
+}
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__completed {
+  border-color: #22C55E;
+  color: #15803D;
+}
+.customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .cus-tbns-sty__completed span {
+  min-width: 5px;
+  min-height: 5px;
+  border-radius: 10px;
+  background-color: #22C55E;
 }
 .customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-i--status .receipt {
   display: flex;
@@ -5686,6 +5733,10 @@ h4 span {
   margin: 0;
   font-weight: 500;
   line-height: 120%;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .customer--dash .cusdash-right__cards-con .cdrcc-ordbox--info .cdrcc-ordbox-d .cdrcc-ordbox-d-l--service-type p {
   font-size: 12px;
@@ -5774,7 +5825,7 @@ h4 span {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   padding-bottom: 25px;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 }
 @media (max-width: 992px) {
   .customer--dash {

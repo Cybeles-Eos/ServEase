@@ -130,7 +130,7 @@
         &__head{
             width: 100%;
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 10px;
             padding-top: 5px;
@@ -192,10 +192,15 @@
                     img{
                         width: 200px;
                         height: 100%;
+                        
                         object-fit: cover;
                         object-position: center;
                         display: block;
+                        @media (max-width: 1280px) {
+                            width: 250px;
+                        }
                     }
+
                 }
                 &--info{
                     width: 100%;
@@ -241,6 +246,9 @@
                                         font-weight: 500;
                                         margin: 0;
                                     }
+                                    a{
+                                        color: #777980;
+                                    }
                                 }
                             }
                         }
@@ -249,7 +257,7 @@
                             align-items: center;
                             gap: 8px;
 
-                            button{
+                            .cus-tbns-sty{
                                 border: 1px solid #D1D5DB;
                                 background-color: transparent;
                                 padding: 6px 13px;
@@ -258,21 +266,81 @@
                                 display: flex;
                                 align-items: center;
                                 gap: 8px;
-                                span{
-                                    min-width: 5px;
-                                    min-height: 5px;
-                                    border-radius: 10px;
-                                    background-color: #FFBE42;
+
+                                &__pending{
+                                    background-color: rgba(245, 158, 11, 0.12);
+                                    border-color: #F59E0B;
+                                    color: #B45309;
+                                    span{
+                                        min-width: 5px;
+                                        min-height: 5px;
+                                        border-radius: 10px;
+                                        background-color: #F59E0B;
+                                    }
                                 }
-                                .cdrcc-btn-b{
-                                    background-color: #0088FF;
+
+                                &__sceduled{
+                                    background-color: rgba(59, 130, 246, 0.12);
+                                    border-color: #3B82F6;
+                                    color: #1D4ED8;
+                                    span{
+                                        min-width: 5px;
+                                        min-height: 5px;
+                                        border-radius: 10px;
+                                        background-color: #3B82F6;
+                                    }
                                 }
-                                .cdrcc-btn-p{
-                                    background-color: #FFBE42;
+
+                                &__ongoing{
+                                    background-color: rgba(139, 92, 246, 0.12);
+                                    border-color: #8B5CF6;
+                                    color: #6D28D9;
+                                    span{
+                                        min-width: 5px;
+                                        min-height: 5px;
+                                        border-radius: 10px;
+                                        background-color: #8B5CF6;
+                                    }
                                 }
-                                .cdrcc-btn-g{
-                                    background-color: #34C759;
+
+                                &__cancelled{
+                                    background-color: rgba(239, 68, 68, 0.12);
+                                    border-color: #EF4444;
+                                    color: #B91C1C;
+                                    span{
+                                        min-width: 5px;
+                                        min-height: 5px;
+                                        border-radius: 10px;
+                                        background-color: #EF4444;
+                                    }
                                 }
+
+                                &__completed{
+                                    //background-color: rgba(34, 197, 94, 0.12);
+                                    border-color: #22C55E;
+                                    color: #15803D;
+                                    span{
+                                        min-width: 5px;
+                                        min-height: 5px;
+                                        border-radius: 10px;
+                                        background-color: #22C55E;
+                                    }
+                                }
+                                // span{
+                                //     min-width: 5px;
+                                //     min-height: 5px;
+                                //     border-radius: 10px;
+                                //     background-color: #FFBE42;
+                                // }
+                                // .cdrcc-btn-b{
+                                //     background-color: #0088FF;
+                                // }
+                                // .cdrcc-btn-p{
+                                //     background-color: #FFBE42;
+                                // }
+                                // .cdrcc-btn-g{
+                                //     background-color: #34C759;
+                                // }
                             }
                             .receipt{
                                 display: flex;
@@ -310,6 +378,11 @@
                                     margin: 0;
                                     font-weight: 500;
                                     line-height: 120%;
+
+                                    display: -webkit-box;
+                                    -webkit-line-clamp: 1;  
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
                                 }
                                 p{
                                     font-size: 12px;
@@ -413,7 +486,7 @@
                 border-bottom: 1px solid #E0E2E7;
                 // height: 20rem;
                 padding-bottom: 25px;
-                margin-bottom: 25px;
+                margin-bottom: 10px;
             }
 
 

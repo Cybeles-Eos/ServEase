@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('profile_image')->nullable();
             $table->string('phone_number')->nullable();
+            $table->string('personal_email')->nullable();
 
             // Can be normalize further in the future (temporary only)
             $table->string('home_address')->nullable();

@@ -13,6 +13,7 @@ class Customer extends Model
         'last_name', 
         'profile_image',
         'phone_number',
+        'personal_email',
         'street_address',
         'city',
         'barangay',
@@ -23,4 +24,5 @@ class Customer extends Model
     { 
         return $this->belongsTo(User::class); 
     }
+
 }

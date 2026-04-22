@@ -1,0 +1,197 @@
+<!-- 
+@extends('admin.layouts.auth')
+
+{{-- Meta Section --}}
+@section('title', 'Customer Servease Dashboard')
+
+{{-- Page Content --}}
+@section('content')
+    @include('admin.layouts.header')
+    {{-- @include('admin.layouts.sidebar') --}}
+
+    <main class="main-dash-uix dash-sp customer--dash">
+
+
+        <section class="cusdash-left">
+            {{-- Account Information Needed For Customers --}}
+            @php
+                $user = auth()->user()->customer;
+            @endphp
+            @if ($user->street_address === null || $user->city === null || $user->barangay === null || $user->zipcode === null || $user->phone_number === null)
+                <div class="alert alert-danger mb-0" role="alert">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>Complete Your Account Information</strong>
+                            <ul class="mb-0 mt-2 pl-3" style="list-style: disc">
+                                @if (!$user->street_address)
+                                    <li>Street Address</li>
+                                @endif
+                                @if (!$user->city)
+                                    <li>City</li>
+                                @endif
+                                @if (!$user->barangay)
+                                    <li>Barangay</li>
+                                @endif
+                                @if (!$user->zipcode)
+                                    <li>Zip Code</li>
+                                @endif
+                                @if (!$user->phone_number)
+                                    <li>Phone Number</li>
+                                @endif
+                            </ul>
+                        </div>
+                        <i class="fa fa-exclamation-circle mt-1"></i>
+                    </div>
+                </div>
+            @endif
+
+
+
+            <div class="cusdash-left--total">
+                <div>
+                    <p>Total Bookings</p>
+                    <h3>{{ $bookings->count() }}</h3>
+                </div>
+                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="50" height="50" rx="25" fill="#FFBE42"/>
+                    <path d="M25 21.8352C25 20.276 23.725 19 22.167 19H16.5V29.2078H22.2018C25 29.2078 25 32.0439 25 32.0439M25 21.8352C25 20.2751 26.275 19 27.8331 19H33.5V29.2078H27.8331C25 29.2078 25 32.0439 25 32.0439M25 21.8352V32.0439M26.5938 33C26.7711 32.6324 27.0474 32.3216 27.3915 32.1025C27.7357 31.8834 28.1341 31.7647 28.542 31.7598H32.65M23.4063 33C23.2321 32.6299 22.9566 32.3169 22.6117 32.0973C22.2669 31.8778 21.8668 31.7607 21.4581 31.7598H17.35" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="cusdash-left--canceled">
+                <div class="cusdash-left--canceled__top">
+                    <div>
+                        <p>Canceled Booking </p>
+                        <h3>{{ $bookings->where('status', 'CANCELLED')->count() }}</h3>
+                    </div>
+                    <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="50" height="50" rx="25" fill="#DF4545"/>
+                        <path d="M20.1998 19.0004C20.1998 18.6821 20.3262 18.3769 20.5513 18.1519C20.7763 17.9268 21.0815 17.8004 21.3998 17.8004H28.5998C28.9181 17.8004 29.2233 17.9268 29.4483 18.1519C29.6734 18.3769 29.7998 18.6821 29.7998 19.0004V20.2004C29.7998 20.5187 29.6734 20.8239 29.4483 21.0489C29.2233 21.274 28.9181 21.4004 28.5998 21.4004H21.3998C21.0815 21.4004 20.7763 21.274 20.5513 21.0489C20.3262 20.8239 20.1998 20.5187 20.1998 20.2004V19.0004ZM21.3998 19.0004V20.2004H28.5998V19.0004H21.3998ZM17.7998 17.8004V32.2004C17.7998 32.8369 18.0527 33.4474 18.5027 33.8974C18.9528 34.3475 19.5633 34.6004 20.1998 34.6004H25.3082C25.0025 34.2303 24.7382 33.8279 24.5198 33.4004H20.1998C19.8815 33.4004 19.5763 33.274 19.3513 33.0489C19.1262 32.8239 18.9998 32.5187 18.9998 32.2004H24.0482C23.9373 31.8081 23.863 31.4064 23.8262 31.0004H18.9998V17.8004C18.9998 17.4821 19.1262 17.1769 19.3513 16.9519C19.5763 16.7268 19.8815 16.6004 20.1998 16.6004H29.7998C30.1181 16.6004 30.4233 16.7268 30.6483 16.9519C30.8734 17.1769 30.9998 17.4821 30.9998 17.8004V23.8268C31.4126 23.8644 31.8126 23.9384 32.1998 24.0488V17.8004C32.1998 17.1639 31.9469 16.5534 31.4969 16.1033C31.0468 15.6532 30.4363 15.4004 29.7998 15.4004H20.1998C19.5633 15.4004 18.9528 15.6532 18.5027 16.1033C18.0527 16.5534 17.7998 17.1639 17.7998 17.8004ZM35.7998 30.4004C35.7998 31.8326 35.2309 33.2061 34.2182 34.2188C33.2055 35.2315 31.832 35.8004 30.3998 35.8004C28.9676 35.8004 27.5941 35.2315 26.5814 34.2188C25.5687 33.2061 24.9998 31.8326 24.9998 30.4004C24.9998 28.9682 25.5687 27.5947 26.5814 26.582C27.5941 25.5693 28.9676 25.0004 30.3998 25.0004C31.832 25.0004 33.2055 25.5693 34.2182 26.582C35.2309 27.5947 35.7998 28.9682 35.7998 30.4004ZM32.6246 29.0252C32.7373 28.9125 32.8006 28.7597 32.8006 28.6004C32.8006 28.4411 32.7373 28.2883 32.6246 28.1756C32.5119 28.0629 32.3591 27.9996 32.1998 27.9996C32.0405 27.9996 31.8877 28.0629 31.775 28.1756L30.3998 29.552L29.0246 28.1756C28.9119 28.0629 28.7591 27.9996 28.5998 27.9996C28.4405 27.9996 28.2877 28.0629 28.175 28.1756C28.0623 28.2883 27.999 28.4411 27.999 28.6004C27.999 28.7597 28.0623 28.9125 28.175 29.0252L29.5514 30.4004L28.175 31.7756C28.1192 31.8314 28.075 31.8976 28.0448 31.9705C28.0146 32.0434 27.999 32.1215 27.999 32.2004C27.999 32.2793 28.0146 32.3574 28.0448 32.4303C28.075 32.5032 28.1192 32.5694 28.175 32.6252C28.2308 32.681 28.297 32.7252 28.3699 32.7554C28.4428 32.7856 28.5209 32.8011 28.5998 32.8011C28.6787 32.8011 28.7568 32.7856 28.8297 32.7554C28.9026 32.7252 28.9688 32.681 29.0246 32.6252L30.3998 31.2488L31.775 32.6252C31.8308 32.681 31.897 32.7252 31.9699 32.7554C32.0428 32.7856 32.1209 32.8011 32.1998 32.8011C32.2787 32.8011 32.3568 32.7856 32.4297 32.7554C32.5026 32.7252 32.5688 32.681 32.6246 32.6252C32.6804 32.5694 32.7246 32.5032 32.7548 32.4303C32.785 32.3574 32.8006 32.2793 32.8006 32.2004C32.8006 32.1215 32.785 32.0434 32.7548 31.9705C32.7246 31.8976 32.6804 31.8314 32.6246 31.7756L31.2482 30.4004L32.6246 29.0252Z" fill="white"/>
+                    </svg>
+                </div>
+                <div class="cusdash-left--canceled__bot">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="10" r="10" fill="#FFBE42"/>
+                        <g clip-path="url(#clip0_1146_9743)">
+                        <path d="M9.99986 8.00012V10.2223M9.99986 13.5157H7.30653C5.76431 13.5157 5.11986 12.4135 5.86653 11.0668L7.2532 8.56901L8.55986 6.22234C9.35097 4.79568 10.6488 4.79568 11.4399 6.22234L12.7465 8.57345L14.1332 11.0712C14.8799 12.4179 14.231 13.5201 12.6932 13.5201H9.99986V13.5157Z" stroke="#4B3D2C" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9.99805 11.5557H10.0025" stroke="#4B3D2C" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        <defs>
+                        <clipPath id="clip0_1146_9743">
+                        <rect width="10.6667" height="10.6667" fill="white" transform="translate(4.66699 4)"/>
+                        </clipPath>
+                        </defs>
+                    </svg>
+                    <p>Note: Frequent cancellations may result in penalties or account restrictions.</p>
+                </div>
+            </div>
+            {{-- <hr> --}}
+            <div class="cusdash-left--reminders">
+                <p class="cusdash-left--reminders__title">Reminders:</p>
+                <p class="cusdash-left--reminders__label">After you book a service, the provider will be notified and may call you to confirm details.</p>
+                <ul>
+                    <li>Be available on your scheduled time</li>
+                    <li>Prepare access to your location</li>
+                    <li>Ensure contact number is active</li>
+                </ul>
+
+            </div>
+        </section>
+        
+        <section class="cusdash-right">
+            <div class="cusdash-right__head">
+                <h4>Bookings <span>({{ $bookings->count() }})</span></h4>
+            </div>
+            <div class="cusdash-right__cards-con">
+                @forelse($bookings as $booking)
+                    @php
+                        $service = $booking->service;
+                        $provider = $service?->provider;
+                        $providerUser = $provider?->user;
+                        $providerFullName = trim(($provider?->first_name ?? '') . ' ' . ($provider?->last_name ?? ''));
+                        $providerName = $providerFullName !== '' ? $providerFullName : ($providerUser?->name ?? 'Provider');
+                        $status = strtoupper($booking->status ?? 'PENDING');
+                        $badgeClass = match ($status) {
+                            'COMPLETED' => 'cdrcc-btn-g',
+                            'ONGOING' => 'cdrcc-btn-b',
+                            default => '',
+                        };
+                    @endphp
+                    <div class="cdrcc-ordbox {{ in_array($status, ['ACCEPTED', 'ONGOING']) ? 'active' : '' }}">
+                        <div class="cdrcc-ordbox--img">
+                            <img src="{{ $service?->image ? asset($service->image) : asset('images/serv-bg.png') }}" alt="thumbnail">
+                        </div>
+                        <div class="cdrcc-ordbox--info">
+                            <div class="cdrcc-ordbox-i">
+                                <div class="cdrcc-ordbox-i--profile">
+                                    <img src="{{ $provider?->profile_image ? asset($provider->profile_image) : asset('images/user.png') }}" alt="profile">
+                                    <div class="cdrcc-ordbox-i--profile__dtl">
+                                        <h3>{{ $providerName }}</h3>
+                                        <div class="cdrcc-ordbox-i--profile__dtl--con">
+                                            <div>{{ $provider?->phone_number ?: 'No phone number' }}</div>
+                                            <div>{{ $providerUser?->email ?: 'No email address' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cdrcc-ordbox-i--status">
+                                    <button disabled class="cus-tbns-sty">
+                                        <span class="{{ $badgeClass }}"></span> {{ ucfirst(strtolower($status)) }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="cdrcc-ordbox-d">
+                                <div class="cdrcc-ordbox-d-l">
+                                    <div class="cdrcc-ordbox-d-l--service-type">
+                                        <h4>{{ $service?->title ?? 'Service' }}</h4>
+                                        <p>{{ $service?->description ?? 'No service description provided.' }}</p>
+                                    </div>
+                                    <div class="cdrcc-ordbox-d-l--sched">
+                                        <p class="cdrcc-ordbox-d-l--sched__label">Service Schedule:</p>
+                                        <p class="cdrcc-ordbox-d-l--sched__txt">Date:
+                                            <span>{{ $booking->date ? \Carbon\Carbon::parse($booking->date)->format('M d, Y') : 'Not set' }}</span>
+                                        </p>
+                                        <p class="cdrcc-ordbox-d-l--sched__txt">Time
+                                            <span>{{ $booking->time ? \Carbon\Carbon::parse($booking->time)->format('h:i A') : 'Not set' }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="cdrcc-ordbox-d-r">
+                                    <p>Service Price:</p>
+                                    <h4>
+                                        {{ $service?->price !== null ? 'P'.number_format((float) $service->price, 2) : 'Not set' }}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="alert alert-warning mb-0" role="alert">
+                        You do not have any bookings yet.
+                    </div>
+                @endforelse
+            </div>
+        </section>
+
+
+
+        {{-- <h1>Customer Dashboard</h1>
+
+        @auth
+            <h2>welcome {{ auth()->user()->name }}</h2>
+        @endauth
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit">logoout</button>
+        </form> --}}
+    </main>
+
+
+    {{-- Only Show When Someone is login --}}
+
+    
+@endsection
+@push('extrascripts')
+
+@endpush
+
+ -->
+

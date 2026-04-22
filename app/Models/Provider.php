@@ -15,6 +15,7 @@ class Provider extends Model
         'last_name',
         'profile_image',
         'phone_number', 
+        'personal_email',
         'home_address', 
         'province', 
         'barangay',

@@ -162,6 +162,11 @@
                         <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
                         @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
+                    <div class="cms-mm-group">
+                        <label>Personal Email Address For Booking</label>
+                        <input type="email" name="personal_email" value="{{ old('personal_email',$user->customer->personal_email ?? '') }}">
+                        @error('personal_email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                    </div>
                     <br>
                     <h5>Permanent home address</h5>
                     <div class="cms-mm-group-con">

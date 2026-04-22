@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:customer')->group(function () {
         
         Route::redirect('/customer', '/customer/dashboard');
-        Route::get('/customer/dashboard', function () {return view('admin.cusdashboard');})->name('customer.dashboard');
+        Route::get('/customer/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
         Route::get('/customer/bookings', function () {return view('admin.cusbookings');})->name('customer.bookings');
 
         // Customer Setting

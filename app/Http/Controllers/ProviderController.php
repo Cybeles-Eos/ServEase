@@ -25,6 +25,7 @@ class ProviderController extends Controller
             'last_name'    => 'nullable|string|max:255',
             'profile_image'=> 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'phone_number' => 'nullable|string|max:20',
+            'personal_email' => 'nullable|email|max:255',
             'home_address' => 'nullable|string|max:255',
             'province'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
@@ -75,6 +76,7 @@ class ProviderController extends Controller
         $provider->first_name  = $request->first_name;
         $provider->last_name   = $request->last_name;
         $provider->phone_number= $request->phone_number;
+        $provider->personal_email= $request->personal_email;
         $provider->home_address     = $request->home_address;
         $provider->province        = $request->province;
         $provider->barangay     = $request->barangay;
