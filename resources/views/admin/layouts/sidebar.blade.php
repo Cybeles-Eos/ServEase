@@ -43,7 +43,7 @@
                         Bookings
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="#">
                         <div >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +54,7 @@
                         </div>
                         Inbox
                     </a>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{url('/provider/setting')}}" class="{{ Request::is('provider/setting') ? 'active' : '' }}">
                         <div >

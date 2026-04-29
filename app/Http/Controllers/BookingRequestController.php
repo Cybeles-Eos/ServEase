@@ -10,6 +10,8 @@ class BookingRequestController extends Controller
 {
     //    1        2       3        4       5         6
     // PENDING ACCEPTED ONGOING DECLINED CANCELLED COMPLETED
+    private int $bookingDurationHours = 16; // Auto Close when 16hours reach
+    private int $bookingDurationMinutes = 1;
 
     public function providerRequests()
     {
@@ -27,6 +29,7 @@ class BookingRequestController extends Controller
 
         foreach ($bookRequests as $bookingRequest) {
             $this->updateToOngoingIfDue($bookingRequest);
+            $this->updateToCompletedIfDue($bookingRequest);
         }
 
         $bookRequests = BookingRequest::with([
@@ -40,6 +43,80 @@ class BookingRequestController extends Controller
             ->get();
 
         return view('admin.provbookings', compact('bookRequests'));
+    }
+
+    private function updateToCompletedIfDue($bookingRequest)
+    {
+        $bookingInfo = $bookingRequest->bookingInfo;
+
+        if (!$bookingInfo) {
+            return;
+        }
+
+        /*
+        * Only ONGOING bookings should become COMPLETED.
+        * Example:
+        * Booking time: 1:12 PM
+        * Duration: 8 hours
+        * Completed time: 9:12 PM
+        */
+        if ($bookingRequest->status !== 'ONGOING' || $bookingInfo->status !== 'ONGOING') {
+            return;
+        }
+
+        if (empty($bookingInfo->date) || empty($bookingInfo->time)) {
+            return;
+        }
+
+        try {
+            $bookingDate = Carbon::parse($bookingInfo->date)->toDateString();
+            $bookingTime = Carbon::parse($bookingInfo->time)->format('H:i:s');
+
+            $scheduleDateTime = Carbon::parse(
+                $bookingDate . ' ' . $bookingTime,
+                config('app.timezone')
+            );
+
+            // $completedDateTime = $scheduleDateTime
+            //     ->copy()
+            //     ->addHours($this->bookingDurationHours);
+            $completedDateTime = $scheduleDateTime
+                ->copy()
+                ->addMinutes($this->bookingDurationMinutes);
+
+            $now = Carbon::now(config('app.timezone'));
+
+            \Log::info('Booking completion time check', [
+                'booking_request_id' => $bookingRequest->id,
+                'booking_info_id' => $bookingInfo->id,
+                'request_status' => $bookingRequest->status,
+                'booking_info_status' => $bookingInfo->status,
+                'duration_hours' => $this->bookingDurationHours,
+                'schedule' => $scheduleDateTime->toDateTimeString(),
+                'completed_at' => $completedDateTime->toDateTimeString(),
+                'now' => $now->toDateTimeString(),
+                'timezone' => config('app.timezone'),
+            ]);
+
+            if ($now->greaterThanOrEqualTo($completedDateTime)) {
+                $bookingRequest->update([
+                    'status' => 'COMPLETED',
+                ]);
+
+                $bookingInfo->update([
+                    'status' => 'COMPLETED',
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Booking updateToCompletedIfDue failed', [
+                'booking_request_id' => $bookingRequest->id,
+                'booking_info_id' => $bookingInfo->id ?? null,
+                'date' => $bookingInfo->date ?? null,
+                'time' => $bookingInfo->time ?? null,
+                'duration_hours' => $this->bookingDurationHours,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     private function updateToOngoingIfDue($bookingRequest)

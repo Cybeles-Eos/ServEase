@@ -9,6 +9,10 @@ use Carbon\Carbon;
 
 class AutoCloseBookings extends Command
 {
+
+    // php artisan schedule:work
+
+
     /**
      * The name and signature of the console command.
      *

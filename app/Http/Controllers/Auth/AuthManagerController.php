@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use App\Services\BookingStatusService;
 
 class AuthManagerController extends Controller
 {
@@ -38,8 +39,9 @@ class AuthManagerController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+            app(BookingStatusService::class)->updateAllDueBookings(); //Update Status
 
-            $user = Auth::user();
+            $user = Auth::user();   
 
             if ($user->isAdmin()) {
                 return redirect('/admin/dashboard');

@@ -12,9 +12,23 @@ use Carbon\Carbon;
 
 class CustomerController extends Controller
 {
+    private int $bookingDurationHours = 16; // Auto-complete 16 hours after booking start time
+    private int $bookingDurationMinutes = 1;
+
     public function dashboard()
     {
         $customerId = auth()->user()->customer->id;
+
+        // Auto Complete 
+        // $bookingsToCheck = BookingInfo::with('bookingRequest')
+        //     ->where('customer_id', $customerId)
+        //     ->whereIn('status', ['ACCEPTED', 'ONGOING'])
+        //     ->get();
+        // foreach ($bookingsToCheck as $bookingInfo) {
+        //     $this->updateToOngoingIfDue($bookingInfo);
+        //     $this->updateToCompletedIfDue($bookingInfo);
+        // }
+
 
         $ongoingBookings = BookingInfo::with(['service.provider.user'])
             ->where('customer_id', $customerId)
@@ -29,6 +43,96 @@ class CustomerController extends Controller
             ->get();
 
         return view('admin.cusdashboard', compact('ongoingBookings', 'allBookings'));
+    }
+    private function updateToOngoingIfDue($bookingInfo)
+    {
+        if (
+            $bookingInfo->status !== 'ACCEPTED' ||
+            empty($bookingInfo->date) ||
+            empty($bookingInfo->time)
+        ) {
+            return;
+        }
+
+        try {
+            $bookingDate = \Carbon\Carbon::parse($bookingInfo->date)->toDateString();
+            $bookingTime = \Carbon\Carbon::parse($bookingInfo->time)->format('H:i:s');
+
+            $scheduleDateTime = \Carbon\Carbon::parse(
+                $bookingDate . ' ' . $bookingTime,
+                config('app.timezone')
+            );
+
+            $now = \Carbon\Carbon::now(config('app.timezone'));
+
+            if ($now->greaterThanOrEqualTo($scheduleDateTime)) {
+                $bookingInfo->update([
+                    'status' => 'ONGOING',
+                ]);
+
+                if ($bookingInfo->bookingRequest) {
+                    $bookingInfo->bookingRequest->update([
+                        'status' => 'ONGOING',
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Customer dashboard updateToOngoingIfDue failed', [
+                'booking_info_id' => $bookingInfo->id ?? null,
+                'date' => $bookingInfo->date ?? null,
+                'time' => $bookingInfo->time ?? null,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+    private function updateToCompletedIfDue($bookingInfo)
+    {
+        if (
+            $bookingInfo->status !== 'ONGOING' ||
+            empty($bookingInfo->date) ||
+            empty($bookingInfo->time)
+        ) {
+            return;
+        }
+
+        try {
+            $bookingDate = \Carbon\Carbon::parse($bookingInfo->date)->toDateString();
+            $bookingTime = \Carbon\Carbon::parse($bookingInfo->time)->format('H:i:s');
+
+            $scheduleDateTime = \Carbon\Carbon::parse(
+                $bookingDate . ' ' . $bookingTime,
+                config('app.timezone')
+            );
+
+            $completedDateTime = $scheduleDateTime
+                ->copy()
+                ->addHours($this->bookingDurationHours);
+            $completedDateTime = $scheduleDateTime
+                ->copy()
+                ->addMinutes($this->bookingDurationMinutes);
+
+            $now = \Carbon\Carbon::now(config('app.timezone'));
+
+            if ($now->greaterThanOrEqualTo($completedDateTime)) {
+                $bookingInfo->update([
+                    'status' => 'COMPLETED',
+                ]);
+
+                if ($bookingInfo->bookingRequest) {
+                    $bookingInfo->bookingRequest->update([
+                        'status' => 'COMPLETED',
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Customer dashboard updateToCompletedIfDue failed', [
+                'booking_info_id' => $bookingInfo->id ?? null,
+                'date' => $bookingInfo->date ?? null,
+                'time' => $bookingInfo->time ?? null,
+                'duration_hours' => $this->bookingDurationHours,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     // Index Settings
