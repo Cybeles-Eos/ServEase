@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\BookingInfo;
+use App\Models\BookingRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -13,59 +13,84 @@ class BookingStatusService
 
     public function updateAllDueBookings(): void
     {
-        $bookings = BookingInfo::with('bookingRequest')
+        $bookingRequests = BookingRequest::with('bookingInfo')
             ->whereIn('status', ['ACCEPTED', 'ONGOING'])
-            ->whereNotNull('date')
-            ->whereNotNull('time')
+            ->whereHas('bookingInfo', function ($query) {
+                $query->whereNotNull('date')
+                    ->whereNotNull('time');
+            })
             ->get();
 
-        foreach ($bookings as $bookingInfo) {
-            $this->updateToOngoingIfDue($bookingInfo);
-            $this->updateToCompletedIfDue($bookingInfo);
+        Log::info('Global booking status check started', [
+            'total_checked' => $bookingRequests->count(),
+        ]);
+
+        foreach ($bookingRequests as $bookingRequest) {
+            $this->updateToOngoingIfDue($bookingRequest);
+            $this->updateToCompletedIfDue($bookingRequest);
         }
     }
 
-    private function updateToOngoingIfDue($bookingInfo): void
+    private function updateToOngoingIfDue(BookingRequest $bookingRequest): void
     {
-        if ($bookingInfo->status !== 'ACCEPTED') {
+        if ($bookingRequest->status !== 'ACCEPTED') {
+            return;
+        }
+
+        if (!$bookingRequest->bookingInfo) {
             return;
         }
 
         try {
-            $scheduleDateTime = $this->getScheduleDateTime($bookingInfo);
+            $scheduleDateTime = $this->getScheduleDateTime($bookingRequest);
             $now = Carbon::now(config('app.timezone'));
 
+            Log::info('Global ongoing check', [
+                'booking_request_id' => $bookingRequest->id,
+                'booking_info_id' => $bookingRequest->bookingInfo->id,
+                'request_status' => $bookingRequest->status,
+                'info_status' => $bookingRequest->bookingInfo->status,
+                'schedule' => $scheduleDateTime->toDateTimeString(),
+                'now' => $now->toDateTimeString(),
+            ]);
+
             if ($now->greaterThanOrEqualTo($scheduleDateTime)) {
-                DB::transaction(function () use ($bookingInfo) {
-                    $bookingInfo->update([
+                DB::transaction(function () use ($bookingRequest) {
+                    $bookingRequest->update([
                         'status' => 'ONGOING',
                     ]);
 
-                    if ($bookingInfo->bookingRequest) {
-                        $bookingInfo->bookingRequest->update([
-                            'status' => 'ONGOING',
-                        ]);
-                    }
+                    $bookingRequest->bookingInfo->update([
+                        'status' => 'ONGOING',
+                    ]);
                 });
+
+                Log::info('Global booking updated to ONGOING', [
+                    'booking_request_id' => $bookingRequest->id,
+                ]);
             }
         } catch (\Exception $e) {
             Log::error('Global updateToOngoingIfDue failed', [
-                'booking_info_id' => $bookingInfo->id ?? null,
-                'date' => $bookingInfo->date ?? null,
-                'time' => $bookingInfo->time ?? null,
+                'booking_request_id' => $bookingRequest->id ?? null,
+                'date' => $bookingRequest->bookingInfo->date ?? null,
+                'time' => $bookingRequest->bookingInfo->time ?? null,
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    private function updateToCompletedIfDue($bookingInfo): void
+    private function updateToCompletedIfDue(BookingRequest $bookingRequest): void
     {
-        if ($bookingInfo->status !== 'ONGOING') {
+        if ($bookingRequest->status !== 'ONGOING') {
+            return;
+        }
+
+        if (!$bookingRequest->bookingInfo) {
             return;
         }
 
         try {
-            $scheduleDateTime = $this->getScheduleDateTime($bookingInfo);
+            $scheduleDateTime = $this->getScheduleDateTime($bookingRequest);
 
             $completedDateTime = $scheduleDateTime
                 ->copy()
@@ -73,32 +98,47 @@ class BookingStatusService
 
             $now = Carbon::now(config('app.timezone'));
 
+            Log::info('Global completed check', [
+                'booking_request_id' => $bookingRequest->id,
+                'booking_info_id' => $bookingRequest->bookingInfo->id,
+                'duration_hours' => $this->bookingDurationHours,
+                'request_status' => $bookingRequest->status,
+                'info_status' => $bookingRequest->bookingInfo->status,
+                'schedule' => $scheduleDateTime->toDateTimeString(),
+                'completed_at' => $completedDateTime->toDateTimeString(),
+                'now' => $now->toDateTimeString(),
+            ]);
+
             if ($now->greaterThanOrEqualTo($completedDateTime)) {
-                DB::transaction(function () use ($bookingInfo) {
-                    $bookingInfo->update([
+                DB::transaction(function () use ($bookingRequest) {
+                    $bookingRequest->update([
                         'status' => 'COMPLETED',
                     ]);
 
-                    if ($bookingInfo->bookingRequest) {
-                        $bookingInfo->bookingRequest->update([
-                            'status' => 'COMPLETED',
-                        ]);
-                    }
+                    $bookingRequest->bookingInfo->update([
+                        'status' => 'COMPLETED',
+                    ]);
                 });
+
+                Log::info('Global booking updated to COMPLETED', [
+                    'booking_request_id' => $bookingRequest->id,
+                ]);
             }
         } catch (\Exception $e) {
             Log::error('Global updateToCompletedIfDue failed', [
-                'booking_info_id' => $bookingInfo->id ?? null,
-                'date' => $bookingInfo->date ?? null,
-                'time' => $bookingInfo->time ?? null,
+                'booking_request_id' => $bookingRequest->id ?? null,
+                'date' => $bookingRequest->bookingInfo->date ?? null,
+                'time' => $bookingRequest->bookingInfo->time ?? null,
                 'duration_hours' => $this->bookingDurationHours,
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    private function getScheduleDateTime($bookingInfo): Carbon
+    private function getScheduleDateTime(BookingRequest $bookingRequest): Carbon
     {
+        $bookingInfo = $bookingRequest->bookingInfo;
+
         $bookingDate = Carbon::parse($bookingInfo->date)->toDateString();
         $bookingTime = Carbon::parse($bookingInfo->time)->format('H:i:s');
 

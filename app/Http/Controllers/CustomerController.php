@@ -104,9 +104,9 @@ class CustomerController extends Controller
                 config('app.timezone')
             );
 
-            $completedDateTime = $scheduleDateTime
-                ->copy()
-                ->addHours($this->bookingDurationHours);
+            // $completedDateTime = $scheduleDateTime
+            //     ->copy()
+            //     ->addHours($this->bookingDurationHours);
             $completedDateTime = $scheduleDateTime
                 ->copy()
                 ->addMinutes($this->bookingDurationMinutes);
