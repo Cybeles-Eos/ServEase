@@ -3668,6 +3668,159 @@ h4 span {
   }
 }
 
+.page-admin-users {
+  width: 100%;
+  background-color: #F5F7FA;
+  padding: 10px 15px;
+  padding-top: 15px;
+  padding-bottom: 25px;
+}
+.page-admin-users__btn {
+  display: block;
+  width: 100%;
+  background-color: #FFF;
+  text-decoration: none !important;
+  position: relative;
+}
+.page-admin-users__btn div {
+  width: 100%;
+  height: 40px;
+  background-color: #FFBE42;
+  color: #171515;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+.page-admin-users__btn div:last-child {
+  height: 50px;
+  background-color: #fff;
+}
+.page-admin-users__btn::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0px;
+  background-color: #FFE4AF;
+  transition: 80ms ease;
+}
+.page-admin-users__btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+.page-admin-users__btn:hover::before {
+  height: 4px;
+}
+.page-admin-users__btn:active {
+  transition: 100ms;
+  transform: translateY(2px);
+}
+.page-admin-users .section__table {
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #E0E2E7;
+  border-radius: 2px;
+  margin-top: 20px;
+  padding: 20px;
+}
+.page-admin-users .section__table h4 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #171515;
+  margin-bottom: 1px;
+}
+.page-admin-users .section__table--label {
+  opacity: 0.5;
+  font-size: 14px;
+}
+.page-admin-users .section__table .admin-ustbl-main {
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 2px;
+  border: 1px solid #E0E2E7;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__head {
+  width: 100%;
+  border-bottom: 1px solid #E0E2E7;
+  display: grid;
+  grid-template-columns: 190px 1fr 1fr 15% 120px 120px;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__head div {
+  height: 40px;
+  padding: 10px 15px;
+  border-right: 1px solid #E0E2E7;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 100%;
+  display: flex;
+  align-items: center;
+  color: #171515;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__head div:last-child {
+  border-right: none;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody {
+  width: 100%;
+  border-bottom: 1px solid #E0E2E7;
+  display: grid;
+  grid-template-columns: 190px 1fr 1fr 15% 120px 120px;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody div {
+  height: 100%;
+  padding: 10px 15px;
+  border-right: 1px solid #E0E2E7;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 100%;
+  display: flex;
+  align-items: center;
+  color: #171515;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody div:last-child {
+  border-right: none;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-id {
+  color: #777980;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-slug {
+  color: #006DCC;
+  word-break: break-all;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act {
+  gap: 8px;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act a {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #535353;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act__remove {
+  background-color: #DF4545;
+  border-color: #DF4545 !important;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody:nth-child(even) {
+  background-color: #F9F9F9;
+}
+.page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody:last-child {
+  border-bottom: none;
+}
+@media (max-width: 992px) {
+  .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c {
+    width: 900px;
+  }
+}
+@media (max-width: 992px) {
+  .page-admin-users .section__table .admin-ustbl-main {
+    overflow-x: scroll;
+  }
+}
+
 p {
   font-size: 15px;
   font-weight: 400;

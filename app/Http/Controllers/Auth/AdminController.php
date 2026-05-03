@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -16,6 +17,19 @@ class AdminController extends Controller
 
 
         return view('admin.page.admin.index');
+    }
+
+    public function users()
+    {
+        // $AdminId = auth()->user()->admin->id;
+
+        $users = User::query()
+            ->whereIn('role', ['provider', 'customer'])
+            ->with(['provider', 'customer'])
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.page.admin.user.index', compact('users'));
     }
 
     /**

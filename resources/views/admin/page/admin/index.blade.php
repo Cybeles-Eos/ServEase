@@ -1,7 +1,7 @@
 @extends('admin.layouts.auth')
 
 {{-- Meta Section --}}
-@section('title', 'Customer Servease Dashboard')
+@section('title', 'Admin Dashboard')
 
 {{-- Page Content --}}
 @section('content')
