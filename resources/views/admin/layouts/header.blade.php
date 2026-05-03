@@ -46,6 +46,12 @@
                     $fname = explode(' ', $user->provider->first_name)[0] ?? '';
                     $lname = explode(' ', $user->provider->last_name)[0] ?? '';
                     $profileImage = $user->provider->profile_image ?? null;
+                } else if ($user->role === 'admin') {
+                    $fullname = explode(' ', $user->name);
+
+                    $fname = $fullname[0] ?? '';
+                    $lname = $fullname[1] ?? '';
+                    $profileImage = null; // No Image For Admin | If We Have Default For Admin Add Hard Coded
                 }
             @endphp
             @if ($profileImage)

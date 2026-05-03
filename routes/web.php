@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BookingInfoController;
 use App\Http\Controllers\BookingRequestController;
+use App\Http\Controllers\Auth\AdminController;
 
 
 Route::get('/', function () {
@@ -53,9 +54,13 @@ Route::post('/provider-signup-c', [AuthManagerController::class, 'signupProvider
 
 Route::middleware('auth')->group(function () {
 
-    Route::middleware('role:admin')->get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::middleware('role:admin')->group(function () {
+        
+        Route::redirect('/admin', '/admin/dashboard');
+        Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        
+    
+    });
 
     // Provider
     Route::middleware('role:provider')->group(function () {
