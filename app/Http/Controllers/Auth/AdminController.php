@@ -113,6 +113,14 @@ class AdminController extends Controller
         ]);
     }
 
+    public function showUser(User $user)
+    {
+        $this->assertManagedUser($user);
+        $user->load(['provider', 'customer']);
+
+        return view('admin.page.admin.user.show', compact('user'));
+    }
+
     public function editUser(User $user)
     {
         $this->assertManagedUser($user);

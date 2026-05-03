@@ -53,7 +53,12 @@
                             <div class="prvstble-mctb-date">{{ ucfirst($user->role) }}</div>
                             <div class="prvstble-mctb-date">{{ $user->is_active ? 'Active' : 'Disabled' }}</div>
                             <div class="prvstble-mctb-act">
-                                <a href="{{ route('admin.users.edit', $user) }}">
+                                <a href="{{ route('admin.users.show', $user) }}" title="View profile">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path d="M8 3C4.5 3 1.73 5.11 1 8c.73 2.89 3.5 5 7 5s6.27-2.11 7-5c-.73-2.89-3.5-5-7-5Zm0 8.33a3.33 3.33 0 1 1 0-6.66 3.33 3.33 0 0 1 0 6.66Zm0-5.33a1.67 1.67 0 1 0 0 3.33 1.67 1.67 0 0 0 0-3.33Z" fill="#535353"/>
+                                    </svg>
+                                </a>
+                                <a href="{{ route('admin.users.edit', $user) }}" title="Edit">
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3 13V10.6389L10.3333 3.31944C10.4444 3.21759 10.5672 3.13889 10.7017 3.08333C10.8361 3.02778 10.9772 3 11.125 3C11.2728 3 11.4163 3.02778 11.5556 3.08333C11.6948 3.13889 11.8152 3.22222 11.9167 3.33333L12.6806 4.11111C12.7917 4.21296 12.8728 4.33333 12.9239 4.47222C12.975 4.61111 13.0004 4.75 13 4.88889C13 5.03704 12.9746 5.17833 12.9239 5.31278C12.8731 5.44722 12.792 5.56981 12.6806 5.68056L5.36111 13H3ZM11.1111 5.66667L11.8889 4.88889L11.1111 4.11111L10.3333 4.88889L11.1111 5.66667Z" fill="#535353"/>
                                     </svg>
