@@ -48,7 +48,17 @@ class AuthManagerController extends Controller
 
             $this->updateAllBookingStatuses();
 
-            $user = Auth::user();   
+            $user = Auth::user();
+
+            if (!$user->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => ['This account has been disabled.'],
+                ]);
+            }
 
             if ($user->isAdmin()) {
                 return redirect('/admin/dashboard');
