@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -247,5 +248,77 @@ class AdminController extends Controller
         if (! in_array($user->role, ['provider', 'customer'], true)) {
             abort(404);
         }
+    }
+
+
+
+    /*
+     *
+     *  General Setting Controllers
+     * 
+    */
+    public function setting()
+    {
+        $serviceCategories = ServiceCategory::query()
+            ->latest()
+            ->get();
+
+        return view('admin.page.admin.general_setting.index', compact('serviceCategories'));
+    }
+    public function storeServiceCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:service_categories,name'],
+        ]);
+
+        ServiceCategory::create([
+            'name' => $validated['name'],
+            'is_active' => true,
+        ]);
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => 'Service category created successfully.',
+            'type' => 'success',
+        ]);
+    }
+    public function updateServiceCategory(Request $request, ServiceCategory $serviceCategory)
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('service_categories', 'name')->ignore($serviceCategory->id),
+            ],
+            'is_active' => ['nullable', 'in:1'],
+        ]);
+
+        $serviceCategory->update([
+            'name' => $validated['name'],
+            'is_active' => $request->has('is_active'),
+        ]);
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => 'Service category updated successfully.',
+            'type' => 'success',
+        ]);
+    }
+    public function destroyServiceCategory(Request $request, ServiceCategory $serviceCategory)
+    {
+        $serviceCategory->delete();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message' => 'Service category deleted successfully.',
+            ]);
+        }
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => 'Service category deleted successfully.',
+            'type' => 'success',
+        ]);
     }
 }

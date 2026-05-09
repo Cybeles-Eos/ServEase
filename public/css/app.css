@@ -3790,6 +3790,7 @@ h4 span {
 }
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act {
   gap: 8px;
+  flex-wrap: wrap;
 }
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act a {
   width: 22px;
@@ -4138,6 +4139,342 @@ h4 span {
   .provider-register__main {
     padding-left: 0rem;
   }
+}
+
+.page-admin-setting {
+  width: 100%;
+  background-color: #F5F7FA;
+  padding: 10px 15px;
+  padding-top: 15px;
+  padding-bottom: 25px;
+}
+.page-admin-setting .p-a-gs-card {
+  background-color: #fff;
+  border: 1px solid #E0E2E7;
+  border-radius: 6px;
+  padding: 20px 15px;
+}
+.page-admin-setting .section.service-category .p-a-gs-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-admin-setting .section.service-category .p-a-gs-card-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+.page-admin-setting .section.service-category .mct-inline-create-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.page-admin-setting .section.service-category .mct-inline-create-form input {
+  width: 240px;
+  height: 34px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 0 10px;
+  font-size: 13px;
+  outline: none;
+}
+.page-admin-setting .section.service-category .mct-inline-create-form input:focus {
+  border-color: #111827;
+}
+.page-admin-setting .section.service-category .mct-inline-create-form button {
+  height: 34px;
+  border: 1px solid #111827;
+  background: #111827;
+  color: #fff;
+  padding: 0 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.page-admin-setting .section.service-category .mct-inline-create-form button:hover {
+  background: #000;
+}
+.page-admin-setting .section.service-category .mct-form-error {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #dc2626;
+}
+.page-admin-setting .section.service-category .mct-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+.page-admin-setting .section.service-category .mct-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 13px;
+}
+.page-admin-setting .section.service-category .mct-table th,
+.page-admin-setting .section.service-category .mct-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  color: #111827;
+}
+.page-admin-setting .section.service-category .mct-table th {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  background: #fff;
+}
+.page-admin-setting .section.service-category .mct-table tbody tr:hover {
+  background: #fafafa;
+}
+.page-admin-setting .section.service-category .mct-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.page-admin-setting .section.service-category .mct-text-right {
+  text-align: right !important;
+}
+.page-admin-setting .section.service-category .mct-name-with-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.page-admin-setting .section.service-category .mct-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.page-admin-setting .section.service-category .mct-status.mct-status-active {
+  background: #e8f7ee;
+  color: #16803c;
+}
+.page-admin-setting .section.service-category .mct-status.mct-status-disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+.page-admin-setting .section.service-category .mct-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.page-admin-setting .section.service-category .mct-actions form {
+  margin: 0;
+}
+.page-admin-setting .section.service-category .mct-action-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  background: #fff;
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+}
+.page-admin-setting .section.service-category .mct-action-btn:hover {
+  background: #f9fafb;
+}
+.page-admin-setting .section.service-category .mct-action-btn.mct-action-delete {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+.page-admin-setting .section.service-category .mct-action-btn.mct-action-delete:hover {
+  background: #dc2626;
+}
+.page-admin-setting .section.service-category .mct-empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 24px !important;
+}
+@media (max-width: 768px) {
+  .page-admin-setting .section.service-category .p-a-gs-card-header {
+    align-items: flex-start;
+  }
+  .page-admin-setting .section.service-category .mct-inline-create-form {
+    width: 100%;
+  }
+  .page-admin-setting .section.service-category .mct-inline-create-form input {
+    width: 100%;
+  }
+}
+
+.mct-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+.mct-modal.show {
+  display: block;
+}
+.mct-modal .mct-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.mct-modal .mct-modal-box {
+  position: relative;
+  width: 420px;
+  max-width: calc(100% - 32px);
+  margin: 90px auto;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+.mct-modal .mct-modal-header,
+.mct-modal .mct-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.mct-modal .mct-modal-footer {
+  border-top: 1px solid #e5e7eb;
+  border-bottom: none;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.mct-modal .mct-modal-header h5 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.mct-modal .mct-modal-header button {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #374151;
+}
+.mct-modal .mct-modal-body {
+  padding: 16px;
+}
+.mct-modal .mct-form-group {
+  margin-bottom: 16px;
+}
+.mct-modal .mct-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+.mct-modal .mct-form-group input {
+  width: 100%;
+  height: 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 0 12px;
+  font-size: 13px;
+  outline: none;
+}
+.mct-modal .mct-form-group input:focus {
+  border-color: #111827;
+}
+.mct-modal .mct-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.mct-modal .mct-toggle-row label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+.mct-modal .mct-toggle-row small {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+}
+.mct-modal .mct-switch {
+  position: relative;
+  display: inline-block !important;
+  width: 42px;
+  height: 22px;
+  margin: 0 !important;
+}
+.mct-modal .mct-switch input {
+  display: none;
+}
+.mct-modal .mct-switch input:checked + span {
+  background: #FFBE42;
+}
+.mct-modal .mct-switch input:checked + span:before {
+  transform: translateX(20px);
+}
+.mct-modal .mct-switch span {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #d1d5db;
+  border-radius: 999px;
+  transition: 0.2s;
+}
+.mct-modal .mct-switch span:before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 2px;
+  top: 2px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.mct-modal .mct-view-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 13px;
+}
+.mct-modal .mct-view-row:last-child {
+  border-bottom: none;
+}
+.mct-modal .mct-view-row span {
+  color: #6b7280;
+}
+.mct-modal .mct-view-row strong {
+  color: #111827;
+  font-weight: 600;
+  text-align: right;
+}
+.mct-modal .mct-btn-light,
+.mct-modal .mct-btn-dark {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.mct-modal .mct-btn-light {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+}
+.mct-modal .mct-btn-dark {
+  border: 1px solid #111827;
+  background: #111827;
+  color: #fff;
 }
 
 .provider--dashboard {

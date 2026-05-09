@@ -65,7 +65,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/users/{user}', [AdminController::class, 'showUser'])->name('admin.users.show');
         Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
-    
+
+        //Admin General Setting
+        Route::get('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');
+            // Service Category inside General Setting
+            Route::post('/admin/setting/service-categories', [AdminController::class, 'storeServiceCategory'])
+                ->name('admin.setting.service-categories.store');
+            Route::put('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'updateServiceCategory'])
+                ->name('admin.setting.service-categories.update');
+            Route::delete('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'destroyServiceCategory'])
+                ->name('admin.setting.service-categories.destroy');
     });
 
     // Provider

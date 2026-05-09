@@ -5,7 +5,7 @@
 @push('extrastylesheets')
     <style>
         .admin-user-show {
-            max-width: 520px;
+            max-width: 920px;
             margin-left: auto;
             margin-right: auto;
             text-align: center;
@@ -16,7 +16,7 @@
             display: inline-block;
             margin-bottom: 20px;
             font-size: 14px;
-            color: #282828;
+            /* color: #282828; */
             opacity: .7;
             position: absolute;
             left: 16px;
@@ -126,6 +126,21 @@
                 font-size: 11px;
             }
         }
+        .show-user-d-main{
+            widows: 100%;
+            display: flex;
+            /* align-items: center; */
+            justify-content: center;
+            gap: 20px;
+        }
+        @media (max-width: 992px){
+            .admin-user-show {
+                max-width: 620px;
+            }
+            .show-user-d-main{
+                flex-direction: column;
+            }
+        }
     </style>
 @endpush
 
@@ -171,7 +186,7 @@
 
     <main class="main-dash-uix page-admin-users dash-sp">
         <div class="admin-user-show">
-            <a href="{{ route('admin.users') }}" class="admin-user-show__back">Go back</a>
+            <a href="{{ route('admin.users') }}" class="admin-user-show__back">← Go back</a>
 
             @if ($avatarImgSrc)
                 <img src="{{ $avatarImgSrc }}" alt="" class="admin-user-show__avatar" width="140" height="140">
@@ -183,123 +198,127 @@
 
             <h1 class="admin-user-show__name">{{ $displayName }}</h1>
             <span class="admin-user-show__role">{{ ucfirst($user->role) }}</span>
+            <div class="show-user-d-main">
 
-            <div class="admin-user-show__card">
-                <h5>Account</h5>
-                <div class="admin-user-show__row">
-                    <span class="admin-user-show__label">Login email</span>
-                    <span class="admin-user-show__value">{{ $detail($user->email) }}</span>
+                <div class="admin-user-show__card">
+                    <h5>Account</h5>
+                    <div class="admin-user-show__row">
+                        <span class="admin-user-show__label">Login email</span>
+                        <span class="admin-user-show__value">{{ $detail($user->email) }}</span>
+                    </div>
+                    <div class="admin-user-show__row">
+                        <span class="admin-user-show__label">Account name</span>
+                        <span class="admin-user-show__value">{{ $detail($user->name) }}</span>
+                    </div>
+                    <div class="admin-user-show__row">
+                        <span class="admin-user-show__label">Status</span>
+                        <span class="admin-user-show__value">{{ $user->is_active ? 'Active' : 'Disabled' }}</span>
+                    </div>
+                    <div class="admin-user-show__row">
+                        <span class="admin-user-show__label">Joined</span>
+                        <span class="admin-user-show__value">{{ $user->created_at?->format('M j, Y \a\t g:i A') ?? '—' }}</span>
+                    </div>
+                    <div class="admin-user-show__row">
+                        <span class="admin-user-show__label">Last updated</span>
+                        <span class="admin-user-show__value">{{ $user->updated_at?->format('M j, Y \a\t g:i A') ?? '—' }}</span>
+                    </div>
                 </div>
-                <div class="admin-user-show__row">
-                    <span class="admin-user-show__label">Account name</span>
-                    <span class="admin-user-show__value">{{ $detail($user->name) }}</span>
-                </div>
-                <div class="admin-user-show__row">
-                    <span class="admin-user-show__label">Status</span>
-                    <span class="admin-user-show__value">{{ $user->is_active ? 'Active' : 'Disabled' }}</span>
-                </div>
-                <div class="admin-user-show__row">
-                    <span class="admin-user-show__label">Joined</span>
-                    <span class="admin-user-show__value">{{ $user->created_at?->format('M j, Y \a\t g:i A') ?? '—' }}</span>
-                </div>
-                <div class="admin-user-show__row">
-                    <span class="admin-user-show__label">Last updated</span>
-                    <span class="admin-user-show__value">{{ $user->updated_at?->format('M j, Y \a\t g:i A') ?? '—' }}</span>
-                </div>
+
+                @if ($user->role === 'customer' && $profile)
+                    <div class="admin-user-show__card">
+                        <h5>Customer profile</h5>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">First name</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->first_name) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Last name</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->last_name) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Phone</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->phone_number) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Personal email</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->personal_email) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Street address</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->street_address) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">City</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->city) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Barangay</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->barangay) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Zip code</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->zipcode) }}</span>
+                        </div>
+                    </div>
+                @elseif ($user->role === 'provider' && $profile)
+                    <div class="admin-user-show__card">
+                        <h5>Provider profile</h5>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">First name</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->first_name) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Last name</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->last_name) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Phone</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->phone_number) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Personal email</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->personal_email) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Home address</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->home_address) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Province</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->province) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Barangay</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->barangay) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Zip code</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->zipcode) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Profession</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->profession) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Years experience</span>
+                            <span class="admin-user-show__value">{{ $profile->year_exp !== null ? (int) $profile->year_exp : '—' }}</span>
+                        </div>
+                        @if (! empty($profile->verified_at))
+                            <div class="admin-user-show__row">
+                                <span class="admin-user-show__label">Verified</span>
+                                <span class="admin-user-show__value">{{ \Carbon\Carbon::parse($profile->verified_at)->format('M j, Y') }}</span>
+                            </div>
+                        @endif
+                    </div>
+                @elseif (!$profile)
+                    <div class="admin-user-show__card">
+                        <h5>Profile</h5>
+                        <p style="margin:0;font-size:14px;color:#888;">No profile record for this user yet.</p>
+                    </div>
+                @endif
+
             </div>
 
-            @if ($user->role === 'customer' && $profile)
-                <div class="admin-user-show__card">
-                    <h5>Customer profile</h5>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">First name</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->first_name) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Last name</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->last_name) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Phone</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->phone_number) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Personal email</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->personal_email) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Street address</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->street_address) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">City</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->city) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Barangay</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->barangay) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Zip code</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->zipcode) }}</span>
-                    </div>
-                </div>
-            @elseif ($user->role === 'provider' && $profile)
-                <div class="admin-user-show__card">
-                    <h5>Provider profile</h5>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">First name</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->first_name) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Last name</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->last_name) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Phone</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->phone_number) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Personal email</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->personal_email) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Home address</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->home_address) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Province</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->province) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Barangay</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->barangay) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Zip code</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->zipcode) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Profession</span>
-                        <span class="admin-user-show__value">{{ $detail($profile->profession) }}</span>
-                    </div>
-                    <div class="admin-user-show__row">
-                        <span class="admin-user-show__label">Years experience</span>
-                        <span class="admin-user-show__value">{{ $profile->year_exp !== null ? (int) $profile->year_exp : '—' }}</span>
-                    </div>
-                    @if (! empty($profile->verified_at))
-                        <div class="admin-user-show__row">
-                            <span class="admin-user-show__label">Verified</span>
-                            <span class="admin-user-show__value">{{ \Carbon\Carbon::parse($profile->verified_at)->format('M j, Y') }}</span>
-                        </div>
-                    @endif
-                </div>
-            @elseif (!$profile)
-                <div class="admin-user-show__card">
-                    <h5>Profile</h5>
-                    <p style="margin:0;font-size:14px;color:#888;">No profile record for this user yet.</p>
-                </div>
-            @endif
 
             <div class="admin-user-show__actions">
                 <a href="{{ route('admin.users.edit', $user) }}" class="btn btn--primary">Edit user</a>

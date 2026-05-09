@@ -51,7 +51,7 @@
                             <div class="prvstble-mctb-date">{{ $barangay }}</div>
                             <div class="prvstble-mctb-date">{{ $phone }}</div>
                             <div class="prvstble-mctb-date">{{ ucfirst($user->role) }}</div>
-                            <div class="prvstble-mctb-date">{{ $user->is_active ? 'Active' : 'Disabled' }}</div>
+                            <div class="prvstble-mctb-date">{!! $user->is_active ? '<span class="badge bg-success text-white" style="font-size: 11px">Active</span>' : '<span class="badge bg-danger text-white" style="font-size: 11px">Disabled</span>' !!}</div>
                             <div class="prvstble-mctb-act">
                                 <a href="{{ route('admin.users.show', $user) }}" title="View profile">
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -67,10 +67,7 @@
                                 class="prvstble-mctb-act__remove delete-admin-user-btn"
                                 data-delete-url="{{ route('admin.users.destroy', $user) }}"
                                 data-id="{{ $user->id }}">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M5 11.9907L8.49533 8.49533M8.49533 8.49533L11.9907 5M8.49533 8.49533L5 5M8.49533 8.49533L11.9907 11.9907"
-                                            stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                                    <i class="fa fa-times" style="color: #fff"></i>
                                 </a>
                             </div>
                         </div>
