@@ -604,7 +604,24 @@
             renderServices(currentData);
         });
 
-        $('.ps-sl-cc-main input[type="checkbox"]').on('change', function () {
+        // $('.ps-sl-cc-main input[type="checkbox"]').on('change', function () {
+        //     const selected = $('.ps-sl-cc-main input:checked')
+        //         .map(function () {
+        //             return this.value;
+        //         }).get();
+
+        //     if (selected.length === 0) {
+        //         currentData = [...servicesData];
+        //     } else {
+        //         currentData = servicesData.filter(service =>
+        //             selected.includes(service.category)
+        //         );
+        //     }
+
+        //     visibleCount = STEP;
+        //     renderServices(currentData);
+        // });
+        $(document).on('change', '.ps-sl-cc-main input[type="checkbox"]', function () {
             const selected = $('.ps-sl-cc-main input:checked')
                 .map(function () {
                     return this.value;

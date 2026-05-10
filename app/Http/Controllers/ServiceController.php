@@ -6,6 +6,8 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ServiceCategory;
+use Illuminate\Validation\Rule;
 use File;
 use Carbon\Carbon;
 
@@ -16,10 +18,36 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $services = Service::with('provider')
-            ->where('is_active',1)
+        $services = Service::with(['provider', 'serviceCategory'])
+            ->where('is_active', 1)
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($service) {
+                return [
+                    'id' => $service->id,
+                    'service_id' => $service->service_id,
+                    'provider_id' => $service->provider_id,
+                    'service_category_id' => $service->service_category_id,
+
+                    'title' => $service->title,
+                    'slug' => $service->slug,
+                    'description' => $service->description,
+                    'content' => $service->content,
+
+                    // Keep this key because your JS uses service.category
+                    'category' => $service->serviceCategory?->name ?? 'No Category',
+
+                    'price' => $service->price,
+                    'image' => $service->image,
+                    'jobs' => $service->jobs ?? 0,
+                    'rating' => $service->rating ?? 0,
+                    'reviews' => $service->reviews ?? 0,
+                    'specialization' => $service->specialization,
+                    'created_at' => $service->created_at,
+
+                    'provider' => $service->provider,
+                ];
+            });
 
         return view('front.pages.custom-pages.services', compact('services'));
     }
@@ -27,7 +55,11 @@ class ServiceController extends Controller
     public function indexProvider()
     {
         $provider = auth()->user()->provider;
-        $services = Service::where('provider_id', $provider->id)->get();
+
+        $services = Service::with('serviceCategory')
+            ->where('provider_id', $provider->id)
+            ->latest()
+            ->get();
 
         return view('admin.provserv', compact('services'));
     }
@@ -48,10 +80,14 @@ class ServiceController extends Controller
     {
         $request->validate([
             'title'          => 'required|string|max:255',
+            'service_category_id' => [
+                'required',
+                Rule::exists('service_categories', 'id')->where('is_active', true),
+            ],
             'slug'           => 'nullable|string|max:255|unique:tbl_services,slug',
             'description'    => 'nullable|string',
             'content'        => 'nullable|string',
-            'category'       => 'required|string',
+            // 'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
             'price'          => 'required|numeric|max:30000',
             'image'          => 'image|mimes:jpg,jpeg,png,webp|max:5048',
@@ -84,11 +120,12 @@ class ServiceController extends Controller
         $service = Service::create([
             'service_id'     => $serviceId,
             'provider_id'    => $provider->id,
+            'service_category_id' => $request->service_category_id,
             'title'          => $request->title,
             'slug'           => $slug,
             'description'    => $request->description,
             'content'        => $request->content,
-            'category'       => $request->category,
+            // 'category'       => $request->category,
             'specialization' => $request->specialization,
             'price'          => $request->price,
             'image'          => null,
@@ -129,50 +166,54 @@ class ServiceController extends Controller
      */
     public function show(string $slug)
     {
-        // Fetch service by slug (NOT ID)
-        $service = Service::with('provider')
+        $service = Service::with(['provider', 'serviceCategory'])
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // Fetch Related Services
-        $relatedServices = Service::where('category', $service->category)
+        $relatedServices = Service::with(['provider', 'serviceCategory'])
+            ->where('service_category_id', $service->service_category_id)
             ->where('id', '!=', $service->id)
+            ->where('is_active', 1)
+            ->latest()
             ->limit(3)
             ->get();
 
-        // Flatten primary data safely
+        $categoryName = $service->serviceCategory?->name ?? 'No Category';
+
         $data = [
-            'id'             => $service->id,
-            'title'          => $service->title,
-            'slug'           => $service->slug,
-            'category'       => $service->category,
-            'description'    => $service->description,
-            'content'           => $service->content,
-            'image'          => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
-            'jobs'           => '0',
-            'price'           => $service->price,
-            'rating'         => $service->rating,
-            'reviews'        => '0',
+            'id' => $service->id,
+            'title' => $service->title,
+            'slug' => $service->slug,
+
+            'service_category_id' => $service->service_category_id,
+            'category' => $categoryName,
+
+            'description' => $service->description,
+            'content' => $service->content,
+            'image' => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
+            'jobs' => $service->jobs ?? 0,
+            'price' => $service->price,
+            'rating' => $service->rating ?? 0,
+            'reviews' => $service->reviews ?? 0,
             'specialization' => $service->specialization,
-            'created_at'     => $service->created_at->format('M d, Y'),
+            'created_at' => $service->created_at->format('M d, Y'),
 
-            // Provider info (null-safe)
-            'provider_name'  => $service->provider
-                                    ? $service->provider->first_name . ' ' . $service->provider->last_name
-                                    : 'Unknown Provider',
+            'provider_name' => $service->provider
+                ? $service->provider->first_name . ' ' . $service->provider->last_name
+                : 'Unknown Provider',
 
-            'provider_id' => $service->provider->id,
-            'provider_fname' => $service->provider->first_name,
-            'provider_lname' => $service->provider->last_name,
-            'provider_profile' => $service->provider->profile_image,
+            'provider_id' => $service->provider?->id,
+            'provider_fname' => $service->provider?->first_name,
+            'provider_lname' => $service->provider?->last_name,
+            'provider_profile' => $service->provider?->profile_image,
 
-            'provider_exp'   => $service->provider->year_exp ?? 0,
-            'provider_area'  => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
+            'provider_exp' => $service->provider->year_exp ?? 0,
+            'provider_area' => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
         ];
 
         return view('front.pages.custom-pages.service-detail', [
             'service' => (object) $data,
-            'related' => $relatedServices
+            'related' => $relatedServices,
         ]);
     }
 
@@ -198,7 +239,11 @@ class ServiceController extends Controller
             'slug'           => 'nullable|string|max:255|unique:tbl_services,slug,' . $id,
             'description'    => 'nullable|string',
             'content'        => 'nullable|string',
-            'category'       => 'required|string',
+            'service_category_id' => [
+                'required',
+                Rule::exists('service_categories', 'id')->where('is_active', true),
+            ],
+            // 'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
             'price'          => 'nullable|numeric',
             'image'          => $service->image
@@ -214,9 +259,10 @@ class ServiceController extends Controller
         $service->update([
             'title'          => $request->title,
             'slug'           => $slug,
+            'service_category_id' => $request->service_category_id,
             'description'    => $request->description,
             'content'        => $request->content,
-            'category'       => $request->category,
+            // 'category'       => $request->category,
             'specialization' => $request->specialization,
             'price'          => $request->price,
             'is_active'      => $request->is_active

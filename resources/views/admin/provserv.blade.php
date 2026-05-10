@@ -60,7 +60,7 @@
                             <div class="provider-stbl-main-c__tbody">
                                 <div class="prvstble-mctb-id">{{$service->service_id}}</div>
                                 <div class="prvstble-mctb-name">{{ Str::limit($service->title, 60) }}</div>
-                                <div class="prvstble-mctb-serv">{{$service->category}}</div>
+                                <div class="prvstble-mctb-serv">{{ $service->serviceCategory?->name ?? 'No Category' }}</div>
                                 <div class="prvstble-mctb-slug"><a href="{{url('services/'. $service->slug)}}">{{url('services/'.$service->slug)}}</a></div>
                                 <div class="prvstble-mctb-date">{{ $service->created_at->format('M j, Y') }}</div>
                                 <div class="prvstble-mctb-act">

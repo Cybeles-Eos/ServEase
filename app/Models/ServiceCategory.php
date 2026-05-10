@@ -17,4 +17,9 @@ class ServiceCategory extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function services()
+    {
+        return $this->hasMany(Service::class, 'service_category_id');
+    }
 }

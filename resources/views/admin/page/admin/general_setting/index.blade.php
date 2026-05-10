@@ -9,8 +9,8 @@
     {{-- @include('admin.layouts.sidebar') --}}
 
     <main class="main-dash-uix page-admin-setting dash-sp">
-        <p>General Setting</p>
-        <hr>
+        <p style="margin: 0; font-size: 14px; opacity: .6">General Setting</p>
+        <hr style="margin-top: 10px">
         <section class="p-a-gs-card section service-category">
             <div class="p-a-gs-card-header">
                 <h5>Service Category</h5>
@@ -40,9 +40,33 @@
                 <small class="mct-form-error">{{ $message }}</small>
             @enderror
 
-            <hr>
+            <hr style="margin-bottom: 12px">
 
-            {{-- Minimal Table Here --}}
+            {{-- <div class="mct-table-topbar">
+                <form action="{{ route('admin.setting') }}" method="GET" class="mct-mini-search-form">
+                    <input
+                        type="text"
+                        name="category_search"
+                        value="{{ $categorySearch ?? '' }}"
+                        placeholder="Search category..."
+                    >
+
+                    <button type="submit">
+                        Search
+                    </button>
+
+                    @if (!empty($categorySearch))
+                        <a href="{{ route('admin.setting') }}">
+                            Clear
+                        </a>
+                    @endif
+                </form>
+
+                <span class="mct-result-count">
+                    Showing {{ $serviceCategories->count() }} of {{ $serviceCategories->total() }}
+                </span>
+            </div> --}}
+
             <div class="mct-table-wrapper">
                 <table class="mct-table">
                     <thead>
@@ -95,9 +119,9 @@
                                             data-active="{{ $category->is_active ? 1 : 0 }}"
                                             data-update-url="{{ route('admin.setting.service-categories.update', $category) }}"
                                         >
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M3 13V10.6389L10.3333 3.31944C10.4444 3.21759 10.5672 3.13889 10.7017 3.08333C10.8361 3.02778 10.9772 3 11.125 3C11.2728 3 11.4163 3.02778 11.5556 3.08333C11.6948 3.13889 11.8152 3.22222 11.9167 3.33333L12.6806 4.11111C12.7917 4.21296 12.8728 4.33333 12.9239 4.47222C12.975 4.61111 13.0004 4.75 13 4.88889C13 5.03704 12.9746 5.17833 12.9239 5.31278C12.8731 5.44722 12.792 5.56981 12.6806 5.68056L5.36111 13H3ZM11.1111 5.66667L11.8889 4.88889L11.1111 4.11111L10.3333 4.88889L11.1111 5.66667Z" fill="#535353"/>
-                                        </svg>
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3 13V10.6389L10.3333 3.31944C10.4444 3.21759 10.5672 3.13889 10.7017 3.08333C10.8361 3.02778 10.9772 3 11.125 3C11.2728 3 11.4163 3.02778 11.5556 3.08333C11.6948 3.13889 11.8152 3.22222 11.9167 3.33333L12.6806 4.11111C12.7917 4.21296 12.8728 4.33333 12.9239 4.47222C12.975 4.61111 13.0004 4.75 13 4.88889C13 5.03704 12.9746 5.17833 12.9239 5.31278C12.8731 5.44722 12.792 5.56981 12.6806 5.68056L5.36111 13H3ZM11.1111 5.66667L11.8889 4.88889L11.1111 4.11111L10.3333 4.88889L11.1111 5.66667Z" fill="#535353"/>
+                                            </svg>
                                         </button>
 
                                         <form
@@ -118,13 +142,38 @@
                         @empty
                             <tr>
                                 <td colspan="3" class="mct-empty">
-                                    No service categories found.
+                                    @if (!empty($categorySearch))
+                                        No service categories found for "{{ $categorySearch }}".
+                                    @else
+                                        No service categories found.
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if ($serviceCategories->hasPages())
+                <div class="mct-pagination">
+                    @if ($serviceCategories->onFirstPage())
+                        <span class="mct-page-disabled"><i class="fa fa-chevron-left"></i></span>
+                    @else
+                        <a href="{{ $serviceCategories->previousPageUrl() }}"><i class="fa fa-chevron-left"></i></a>
+                    @endif
+
+                    <span class="mct-page-info">
+                        Page {{ $serviceCategories->currentPage() }} of {{ $serviceCategories->lastPage() }}
+                    </span>
+
+                    @if ($serviceCategories->hasMorePages())
+                        <a href="{{ $serviceCategories->nextPageUrl() }}"><i class="fa fa-chevron-right"></i></a>
+                    @else
+                        <span class="mct-page-disabled"><i class="fa fa-chevron-right"></i></span>
+                    @endif
+                </div>
+
+            @endif
         </section>
     </main>
 

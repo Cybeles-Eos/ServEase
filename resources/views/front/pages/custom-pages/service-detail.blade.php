@@ -27,7 +27,7 @@
                         <a href="{{ route('services.show', $rel->id) }}" class="psdslcr-box">
                             <div class="psdslcr-box__head">
                                 <div>
-                                    {{ $rel->category }}
+                                    {{ $rel->serviceCategory?->name ?? 'No Category' }}
                                 </div>
 
                                 <p>
@@ -69,7 +69,7 @@
                                 <a href="{{ route('services.show', $rel->id) }}" class="psd-sl-sdetaili-relateds__bc">
                                     <div class="psd-sl-sdetaili-relateds__bc__head">
                                         <div>
-                                            {{ $rel->category }}
+                                            {{ $rel->serviceCategory?->name ?? 'No Category' }}
                                         </div>
 
                                         <p>

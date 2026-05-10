@@ -23,3 +23,11 @@ function services(){
     $services = \App\Models\Service::where('is_active', 1)->get();
     return $services;
 }
+
+function getActiveServiceCategories()
+{
+    return \App\Models\ServiceCategory::query()
+        ->where('is_active', true)
+        ->orderBy('name')
+        ->get();
+}

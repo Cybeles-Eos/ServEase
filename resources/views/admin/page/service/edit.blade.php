@@ -148,6 +148,31 @@
                         </div>
 
                         <div class="prg-mm-group">
+                            <label for="lname">Service Category</label>
+                            <div class="provserv-c-body--fields--dropdowns">
+                                <select name="service_category_id" class="provserv-c-body--fields--dropdowns--sort" id="">
+                                    <option value="">-- Choose Category --</option>
+                                    @php
+                                        $serviceCategories = getActiveServiceCategories();
+                                    @endphp
+
+                                    @foreach ($serviceCategories as $serviceCategory)
+                                        <option
+                                            value="{{ $serviceCategory->id }}"
+                                            {{ old('service_category_id', $service->service_category_id ?? '') == $serviceCategory->id ? 'selected' : '' }}
+                                        >
+                                            {{ $serviceCategory->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            @error('service_category_id') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="prg-mm-group">
                             <label>Short Description</label>
                             <textarea name="description" rows="3">{{ old('description', $service->description) }}</textarea>
                             @error('description') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
@@ -157,22 +182,6 @@
                             <label>Full Content</label>
                             <textarea name="content" id="content" rows="20">{{ old('content', $service->content) }}</textarea>
                             @error('content') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
-                        </div>
-
-                        <div class="prg-mm-group">
-                            <label for="lname">Service Category</label>
-                            <div class="provserv-c-body--fields--dropdowns">
-                                <select name="category" class="provserv-c-body--fields--dropdowns--sort" id="">
-                                    <option value="">-- Choose Category --</option>
-                                    <option value="Plumber" {{ old('category', $service->category) == 'Plumber' ? 'selected' : '' }}>Plumber</option>
-                                    <option value="Electrician" {{ old('category', $service->category) == 'Electrician' ? 'selected' : '' }}>Electrician</option>
-                                    <option value="Vendor" {{ old('category', $service->category) == 'Vendor' ? 'selected' : '' }}>Vendor</option>
-                                </select>
-                                <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            @error('category') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">

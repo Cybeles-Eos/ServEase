@@ -257,13 +257,22 @@ class AdminController extends Controller
      *  General Setting Controllers
      * 
     */
-    public function setting()
+    public function setting(Request $request)
     {
-        $serviceCategories = ServiceCategory::query()
-            ->latest()
-            ->get();
+        $categorySearch = $request->input('category_search');
 
-        return view('admin.page.admin.general_setting.index', compact('serviceCategories'));
+        $serviceCategories = ServiceCategory::query()
+            ->when($categorySearch, function ($query) use ($categorySearch) {
+                $query->where('name', 'like', '%' . $categorySearch . '%');
+            })
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        return view('admin.page.admin.general_setting.index', compact(
+            'serviceCategories',
+            'categorySearch'
+        ));
     }
     public function storeServiceCategory(Request $request)
     {

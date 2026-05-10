@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Provider;
 use App\Models\Service;
+use App\Models\ServiceCategory;
+use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -213,6 +215,14 @@ class ServiceSeeder extends Seeder
 
         
         foreach ($servicesData as $data) {
+            $serviceCategory = ServiceCategory::where('name', $data['category'])->first();
+
+            if (! $serviceCategory) {
+                $serviceCategory = ServiceCategory::create([
+                    'name' => $data['category'],
+                    'is_active' => true,
+                ]);
+            }
             // Create or find the user/provider first
             $user = User::firstOrCreate(
                 ['email' => strtolower(str_replace(' ', '.', $data['provider'])) . '@example.com'],
@@ -229,7 +239,7 @@ class ServiceSeeder extends Seeder
                     'user_id'    => $user->id,
                     'first_name' => $nameParts[0],
                     'last_name'  => $nameParts[1] ?? '',
-                    'profession' => $data['category'],
+                    'profession' => $serviceCategory->name,
                     'verified_at' => now(),
                 ]);
             }
@@ -238,7 +248,8 @@ class ServiceSeeder extends Seeder
             Service::factory()->create([
                 'provider_id'    => $provider->id,
                 'title'          => $data['title'],
-                'category'       => $data['category'],
+                //'category'       => $data['category'],
+                'service_category_id'  => $serviceCategory->id,
                 'description'    => $data['description'],
                 'jobs'           => $data['jobs'],
                 'rating'         => $data['rating'],
