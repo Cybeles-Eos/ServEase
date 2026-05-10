@@ -23,6 +23,8 @@ class ServiceController extends Controller
             ->latest()
             ->get()
             ->map(function ($service) {
+                $categoryIsActive = $service->serviceCategory && $service->serviceCategory->is_active;
+
                 return [
                     'id' => $service->id,
                     'service_id' => $service->service_id,
@@ -34,8 +36,11 @@ class ServiceController extends Controller
                     'description' => $service->description,
                     'content' => $service->content,
 
-                    // Keep this key because your JS uses service.category
-                    'category' => $service->serviceCategory?->name ?? 'No Category',
+                    'category' => $categoryIsActive
+                        ? $service->serviceCategory->name
+                        : null,
+
+                    'category_is_active' => $categoryIsActive,
 
                     'price' => $service->price,
                     'image' => $service->image,
@@ -144,7 +149,6 @@ class ServiceController extends Controller
         ]);
     }
     
-
     public function uploadFile($file, $type = null, $path)
     {
         $extension = $file->getClientOriginalExtension();
@@ -179,14 +183,16 @@ class ServiceController extends Controller
             ->get();
 
         $categoryName = $service->serviceCategory?->name ?? 'No Category';
-
+        $categoryIsVisible = $service->serviceCategory && $service->serviceCategory->is_active;
         $data = [
             'id' => $service->id,
             'title' => $service->title,
             'slug' => $service->slug,
 
             'service_category_id' => $service->service_category_id,
-            'category' => $categoryName,
+            'category' => $categoryIsVisible
+                ? $service->serviceCategory->name
+                : null,
 
             'description' => $service->description,
             'content' => $service->content,

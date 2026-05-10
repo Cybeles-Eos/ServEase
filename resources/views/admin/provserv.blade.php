@@ -2,7 +2,27 @@
 
 {{-- Meta Section --}}
 @section('title', 'Provider Bookings - Servease')
+@push('extrastylesheets')
+    <style>
+.prvstble-mctb-serv {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 
+.service-category-disabled-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+}
+    </style>
+@endpush
 {{-- Page Content --}}
 @section('content')
     @include('admin.layouts.header')
@@ -60,7 +80,17 @@
                             <div class="provider-stbl-main-c__tbody">
                                 <div class="prvstble-mctb-id">{{$service->service_id}}</div>
                                 <div class="prvstble-mctb-name">{{ Str::limit($service->title, 60) }}</div>
-                                <div class="prvstble-mctb-serv">{{ $service->serviceCategory?->name ?? 'No Category' }}</div>
+                                <div class="prvstble-mctb-serv">
+                                    @if ($service->serviceCategory)
+                                        @if (! $service->serviceCategory->is_active)
+                                            <small class="service-category-disabled-label">Category Disabled</small>
+                                        @else
+                                            <span>{{ $service->serviceCategory->name }}</span>                         
+                                        @endif
+                                    @else
+                                        <small class="service-category-disabled-label">No Category</small>
+                                    @endif
+                                </div>
                                 <div class="prvstble-mctb-slug"><a href="{{url('services/'. $service->slug)}}">{{url('services/'.$service->slug)}}</a></div>
                                 <div class="prvstble-mctb-date">{{ $service->created_at->format('M j, Y') }}</div>
                                 <div class="prvstble-mctb-act">

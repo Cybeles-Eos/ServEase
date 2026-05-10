@@ -445,7 +445,7 @@
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
                             <img src="${assetBase}${service.image ?? 'images/default_service_banner.png'}" alt="${service.title}">
-                            <span class="ps-sl-c-box__head--cat">${service.category}</span>
+                            ${service.category ? `<span class="ps-sl-c-box__head--cat">${service.category}</span>` : ''}
                         </div>
 
                         <div class="ps-sl-c-box__body">
@@ -480,7 +480,7 @@
                                         <path d="M8 11.8472V8.21387" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M7.17348 4.19305L5.04015 5.37973C4.56015 5.6464 4.16016 6.31973 4.16016 6.87306V9.13307C4.16016 9.6864 4.55348 10.3597 5.04015 10.6264L7.17348 11.813C7.62682 12.0664 8.37349 12.0664 8.83349 11.813L10.9668 10.6264C11.4468 10.3597 11.8468 9.6864 11.8468 9.13307V6.87306C11.8468 6.31973 11.4535 5.6464 10.9668 5.37973L8.83349 4.19305C8.37349 3.93305 7.62682 3.93305 7.17348 4.19305Z" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    Specialization: ${service.specialization ?? service.category}
+                                    Specialization: ${service.specialization ?? 'No specialization'}
                                 </div>
 
                                 <div>
@@ -540,6 +540,10 @@
             const categoryMap = {};
 
             $.each(data, function (_, service) {
+                if (!service.category) {
+                    return;
+                }
+
                 categoryMap[service.category] =
                     (categoryMap[service.category] || 0) + 1;
             });
@@ -595,7 +599,7 @@
             currentData = servicesData
                 .filter(service =>
                     service.title.toLowerCase().includes(keyword) ||
-                    service.category.toLowerCase().includes(keyword) ||
+                    (service.category && service.category.toLowerCase().includes(keyword)) ||
                     (service.description && service.description.toLowerCase().includes(keyword))
                 )
                 .sort((a, b) => a.title.localeCompare(b.title));

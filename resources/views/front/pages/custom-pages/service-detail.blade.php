@@ -24,7 +24,8 @@
                 </div>
                 <div class="psd-sl-category__rcon">
                     @foreach($related as $rel)
-                        <a href="{{ route('services.show', $rel->id) }}" class="psdslcr-box">
+                    {{-- {{ route('services.show', $rel->id) }} --}}
+                        <a href="{{url('services/'.$rel->slug)}}" class="psdslcr-box">
                             <div class="psdslcr-box__head">
                                 <div>
                                     {{ $rel->serviceCategory?->name ?? 'No Category' }}
@@ -55,7 +56,9 @@
                 </div>
                 <div class="psd-sl-sdetail__info">
                     <div class="psd-sl-sdetaili-description">
-                        <p class="psd-sl-sdetaili-description__prt">{{ $service->category }}</p>
+                        @if ($service->category)
+                            <p class="psd-sl-sdetaili-description__prt">{{ $service->category }}</p>
+                        @endif
                         <h3>{{ $service->title }}</h3>
                         <br>
 

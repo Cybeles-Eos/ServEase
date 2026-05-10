@@ -150,11 +150,23 @@
                         <div class="prg-mm-group">
                             <label for="lname">Service Category</label>
                             <div class="provserv-c-body--fields--dropdowns">
-                                <select name="service_category_id" class="provserv-c-body--fields--dropdowns--sort" id="">
+                                <select
+                                    name="service_category_id"
+                                    class="provserv-c-body--fields--dropdowns--sort"
+                                    id="service_category_id"
+                                >
                                     <option value="">-- Choose Category --</option>
+
                                     @php
                                         $serviceCategories = getActiveServiceCategories();
+                                        $selectedCategory = $service->serviceCategory ?? null;
                                     @endphp
+
+                                    @if ($selectedCategory && ! $selectedCategory->is_active)
+                                        <option value="{{ $selectedCategory->id }}" selected>
+                                            {{ $selectedCategory->name }} — Disabled
+                                        </option>
+                                    @endif
 
                                     @foreach ($serviceCategories as $serviceCategory)
                                         <option

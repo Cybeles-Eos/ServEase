@@ -171,10 +171,12 @@
 
 @php
     $servicesJson = services()->map(function ($service) {
+        $categoryIsVisible = $service->serviceCategory && $service->serviceCategory->is_active;
+
         return [
             'title' => $service->title,
             'slug' => $service->slug,
-            'category' => $service->category,
+            'category' => $categoryIsVisible ? $service->serviceCategory->name : null,
         ];
     })->values()->toJson();
 @endphp
@@ -204,13 +206,15 @@
             $notFound.hide();
 
             items.forEach(service => {
+                const serviceLabel = `${service.category ? service.category + ' - ' : ''}${service.title}`;
+
                 $list.append(`
                     <li>
                         <a href="/services/${service.slug}"
-                           data-title="${service.title}"
-                           data-slug="${service.slug}"
-                           data-category="${service.category}">
-                            ${service.category} - ${service.title}
+                        data-title="${service.title}"
+                        data-slug="${service.slug}"
+                        data-category="${service.category ?? ''}">
+                            ${serviceLabel}
                         </a>
                     </li>
                 `);

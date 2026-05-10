@@ -20,7 +20,7 @@ return new class extends Migration
             // Main Service Info
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('category');
+            // $table->string('category');
             $table->text('description')->nullable();
             $table->text('content')->nullable();
             $table->string('specialization')->nullable();
