@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Service;
 use App\Models\ServiceCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,10 +16,53 @@ class AdminController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return view('admin.page.admin.index');
+public function index()
+{
+    if (! auth()->user()->isAdmin()) {
+        return redirect('/')->with('flash_message', [
+            'title' => 'Account Not Found!',
+            'message' => 'Please Login Your Account To Continue.',
+            'type' => 'error'
+        ]);
     }
+
+    $totalUsers = User::query()
+        ->where('is_active', 1)
+        ->whereIn('role', ['provider', 'customer'])
+        ->count();
+
+    $totalProviders = User::query()
+        ->where('is_active', 1)
+        ->where('role', 'provider')
+        ->count();
+
+    $totalCustomers = User::query()
+        ->where('is_active', 1)
+        ->where('role', 'customer')
+        ->count();
+
+    $totalServices = Service::query()
+        ->where('is_active', 1)
+        ->count();
+
+    $recentServices = Service::with(['provider', 'serviceCategory'])
+        ->latest()
+        ->paginate(4, ['*'], 'services_page');
+
+    $recentUsers = User::query()
+        ->whereIn('role', ['provider', 'customer'])
+        ->latest()
+        ->paginate(4, ['*'], 'users_page');
+
+    return view('admin.page.admin.index', compact(
+        'totalUsers',
+        'totalProviders',
+        'totalCustomers',
+        'totalServices',
+        'recentServices',
+        'recentUsers'
+    ));
+}
 
     public function users()
     {

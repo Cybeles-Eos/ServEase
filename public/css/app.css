@@ -3447,6 +3447,333 @@ h4 span {
   padding: 80px 1rem;
 }
 
+.admin--dash {
+  width: 100%;
+  height: fit-content;
+  padding: 25px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-x: hidden;
+}
+.admin--dash .section--header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.admin--dash .section--header__card {
+  background-color: #fff;
+  border: 1px solid #E0E2E7;
+  border-radius: 8px;
+  padding: 18px;
+  min-height: 115px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.admin--dash .section--header__card-icon {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 10px;
+  background-color: #FFF7E8;
+  color: #FDB932;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin--dash .section--header__card-icon svg {
+  display: block;
+}
+.admin--dash .section--header__card-content {
+  min-width: 0;
+}
+.admin--dash .section--header__card-label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B7280;
+}
+.admin--dash .section--header__card-value {
+  margin: 4px 0;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 700;
+  color: #111827;
+}
+.admin--dash .section--header__card-desc {
+  display: block;
+  font-size: 12px;
+  color: #9CA3AF;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin--dash .section--recent {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.admin--dash .section--recent__card {
+  background-color: #fff;
+  border: 1px solid #E0E2E7;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+  overflow: hidden;
+}
+.admin--dash .section--recent__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.admin--dash .section--recent__card-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+.admin--dash .section--recent__card-header p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #6B7280;
+}
+.admin--dash .section--recent__table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+}
+.admin--dash .section--recent__table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+.admin--dash .section--recent__table-wrapper::-webkit-scrollbar-track {
+  background-color: #F3F4F6;
+}
+.admin--dash .section--recent__table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #D1D5DB;
+  border-radius: 999px;
+}
+.admin--dash .section--recent__table {
+  width: 100%;
+  min-width: 720px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background-color: #fff;
+  font-size: 12px;
+}
+.admin--dash .section--recent__table th,
+.admin--dash .section--recent__table td {
+  padding: 12px 13px;
+  border-bottom: 1px solid #E5E7EB;
+  text-align: left;
+  vertical-align: middle;
+  color: #111827;
+}
+.admin--dash .section--recent__table th {
+  font-weight: 700;
+  font-size: 11px;
+  color: #374151;
+  background-color: #FAFAFA;
+  white-space: nowrap;
+}
+.admin--dash .section--recent__table td {
+  overflow: hidden;
+}
+.admin--dash .section--recent__table tbody tr:hover {
+  background-color: #FAFAFA;
+}
+.admin--dash .section--recent__table tbody tr:last-child td {
+  border-bottom: none;
+}
+.admin--dash .section--recent__table--services {
+  min-width: 780px;
+}
+.admin--dash .section--recent__table--services th:nth-child(1),
+.admin--dash .section--recent__table--services td:nth-child(1) {
+  width: 120px;
+}
+.admin--dash .section--recent__table--services th:nth-child(2),
+.admin--dash .section--recent__table--services td:nth-child(2) {
+  width: 175px;
+}
+.admin--dash .section--recent__table--services th:nth-child(3),
+.admin--dash .section--recent__table--services td:nth-child(3) {
+  width: 135px;
+}
+.admin--dash .section--recent__table--services th:nth-child(4),
+.admin--dash .section--recent__table--services td:nth-child(4) {
+  width: 135px;
+}
+.admin--dash .section--recent__table--services th:nth-child(5),
+.admin--dash .section--recent__table--services td:nth-child(5) {
+  width: 90px;
+}
+.admin--dash .section--recent__table--services th:nth-child(6),
+.admin--dash .section--recent__table--services td:nth-child(6) {
+  width: 110px;
+}
+.admin--dash .section--recent__table--users {
+  min-width: 650px;
+}
+.admin--dash .section--recent__table--users th:nth-child(1),
+.admin--dash .section--recent__table--users td:nth-child(1) {
+  width: 150px;
+}
+.admin--dash .section--recent__table--users th:nth-child(2),
+.admin--dash .section--recent__table--users td:nth-child(2) {
+  width: 200px;
+}
+.admin--dash .section--recent__table--users th:nth-child(3),
+.admin--dash .section--recent__table--users td:nth-child(3) {
+  width: 100px;
+}
+.admin--dash .section--recent__table--users th:nth-child(4),
+.admin--dash .section--recent__table--users td:nth-child(4) {
+  width: 90px;
+}
+.admin--dash .section--recent__table--users th:nth-child(5),
+.admin--dash .section--recent__table--users td:nth-child(5) {
+  width: 110px;
+}
+.admin--dash .section--recent__text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin--dash .section--recent__text--id {
+  max-width: 105px;
+}
+.admin--dash .section--recent__text--name {
+  max-width: 155px;
+}
+.admin--dash .section--recent__text--provider {
+  max-width: 115px;
+}
+.admin--dash .section--recent__text--category {
+  max-width: 115px;
+}
+.admin--dash .section--recent__text--user {
+  max-width: 130px;
+}
+.admin--dash .section--recent__text--email {
+  max-width: 180px;
+}
+.admin--dash .section--recent__text--date {
+  max-width: 95px;
+}
+.admin--dash .section--recent__status, .admin--dash .section--recent__role {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.admin--dash .section--recent__status--active {
+  background-color: #E8F7EE;
+  color: #16803C;
+}
+.admin--dash .section--recent__status--disabled {
+  background-color: #F3F4F6;
+  color: #6B7280;
+}
+.admin--dash .section--recent__role {
+  background-color: #FFF7E8;
+  color: #B7791F;
+}
+.admin--dash .section--recent__empty {
+  text-align: center !important;
+  color: #6B7280 !important;
+  padding: 24px !important;
+}
+.admin--dash .section--recent__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 12px;
+}
+.admin--dash .section--recent__pagination a,
+.admin--dash .section--recent__pagination span {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.admin--dash .section--recent__pagination a {
+  border: 1px solid #111827;
+  background-color: #111827;
+  color: #fff;
+  text-decoration: none;
+}
+.admin--dash .section--recent__pagination a:hover {
+  background-color: #000;
+}
+.admin--dash .section--recent__pagination a svg {
+  display: block;
+}
+.admin--dash .section--recent__page-disabled {
+  border: 1px solid #E5E7EB;
+  background-color: #F9FAFB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+.admin--dash .section--recent__page-disabled svg {
+  display: block;
+}
+.admin--dash .section--recent__page-info {
+  width: auto !important;
+  min-width: 46px;
+  padding: 0 8px;
+  border: 1px solid #E5E7EB;
+  background-color: #fff;
+  color: #6B7280;
+}
+
+@media (max-width: 1100px) {
+  .admin--dash .section--header {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin--dash .section--recent {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .admin--dash {
+    padding: 18px 10px;
+  }
+  .admin--dash .section--header {
+    grid-template-columns: 1fr;
+  }
+  .admin--dash .section--recent__card {
+    padding: 12px;
+  }
+  .admin--dash .section--recent__card-header h5 {
+    font-size: 15px;
+  }
+  .admin--dash .section--recent__card-header p {
+    font-size: 11px;
+  }
+  .admin--dash .section--recent__pagination {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
 p {
   font-size: 15px;
   font-weight: 400;
