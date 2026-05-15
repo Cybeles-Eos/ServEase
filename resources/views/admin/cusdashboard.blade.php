@@ -49,7 +49,7 @@
             <div class="cusdash-left--total">
                 <div>
                     <p>Total Bookings</p>
-                    <h3>12</h3>
+                    <h3>{{ number_format($totalBookings) }}</h3>
                 </div>
                 <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="50" height="50" rx="25" fill="#FFBE42"/>
@@ -59,8 +59,8 @@
             <div class="cusdash-left--canceled">
                 <div class="cusdash-left--canceled__top">
                     <div>
-                        <p>Canceled Booking </p>
-                        <h3>1</h3>
+                        <p>Your Cancelled Bookings</p>
+                        <h3>{{ number_format($cancelledBookings) }}</h3>
                     </div>
                     <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="50" height="50" rx="25" fill="#DF4545"/>
@@ -80,7 +80,7 @@
                         </clipPath>
                         </defs>
                     </svg>
-                    <p>Note: Frequent cancellations may result in penalties or account restrictions.</p>
+                    <p>Note: This only counts bookings you personally cancelled. Frequent cancellations may affect your account standing.</p>
                 </div>
             </div>
             {{-- <hr> --}}
@@ -107,7 +107,8 @@
                             <div class="cdrcc-ordbox--info"> 
                                 <div class="cdrcc-ordbox-i">
                                     <div class="cdrcc-ordbox-i--profile">
-                                        <img src="{{asset($booking->service->provider->profile_image ?? 'images/user.png')}}" alt="profile">
+                                        {{-- <img src="{{asset($booking->service->provider->profile_image ?? 'images/user.png')}}" alt="profile"> --}}
+                                        <img src="{{ asset($ongoingBookings->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
                                         <div class="cdrcc-ordbox-i--profile__dtl">
                                             <h3>{{ $ongoingBookings->service->provider->first_name }} {{ $ongoingBookings->service->provider->last_name }}</h3>
                                             <div class="cdrcc-ordbox-i--profile__dtl--con">
@@ -187,15 +188,24 @@
 
 
             <div class="cusdash-right__head">
-                <h4>Bookings <span>(3)</span></h4>
+                <h4>Bookings <span>({{ number_format($bookingListCount) }})</span></h4>
 
                 <div class="cusdash-right__head__filter">
-                    <select name="" class="cusdash-right__head__filter--sort" id="">
-                        <option value="">Status</option>
-                        <option value="">Pending</option>
-                        <option value="">Confirmed</option>
-                        <option value="">Cancelled</option>
-                    </select>
+                    <form method="GET" action="{{ route('customer.dashboard') }}" class="cusdash-right__head__filter">
+                        <select name="status" class="cusdash-right__head__filter--sort" onchange="this.form.submit()">
+                            <option value="" {{ empty($selectedStatus) ? 'selected' : '' }}>All Status</option>
+                            <option value="PENDING" {{ $selectedStatus === 'PENDING' ? 'selected' : '' }}>Pending</option>
+                            <option value="ACCEPTED" {{ $selectedStatus === 'ACCEPTED' ? 'selected' : '' }}>Accepted</option>
+                            <option value="ONGOING" {{ $selectedStatus === 'ONGOING' ? 'selected' : '' }}>Ongoing</option>
+                            <option value="COMPLETED" {{ $selectedStatus === 'COMPLETED' ? 'selected' : '' }}>Completed</option>
+                            <option value="DECLINED" {{ $selectedStatus === 'DECLINED' ? 'selected' : '' }}>Declined</option>
+                            <option value="CANCELLED" {{ $selectedStatus === 'CANCELLED' ? 'selected' : '' }}>Cancelled</option>
+                        </select>
+
+                        <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </form>
                     <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -256,10 +266,13 @@
                                         <span></span> {{ ucfirst(strtolower($booking->status)) }}
                                     </button>
                                     
-                                    @if($booking->status !== 'COMPLETED')
-                                        <button class="btn-sm btn-danger">
-                                            Cancel
-                                        </button>
+                                    @if(in_array($booking->status, ['PENDING', 'ACCEPTED']))
+                                        <form method="POST" action="{{ route('customer.booking.cancel', $booking->bookingRequest?->id) }}" class="customer-cancel-booking-form">
+                                            @csrf
+                                            <button type="submit" class="btn-sm btn-danger">
+                                                Cancel
+                                            </button>
+                                        </form>
                                     @endif
 
                                     @if($booking->status == 'COMPLETED')
@@ -328,5 +341,28 @@
     {{-- Only Show When Someone is login --}}
 @endsection
 @push('extrascripts')
+<script>
+    $(document).ready(function () {
+        $('.customer-cancel-booking-form').on('submit', function (e) {
+            e.preventDefault();
 
+            const form = this;
+
+            Swal.fire({
+                title: 'Cancel this booking?',
+                text: 'This action will cancel your booking request. The provider will be notified.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DF4545',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, cancel booking',
+                cancelButtonText: 'Keep booking'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
 @endpush

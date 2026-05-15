@@ -10,13 +10,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-public function index()
+public function index(Request $request)
 {
     if (! auth()->user()->isAdmin()) {
         return redirect('/')->with('flash_message', [
@@ -26,6 +28,18 @@ public function index()
         ]);
     }
 
+    $selectedYear = (int) $request->get('year', now()->year);
+    $selectedMonth = $request->get('month');
+
+    $selectedMonth = $selectedMonth !== null && $selectedMonth !== ''
+        ? (int) $selectedMonth
+        : null;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Header Cards
+    |--------------------------------------------------------------------------
+    */
     $totalUsers = User::query()
         ->where('is_active', 1)
         ->whereIn('role', ['provider', 'customer'])
@@ -45,20 +59,163 @@ public function index()
         ->where('is_active', 1)
         ->count();
 
+    /*
+    |--------------------------------------------------------------------------
+    | Booking / Earnings Analytics
+    |--------------------------------------------------------------------------
+    */
+    $totalBookings = DB::table('booking_requests')->count();
+
+    $completedBookings = DB::table('booking_requests')
+        ->where('status', 'COMPLETED')
+        ->count();
+
+    $pendingBookings = DB::table('booking_requests')
+        ->where('status', 'PENDING')
+        ->count();
+
+    $totalEarnings = DB::table('booking_requests')
+        ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
+        ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+        ->where('booking_requests.status', 'COMPLETED')
+        ->whereNull('tbl_services.deleted_at')
+        ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
+
+    /*
+    |--------------------------------------------------------------------------
+    | Chart Data
+    |--------------------------------------------------------------------------
+    | If month is empty: Jan-Dec.
+    | If month has value: daily data for selected month.
+    */
+    $chartLabels = [];
+    $analyticsBookings = [];
+    $analyticsEarnings = [];
+
+    if ($selectedMonth) {
+        $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
+        $endDate = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth();
+
+        $dailyStats = DB::table('booking_requests')
+            ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
+            ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            ->whereBetween('booking_infos.date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->whereNull('tbl_services.deleted_at')
+            ->selectRaw('
+                DAY(booking_infos.date) as day,
+                COUNT(booking_requests.id) as bookings_count,
+                SUM(
+                    CASE
+                        WHEN booking_requests.status = "COMPLETED"
+                        THEN COALESCE(tbl_services.price, 0)
+                        ELSE 0
+                    END
+                ) as earnings_total
+            ')
+            ->groupBy(DB::raw('DAY(booking_infos.date)'))
+            ->get()
+            ->keyBy('day');
+
+        foreach (CarbonPeriod::create($startDate, $endDate) as $date) {
+            $day = (int) $date->format('d');
+
+            $chartLabels[] = $date->format('M d');
+            $analyticsBookings[] = (int) ($dailyStats[$day]->bookings_count ?? 0);
+            $analyticsEarnings[] = (float) ($dailyStats[$day]->earnings_total ?? 0);
+        }
+    } else {
+        $monthlyStats = DB::table('booking_requests')
+            ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
+            ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            ->whereYear('booking_infos.date', $selectedYear)
+            ->whereNull('tbl_services.deleted_at')
+            ->selectRaw('
+                MONTH(booking_infos.date) as month,
+                COUNT(booking_requests.id) as bookings_count,
+                SUM(
+                    CASE
+                        WHEN booking_requests.status = "COMPLETED"
+                        THEN COALESCE(tbl_services.price, 0)
+                        ELSE 0
+                    END
+                ) as earnings_total
+            ')
+            ->groupBy(DB::raw('MONTH(booking_infos.date)'))
+            ->get()
+            ->keyBy('month');
+
+        for ($month = 1; $month <= 12; $month++) {
+            $chartLabels[] = Carbon::create()->month($month)->format('M');
+            $analyticsBookings[] = (int) ($monthlyStats[$month]->bookings_count ?? 0);
+            $analyticsEarnings[] = (float) ($monthlyStats[$month]->earnings_total ?? 0);
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recent Services
+    |--------------------------------------------------------------------------
+    */
     $recentServices = Service::with(['provider', 'serviceCategory'])
         ->latest()
-        ->paginate(4, ['*'], 'services_page');
+        ->paginate(4, ['*'], 'services_page')
+        ->withQueryString();
 
-    $recentUsers = User::query()
+    $serviceIds = $recentServices->getCollection()->pluck('id')->filter()->values();
+
+    $serviceStats = DB::table('booking_infos')
+        ->join('booking_requests', 'booking_requests.booking_info_id', '=', 'booking_infos.id')
+        ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+        ->whereIn('booking_infos.service_id', $serviceIds)
+        ->selectRaw('
+            booking_infos.service_id,
+            COUNT(booking_requests.id) as bookings_count,
+            SUM(
+                CASE
+                    WHEN booking_requests.status = "COMPLETED"
+                    THEN COALESCE(tbl_services.price, 0)
+                    ELSE 0
+                END
+            ) as earnings_total
+        ')
+        ->groupBy('booking_infos.service_id')
+        ->get()
+        ->keyBy('service_id');
+
+    $recentServices->getCollection()->transform(function ($service) use ($serviceStats) {
+        $stats = $serviceStats[$service->id] ?? null;
+
+        $service->dashboard_bookings_count = (int) ($stats->bookings_count ?? 0);
+        $service->dashboard_earnings_total = (float) ($stats->earnings_total ?? 0);
+
+        return $service;
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recent Users
+    |--------------------------------------------------------------------------
+    */
+    $recentUsers = User::with(['provider', 'customer'])
         ->whereIn('role', ['provider', 'customer'])
         ->latest()
-        ->paginate(4, ['*'], 'users_page');
+        ->paginate(4, ['*'], 'users_page')
+        ->withQueryString();
 
     return view('admin.page.admin.index', compact(
         'totalUsers',
         'totalProviders',
         'totalCustomers',
         'totalServices',
+        'totalBookings',
+        'completedBookings',
+        'pendingBookings',
+        'totalEarnings',
+        'selectedYear',
+        'selectedMonth',
+        'chartLabels',
+        'analyticsBookings',
+        'analyticsEarnings',
         'recentServices',
         'recentUsers'
     ));

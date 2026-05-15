@@ -15,34 +15,96 @@ class CustomerController extends Controller
     private int $bookingDurationHours = 16; // Auto-complete 16 hours after booking start time
     private int $bookingDurationMinutes = 1;
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        $customerId = auth()->user()->customer->id;
+        $customer = auth()->user()->customer;
 
-        // Auto Complete 
-        // $bookingsToCheck = BookingInfo::with('bookingRequest')
-        //     ->where('customer_id', $customerId)
-        //     ->whereIn('status', ['ACCEPTED', 'ONGOING'])
-        //     ->get();
-        // foreach ($bookingsToCheck as $bookingInfo) {
-        //     $this->updateToOngoingIfDue($bookingInfo);
-        //     $this->updateToCompletedIfDue($bookingInfo);
-        // }
+        if (! $customer) {
+            abort(403, 'Customer account not found.');
+        }
 
+        $customerId = $customer->id;
+        $selectedStatus = $request->get('status');
 
-        $ongoingBookings = BookingInfo::with(['service.provider.user'])
+        /*
+        |--------------------------------------------------------------------------
+        | Auto status update
+        |--------------------------------------------------------------------------
+        */
+        $bookingsToCheck = BookingInfo::with('bookingRequest')
             ->where('customer_id', $customerId)
-            ->where('status', 'ONGOING') // change if your real value is different
+            ->whereIn('status', ['ACCEPTED', 'ONGOING'])
+            ->get();
+
+        foreach ($bookingsToCheck as $bookingInfo) {
+            $this->updateToOngoingIfDue($bookingInfo);
+            $this->updateToCompletedIfDue($bookingInfo);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Left side dynamic counts
+        |--------------------------------------------------------------------------
+        */
+        $totalBookings = BookingInfo::query()
+            ->where('customer_id', $customerId)
+            ->count();
+
+        $cancelledBookings = \App\Models\BookingRequest::query()
+            ->whereHas('bookingInfo', function ($query) use ($customerId) {
+                $query->where('customer_id', $customerId);
+            })
+            ->where('status', 'CANCELLED')
+            ->where(function ($query) {
+                $query->where('cancelled_by', 'customer')
+                    ->orWhereNull('cancelled_by');
+            })
+            ->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Active booking
+        |--------------------------------------------------------------------------
+        */
+        $ongoingBookings = BookingInfo::with([
+                'service.provider.user',
+                'bookingRequest',
+            ])
+            ->where('customer_id', $customerId)
+            ->where('status', 'ONGOING')
             ->latest()
             ->first();
 
-        $allBookings = BookingInfo::with(['service.provider.user'])
+        /*
+        |--------------------------------------------------------------------------
+        | Booking list with status filter
+        |--------------------------------------------------------------------------
+        */
+        $allBookingsQuery = BookingInfo::with([
+                'service.provider.user',
+                'bookingRequest',
+            ])
             ->where('customer_id', $customerId)
-            ->where('status', '!=', 'ONGOING') // exclude ongoing
+            ->where('status', '!=', 'ONGOING');
+
+        if (! empty($selectedStatus)) {
+            $allBookingsQuery->where('status', $selectedStatus);
+        }
+
+        $allBookings = $allBookingsQuery
             ->latest()
             ->get();
 
-        return view('admin.cusdashboard', compact('ongoingBookings', 'allBookings'));
+        $bookingListCount = $allBookings->count();
+
+        return view('admin.cusdashboard', compact(
+            'ongoingBookings',
+            'allBookings',
+            'totalBookings',
+            'cancelledBookings',
+            'bookingListCount',
+            'selectedStatus'
+        ));
     }
     private function updateToOngoingIfDue($bookingInfo)
     {

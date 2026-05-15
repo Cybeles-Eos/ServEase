@@ -190,6 +190,7 @@ class BookingRequestController extends Controller
         $bookingRequest->update([
             'status' => 'ACCEPTED',
             'responded_at' => now(),
+            'customer_seen_at' => null,
         ]);
 
         if ($bookingRequest->bookingInfo) {
@@ -225,6 +226,7 @@ class BookingRequestController extends Controller
         $bookingRequest->update([
             'status' => 'DECLINED',
             'responded_at' => now(),
+            'customer_seen_at' => null,
         ]);
 
         if ($bookingRequest->bookingInfo) {
@@ -260,6 +262,8 @@ class BookingRequestController extends Controller
         $bookingRequest->update([
             'status' => 'CANCELLED',
             'responded_at' => now(),
+            'customer_seen_at' => null,
+            'cancelled_by' => 'provider',
         ]);
 
         if ($bookingRequest->bookingInfo) {
@@ -303,6 +307,8 @@ class BookingRequestController extends Controller
         $bookingRequest->update([
             'status' => 'COMPLETED',
             'responded_at' => now(),
+            'customer_seen_at' => null,
+            'cancelled_by' => 'provider',
         ]);
 
         if ($bookingRequest->bookingInfo) {
@@ -315,6 +321,95 @@ class BookingRequestController extends Controller
             'title' => 'Booking Completed',
             'message' => 'The booking has been marked as completed.',
             'type' => 'success'
+        ]);
+    }
+
+    public function markProviderNotificationsRead()
+    {
+        $user = auth()->user();
+
+        if (! $user || $user->role !== 'provider' || ! $user->provider) {
+            abort(403);
+        }
+
+        \App\Models\BookingRequest::query()
+            ->where('provider_id', $user->provider->id)
+            ->whereNull('provider_seen_at')
+            ->update([
+                'provider_seen_at' => now(),
+            ]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    public function customerCancel($id)
+    {
+        $customer = auth()->user()->customer ?? null;
+
+        if (! $customer) {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Unauthorized',
+                'message' => 'Customer account not found.',
+                'type' => 'error'
+            ]);
+        }
+
+        $bookingRequest = BookingRequest::with('bookingInfo')
+            ->where('id', $id)
+            ->whereHas('bookingInfo', function ($query) use ($customer) {
+                $query->where('customer_id', $customer->id);
+            })
+            ->firstOrFail();
+
+        if (! in_array($bookingRequest->status, ['PENDING', 'ACCEPTED'])) {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Invalid Action',
+                'message' => 'Only pending or accepted bookings can be cancelled.',
+                'type' => 'warning'
+            ]);
+        }
+
+        $bookingRequest->update([
+            'status' => 'CANCELLED',
+            'cancelled_by' => 'customer',
+            'responded_at' => now(),
+            'provider_seen_at' => null,
+        ]);
+
+        if ($bookingRequest->bookingInfo) {
+            $bookingRequest->bookingInfo->update([
+                'status' => 'CANCELLED',
+            ]);
+        }
+
+        return redirect()->back()->with('flash_message', [
+            'title' => 'Booking Cancelled',
+            'message' => 'Your booking has been cancelled.',
+            'type' => 'warning'
+        ]);
+    }
+    public function markCustomerNotificationsRead()
+    {
+        $customer = auth()->user()->customer ?? null;
+
+        if (! $customer) {
+            abort(403);
+        }
+
+        BookingRequest::query()
+            ->whereHas('bookingInfo', function ($query) use ($customer) {
+                $query->where('customer_id', $customer->id);
+            })
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->whereNull('customer_seen_at')
+            ->update([
+                'customer_seen_at' => now(),
+            ]);
+
+        return response()->json([
+            'success' => true,
         ]);
     }
 }

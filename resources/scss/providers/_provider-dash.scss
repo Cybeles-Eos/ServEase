@@ -134,6 +134,7 @@
                             p{
                                 font-size: 12px;
                                 color: #7779808d;
+                                margin-bottom: 4px;
                                 @media (max-width: 592px){
                                     margin-bottom: 4px;
                                 }
@@ -143,7 +144,6 @@
                             display: flex;
                             align-items: center;
                             gap: 10px;
-
                             &--p1{
                                 font-size: 12px;
                                 color: #7779808d;
@@ -178,7 +178,7 @@
                                 }
                             }
                         }
-                        @media (max-width: 592px){
+                        @media (max-width: 992px){
                             flex-direction: column;
                             align-items: flex-start;
                             
@@ -469,4 +469,254 @@
     // @media (min-height: 993px) {
     //     height: 100vh;
     // }
+}
+
+
+
+.header-notif-btn {
+    position: relative;
+}
+
+.header-notif-btn__badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 17px;
+    text-align: center;
+    border: 2px solid #fff;
+}
+
+.provider-notification-modal {
+    position: absolute;
+    top: 58px;
+    right: 72px;
+    width: 360px;
+    max-width: calc(100vw - 24px);
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+    z-index: 9999;
+    overflow: hidden;
+    display: none;
+}
+
+.provider-notification-modal.is-open {
+    display: block;
+}
+
+.provider-notification-modal__header {
+    padding: 16px 16px 12px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.provider-notification-modal__header h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.provider-notification-modal__header p {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.provider-notification-modal__header button {
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.provider-notification-modal__tabs {
+    padding: 0 16px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.provider-notification-modal__tabs span {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    border-bottom: 2px solid #fdb932;
+    color: #b7791f;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.provider-notification-modal__body {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.provider-notification-modal__body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.provider-notification-modal__body::-webkit-scrollbar-track {
+    background: #f9fafb;
+}
+
+.provider-notification-modal__body::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
+}
+
+.provider-notification-modal__item {
+    display: flex;
+    gap: 10px;
+    padding: 13px 16px;
+    text-decoration: none;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fff;
+    transition: background 0.2s ease;
+    text-decoration: none !important;
+}
+
+.provider-notification-modal__item:hover {
+    background: #f9fafb;
+}
+
+.provider-notification-modal__item.is-unread {
+    background: #fffaf0;
+}
+
+.provider-notification-modal__dot {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    margin-top: 6px;
+    border-radius: 999px;
+    background: #d1d5db;
+}
+
+.provider-notification-modal__item.is-unread .provider-notification-modal__dot {
+    background: #fdb932;
+}
+
+.provider-notification-modal__content {
+    min-width: 0;
+    flex: 1;
+}
+
+.provider-notification-modal__topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.provider-notification-modal__topline strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.provider-notification-modal__content p {
+    margin: 5px 0 4px;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #4b5563;
+}
+
+.provider-notification-modal__content b {
+    color: #111827;
+    font-weight: 800;
+}
+
+.provider-notification-modal__content small {
+    display: block;
+    font-size: 10.5px;
+    color: #9ca3af;
+}
+
+.provider-notification-modal__status {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.provider-notification-modal__status--pending {
+    background: #fff7e8;
+    color: #b7791f;
+}
+
+.provider-notification-modal__status--accepted {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.provider-notification-modal__status--completed {
+    background: #e8f7ee;
+    color: #16803c;
+}
+
+.provider-notification-modal__status--cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.provider-notification-modal__empty {
+    padding: 34px 20px;
+    text-align: center;
+}
+
+.provider-notification-modal__empty strong {
+    display: block;
+    font-size: 13px;
+    color: #111827;
+    text-decoration: none !important;
+}
+
+.provider-notification-modal__empty p {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: #9ca3af;
+    text-decoration: none !important;
+}
+
+.provider-notification-modal__footer {
+    padding: 12px 16px;
+    border-top: 1px solid #f3f4f6;
+    background: #fafafa;
+    text-align: center;
+}
+
+.provider-notification-modal__footer a {
+    color: #b7791f;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none !important;
+}
+
+@media (max-width: 640px) {
+    .provider-notification-modal {
+        top: 58px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
 }

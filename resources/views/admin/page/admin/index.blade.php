@@ -74,7 +74,90 @@
             </div>
         </section>
 
-        <section class="section section--recent">
+<section class="section section--analytics">
+    <div class="section--analytics__main">
+        <div class="section--analytics__header">
+            <div>
+                <h3>
+                    {{ $selectedMonth ? 'Daily Provider Booking Analytics' : 'Monthly Provider Booking Analytics' }}
+                </h3>
+
+                <p>
+                    Platform-wide provider bookings and completed-booking earnings
+                    @if ($selectedMonth)
+                        for {{ \Carbon\Carbon::create()->month($selectedMonth)->format('F') }} {{ $selectedYear }}
+                    @else
+                        for {{ $selectedYear }}
+                    @endif
+                </p>
+            </div>
+
+            <form method="GET" action="{{ route('admin.dashboard') }}" class="admin-chart-filter">
+                <select name="year" onchange="this.form.submit()">
+                    @for ($filterYear = now()->year; $filterYear >= now()->year - 5; $filterYear--)
+                        <option value="{{ $filterYear }}" {{ $selectedYear == $filterYear ? 'selected' : '' }}>
+                            {{ $filterYear }}
+                        </option>
+                    @endfor
+                </select>
+
+                <select name="month" onchange="this.form.submit()">
+                    <option value="" {{ empty($selectedMonth) ? 'selected' : '' }}>
+                        All Months
+                    </option>
+
+                    @for ($month = 1; $month <= 12; $month++)
+                        <option value="{{ $month }}" {{ $selectedMonth == $month ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::create()->month($month)->format('F') }}
+                        </option>
+                    @endfor
+                </select>
+            </form>
+        </div>
+
+        <div class="section--analytics__legend">
+            <span class="section--analytics__legend-item section--analytics__legend-item--earnings">
+                <i></i> Earnings
+            </span>
+
+            <span class="section--analytics__legend-item section--analytics__legend-item--bookings">
+                <i></i> Bookings
+            </span>
+        </div>
+
+        <div class="section--analytics__chart">
+            <canvas id="adminBookingAnalyticsChart"></canvas>
+        </div>
+    </div>
+
+    <div class="section--analytics__side">
+        <div class="section--analytics__mini-card">
+            <span>Overall Provider Bookings</span>
+            <strong>{{ number_format($totalBookings) }}</strong>
+            <p>Total booking requests across all providers</p>
+        </div>
+
+        <div class="section--analytics__mini-card">
+            <span>Completed Provider Jobs</span>
+            <strong>{{ number_format($completedBookings) }}</strong>
+            <p>Finished bookings from all providers</p>
+        </div>
+
+        <div class="section--analytics__mini-card">
+            <span>Pending Provider Requests</span>
+            <strong>{{ number_format($pendingBookings) }}</strong>
+            <p>Booking requests waiting for provider action</p>
+        </div>
+
+        <div class="section--analytics__mini-card section--analytics__mini-card--earnings">
+            <span>Overall Provider Earnings</span>
+            <strong>₱{{ number_format($totalEarnings, 2) }}</strong>
+            <p>Total earnings from completed provider bookings</p>
+        </div>
+    </div>
+</section>
+
+        {{-- <section class="section section--recent">
             <div class="section--recent__card">
                 <div class="section--recent__card-header">
                     <div>
@@ -308,9 +391,372 @@
                     </div>
                 @endif
             </div>
-        </section>
+        </section> --}}
+
+<section class="section section--recent">
+    <div class="section--recent__card">
+        <div class="section--recent__card-header">
+            <div>
+                <h5>Recent Services</h5>
+                <p>Latest provider services with booking and earning activity.</p>
+            </div>
+
+            <span class="section--recent__badge">
+                {{ $recentServices->total() }} Total
+            </span>
+        </div>
+
+        <div class="section--recent__table-wrapper">
+            <table class="section--recent__table section--recent__table--services">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Provider</th>
+                        <th>Category</th>
+                        <th>Bookings</th>
+                        <th>Earnings</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($recentServices as $service)
+                        <tr>
+                            <td>
+                                <div class="section--recent__primary">
+                                    <strong title="{{ $service->title }}">
+                                        {{ \Illuminate\Support\Str::limit($service->title, 26) }}
+                                    </strong>
+                                    <span title="{{ $service->service_id }}">
+                                        {{ $service->service_id ?? 'No ID' }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="section--recent__primary">
+                                    <strong>
+                                        @if ($service->provider)
+                                            {{ $service->provider->first_name }} {{ $service->provider->last_name }}
+                                        @else
+                                            Unknown Provider
+                                        @endif
+                                    </strong>
+                                    <span>Provider</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                @if ($service->serviceCategory)
+                                    <span class="section--recent__category">
+                                        {{ \Illuminate\Support\Str::limit($service->serviceCategory->name, 20) }}
+                                    </span>
+                                @else
+                                    <span class="section--recent__status section--recent__status--disabled">
+                                        No Category
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>
+                                <strong class="section--recent__metric">
+                                    {{ number_format($service->dashboard_bookings_count ?? 0) }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                <strong class="section--recent__metric">
+                                    ₱{{ number_format($service->dashboard_earnings_total ?? 0, 2) }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                @if ($service->is_active)
+                                    <span class="section--recent__status section--recent__status--active">
+                                        Active
+                                    </span>
+                                @else
+                                    <span class="section--recent__status section--recent__status--disabled">
+                                        Disabled
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>
+                                <span class="section--recent__date">
+                                    {{ $service->created_at ? $service->created_at->format('M d, Y') : 'N/A' }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="section--recent__empty">
+                                No recent services found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if ($recentServices->hasPages())
+            <div class="section--recent__pagination">
+                @if ($recentServices->onFirstPage())
+                    <span class="section--recent__page-disabled">‹</span>
+                @else
+                    <a href="{{ $recentServices->previousPageUrl() }}">‹</a>
+                @endif
+
+                <span class="section--recent__page-info">
+                    {{ $recentServices->currentPage() }} / {{ $recentServices->lastPage() }}
+                </span>
+
+                @if ($recentServices->hasMorePages())
+                    <a href="{{ $recentServices->nextPageUrl() }}">›</a>
+                @else
+                    <span class="section--recent__page-disabled">›</span>
+                @endif
+            </div>
+        @endif
+    </div>
+
+    <div class="section--recent__card">
+        <div class="section--recent__card-header">
+            <div>
+                <h5>Recent Users</h5>
+                <p>Newest providers and customers registered in the platform.</p>
+            </div>
+
+            <span class="section--recent__badge">
+                {{ $recentUsers->total() }} Total
+            </span>
+        </div>
+
+        <div class="section--recent__table-wrapper">
+            <table class="section--recent__table section--recent__table--users">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Contact</th>
+                        <th>Role</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($recentUsers as $user)
+                        <tr>
+                            <td>
+                                <div class="section--recent__user">
+                                    @php
+                                        $profileImage = null;
+
+                                        if ($user->role === 'provider' && $user->provider && $user->provider->profile_image) {
+                                            $profileImage = $user->provider->profile_image;
+                                        }
+
+                                        if ($user->role === 'customer' && $user->customer && $user->customer->profile_image) {
+                                            $profileImage = $user->customer->profile_image;
+                                        }
+                                    @endphp
+
+                                    @if ($profileImage)
+                                        <img
+                                            class="section--recent__avatar-img"
+                                            src="{{ asset($profileImage) }}"
+                                            alt="{{ $user->name }}"
+                                            loading="lazy"
+                                        >
+                                    @else
+                                        <div class="section--recent__avatar">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+
+                                    <div class="section--recent__primary">
+                                        <strong title="{{ $user->name }}">
+                                            {{ \Illuminate\Support\Str::limit($user->name, 22) }}
+                                        </strong>
+                                        <span>ID: {{ $user->id }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="section--recent__primary">
+                                    <strong title="{{ $user->email }}">
+                                        {{ \Illuminate\Support\Str::limit($user->email, 26) }}
+                                    </strong>
+
+                                    <span>
+                                        @if ($user->role === 'provider' && $user->provider)
+                                            {{ $user->provider->phone_number ?? 'No phone' }}
+                                        @elseif ($user->role === 'customer' && $user->customer)
+                                            {{ $user->customer->phone_number ?? 'No phone' }}
+                                        @else
+                                            No phone
+                                        @endif
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="section--recent__role">
+                                    {{ ucfirst($user->role) }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="section--recent__date">
+                                    @if ($user->role === 'provider' && $user->provider)
+                                        {{ $user->provider->profession ?? 'No profession' }}
+                                    @elseif ($user->role === 'customer' && $user->customer)
+                                        {{ $user->customer->city ?? 'No city' }}
+                                    @else
+                                        No details
+                                    @endif
+                                </span>
+                            </td>
+
+                            <td>
+                                @if ($user->is_active)
+                                    <span class="section--recent__status section--recent__status--active">
+                                        Active
+                                    </span>
+                                @else
+                                    <span class="section--recent__status section--recent__status--disabled">
+                                        Disabled
+                                    </span>
+                                @endif
+                            </td>
+
+                            <td>
+                                <span class="section--recent__date">
+                                    {{ $user->created_at ? $user->created_at->format('M d, Y') : 'N/A' }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="section--recent__empty">
+                                No recent users found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if ($recentUsers->hasPages())
+            <div class="section--recent__pagination">
+                @if ($recentUsers->onFirstPage())
+                    <span class="section--recent__page-disabled">‹</span>
+                @else
+                    <a href="{{ $recentUsers->previousPageUrl() }}">‹</a>
+                @endif
+
+                <span class="section--recent__page-info">
+                    {{ $recentUsers->currentPage() }} / {{ $recentUsers->lastPage() }}
+                </span>
+
+                @if ($recentUsers->hasMorePages())
+                    <a href="{{ $recentUsers->nextPageUrl() }}">›</a>
+                @else
+                    <span class="section--recent__page-disabled">›</span>
+                @endif
+            </div>
+        @endif
+    </div>
+</section>
     </main>
 @endsection
 
 @push('extrascripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('adminBookingAnalyticsChart');
+
+        if (!ctx) {
+            return;
+        }
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($chartLabels),
+                datasets: [
+                    {
+                        label: 'Earnings',
+                        data: @json($analyticsEarnings),
+                        backgroundColor: '#2563EB',
+                        borderRadius: 6,
+                        barThickness: 12,
+                        yAxisID: 'yEarnings'
+                    },
+                    {
+                        label: 'Bookings',
+                        data: @json($analyticsBookings),
+                        backgroundColor: '#FBBF24',
+                        borderRadius: 6,
+                        barThickness: 12,
+                        yAxisID: 'yBookings'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                if (ctx.dataset.label === 'Earnings') {
+                                    return 'Earnings: ₱' + Number(ctx.raw).toLocaleString();
+                                }
+
+                                return 'Bookings: ' + Number(ctx.raw).toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    yEarnings: {
+                        type: 'linear',
+                        position: 'left',
+                        beginAtZero: true,
+                        grid: {
+                            borderDash: [4, 4],
+                            color: '#E5E7EB'
+                        },
+                        ticks: {
+                            callback: value => '₱' + Number(value).toLocaleString()
+                        }
+                    },
+                    yBookings: {
+                        type: 'linear',
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            callback: value => Number(value).toLocaleString()
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 @endpush

@@ -1,3 +1,55 @@
+@php
+    use App\Models\BookingRequest;
+
+    $providerNotifications = collect();
+    $providerUnreadNotificationCount = 0;
+
+    $customerNotifications = collect();
+    $customerUnreadNotificationCount = 0;
+
+    $authUser = auth()->user();
+
+    if ($authUser && $authUser->role === 'provider' && $authUser->provider) {
+        $providerNotifications = BookingRequest::with([
+                'bookingInfo.service',
+                'bookingInfo.customer',
+            ])
+            ->where('provider_id', $authUser->provider->id)
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $providerUnreadNotificationCount = BookingRequest::query()
+            ->where('provider_id', $authUser->provider->id)
+            ->whereNull('provider_seen_at')
+            ->count();
+    }
+
+    if ($authUser && $authUser->role === 'customer' && $authUser->customer) {
+        $customerNotifications = BookingRequest::with([
+                'bookingInfo.service.provider',
+            ])
+            ->whereHas('bookingInfo', function ($query) use ($authUser) {
+                $query->where('customer_id', $authUser->customer->id);
+            })
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $customerUnreadNotificationCount = BookingRequest::query()
+            ->whereHas('bookingInfo', function ($query) use ($authUser) {
+                $query->where('customer_id', $authUser->customer->id);
+            })
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->whereNull('customer_seen_at')
+            ->count();
+    }
+
+    $notificationBadgeCount = $authUser?->role === 'customer'
+        ? $customerUnreadNotificationCount
+        : $providerUnreadNotificationCount;
+@endphp
 <div class="main-headerdash-uix header--dashboard">
 
     {{-- <form method="POST" action="{{ route('logout') }}">
@@ -19,19 +71,25 @@
 
                     @endphp
              <div>
-                <button id="phd-inbox">
+                {{-- <button id="phd-inbox">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2 6L7.18477 9.13358C9.0962 10.2888 9.9038 10.2888 11.8152 9.13358L17 6" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                         <path d="M2.01183 11.6284C2.06085 13.9727 2.08537 15.1447 2.93372 16.0131C3.78206 16.8813 4.96274 16.9115 7.32412 16.972C8.77947 17.0093 10.2205 17.0093 11.6759 16.972C14.0373 16.9115 15.2179 16.8813 16.0663 16.0131C16.9146 15.1447 16.9392 13.9727 16.9881 11.6284C17.004 10.8746 17.004 10.1254 16.9881 9.3716C16.9392 7.02736 16.9146 5.85525 16.0663 4.98698C15.2179 4.11871 14.0373 4.08846 11.6759 4.02797C10.2205 3.99068 8.77947 3.99068 7.32411 4.02796C4.96274 4.08845 3.78206 4.11869 2.93371 4.98697C2.08536 5.85524 2.06085 7.02736 2.01182 9.3716C1.99606 10.1254 1.99606 10.8746 2.01183 11.6284Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                     </svg>
-                </button>
+                </button> --}}
              </div>
              <div>
-                <button id="phd-notif">
+                <button id="phd-notif" class="header-notif-btn" type="button">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 15C13 16.6569 11.6569 18 10 18C8.34314 18 7 16.6569 7 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M15.6242 15H4.37579C3.61596 15 3 14.3868 3 13.6305C3 13.2674 3.14495 12.919 3.40296 12.6622L3.87214 12.1952C4.30972 11.7596 4.55556 11.1688 4.55556 10.5529V8.41935C4.55556 5.42633 6.99312 3 10 3C13.0069 3 15.4444 5.42632 15.4444 8.41935V10.5529C15.4444 11.1688 15.6903 11.7596 16.1279 12.1952L16.597 12.6622C16.855 12.919 17 13.2674 17 13.6305C17 14.3868 16.384 15 15.6242 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13 15C13 16.6569 11.6569 18 10 18C8.34314 18 7 16.6569 7 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.6242 15H4.37579C3.61596 15 3 14.3868 3 13.6305C3 13.2674 3.14495 12.919 3.40296 12.6622L3.87214 12.1952C4.30972 11.7596 4.55556 11.1688 4.55556 10.5529V8.41935C4.55556 5.42633 6.99312 3 10 3C13.0069 3 15.4444 5.42632 15.4444 8.41935V10.5529C15.4444 11.1688 15.6903 11.7596 16.1279 12.1952L16.597 12.6622C16.855 12.919 17 13.2674 17 13.6305C17 14.3868 16.384 15 15.6242 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+
+                    @if ($notificationBadgeCount > 0)
+                        <span class="header-notif-btn__badge" id="dashboardNotifBadge">
+                            {{ $notificationBadgeCount > 99 ? '99+' : $notificationBadgeCount }}
+                        </span>
+                    @endif
                 </button>
              </div>
         </div>
@@ -69,6 +127,190 @@
         </div>
     </div>
 </div>
+@if ($authUser && $authUser->role === 'provider')
+    <div class="provider-notification-modal" id="providerNotificationModal">
+        <div class="provider-notification-modal__header">
+            <div>
+                <h4>Booking Notifications</h4>
+                <p>New booking requests for your services</p>
+            </div>
+
+            @if ($providerUnreadNotificationCount > 0)
+                <button type="button" id="markProviderNotifRead">
+                    Mark all as read
+                </button>
+            @endif
+        </div>
+
+        <div class="provider-notification-modal__tabs">
+            <span>Booking Requests</span>
+        </div>
+
+        <div class="provider-notification-modal__body">
+            @forelse ($providerNotifications as $notification)
+                @php
+                    $bookingInfo = $notification->bookingInfo;
+                    $service = $bookingInfo?->service;
+                    $customerName = trim(($bookingInfo->fname ?? '') . ' ' . ($bookingInfo->lname ?? ''));
+
+                    if (! $customerName && $bookingInfo?->customer) {
+                        $customerName = trim(($bookingInfo->customer->first_name ?? '') . ' ' . ($bookingInfo->customer->last_name ?? ''));
+                    }
+
+                    $isUnread = is_null($notification->provider_seen_at);
+
+                    $statusClass = match ($notification->status) {
+                        'PENDING' => 'provider-notification-modal__status--pending',
+                        'ACCEPTED' => 'provider-notification-modal__status--accepted',
+                        'COMPLETED' => 'provider-notification-modal__status--completed',
+                        'DECLINED', 'CANCELLED' => 'provider-notification-modal__status--cancelled',
+                        default => 'provider-notification-modal__status--pending',
+                    };
+                @endphp
+
+                <a href="{{ route('provider.bookings') }}" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                    <div class="provider-notification-modal__dot"></div>
+
+                    <div class="provider-notification-modal__content">
+                        <div class="provider-notification-modal__topline">
+                            <strong>
+                                {{ $isUnread ? 'New Booking Request' : 'Booking Update' }}
+                            </strong>
+
+                            <span class="provider-notification-modal__status {{ $statusClass }}">
+                                {{ ucfirst(strtolower($notification->status)) }}
+                            </span>
+                        </div>
+
+                        <p>
+                            {{ $customerName ?: 'A customer' }}
+                            booked
+                            <b>{{ $service?->title ?? 'your service' }}</b>.
+                        </p>
+
+                        <small>
+                            @if ($bookingInfo?->date)
+                                {{ \Carbon\Carbon::parse($bookingInfo->date)->format('M d, Y') }}
+                            @endif
+
+                            @if ($bookingInfo?->time)
+                                • {{ \Carbon\Carbon::parse($bookingInfo->time)->format('h:i A') }}
+                            @endif
+
+                            @if ($notification->created_at)
+                                • {{ $notification->created_at->diffForHumans() }}
+                            @endif
+                        </small>
+                    </div>
+                </a>
+            @empty
+                <div class="provider-notification-modal__empty">
+                    <strong>No booking notifications yet</strong>
+                    <p>New customer bookings will appear here.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="provider-notification-modal__footer">
+            <a href="{{ route('provider.bookings') }}">View all bookings</a>
+        </div>
+    </div>
+@endif
+@if ($authUser && $authUser->role === 'customer')
+    <div class="provider-notification-modal" id="customerNotificationModal">
+        <div class="provider-notification-modal__header">
+            <div>
+                <h4>Booking Updates</h4>
+                <p>Updates from providers about your bookings</p>
+            </div>
+
+            @if ($customerUnreadNotificationCount > 0)
+                <button type="button" id="markCustomerNotifRead">
+                    Mark all as read
+                </button>
+            @endif
+        </div>
+
+        <div class="provider-notification-modal__tabs">
+            <span>Service Updates</span>
+        </div>
+
+        <div class="provider-notification-modal__body">
+            @forelse ($customerNotifications as $notification)
+                @php
+                    $bookingInfo = $notification->bookingInfo;
+                    $service = $bookingInfo?->service;
+                    $provider = $service?->provider;
+                    $providerName = $provider
+                        ? trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''))
+                        : 'The provider';
+
+                    $isUnread = is_null($notification->customer_seen_at);
+
+                    $statusClass = match ($notification->status) {
+                        'ACCEPTED' => 'provider-notification-modal__status--accepted',
+                        'ONGOING' => 'provider-notification-modal__status--ongoing',
+                        'COMPLETED' => 'provider-notification-modal__status--completed',
+                        'DECLINED', 'CANCELLED' => 'provider-notification-modal__status--cancelled',
+                        default => 'provider-notification-modal__status--pending',
+                    };
+
+                    $notificationTitle = match ($notification->status) {
+                        'ACCEPTED' => 'Booking Accepted',
+                        'ONGOING' => 'Service Ongoing',
+                        'COMPLETED' => 'Booking Completed',
+                        'DECLINED' => 'Booking Declined',
+                        'CANCELLED' => 'Booking Cancelled',
+                        default => 'Booking Update',
+                    };
+                @endphp
+
+                <a href="{{ route('customer.dashboard') }}" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                    <div class="provider-notification-modal__dot"></div>
+
+                    <div class="provider-notification-modal__content">
+                        <div class="provider-notification-modal__topline">
+                            <strong>{{ $notificationTitle }}</strong>
+
+                            <span class="provider-notification-modal__status {{ $statusClass }}">
+                                {{ ucfirst(strtolower($notification->status)) }}
+                            </span>
+                        </div>
+
+                        <p>
+                            {{ $providerName }}
+                            updated your booking for
+                            <b>{{ $service?->title ?? 'your selected service' }}</b>.
+                        </p>
+
+                        <small>
+                            @if ($bookingInfo?->date)
+                                {{ \Carbon\Carbon::parse($bookingInfo->date)->format('M d, Y') }}
+                            @endif
+
+                            @if ($bookingInfo?->time)
+                                • {{ \Carbon\Carbon::parse($bookingInfo->time)->format('h:i A') }}
+                            @endif
+
+                            @if ($notification->updated_at)
+                                • {{ $notification->updated_at->diffForHumans() }}
+                            @endif
+                        </small>
+                    </div>
+                </a>
+            @empty
+                <div class="provider-notification-modal__empty">
+                    <strong>No booking updates yet</strong>
+                    <p>Provider responses will appear here.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="provider-notification-modal__footer">
+            <a href="{{ route('customer.dashboard') }}">View my bookings</a>
+        </div>
+    </div>
+@endif
 <div id="user-menu">
     <ul>
         {{-- <li><a href="{{ route('admin.profile') }}">Profile</a></li> --}}
@@ -111,4 +353,63 @@
             });
         });
     </script>
+
+<script>
+    $(document).ready(function () {
+        $('#phd-notif').on('click', function (e) {
+            e.stopPropagation();
+
+            $('#providerNotificationModal').toggleClass('is-open');
+            $('#customerNotificationModal').toggleClass('is-open');
+
+            $('#user-menu').removeClass('is-open');
+            $('.menu-icon').removeClass('is-rotated');
+        });
+
+        $('#providerNotificationModal, #customerNotificationModal').on('click', function (e) {
+            e.stopPropagation();
+        });
+
+        $(document).on('click', function () {
+            $('#providerNotificationModal').removeClass('is-open');
+            $('#customerNotificationModal').removeClass('is-open');
+        });
+
+        $('#markProviderNotifRead').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            $.ajax({
+                url: "{{ Route::has('provider.notifications.mark-read') ? route('provider.notifications.mark-read') : '#' }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function () {
+                    $('#dashboardNotifBadge').remove();
+                    $('.provider-notification-modal__item').removeClass('is-unread');
+                    $('#markProviderNotifRead').remove();
+                }
+            });
+        });
+
+        $('#markCustomerNotifRead').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            $.ajax({
+                url: "{{ Route::has('customer.notifications.mark-read') ? route('customer.notifications.mark-read') : '#' }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function () {
+                    $('#dashboardNotifBadge').remove();
+                    $('#customerNotificationModal .provider-notification-modal__item').removeClass('is-unread');
+                    $('#markCustomerNotifRead').remove();
+                }
+            });
+        });
+    });
+</script>
 @endpush

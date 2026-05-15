@@ -81,8 +81,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:provider')->group(function () {
 
         Route::redirect('/provider', '/provider/dashboard');
-        Route::get('/provider/dashboard', function () {return view('admin.provdashboard');})->name('provider.dashboard');
-        
+        //Route::get('/provider/dashboard', function () {return view('admin.provdashboard');})->name('provider.dashboard');
+        Route::get('/provider/dashboard', [ProviderController::class, 'dashboard'])
+            ->name('provider.dashboard');
         // Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
         Route::get('/provider/bookings', [BookingRequestController::class, 'providerRequests'])->name('provider.bookings');
         
@@ -105,6 +106,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/provider/booking-request/{id}/decline', [BookingRequestController::class, 'decline'])->name('provider.booking-request.decline');
         Route::post('/provider/booking-request/{id}/cancel', [BookingRequestController::class, 'cancel'])->name('provider.booking-request.cancel');
         Route::post('/provider/booking-request/{id}/complete', [BookingRequestController::class, 'markComplete'])->name('provider.booking-request.complete');
+
+        // Notification
+        Route::post('/provider/notifications/mark-read', [BookingRequestController::class, 'markProviderNotificationsRead'])->name('provider.notifications.mark-read');
         
     });
 
@@ -120,7 +124,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/customer/setting', [CustomerController::class, 'setting'])->name('customer.setting');
 
         Route::post('/customer/book', [BookingInfoController::class, 'store'])->name('customer.book');
-           
+        Route::post('/customer/booking-request/{id}/cancel', [BookingRequestController::class, 'customerCancel'])
+            ->name('customer.booking.cancel');
+        Route::post('/customer/notifications/mark-read', [BookingRequestController::class, 'markCustomerNotificationsRead'])
+            ->name('customer.notifications.mark-read');
+
     });
 
 });
