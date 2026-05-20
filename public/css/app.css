@@ -6403,7 +6403,7 @@ h4 span {
   margin: 0;
   line-height: 100%;
 }
-.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo button {
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo button, .provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo a {
   width: fit-content;
   height: 22px;
   border-radius: 4px;
@@ -6417,10 +6417,10 @@ h4 span {
   background-color: #d2d2d2;
   border-color: #d2d2d2 !important;
 }
-.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo button:hover {
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo button:hover, .provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo a:hover {
   background-color: #e0e0e0;
 }
-.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo button svg {
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo button svg, .provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo a svg {
   width: 11px;
   height: 10px;
   margin-right: 5px;

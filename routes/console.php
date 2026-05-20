@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// Schedule::command('bookings:auto-close')->everyMinute();
+Schedule::command('bookings:auto-close')->everyMinute();

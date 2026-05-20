@@ -65,7 +65,7 @@
     <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    @livewireStyles
 </head>
 <body class="dashboard-bg-un-ds">
     {{-- @include('admin.layouts.header')
@@ -96,6 +96,6 @@
             });
         </script>
     @endif
-
+    @livewireScripts
 </body>
 </html>

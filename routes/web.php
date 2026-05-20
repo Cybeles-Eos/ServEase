@@ -9,7 +9,7 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BookingInfoController;
 use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\Auth\AdminController;
-
+use App\Http\Controllers\BookingReceiptController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -132,3 +132,8 @@ Route::middleware('auth')->group(function () {
     });
 
 });
+
+
+
+Route::get('/booking-receipt/{id}', [BookingReceiptController::class, 'show'])
+    ->name('booking.receipt');
