@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\BookingRequest;
+use App\Models\ServiceRating;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\CarbonPeriod;
@@ -86,14 +87,25 @@ class ProviderController extends Controller
             ->whereNull('tbl_services.deleted_at')
             ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
 
-        /*
-        |--------------------------------------------------------------------------
-        | Ratings
-        |--------------------------------------------------------------------------
-        | No rating/review table exists in the uploaded files.
-        | Keep this 0 for now, or replace later when you already have reviews table.
-        */
-        $ratings = 0;
+            /*
+            |--------------------------------------------------------------------------
+            | Ratings
+            |--------------------------------------------------------------------------
+            | Provider overall rating from all service ratings under this provider.
+            */
+            $providerRatings = ServiceRating::where('provider_id', $provider->id)->get();
+
+            $ratingCount = $providerRatings->count();
+
+            $averageRating = round($providerRatings->avg('rating') ?? 0, 1);
+
+            $todayRatings = ServiceRating::where('provider_id', $provider->id)
+                ->whereDate('created_at', $today)
+                ->count();
+
+            $ratingTodayPercent = $ratingCount > 0
+                ? round(($todayRatings / $ratingCount) * 100)
+                : 0;
 
         /*
         |--------------------------------------------------------------------------
@@ -264,7 +276,10 @@ class ProviderController extends Controller
             'todayBookings',
             'completedBookings',
             'completedToday',
-            'ratings',
+            'averageRating',
+            'ratingCount',
+            'todayRatings',
+            'ratingTodayPercent',
             'totalEarnings',
             'todayEarnings',
             'monthlyBookings',
@@ -274,6 +289,7 @@ class ProviderController extends Controller
             'categoryEarnings'
         ));
     }
+
     // Index Settings
     public function setting()
     {

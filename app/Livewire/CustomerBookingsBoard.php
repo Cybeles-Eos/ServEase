@@ -29,12 +29,17 @@ class CustomerBookingsBoard extends Component
     {
         $customerId = auth()->user()->customer->id ?? null;
 
-        $query = BookingInfo::with([
+        $relations = [
             'service',
+            'service.ratings',
             'service.provider',
             'service.provider.user',
+            'service.provider.ratings',
             'bookingRequest',
-        ])
+            'bookingRequest.rating',
+        ];
+
+        $query = BookingInfo::with($relations)
             ->where('customer_id', $customerId)
             ->latest();
 
@@ -44,12 +49,7 @@ class CustomerBookingsBoard extends Component
 
         $allBookings = $query->get();
 
-        $ongoingBookings = BookingInfo::with([
-            'service',
-            'service.provider',
-            'service.provider.user',
-            'bookingRequest',
-        ])
+        $ongoingBookings = BookingInfo::with($relations)
             ->where('customer_id', $customerId)
             ->where('status', 'ONGOING')
             ->latest()

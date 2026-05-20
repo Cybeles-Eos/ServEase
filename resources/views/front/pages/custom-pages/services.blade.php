@@ -418,6 +418,25 @@
     <script>
         // Call the endpoint (already flatten)
         const servicesData = @json($services);
+
+        function renderStars(rating) {
+            const safeRating = Number(rating || 0);
+            let stars = '';
+
+            for (let i = 1; i <= 5; i++) {
+                stars += `
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z"
+                            fill="${i <= Math.round(safeRating) ? '#FFBE42' : '#D1D5DB'}"
+                            stroke="${i <= Math.round(safeRating) ? '#FFBE42' : '#D1D5DB'}"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"/>
+                    </svg>
+                `;
+            }
+
+            return stars;
+        }
         
         function updateCategoryCounts(data) {
             $('.ps-sl-cc-main__box').each(function () {
@@ -500,14 +519,9 @@
                             <div class="ps-sl-c-box__body--cta">
                                 <a href="/services/${service.slug}">Learn more</a>
 
-                                <p>
-                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z"
-                                            fill="#FFBE42" stroke="#FFBE42"
-                                            stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    ${service.rating ?? 0} <span>(${service.reviews || 0} reviews)</span>
+                                <p class="service-rating-stars">
+                                    ${renderStars(service.rating)}
+                                    <span>(${service.reviews || 0} reviews)</span>
                                 </p>
                             </div>
                         </div>

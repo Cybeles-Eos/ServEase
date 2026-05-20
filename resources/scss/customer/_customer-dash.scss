@@ -517,3 +517,385 @@
     background: #f5f3ff;
     color: #6d28d9;
 }
+
+
+
+// For Rating 
+.provider-overall-rating,
+.service-card-rating {
+    margin: 3px 0;
+    font-size: 11px;
+    color: #656565;
+}
+
+.provider-overall-rating strong,
+.service-card-rating strong {
+    color: #FFBE42;
+}
+
+.customer-rating-box {
+    margin: 12px 16px 14px;
+    padding: 12px;
+    border: 1px solid rgba(255, 190, 66, 0.35);
+    background: rgba(255, 190, 66, 0.08);
+    border-radius: 10px;
+}
+
+.customer-rating-box__title {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #202020;
+}
+
+.star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 22px;
+    color: #cfcfcf;
+    cursor: pointer;
+    line-height: 1;
+    transition: 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    color: #FFBE42;
+}
+
+.customer-rating-comment {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 12px;
+}
+
+.customer-rating-submit {
+    margin-top: 8px;
+    padding: 7px 12px;
+    background: #FFBE42;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #202020;
+    cursor: pointer;
+}
+
+.customer-rating-box__stars span {
+    font-size: 18px;
+    color: #cfcfcf;
+}
+
+.customer-rating-box__stars span.is-active {
+    color: #FFBE42;
+}
+
+.customer-rating-box__comment {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: #656565;
+}
+
+
+// For Modal Rating
+.rating-trigger-btn {
+    border: 1px solid #f0c35b;
+    background: #fff8e7;
+    color: #8a5a00;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 6px;
+}
+
+.rating-trigger-btn:hover {
+    background: #ffefc8;
+}
+
+.rating-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    padding-top: 10rem;
+    z-index: 9999;
+}
+
+.rating-modal-overlay.show {
+    display: flex;
+}
+
+.rating-modal-box {
+    width: 100%;
+    max-width: 520px;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+}
+
+.rating-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid #ececec;
+}
+
+.rating-modal-head h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #202020;
+}
+
+.rating-modal-close {
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    color: #666;
+}
+
+.rating-modal-body {
+    padding: 18px;
+}
+
+.rating-modal-service-title {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #202020;
+}
+
+.rating-modal-provider-name {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: #666;
+}
+
+.rating-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.rating-cancel-btn {
+    padding: 8px 14px;
+    border: 1px solid #d7d7d7;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.customer-rating-box__stars span {
+    font-size: 24px;
+    color: #cfcfcf;
+}
+
+.customer-rating-box__stars span.is-active {
+    color: #FFBE42;
+}
+
+
+.service-rating-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.service-rating-stars span {
+    margin-left: 4px;
+    font-size: 12px;
+    color: #656565;
+}
+
+
+
+
+
+
+// Coments
+.service-review-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #ececec;
+}
+
+.service-review-section__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.service-review-section__head-m{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.service-review-section__head-m-s{
+    font-size: 16px !important;
+    color: #858688;
+    white-space: nowrap;
+}
+.service-review-section__head .rate-til {
+    margin: 0 0 5px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #202020;
+}
+
+.service-review-section__head p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 13px;
+    color: #656565;
+}
+
+.service-review-section__head span,
+.service-review-card__stars span {
+    color: #D1D5DB;
+}
+
+.service-review-section__head span.is-active,
+.service-review-card__stars span.is-active {
+    color: #FFBE42;
+}
+
+.service-review-section__head strong {
+    margin-left: 6px;
+    color: #202020;
+}
+
+.service-review-section__head small {
+    color: #858688;
+}
+
+.service-review-section__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.service-review-card {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-bottom: 1px solid #eeeeee;
+    //border-radius: 12px;
+    background: #fff;
+}
+
+.service-review-card__avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #FFBE42;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-review-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.service-review-card__avatar span {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.service-review-card__body {
+    width: 100%;
+}
+
+.service-review-card__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.service-review-card__top h6 {
+    margin: 0;
+    font-size: 16px !important;
+    font-weight: 700;
+    margin-bottom: 1px;
+    color: #202020;
+}
+
+.service-review-card__top p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: #858688;
+    margin-bottom: 5px;
+}
+
+.service-review-card__top small {
+    font-size: 12px;
+    color: #858688;
+    white-space: nowrap;
+}
+
+.service-review-card__stars {
+    margin-top: 2px;
+    font-size: 13px;
+    letter-spacing: .1px;
+    line-height: 100%;
+    margin-bottom: 13px;
+}
+
+.service-review-card__comment {
+    margin: 8px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.service-review-card__comment--empty {
+    color: #9CA3AF;
+    font-style: italic;
+}
+
+.service-review-empty {
+    padding: 18px;
+    border: 1px dashed #d7d7d7;
+    border-radius: 12px;
+    text-align: center;
+    color: #858688;
+    font-size: 13px;
+}
+
+

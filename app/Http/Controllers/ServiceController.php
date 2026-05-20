@@ -18,7 +18,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $services = Service::with(['provider', 'serviceCategory'])
+        $services = Service::with(['provider', 'serviceCategory', 'ratings'])
             ->where('is_active', 1)
             ->latest()
             ->get()
@@ -44,9 +44,14 @@ class ServiceController extends Controller
 
                     'price' => $service->price,
                     'image' => $service->image,
-                    'jobs' => $service->jobs ?? 0,
-                    'rating' => $service->rating ?? 0,
-                    'reviews' => $service->reviews ?? 0,
+
+                    'jobs' => \App\Models\BookingInfo::where('service_id', $service->id)
+                        ->where('status', 'COMPLETED')
+                        ->count(),
+
+                    'rating' => round($service->ratings->avg('rating') ?? 0, 1),
+                    'reviews' => $service->ratings->count(),
+
                     'specialization' => $service->specialization,
                     'created_at' => $service->created_at,
 
@@ -170,11 +175,21 @@ class ServiceController extends Controller
      */
     public function show(string $slug)
     {
-        $service = Service::with(['provider', 'serviceCategory'])
+        $service = Service::with([
+                'provider',
+                'serviceCategory',
+                'ratings',
+                'ratings.customer',
+                'ratings.customer.user',
+            ])
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $relatedServices = Service::with(['provider', 'serviceCategory'])
+        $relatedServices = Service::with([
+                'provider',
+                'serviceCategory',
+                'ratings',
+            ])
             ->where('service_category_id', $service->service_category_id)
             ->where('id', '!=', $service->id)
             ->where('is_active', 1)
@@ -182,8 +197,39 @@ class ServiceController extends Controller
             ->limit(3)
             ->get();
 
-        $categoryName = $service->serviceCategory?->name ?? 'No Category';
         $categoryIsVisible = $service->serviceCategory && $service->serviceCategory->is_active;
+
+        $ratings = $service->ratings ?? collect();
+        $providerRatings = \App\Models\ServiceRating::where('provider_id', $service->provider_id)->get();
+
+        $reviews = $ratings
+            ->sortByDesc('created_at')
+            ->map(function ($rating) {
+                $customer = $rating->customer;
+                $user = $customer?->user;
+
+                $customerName = trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? ''));
+
+                if (empty($customerName)) {
+                    $customerName = 'Customer';
+                }
+
+                return (object) [
+                    'id' => $rating->id,
+                    'rating' => $rating->rating,
+                    'comment' => $rating->comment,
+                    'date' => $rating->created_at?->format('M d, Y'),
+                    'customer_name' => $customerName,
+                    'customer_email' => $user->email ?? 'No email',
+                    'customer_image' => $customer->profile_image ?? null,
+                    'customer_initials' => strtoupper(
+                        substr($customer->first_name ?? 'C', 0, 1) .
+                        substr($customer->last_name ?? '', 0, 1)
+                    ),
+                ];
+            })
+            ->values();
+
         $data = [
             'id' => $service->id,
             'title' => $service->title,
@@ -197,10 +243,20 @@ class ServiceController extends Controller
             'description' => $service->description,
             'content' => $service->content,
             'image' => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
-            'jobs' => $service->jobs ?? 0,
+
+            'jobs' => \App\Models\BookingInfo::where('service_id', $service->id)
+                ->where('status', 'COMPLETED')
+                ->count(),
+
             'price' => $service->price,
-            'rating' => $service->rating ?? 0,
-            'reviews' => $service->reviews ?? 0,
+
+            'rating' => round($ratings->avg('rating') ?? 0, 1),
+            'reviews' => $ratings->count(),
+            'rating_comments' => $reviews,
+
+            'provider_rating' => round($providerRatings->avg('rating') ?? 0, 1),
+            'provider_reviews' => $providerRatings->count(),
+
             'specialization' => $service->specialization,
             'created_at' => $service->created_at->format('M d, Y'),
 
@@ -222,7 +278,6 @@ class ServiceController extends Controller
             'related' => $relatedServices,
         ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.

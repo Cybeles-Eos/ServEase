@@ -128,4 +128,28 @@
         });
     });
 </script>
+<script>
+    function openRatingModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeRatingModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('rating-modal-overlay')) {
+            e.target.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
 @endpush

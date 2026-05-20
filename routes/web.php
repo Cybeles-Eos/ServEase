@@ -10,6 +10,7 @@ use App\Http\Controllers\BookingInfoController;
 use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\BookingReceiptController;
+use App\Http\Controllers\ServiceRatingController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -53,6 +54,11 @@ Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->n
 Route::post('/provider-signup-c', [AuthManagerController::class, 'signupProvider'])->name('provider-signup.post');
 
 Route::middleware('auth')->group(function () {
+
+    // Normal URL
+    Route::get('/booking-receipt/{id}', [BookingReceiptController::class, 'show'])
+        ->name('booking.receipt');
+
 
     Route::middleware('role:admin')->group(function () {
         
@@ -126,14 +132,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/customer/book', [BookingInfoController::class, 'store'])->name('customer.book');
         Route::post('/customer/booking-request/{id}/cancel', [BookingRequestController::class, 'customerCancel'])
             ->name('customer.booking.cancel');
-        Route::post('/customer/notifications/mark-read', [BookingRequestController::class, 'markCustomerNotificationsRead'])
+
+        Route::post('/booking/{bookingRequest}/rate-service', [ServiceRatingController::class, 'store'])
+            ->name('customer.booking.rate-service');
+        
+            Route::post('/customer/notifications/mark-read', [BookingRequestController::class, 'markCustomerNotificationsRead'])
             ->name('customer.notifications.mark-read');
 
     });
 
 });
 
-
-
-Route::get('/booking-receipt/{id}', [BookingReceiptController::class, 'show'])
-    ->name('booking.receipt');

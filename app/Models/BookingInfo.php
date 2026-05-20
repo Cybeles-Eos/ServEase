@@ -43,4 +43,8 @@ class BookingInfo extends Model
     {
         return $this->hasOne(BookingRequest::class, 'booking_info_id');
     }
+    public function rating()
+    {
+        return $this->hasOne(\App\Models\ServiceRating::class, 'booking_info_id');
+    }
 }

@@ -30,4 +30,8 @@ class BookingRequest extends Model
     {
         return $this->belongsTo(Provider::class, 'provider_id');
     }
+    public function rating()
+    {
+        return $this->hasOne(\App\Models\ServiceRating::class, 'booking_request_id');
+    }
 }

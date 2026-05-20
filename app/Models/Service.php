@@ -53,4 +53,18 @@ class Service extends Model
     {
         return $this->belongsTo(ServiceCategory::class, 'service_category_id');
     }
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\ServiceRating::class, 'service_id');
+    }
+
+    public function averageRating()
+    {
+        return round($this->ratings()->avg('rating') ?? 0, 1);
+    }
+
+    public function ratingsCount()
+    {
+        return $this->ratings()->count();
+    }
 }

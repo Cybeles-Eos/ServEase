@@ -24,5 +24,8 @@ class Customer extends Model
     { 
         return $this->belongsTo(User::class); 
     }
-
+    public function ratings()
+    {
+        return $this->hasMany(\App\Models\ServiceRating::class, 'customer_id');
+    }
 }
