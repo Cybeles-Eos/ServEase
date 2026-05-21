@@ -1165,15 +1165,28 @@ h5{
 
 
 
-//
-//
-// For Table in Service Details Start
-//
-//
-
-
-//
-//
-// For Table in Service Details End
-//
-//
+/* Back Button */
+.service-review-admin__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 9px 14px;
+    border: 1px solid #E5E7EB;
+    background: #fff;
+    color: #374151;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: 0.2s ease;
+}
+.service-review-admin__back:hover {
+    background: #FFF7E6;
+    border-color: #FFBE42;
+    color: #202020;
+}
+.service-review-admin__back svg {
+    width: 14px;
+    height: 14px;
+}

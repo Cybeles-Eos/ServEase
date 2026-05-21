@@ -186,8 +186,17 @@
 
     <main class="main-dash-uix page-admin-users dash-sp">
         <div class="admin-user-show">
-            <a href="{{ route('admin.users') }}" class="admin-user-show__back">← Go back</a>
-
+            {{-- <a href="{{ route('admin.users') }}" class="admin-user-show__back">← Go back</a> --}}
+            {{-- <a href="{{ route('admin.users') }}" class="service-review-admin__back">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                </svg>
+                Go Back
+            </a> --}}
             @if ($avatarImgSrc)
                 <img src="{{ $avatarImgSrc }}" alt="" class="admin-user-show__avatar" width="140" height="140">
             @else
@@ -321,6 +330,17 @@
 
 
             <div class="admin-user-show__actions">
+                {{-- <a href="{{ route('admin.users') }}" class="service-review-admin__back">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M15 18L9 12L15 6"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"/>
+                    </svg>
+                    Go Back
+                </a> --}}
+                <a href="{{ route('admin.users') }}" style="background-color: transparent !important; color: #171515 !important" class="btn btn--primary">Cancel</a>
                 <a href="{{ route('admin.users.edit', $user) }}" class="btn btn--primary">Edit user</a>
             </div>
         </div>

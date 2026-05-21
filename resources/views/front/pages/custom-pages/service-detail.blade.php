@@ -4,7 +4,7 @@
     <main class="main-page page--services-detail">
         <section class="section--list m-padding m-width">
             <div class="psd-sl-category">
-                <div class="psd-sl-category__head">
+                <div class="psd-sl-category__head" >
                     <a href="{{ url('/') }}" class="">Home</a>
 
                     <svg width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -17,33 +17,40 @@
                         <path d="M0.384033 0.320312L2.88403 3.32031L0.384033 6.32031" stroke="#FDB932"/>
                     </svg>
 
-                    <a href="{{ url('service-detail') }}" class="s-act-link">Residential Pipe Repair Services</a>
+                    <a href="{{ url('services/'.$service->slug) }}" class="s-act-link">{{ $service->title }}</a>
                 </div>
                 <div class="psd-sl-category__side">
                     <h4>Related Services</h4>
                 </div>
                 <div class="psd-sl-category__rcon">
-                    @foreach($related as $rel)
-                    {{-- {{ route('services.show', $rel->id) }} --}}
-                        <a href="{{url('services/'.$rel->slug)}}" class="psdslcr-box">
-                            <div class="psdslcr-box__head">
-                                <div>
-                                    {{ $rel->serviceCategory?->name ?? 'No Category' }}
-                                </div>
+                   @if($related->isNotEmpty())
+                        @foreach($related as $rel)
+                        {{-- {{ route('services.show', $rel->id) }} --}}
+                            <a href="{{url('services/'.$rel->slug)}}" class="psdslcr-box">
+                                <div class="psdslcr-box__head">
+                                    <div>
+                                        {{ $rel->serviceCategory?->name ?? 'No Category' }}
+                                    </div>
 
-                                <p>
-                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z" fill="#FFBE42" stroke="#FFBE42" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    {{ $rel->rating }} <span>({{ $rel->reviews }} reviews)</span>
-                                </p>
-                            </div>
-                            <div class="psdslcr-box__text">
-                                <h3>{{ $rel->title }}</h3>
-                                <p>{{ Str::limit($rel->description, 60) }}</p>
-                            </div>
-                        </a>
-                    @endforeach
+                                    <p>
+                                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z" fill="#FFBE42" stroke="#FFBE42" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        {{ $rel->rating }} <span>({{ $rel->reviews }} reviews)</span>
+                                    </p>
+                                </div>
+                                <div class="psdslcr-box__text">
+                                    <h3>{{ $rel->title }}</h3>
+                                    <p>{{ Str::limit($rel->description, 60) }}</p>
+                                </div>
+                            </a>
+                        @endforeach
+                    @else
+                        <div class="psdslcr-box-empty">
+                            <p>No Related Services</p>
+                        </div>
+                    @endif
+
                 </div>
                 <hr>
                 <a href="{{ url('provider-signup') }}" class="join-now-cta-sd">
@@ -64,116 +71,106 @@
 
                         {{-- Content: Soon to be resolved --}}
                         {!! $service->content !!}
-@php
-    $ratings = collect($service->rating_comments ?? []);
-    $averageRating = $service->rating ?? 0;
-    $ratingCount = $service->reviews ?? 0;
-@endphp
 
-<div class="service-review-section">
-    <div class="service-review-section__head">
-        <div class="service-review-section__head-m">
-            <p class="rate-til">Customer Reviews</p>
-            <p>
-                @for($i = 1; $i <= 5; $i++)
-                    <span class="service-review-section__head-m-s {{ $i <= round($averageRating) ? 'is-active' : '' }}">★</span>
-                @endfor
+                        {{-- Comments --}}
+                        @php
+                            $ratings = collect($service->rating_comments ?? []);
+                            $averageRating = $service->rating ?? 0;
+                            $ratingCount = $service->reviews ?? 0;
+                        @endphp
 
-                <strong>{{ number_format($averageRating, 1) }}/5</strong>
-                <small>({{ $ratingCount }} {{ Str::plural('review', $ratingCount) }})</small>
-            </p>
-        </div>
-    </div>
+                        <div class="service-review-section">
+                            <div class="service-review-section__head">
+                                <div class="service-review-section__head-m">
+                                    <p class="rate-til">Customer Reviews</p>
+                                    <p>
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <span class="service-review-section__head-m-s {{ $i <= round($averageRating) ? 'is-active' : '' }}">★</span>
+                                        @endfor
 
-    <div class="service-review-section__list">
-       @forelse($ratings as $rating)
+                                        <strong>{{ number_format($averageRating, 1) }}/5</strong>
+                                        <small>({{ $ratingCount }} {{ Str::plural('review', $ratingCount) }})</small>
+                                    </p>
+                                </div>
+                            </div>
 
-            <div class="service-review-card">
-                <div class="service-review-card__avatar">
-                    @if(!empty($rating->customer_image))
-                        <img src="{{ asset($rating->customer_image) }}" alt="{{ $rating->customer_name }}">
-                    @else
-                        <span>{{ $rating->customer_initials ?? 'C' }}</span>
-                    @endif
-                </div>
+                            <div class="service-review-section__list">
+                            @forelse($ratings as $rating)
 
-                <div class="service-review-card__body">
-                    <div class="service-review-card__top">
-                        <div>
-                            <h6>{{ $rating->customer_name ?? 'Customer' }}</h6>
-                            <p>{{ $rating->customer_email ?? 'No email' }}</p>
-                        </div>
-
-                        <small>{{ $rating->date ?? '' }}</small>
-                    </div>
-
-                    <div class="service-review-card__stars">
-                        @for($i = 1; $i <= 5; $i++)
-                            <span class="{{ $i <= $rating->rating ? 'is-active' : '' }}">★</span>
-                        @endfor
-                    </div>
-
-                    @if(!empty($rating->comment))
-                        <p class="service-review-card__comment">
-                            “{{ $rating->comment }}”
-                        </p>
-                    @else
-                        <p class="service-review-card__comment service-review-card__comment--empty">
-                            No comment provided.
-                        </p>
-                    @endif
-                </div>
-            </div>
-        @empty
-            <div class="service-review-empty">
-                <p>No customer reviews yet.</p>
-            </div>
-        @endforelse
-    </div>
-</div>
-                        <div class="psd-sl-sdetaili-relateds">
-                            <h4>Related Services</h4>
-                            
-                            @foreach($related as $rel)
-                                <a href="{{ route('services.show', $rel->id) }}" class="psd-sl-sdetaili-relateds__bc">
-                                    <div class="psd-sl-sdetaili-relateds__bc__head">
-                                        <div>
-                                            {{ $rel->serviceCategory?->name ?? 'No Category' }}
+                                    <div class="service-review-card">
+                                        <div class="service-review-card__avatar">
+                                            @if(!empty($rating->customer_image))
+                                                <img src="{{ asset($rating->customer_image) }}" alt="{{ $rating->customer_name }}">
+                                            @else
+                                                <span>{{ $rating->customer_initials ?? 'C' }}</span>
+                                            @endif
                                         </div>
 
-                                        <p>
-                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z" fill="#FFBE42" stroke="#FFBE42" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                            {{ $rel->rating }} <span>({{ $rel->reviews }} reviews)</span>
-                                        </p>
-                                    </div>
-                                    <div class="psd-sl-sdetaili-relateds__bc__text">
-                                        <h3>{{ $rel->title }}</h3>
-                                        <p>{{ Str::limit($rel->description, 60) }}</p>
-                                    </div>
-                                </a>
-                            @endforeach
+                                        <div class="service-review-card__body">
+                                            <div class="service-review-card__top">
+                                                <div>
+                                                    <h6>{{ $rating->customer_name ?? 'Customer' }}</h6>
+                                                    <p>{{ $rating->customer_email ?? 'No email' }}</p>
+                                                </div>
 
+                                                <small>{{ $rating->date ?? '' }}</small>
+                                            </div>
+
+                                            <div class="service-review-card__stars">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <span class="{{ $i <= $rating->rating ? 'is-active' : '' }}">★</span>
+                                                @endfor
+                                            </div>
+
+                                            @if(!empty($rating->comment))
+                                                <p class="service-review-card__comment">
+                                                    “{{ $rating->comment }}”
+                                                </p>
+                                            @else
+                                                <p class="service-review-card__comment service-review-card__comment--empty">
+                                                    No comment provided.
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="service-review-empty">
+                                        <p>No customer reviews yet.</p>
+                                    </div>
+                                @endforelse
+                            </div>
                         </div>
+
+                        @if($related->isNotEmpty())
+                            <div class="psd-sl-sdetaili-relateds">
+                                <h4>Related Services</h4>
+                                
+                                @foreach($related as $rel)
+                                    <a href="{{ route('services.show', $rel->id) }}" class="psd-sl-sdetaili-relateds__bc">
+                                        <div class="psd-sl-sdetaili-relateds__bc__head">
+                                            <div>
+                                                {{ $rel->serviceCategory?->name ?? 'No Category' }}
+                                            </div>
+
+                                            <p>
+                                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.38803 1.09688L6.12137 2.56354C6.22136 2.76771 6.48803 2.96354 6.71303 3.00104L8.0422 3.22187C8.8922 3.36354 9.0922 3.98021 8.4797 4.58854L7.44636 5.62187C7.27136 5.79687 7.17553 6.13437 7.2297 6.37604L7.52553 7.65521C7.75886 8.66771 7.22136 9.05937 6.32553 8.53021L5.0797 7.79271C4.8547 7.65938 4.48387 7.65938 4.2547 7.79271L3.00887 8.53021C2.1172 9.05937 1.57553 8.66354 1.80887 7.65521L2.1047 6.37604C2.15887 6.13437 2.06303 5.79687 1.88803 5.62187L0.854698 4.58854C0.246365 3.98021 0.442199 3.36354 1.2922 3.22187L2.62137 3.00104C2.8422 2.96354 3.10887 2.76771 3.20886 2.56354L3.9422 1.09688C4.3422 0.301042 4.9922 0.301042 5.38803 1.09688Z" fill="#FFBE42" stroke="#FFBE42" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                                {{ $rel->rating }} <span>({{ $rel->reviews }} reviews)</span>
+                                            </p>
+                                        </div>
+                                        <div class="psd-sl-sdetaili-relateds__bc__text">
+                                            <h3>{{ $rel->title }}</h3>
+                                            <p>{{ Str::limit($rel->description, 60) }}</p>
+                                        </div>
+                                    </a>
+                                @endforeach
+
+                            </div>
+                        @endif
+
                     </div>
                     <div class="psd-sl-sdetaili-details">
-                        {{-- @guest
-                            <button id="open-book" class="btn btn--tertiary">Book Now</button>
-                        @endguest --}}
-                        {{-- @guest
-                            <a href="{{url('login')}}" class="btn btn--tertiary-d">Book Now</a>
-                        @endguest
-                        @auth
-                            @if(auth()->user()->isCustomer())
-                                @php
-                                    $user = auth()->user()->customer;
-                                @endphp
-                                @if ($user->street_address === null || $user->city === null || $user->barangay === null || $user->zipcode === null || $user->phone_number === null)
-                                    <button id="open-book" class="btn btn--tertiary">Book Now</button>
-                                ...
-                            @endif
-                        @endauth --}}
                         @guest
                             <a href="{{ url('login') }}" class="btn btn--tertiary-d">Book Now</a>
                         @endguest

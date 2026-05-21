@@ -11,6 +11,7 @@ use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\BookingReceiptController;
 use App\Http\Controllers\ServiceRatingController;
+use App\Http\Controllers\ProviderServiceReviewController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -74,13 +75,14 @@ Route::middleware('auth')->group(function () {
 
         //Admin General Setting
         Route::get('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');
-            // Service Category inside General Setting
-            Route::post('/admin/setting/service-categories', [AdminController::class, 'storeServiceCategory'])
-                ->name('admin.setting.service-categories.store');
-            Route::put('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'updateServiceCategory'])
-                ->name('admin.setting.service-categories.update');
-            Route::delete('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'destroyServiceCategory'])
-                ->name('admin.setting.service-categories.destroy');
+        
+        // Service Category inside General Setting
+        Route::post('/admin/setting/service-categories', [AdminController::class, 'storeServiceCategory'])
+            ->name('admin.setting.service-categories.store');
+        Route::put('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'updateServiceCategory'])
+            ->name('admin.setting.service-categories.update');
+        Route::delete('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'destroyServiceCategory'])
+            ->name('admin.setting.service-categories.destroy');
     });
 
     // Provider
@@ -102,6 +104,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/provider/service/edit/{id}', [ServiceController::class, 'edit'])->name('edit-service');
         Route::put('/provider/service/update/{id}', [ServiceController::class, 'update'])->name('provider.service.update');
         Route::delete('/provider/service/delete/{id}', [ServiceController::class, 'destroy'])->name('provider.service.delete');
+        
+        // Provider Comments Page
+        Route::get('/provider/service/{service}/reviews', [ProviderServiceReviewController::class, 'index'])->name('provider.service.reviews');
+        Route::post('/provider/service-rating/{rating}/toggle-visibility', [ProviderServiceReviewController::class, 'toggle'])->name('provider.service-rating.toggle-visibility');
 
         // Provider Setting
         Route::post('/provider/setting/update', [ProviderController::class, 'updateSetting'])->name('provider.setting.update');
@@ -130,14 +136,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/customer/setting', [CustomerController::class, 'setting'])->name('customer.setting');
 
         Route::post('/customer/book', [BookingInfoController::class, 'store'])->name('customer.book');
-        Route::post('/customer/booking-request/{id}/cancel', [BookingRequestController::class, 'customerCancel'])
-            ->name('customer.booking.cancel');
+        Route::post('/customer/booking-request/{id}/cancel', [BookingRequestController::class, 'customerCancel'])->name('customer.booking.cancel');
 
-        Route::post('/booking/{bookingRequest}/rate-service', [ServiceRatingController::class, 'store'])
-            ->name('customer.booking.rate-service');
-        
-            Route::post('/customer/notifications/mark-read', [BookingRequestController::class, 'markCustomerNotificationsRead'])
-            ->name('customer.notifications.mark-read');
+        Route::post('/booking/{bookingRequest}/rate-service', [ServiceRatingController::class, 'store'])->name('customer.booking.rate-service');
+        Route::post('/customer/notifications/mark-read', [BookingRequestController::class, 'markCustomerNotificationsRead'])->name('customer.notifications.mark-read');
 
     });
 

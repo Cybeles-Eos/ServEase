@@ -289,7 +289,24 @@
                             </div>
 
                             <div class="pbmdr-cb-box__foo">
-                                <p>Rated: ⭐⭐⭐</p>
+                                @php
+                                    $ratingValue = $request->rating?->rating ?? 0;
+                                @endphp
+
+                                <p>
+                                    Rated:
+                                    @if($ratingValue > 0)
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <span style="color: {{ $i <= $ratingValue ? '#FFBE42' : '#D1D5DB' }};">
+                                                ★
+                                            </span>
+                                        @endfor
+                                    @else
+                                        <span style="font-size: 12px; color: #9CA3AF;">
+                                            No rating yet
+                                        </span>
+                                    @endif
+                                </p>
                                 <a href="{{ route('booking.receipt', $request->id) }}"
                                 target="_blank"
                                 class="download-receipt-btn">

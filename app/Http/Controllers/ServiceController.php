@@ -199,7 +199,9 @@ class ServiceController extends Controller
 
         $categoryIsVisible = $service->serviceCategory && $service->serviceCategory->is_active;
 
-        $ratings = $service->ratings ?? collect();
+        $ratings = $service->ratings
+            ? $service->ratings->where('is_visible', true)
+            : collect();
         $providerRatings = \App\Models\ServiceRating::where('provider_id', $service->provider_id)->get();
 
         $reviews = $ratings
@@ -250,6 +252,8 @@ class ServiceController extends Controller
 
             'price' => $service->price,
 
+            // 'rating' => round($ratings->avg('rating') ?? 0, 1),
+            // 'reviews' => $ratings->count(),
             'rating' => round($ratings->avg('rating') ?? 0, 1),
             'reviews' => $ratings->count(),
             'rating_comments' => $reviews,

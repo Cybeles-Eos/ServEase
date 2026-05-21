@@ -31,6 +31,7 @@ class ProviderBookingsBoard extends Component
                     'bookingInfo',
                     'bookingInfo.customer',
                     'bookingInfo.service',
+                    'rating',
                 ])
                 ->where('provider_id', $providerId)
                 ->latest()

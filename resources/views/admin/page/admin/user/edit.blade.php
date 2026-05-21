@@ -56,6 +56,24 @@
             margin-top: 0px !important;
         }
     </style>
+    <style>
+        .back-adm-edit{
+            padding: 3px 8px;
+            background-color: #171515;   
+            margin: 0;  font-size: 12px;
+            font-weight: 700;
+            border-radius: 3px;
+            text-decoration: none !important;
+            color: #fff !important;
+        }
+        .back-adm-edit:hover{
+            opacity: .9;
+        }
+        .back-adm-edit a{
+            color: #fff !important;
+            text-decoration: none !important;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -72,7 +90,7 @@
         <div class="provider--create__main">
             <div class="provserv-c-head">
                 <h4>Edit user — {{ ucfirst($user->role) }}</h4>
-                <p style="margin: 0; opacity: .65; font-size: 14px;"><a href="{{ route('admin.users') }}">← Back</a></p>
+                <p class="back-adm-edit"><a href="{{ route('admin.users') }}">Go Back</a></p>
             </div>
             <div class="provserv-c-body">
                 <div class="provserv-c-body--fields">

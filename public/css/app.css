@@ -1117,6 +1117,34 @@ h5 {
   transform: translateY(35px);
 }
 
+/* Back Button */
+.service-review-admin__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 9px 14px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  color: #374151;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: 0.2s ease;
+}
+
+.service-review-admin__back:hover {
+  background: #FFF7E6;
+  border-color: #FFBE42;
+  color: #202020;
+}
+
+.service-review-admin__back svg {
+  width: 14px;
+  height: 14px;
+}
+
 p {
   font-size: 15px;
   font-weight: 400;
@@ -2800,6 +2828,22 @@ h4 span {
 .page--services-detail .section--list .psd-sl-category__rcon .psdslcr-box:hover * {
   border-color: #FFBE42 !important;
 }
+.page--services-detail .section--list .psd-sl-category__rcon .psdslcr-box-empty {
+  width: 100%;
+  border: 1px dashed rgba(17, 17, 17, 0.0862745098);
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+.page--services-detail .section--list .psd-sl-category__rcon .psdslcr-box-empty p {
+  padding: 0;
+  margin: 0;
+  opacity: 0.4;
+  font-size: 14px;
+}
 @media (max-width: 992px) {
   .page--services-detail .section--list .psd-sl-category__rcon {
     display: none;
@@ -2828,6 +2872,11 @@ h4 span {
 @media (max-width: 992px) {
   .page--services-detail .section--list .psd-sl-category hr {
     display: none;
+  }
+}
+@media (max-width: 400px) {
+  .page--services-detail .section--list .psd-sl-category {
+    min-width: 100%;
   }
 }
 .page--services-detail .section--list .psd-sl-sdetail {
@@ -2959,6 +3008,7 @@ h4 span {
 @media (max-width: 992px) {
   .page--services-detail .section--list .psd-sl-sdetail__info .psd-sl-sdetaili-description .psd-sl-sdetaili-relateds {
     display: flex;
+    height: auto;
   }
 }
 .page--services-detail .section--list .psd-sl-sdetail__info .psd-sl-sdetaili-description figure.table {
@@ -3117,6 +3167,11 @@ h4 span {
   .page--services-detail .section--list {
     flex-direction: column;
     gap: 10px;
+  }
+}
+@media (max-width: 992px) {
+  .page--services-detail .section--list {
+    padding-top: 80px;
   }
 }
 .page--services-detail .booking-modal {
@@ -6575,7 +6630,7 @@ h4 span {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   display: grid;
-  grid-template-columns: 140px 1fr 15% 1fr 15% 90px;
+  grid-template-columns: 140px 1fr 15% 1fr 15% 120px;
 }
 .provider--service__table .provider-stbl-main .provider-stbl-main-c__head div {
   height: 40px;
@@ -6595,7 +6650,7 @@ h4 span {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   display: grid;
-  grid-template-columns: 140px 1fr 15% 1fr 15% 90px;
+  grid-template-columns: 140px 1fr 15% 1fr 15% 120px;
 }
 .provider--service__table .provider-stbl-main .provider-stbl-main-c__tbody div {
   height: 100%;

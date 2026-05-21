@@ -14,8 +14,13 @@ class ServiceRating extends Model
         'service_id',
         'rating',
         'comment',
+        'is_visible',
     ];
 
+    protected $casts = [
+        'is_visible' => 'boolean',
+    ];
+    
     public function bookingRequest()
     {
         return $this->belongsTo(BookingRequest::class, 'booking_request_id');
