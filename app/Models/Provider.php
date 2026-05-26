@@ -10,20 +10,26 @@ class Provider extends Model
     use HasFactory;
     protected $table = 'tbl_providers';
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'first_name',
         'last_name',
         'profile_image',
-        'phone_number', 
+        'phone_number',
         'personal_email',
-        'home_address', 
-        'province', 
+        'home_address',
+        'province',
         'barangay',
+        'zipcode',
         'profession',
         'year_exp',
-        'zip', 
-        'profession', 
-        'year_exp'
+
+        'resume_path',
+        'barangay_clearance_path',
+
+        'application_status',
+        'application_reviewed_at',
+        'application_reviewed_by',
+        'application_remarks',
     ];
 
     // ---------------------

@@ -11,6 +11,7 @@ use App\Models\User;
 // use App\Services\BookingStatusService;
 use App\Models\BookingInfo;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AuthManagerController extends Controller
 {
@@ -33,24 +34,187 @@ class AuthManagerController extends Controller
     /**
      * Handle login request
      */
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+    // public function login(Request $request)
+    // {
+    //     $credentials = $request->validate([
+    //         'email'    => ['required', 'email'],
+    //         'password' => ['required', 'string'],
+    //     ]);
 
-        $remember = $request->boolean('remember');
+    //     $remember = $request->boolean('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            //app(BookingStatusService::class)->updateAllDueBookings(); //Update Status
+    //     if (Auth::attempt($credentials, $remember)) {
+    //         $request->session()->regenerate();
+    //         //app(BookingStatusService::class)->updateAllDueBookings(); //Update Status
+    //         $user = Auth::user();
 
-            $this->updateAllBookingStatuses();
+    //         if ($user->role === 'provider') {
+    //             $provider = $user->provider;
 
-            $user = Auth::user();
+    //             if (!$provider || $provider->application_status !== 'accepted' || !$user->is_active) {
+    //                 Auth::logout();
 
-            if (!$user->is_active) {
+    //                 return redirect()->route('login')->withErrors([
+    //                     'email' => 'Your provider application is still under review. Please wait for admin approval.',
+    //                 ])->withInput();
+    //             }
+    //         }
+    //         $this->updateAllBookingStatuses();
+
+    //         $user = Auth::user();
+
+    //         if (!$user->is_active) {
+    //             Auth::logout();
+    //             $request->session()->invalidate();
+    //             $request->session()->regenerateToken();
+
+    //             throw ValidationException::withMessages([
+    //                 'email' => ['This account has been disabled.'],
+    //             ]);
+    //         }
+
+    //         if ($user->isAdmin()) {
+    //             return redirect('/admin/dashboard');
+    //         }
+
+    //         if ($user->isProvider()) {
+    //             return redirect('/provider/dashboard');
+    //         }
+
+    //         return redirect('customer/dashboard'); // customer
+    //     }
+
+    //     throw ValidationException::withMessages([
+    //         'email' => ['The provided credentials are incorrect.'],
+    //     ]);
+    // }
+    // public function login(Request $request)
+    // {
+    //     $credentials = $request->validate([
+    //         'email'    => ['required', 'email'],
+    //         'password' => ['required', 'string'],
+    //     ]);
+
+    //     $remember = $request->boolean('remember');
+
+    //     if (Auth::attempt($credentials, $remember)) {
+    //         $request->session()->regenerate();
+
+    //         $user = Auth::user();
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Block disabled accounts
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         if (!$user->is_active) {
+    //             Auth::logout();
+    //             $request->session()->invalidate();
+    //             $request->session()->regenerateToken();
+
+    //             throw ValidationException::withMessages([
+    //                 'email' => ['This account has been disabled.'],
+    //             ]);
+    //         }
+
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | Block pending or declined provider applications
+    //         |--------------------------------------------------------------------------
+    //         */
+    //         if ($user->role === 'provider') {
+    //             $provider = $user->provider;
+
+    //             if (!$provider || $provider->application_status !== 'accepted') {
+    //                 Auth::logout();
+    //                 $request->session()->invalidate();
+    //                 $request->session()->regenerateToken();
+
+    //                 throw ValidationException::withMessages([
+    //                     'email' => ['Your provider application is still under review.'],
+    //                 ]);
+    //             }
+    //         }
+
+    //         $this->updateAllBookingStatuses();
+
+    //         if ($user->isAdmin()) {
+    //             return redirect('/admin/dashboard');
+    //         }
+
+    //         if ($user->isProvider()) {
+    //             session()->flash('provider_application_accepted', true);
+
+    //             return redirect('/provider/dashboard');
+    //         }
+
+    //         return redirect('customer/dashboard');
+    //     }
+
+    //     throw ValidationException::withMessages([
+    //         'email' => ['The provided credentials are incorrect.'],
+    //     ]);
+    // }
+public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email'    => ['required', 'email'],
+        'password' => ['required', 'string'],
+    ]);
+
+    $remember = $request->boolean('remember');
+
+    if (Auth::attempt($credentials, $remember)) {
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Provider application check
+        |--------------------------------------------------------------------------
+        | New providers are created with is_active = 0 and application_status = pending.
+        | So we must check provider application status before the general disabled check.
+        */
+        if ($user->role === 'provider') {
+            $provider = $user->provider;
+
+            if (!$provider) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => ['Provider profile was not found. Please contact admin.'],
+                ]);
+            }
+
+            if ($provider->application_status === 'pending') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => ['Your provider application is still under review.'],
+                ]);
+            }
+
+            if ($provider->application_status === 'declined') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                throw ValidationException::withMessages([
+                    'email' => ['Your provider application has been declined.'],
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Accepted provider but manually disabled by admin
+            |--------------------------------------------------------------------------
+            */
+            if ($provider->application_status === 'accepted' && !$user->is_active) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -59,22 +223,41 @@ class AuthManagerController extends Controller
                     'email' => ['This account has been disabled.'],
                 ]);
             }
-
-            if ($user->isAdmin()) {
-                return redirect('/admin/dashboard');
-            }
-
-            if ($user->isProvider()) {
-                return redirect('/provider/dashboard');
-            }
-
-            return redirect('customer/dashboard'); // customer
         }
 
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | General disabled account check
+        |--------------------------------------------------------------------------
+        | This applies to admin/customer, and also protects any non-provider account.
+        */
+        if (!$user->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => ['This account has been disabled.'],
+            ]);
+        }
+
+        $this->updateAllBookingStatuses();
+
+        if ($user->isAdmin()) {
+            return redirect('/admin/dashboard');
+        }
+
+        if ($user->isProvider()) {
+            return redirect('/provider/dashboard');
+        }
+
+        return redirect('customer/dashboard');
     }
+
+    throw ValidationException::withMessages([
+        'email' => ['The provided credentials are incorrect.'],
+    ]);
+}
 
     /**
      * Logout authenticated user
@@ -123,44 +306,112 @@ class AuthManagerController extends Controller
         return redirect('/login');
     }
 
+    // public function signupProvider(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'fname'      => ['required', 'string', 'max:255'],
+    //         'lname'      => ['required', 'string', 'max:255'],
+    //         'email'      => ['required', 'email', 'unique:users,email'],
+    //         'number'     => ['required', 'string'], // phone_num
+    //         'address'    => ['required', 'string'], // home_address
+    //         'province'   => ['required', 'string'],
+    //         'zipcode'    => ['required', 'string'], // zip
+    //         'profession' => ['required', 'string'],
+    //         'experience' => ['required', 'integer'], // year_exp
+    //         'password'   => ['required', 'min:8', 'confirmed'],
+    //     ]);
+        
+    //     // Create the Base User Account
+    //     $user = User::create([
+    //         'name'     => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
+    //         'email'    => $validated['email'],
+    //         'password' => Hash::make($validated['password']),
+    //         'role'     => 'provider', // Set role to provider
+    //     ]);
+
+    //     // Create the Provider Profile
+    //     $user->provider()->create([
+    //         'first_name' => $validated['fname'],
+    //         'last_name' => $validated['lname'],
+    //         'phone_num'    => $validated['number'],
+    //         'home_address' => $validated['address'],
+    //         'province'     => $validated['province'],
+    //         'zipcode'          => $validated['zipcode'],
+    //         'profession'   => $validated['profession'],
+    //         'year_exp'     => $validated['experience'],
+    //     ]);
+
+    //     return redirect('/login')->with('success', 'Provider account created successfully!');
+    // }
     public function signupProvider(Request $request)
     {
         $validated = $request->validate([
-            'fname'      => ['required', 'string', 'max:255'],
-            'lname'      => ['required', 'string', 'max:255'],
-            'email'      => ['required', 'email', 'unique:users,email'],
-            'number'     => ['required', 'string'], // phone_num
-            'address'    => ['required', 'string'], // home_address
-            'province'   => ['required', 'string'],
-            'zipcode'    => ['required', 'string'], // zip
-            'profession' => ['required', 'string'],
-            'experience' => ['required', 'integer'], // year_exp
-            'password'   => ['required', 'min:8', 'confirmed'],
-        ]);
-        
-        // Create the Base User Account
-        $user = User::create([
-            'name'     => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role'     => 'provider', // Set role to provider
+            'fname' => ['required', 'string', 'max:255'],
+            'lname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'number' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'province' => ['required', 'string', 'max:255'],
+            'zipcode' => ['required', 'string', 'max:20'],
+            'profession' => ['required', 'string', 'max:255'],
+            'experience' => ['required', 'integer', 'min:0'],
+            'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
+            'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
+            'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
-        // Create the Provider Profile
-        $user->provider()->create([
-            'first_name' => $validated['fname'],
-            'last_name' => $validated['lname'],
-            'phone_num'    => $validated['number'],
-            'home_address' => $validated['address'],
-            'province'     => $validated['province'],
-            'zipcode'          => $validated['zipcode'],
-            'profession'   => $validated['profession'],
-            'year_exp'     => $validated['experience'],
-        ]);
+        DB::transaction(function () use ($request, $validated) {
+            $resumePath = null;
+            $barangayClearancePath = null;
 
-        return redirect('/login')->with('success', 'Provider account created successfully!');
+            if ($request->hasFile('resume')) {
+                $resumePath = $request->file('resume')->store('provider-resumes', 'public');
+            }
+
+            if ($request->hasFile('barangay_clearance')) {
+                $barangayClearancePath = $request->file('barangay_clearance')->store('provider-barangay-clearances', 'public');
+            }
+
+            $user = User::create([
+                'name' => $validated['fname'] . ' ' . $validated['lname'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'provider',
+
+                /*
+                |--------------------------------------------------------------------------
+                | Important
+                |--------------------------------------------------------------------------
+                | Provider cannot login until admin accepts the application.
+                */
+                'is_active' => 0, // Set to active to allow login, but provider application status will be checked on login to block access until accepted by admin
+            ]);
+
+            $user->provider()->create([
+                'first_name' => $validated['fname'],
+                'last_name' => $validated['lname'],
+                'phone_number' => $validated['number'],
+                'personal_email' => $validated['email'],
+                'home_address' => $validated['address'],
+                'province' => $validated['province'],
+                'zipcode' => $validated['zipcode'],
+                'profession' => $validated['profession'],
+                'year_exp' => $validated['experience'],
+
+                'resume_path' => $resumePath,
+                'barangay_clearance_path' => $barangayClearancePath,
+
+                'application_status' => 'pending',
+                'application_reviewed_at' => null,
+                'application_reviewed_by' => null,
+                'application_remarks' => null,
+            ]);
+        });
+
+        return redirect()
+            ->route('provider-signup')
+            ->with('provider_application_submitted', true);
     }
-
 
 
     // For Status

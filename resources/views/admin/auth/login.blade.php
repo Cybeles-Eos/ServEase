@@ -8,7 +8,9 @@
     <main class="provider-login">
         <section class="provider-login-main">
             <div class="provider-login-main__form">
-                <img src="{{asset('images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
+                <a href="{{url('/')}}">
+                    <img src="{{asset('images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
+                </a>
                 <div class="provider-login-main__form--head">
                     <h3>Let’s Get You Back In</h3>
                     <p>Enter your credentials to access your account</p>                    

@@ -33,7 +33,7 @@
                         </button>
                     </div>
 
-                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields">
+                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields" enctype="multipart/form-data">
                         @csrf
 
                         <div class="provreg-mmcf-firstpage">
@@ -65,53 +65,74 @@
                             </div>
                             <div class="prg-mm-group">
                                 <label for="address">Personal Home Address <span>*</span></label>
-                                <input type="text" placeholder="e. g. name@gmail.com" name="address" value="{{ old('address') }}" required autocomplete="off">
+                                <input type="text" placeholder="" name="address" value="{{ old('address') }}" required autocomplete="off">
                                 @error('address') <small>{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
                                     <label for="province">Province <span>*</span></label>
-                                    <input type="text" placeholder="e. g. name@gmail.com" name="province" value="{{ old('province') }}" required autocomplete="off">
+                                    <input type="text" placeholder="" name="province" value="{{ old('province') }}" required autocomplete="off">
                                     @error('province') <small>{{ $message }}</small> @enderror
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="zipcode">ZIP Code <span>*</span></label>
-                                    <input type="number" placeholder="Enter your Zipcode" name="zipcode" value="{{ old('zipcode') }}" required autocomplete="off">
+                                    <input type="number" placeholder="" name="zipcode" value="{{ old('zipcode') }}" required autocomplete="off">
                                     @error('zipcode') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>
 
                             <button type="button" id="provreg-next" class="btn btn--primary">Next</button>
-                        </div>
+                        </div> 
                         
                         <div class="provreg-mmcf-secpage">
                             <div class="file-field">
                                 <label>Resume / CV Upload (PDF only)</label>
 
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="resume" name="resume" hidden>
+                                    <input type="file" id="resume" name="resume" accept="application/pdf" hidden>
                                     <button type="button" class="file-btn" data-target="resume">
                                         Choose File
                                     </button>
                                     <span class="file-name">No file chosen</span>
                                 </div>
+
+                                @error('resume')
+                                    <small>{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="file-field">
+                                <label>Barangay Clearance Upload (PDF only)</label>
+
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="barangay_clearance" name="barangay_clearance" accept="application/pdf" hidden>
+
+                                    <button type="button" class="file-btn" data-target="barangay_clearance">
+                                        Choose File
+                                    </button>
+
+                                    <span class="file-name">No file chosen</span>
+                                </div>
+
+                                @error('barangay_clearance')
+                                    <small>{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
                                     <label for="name">Professional Details <span>*</span></label>
-                                    <input type="text" placeholder="e. g. Juan" name="profession" value="{{ old('profession') }}" required autocomplete="off">
+                                    <input type="text" placeholder="" name="profession" value="{{ old('profession') }}" required autocomplete="off">
                                     @error('profession') <small>{{ $message }}</small> @enderror
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="lname">Years of experience <span>*</span></label>
-                                    <input type="text" placeholder="e. g. Cruz" name="experience" value="{{ old('experience') }}" required autocomplete="off">
+                                    <input type="text" placeholder="" name="experience" value="{{ old('experience') }}" required autocomplete="off">
                                     @error('experience') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>
                             <div class="prg-mm-group">
                                 <label for="password">Password</label>
                                 <div class="prg-mm-group-pass">
-                                    <input type="password" name="password" id="password" placeholder="e. g. name@gmail.com" required autocomplete="current-password">
+                                    <input type="password" name="password" id="password" placeholder="" required autocomplete="current-password">
                                     <div class="show" id="show-pass">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -125,7 +146,7 @@
                             <div class="prg-mm-group">
                                 <label for="password">Confirm Password</label>
                                 <div class="prg-mm-group-pass">
-                                    <input type="password" name="password_confirmation" id="password_conf" placeholder="e. g. name@gmail.com" required autocomplete="current-password">
+                                    <input type="password" name="password_confirmation" id="password_conf" placeholder="" required autocomplete="current-password">
                                     <div class="show" id="show-pass-conf">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -158,114 +179,146 @@
 @endsection
 @push('extrascripts')
 
-<script>
-$(document).ready(function () {
+    <script>
+        $(document).ready(function () {
 
-    function setStep(step) {
-        if (step === 1) {
-            // First step active
-            $('.firstpage-icon svg path').attr('stroke', '#FFBE42');
-            $('.secpage-icon svg path').attr('stroke', '#D9D9D9');
-        }
+            function setStep(step) {
+                if (step === 1) {
+                    // First step active
+                    $('.firstpage-icon svg path').attr('stroke', '#FFBE42');
+                    $('.secpage-icon svg path').attr('stroke', '#D9D9D9');
+                }
 
-        if (step === 2) {
-            // Second step active
-            $('.firstpage-icon svg path').attr('stroke', '#D9D9D9');
-            $('.secpage-icon svg path').attr('stroke', '#FFBE42');
-        }
-    }
+                if (step === 2) {
+                    // Second step active
+                    $('.firstpage-icon svg path').attr('stroke', '#D9D9D9');
+                    $('.secpage-icon svg path').attr('stroke', '#FFBE42');
+                }
+            }
 
-    // Default state
-    setStep(1);
+            // Default state
+            setStep(1);
 
-    // Next → go to step 2
-    $('#provreg-next').on('click', function (e) {
-        e.preventDefault();
+            // Next → go to step 2
+            $('#provreg-next').on('click', function (e) {
+                e.preventDefault();
 
-        $('.provreg-mmcf-firstpage').hide();
-        $('.provreg-mmcf-secpage').fadeIn(200);
+                $('.provreg-mmcf-firstpage').hide();
+                $('.provreg-mmcf-secpage').fadeIn(200);
 
-        setStep(2);
-    });
+                setStep(2);
+            });
 
-    // Prev → back to step 1
-    $('#provreg-prev').on('click', function (e) {
-        e.preventDefault();
+            // Prev → back to step 1
+            $('#provreg-prev').on('click', function (e) {
+                e.preventDefault();
 
-        $('.provreg-mmcf-secpage').hide();
-        $('.provreg-mmcf-firstpage').fadeIn(200);
+                $('.provreg-mmcf-secpage').hide();
+                $('.provreg-mmcf-firstpage').fadeIn(200);
 
-        setStep(1);
-    });
+                setStep(1);
+            });
 
-});
+        });
 
-$(document).ready(function () {
+        $(document).ready(function () {
 
-    $('.file-btn').on('click', function () {
-        const target = $(this).data('target');
-        $('#' + target).click();
-    });
+            $('.file-btn').on('click', function () {
+                const target = $(this).data('target');
+                $('#' + target).click();
+            });
 
-    $('input[type="file"]').on('change', function () {
-        const fileName = this.files.length
-            ? this.files[0].name
-            : 'No file chosen';
+            $('input[type="file"]').on('change', function () {
+                const file = this.files.length ? this.files[0] : null;
+                const wrapper = $(this).closest('.file-input-wrapper');
+                const fileNameText = wrapper.find('.file-name');
 
-        $(this)
-            .closest('.file-input-wrapper')
-            .find('.file-name')
-            .text(fileName);
-    });
+                if (!file) {
+                    fileNameText.text('No file chosen');
+                    return;
+                }
 
-});
+                const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
-$(document).ready(function () {
+                if (!isPdf) {
+                    this.value = '';
+                    fileNameText.text('No file chosen');
 
-    const showSvg = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14.53 9.46992L9.47004 14.5299C8.82004 13.8799 8.42004 12.9899 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C12.99 8.41992 13.88 8.81992 14.53 9.46992Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M17.82 5.76998C16.07 4.44998 14.07 3.72998 12 3.72998C8.46997 3.72998 5.17997 5.80998 2.88997 9.40998C1.98997 10.82 1.98997 13.19 2.88997 14.6C3.67997 15.84 4.59997 16.91 5.59997 17.77" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8.42004 19.5302C9.56004 20.0102 10.77 20.2702 12 20.2702C15.53 20.2702 18.82 18.1902 21.11 14.5902C22.01 13.1802 22.01 10.8102 21.11 9.40018C20.78 8.88018 20.42 8.39018 20.05 7.93018" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M15.5099 12.7002C15.2499 14.1102 14.0999 15.2602 12.6899 15.5202" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.47 14.5298L2 21.9998" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22 2L14.53 9.47" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    `;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid File',
+                        text: 'Please upload a PDF file only.',
+                        confirmButtonColor: '#FFBE42',
+                    });
 
-    const hideSvg = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 20.2702C15.53 20.2702 18.82 18.1902 21.11 14.5902C22.01 13.1802 22.01 10.8102 21.11 9.40021C18.82 5.80021 15.53 3.72021 12 3.72021C8.46997 3.72021 5.17997 5.80021 2.88997 9.40021C1.98997 10.8102 1.98997 13.1802 2.88997 14.5902C5.17997 18.1902 8.46997 20.2702 12 20.2702Z" stroke="#1E1E1E" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    `;
+                    return;
+                }
 
-    $('#show-pass').on('click', function () {
-        const input = $('#password');
+                fileNameText.text(file.name);
+            });
 
-        if (input.attr('type') === 'password') {
-            input.attr('type', 'text');
-            $(this).html(showSvg);
-        } else {
-            input.attr('type', 'password');
-            $(this).html(hideSvg);
-        }
-    });
-    $('#show-pass-conf').on('click', function () {
-        const input = $('#password_conf');
+        });
 
-        if (input.attr('type') === 'password') {
-            input.attr('type', 'text');
-            $(this).html(showSvg);
-        } else {
-            input.attr('type', 'password');
-            $(this).html(hideSvg);
-        }
-    });
+        $(document).ready(function () {
 
-});
-</script>
+            const showSvg = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.53 9.46992L9.47004 14.5299C8.82004 13.8799 8.42004 12.9899 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C12.99 8.41992 13.88 8.81992 14.53 9.46992Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17.82 5.76998C16.07 4.44998 14.07 3.72998 12 3.72998C8.46997 3.72998 5.17997 5.80998 2.88997 9.40998C1.98997 10.82 1.98997 13.19 2.88997 14.6C3.67997 15.84 4.59997 16.91 5.59997 17.77" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.42004 19.5302C9.56004 20.0102 10.77 20.2702 12 20.2702C15.53 20.2702 18.82 18.1902 21.11 14.5902C22.01 13.1802 22.01 10.8102 21.11 9.40018C20.78 8.88018 20.42 8.39018 20.05 7.93018" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15.5099 12.7002C15.2499 14.1102 14.0999 15.2602 12.6899 15.5202" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.47 14.5298L2 21.9998" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L14.53 9.47" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
 
+            const hideSvg = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 20.2702C15.53 20.2702 18.82 18.1902 21.11 14.5902C22.01 13.1802 22.01 10.8102 21.11 9.40021C18.82 5.80021 15.53 3.72021 12 3.72021C8.46997 3.72021 5.17997 5.80021 2.88997 9.40021C1.98997 10.8102 1.98997 13.1802 2.88997 14.5902C5.17997 18.1902 8.46997 20.2702 12 20.2702Z" stroke="#1E1E1E" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            `;
 
+            $('#show-pass').on('click', function () {
+                const input = $('#password');
 
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    $(this).html(showSvg);
+                } else {
+                    input.attr('type', 'password');
+                    $(this).html(hideSvg);
+                }
+            });
+            $('#show-pass-conf').on('click', function () {
+                const input = $('#password_conf');
+
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    $(this).html(showSvg);
+                } else {
+                    input.attr('type', 'password');
+                    $(this).html(hideSvg);
+                }
+            });
+
+        });
+    </script>
+    @if(session('provider_application_submitted'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Application Submitted',
+                    text: 'Admin will review your application. Please wait for approval before logging in.',
+                    confirmButtonText: 'Go Back',
+                    confirmButtonColor: '#FFBE42',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                }).then(() => {
+                    window.location.href = "{{ url('/') }}";
+                });
+            });
+        </script>
+    @endif
 @endpush

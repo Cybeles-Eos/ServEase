@@ -147,6 +147,17 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ url('admin/applicants') }}" class="{{ Request::is('admin/applicants', 'admin/applicants/*') ? 'active' : '' }}">
+                            <div>
+                                <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4.6252 3.83317V2.24984C4.6252 1.82991 4.79202 1.42718 5.08895 1.13025C5.38588 0.833319 5.78861 0.666504 6.20854 0.666504H9.3752C9.79513 0.666504 10.1979 0.833319 10.4948 1.13025C10.7917 1.42718 10.9585 1.82991 10.9585 2.24984V3.83317M7.79187 7.7915V7.79942M0.66687 5.4165C0.66687 4.99658 0.833685 4.59385 1.13062 4.29692C1.42755 3.99999 1.83028 3.83317 2.2502 3.83317H13.3335C13.7535 3.83317 14.1562 3.99999 14.4531 4.29692C14.7501 4.59385 14.9169 4.99658 14.9169 5.4165V12.5415C14.9169 12.9614 14.7501 13.3642 14.4531 13.6611C14.1562 13.958 13.7535 14.1248 13.3335 14.1248H2.2502C1.83028 14.1248 1.42755 13.958 1.13062 13.6611C0.833685 13.3642 0.66687 12.9614 0.66687 12.5415V5.4165Z" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M0.66687 8.58301C2.87687 9.69663 5.31714 10.2767 7.79187 10.2767C10.2666 10.2767 12.7069 9.69663 14.9169 8.58301" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            Applicants
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{url('/admin/setting')}}" class="{{ Request::is('admin/setting') ? 'active' : '' }}">
                             <div >
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -73,6 +73,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 
+        // Applicants
+        Route::get('/admin/applicants', [AdminController::class, 'applicants'])->name('admin.applicants');
+        Route::get('/admin/applicants/{provider}', [AdminController::class, 'showApplicant'])->name('admin.applicants.show');
+        Route::post('/admin/applicants/{provider}/accept', [AdminController::class, 'acceptApplicant'])->name('admin.applicants.accept');
+        Route::post('/admin/applicants/{provider}/decline', [AdminController::class, 'declineApplicant'])->name('admin.applicants.decline');
+
         //Admin General Setting
         Route::get('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');
         
