@@ -97,7 +97,7 @@
                                 </div>
 
                                 @error('resume')
-                                    <small>{{ $message }}</small>
+                                    <small style="align-self: flex-end">{{ $message }}</small> 
                                 @enderror
                             </div>
                             <div class="file-field">
@@ -114,7 +114,7 @@
                                 </div>
 
                                 @error('barangay_clearance')
-                                    <small>{{ $message }}</small>
+                                    <small style="align-self: flex-end">{{ $message }}</small> 
                                 @enderror
                             </div>
                             <div class="prg-mm-con">
@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="lname">Years of experience <span>*</span></label>
-                                    <input type="text" placeholder="" name="experience" value="{{ old('experience') }}" required autocomplete="off">
+                                    <input type="number" placeholder="" name="experience" value="{{ old('experience') }}" required autocomplete="off">
                                     @error('experience') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>

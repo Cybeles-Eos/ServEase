@@ -15,6 +15,7 @@ use Carbon\CarbonPeriod;
 use App\Models\Provider;
 use Illuminate\Support\Facades\Storage;
 
+
 class AdminController extends Controller
 {
     /**
@@ -223,13 +224,51 @@ class AdminController extends Controller
         ));
     }
 
-    public function users()
+    // public function users()
+    // {
+    //     $users = User::query()
+    //         ->whereIn('role', ['provider', 'customer'])
+    //         ->with(['provider', 'customer'])
+    //         ->orderBy('name')
+    //         ->get();
+
+    //     return view('admin.page.admin.user.index', compact('users'));
+    // }
+    public function users(Request $request)
     {
-        $users = User::query()
-            ->whereIn('role', ['provider', 'customer'])
-            ->with(['provider', 'customer'])
-            ->orderBy('name')
-            ->get();
+        $query = User::with(['customer', 'provider'])->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
+                        $customerQuery->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%")
+                            ->orWhere('barangay', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('provider', function ($providerQuery) use ($search) {
+                        $providerQuery->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('phone_number', 'like', "%{$search}%")
+                            ->orWhere('barangay', 'like', "%{$search}%")
+                            ->orWhere('profession', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status);
+        }
+
+        $users = $query->get();
 
         return view('admin.page.admin.user.index', compact('users'));
     }
@@ -454,16 +493,48 @@ class AdminController extends Controller
     }
 
 
-    public function applicants()
+    // public function applicants()
+    // {
+    //     if (! auth()->user()->isAdmin()) {
+    //         abort(403);
+    //     }
+
+    //     $applicants = Provider::with('user')
+    //         ->whereIn('application_status', ['pending', 'declined'])
+    //         ->latest()
+    //         ->get();
+
+    //     return view('admin.page.admin.applicants.index', compact('applicants'));
+    // }
+    public function applicants(Request $request)
     {
-        if (! auth()->user()->isAdmin()) {
-            abort(403);
+        $query = Provider::with('user')
+            ->whereIn('application_status', ['pending', 'declined'])
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%")
+                    ->orWhere('personal_email', 'like', "%{$search}%")
+                    ->orWhere('profession', 'like', "%{$search}%")
+                    ->orWhere('province', 'like', "%{$search}%")
+                    ->orWhere('barangay', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('email', 'like', "%{$search}%")
+                            ->orWhere('name', 'like', "%{$search}%");
+                    });
+            });
         }
 
-        $applicants = Provider::with('user')
-            ->whereIn('application_status', ['pending', 'declined'])
-            ->latest()
-            ->get();
+        if ($request->filled('status')) {
+            $query->where('application_status', $request->status);
+        }
+
+        $applicants = $query->get();
 
         return view('admin.page.admin.applicants.index', compact('applicants'));
     }

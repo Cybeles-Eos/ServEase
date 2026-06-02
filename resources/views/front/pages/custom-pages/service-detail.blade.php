@@ -282,7 +282,7 @@
                                         <path d="M14.4329 7.33301C13.2795 8.17301 11.9995 8.75967 10.6729 9.09301" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M1.74707 7.51367C2.8604 8.27367 4.07374 8.81367 5.33374 9.12034" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    <p>Job Completed: {{ $service->jobs }}</p>
+                                    <p>All Job Completed: {{ $service->jobs }}</p>
                                 </li>
                             </ul>
                             <hr>
