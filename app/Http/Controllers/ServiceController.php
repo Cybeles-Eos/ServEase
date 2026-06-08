@@ -68,11 +68,17 @@ class ServiceController extends Controller
         $provider = auth()->user()->provider;
 
         $services = Service::with('serviceCategory')
+            ->withCount('reports')
             ->where('provider_id', $provider->id)
             ->latest()
             ->get();
 
-        return view('admin.provserv', compact('services'));
+        $providerReportCount = \App\Models\ServiceReport::where('provider_id', $provider->id)->count();
+        $providerReportStatus = $providerReportCount >= 20
+            ? 'Subject to Disable'
+            : ($providerReportCount >= 10 ? 'Needs Admin Review' : 'Normal');
+
+        return view('admin.provserv', compact('services', 'providerReportCount', 'providerReportStatus'));
     }
 
 
@@ -206,6 +212,16 @@ class ServiceController extends Controller
             ? $service->ratings->where('is_visible', true)
             : collect();
         $providerRatings = \App\Models\ServiceRating::where('provider_id', $service->provider_id)->get();
+        $hasExistingBooking = false;
+
+        if (auth()->check() && auth()->user()->isCustomer() && auth()->user()->customer) {
+            $hasExistingBooking = \App\Models\BookingInfo::where('customer_id', auth()->user()->customer->id)
+                ->where('service_id', $service->id)
+                ->whereHas('bookingRequest', function ($query) {
+                    $query->whereNotIn('status', ['DECLINED', 'CANCELLED']);
+                })
+                ->exists();
+        }
 
         $reviews = $ratings
             ->sortByDesc('created_at')
@@ -285,6 +301,7 @@ class ServiceController extends Controller
 
             'provider_exp' => $service->provider->year_exp ?? 0,
             'provider_area' => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
+            'has_existing_booking' => $hasExistingBooking,
         ];
 
         return view('front.pages.custom-pages.service-detail', [

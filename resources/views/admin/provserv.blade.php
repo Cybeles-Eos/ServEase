@@ -56,6 +56,19 @@
             </a>
         @endif
 
+        <section class="provider-service-report-summary">
+            <div>
+                <span>Total Reports</span>
+                <strong>{{ number_format($providerReportCount ?? 0) }}</strong>
+                <p>Reports submitted by customers across your services.</p>
+            </div>
+            <div>
+                <span>Account Review Status</span>
+                <strong>{{ $providerReportStatus ?? 'Normal' }}</strong>
+                <p>Providers with 20 reports are marked subject to account disable review.</p>
+            </div>
+        </section>
+
         <section class="provider--service__table">
             <h4>Services</h4>
             <p class="provider--service__table--label">Service creation is limited to 5.</p>
@@ -69,6 +82,7 @@
                         <div>Service Category</div>
                         <div>Slug</div>
                         <div>Date Created</div>
+                        <div>Reports</div>
                         <div>Actions</div>
                     </div>
                     @if ($services->isEmpty())
@@ -93,6 +107,11 @@
                                 </div>
                                 <div class="prvstble-mctb-slug"><a href="{{url('services/'. $service->slug)}}">{{url('services/'.$service->slug)}}</a></div>
                                 <div class="prvstble-mctb-date">{{ $service->created_at->format('M j, Y') }}</div>
+                                <div class="prvstble-mctb-reports">
+                                    <span class="{{ $service->reports_count >= 20 ? 'is-danger' : ($service->reports_count > 0 ? 'is-warning' : '') }}">
+                                        {{ number_format($service->reports_count) }}
+                                    </span>
+                                </div>
                                 <div class="prvstble-mctb-act">
                                     {{-- <a href="#">
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

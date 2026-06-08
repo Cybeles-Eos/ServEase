@@ -34,4 +34,9 @@ class BookingRequest extends Model
     {
         return $this->hasOne(\App\Models\ServiceRating::class, 'booking_request_id');
     }
+
+    public function report()
+    {
+        return $this->hasOne(\App\Models\ServiceReport::class, 'booking_request_id');
+    }
 }

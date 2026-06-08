@@ -290,6 +290,79 @@ class ProviderController extends Controller
         ));
     }
 
+    public function bookingCalendar(Request $request)
+    {
+        $provider = auth()->user()->provider ?? null;
+
+        if (!$provider) {
+            abort(403, 'Provider account not found.');
+        }
+
+        $monthInput = $request->input('month', now()->format('Y-m'));
+
+        try {
+            $currentMonth = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+        } catch (\Exception $e) {
+            $currentMonth = now()->startOfMonth();
+        }
+
+        $selectedDate = $request->input('date', now()->toDateString());
+
+        try {
+            $selectedDate = Carbon::parse($selectedDate)->toDateString();
+        } catch (\Exception $e) {
+            $selectedDate = now()->toDateString();
+        }
+
+        $startOfMonth = $currentMonth->copy()->startOfMonth();
+        $endOfMonth = $currentMonth->copy()->endOfMonth();
+        $calendarStart = $startOfMonth->copy()->startOfWeek(Carbon::SUNDAY);
+        $calendarEnd = $endOfMonth->copy()->endOfWeek(Carbon::SATURDAY);
+
+        $calendarDays = collect();
+        for ($date = $calendarStart->copy(); $date->lte($calendarEnd); $date->addDay()) {
+            $calendarDays->push($date->copy());
+        }
+
+        $bookings = BookingRequest::with([
+                'bookingInfo.service',
+                'bookingInfo.customer',
+            ])
+            ->where('provider_id', $provider->id)
+            ->whereNotIn('status', ['DECLINED', 'CANCELLED'])
+            ->whereHas('bookingInfo', function ($query) use ($calendarStart, $calendarEnd) {
+                $query->whereBetween('date', [
+                    $calendarStart->toDateString(),
+                    $calendarEnd->toDateString(),
+                ]);
+            })
+            ->get()
+            ->sortBy(function ($booking) {
+                $bookingInfo = $booking->bookingInfo;
+                return trim(($bookingInfo?->date?->format('Y-m-d') ?? '') . ' ' . ($bookingInfo?->time?->format('H:i') ?? ''));
+            });
+
+        $bookingsByDate = $bookings->groupBy(fn ($booking) => $booking->bookingInfo?->date?->toDateString());
+        $selectedBookings = $bookingsByDate->get($selectedDate, collect());
+
+        $todayBookingsCount = $bookingsByDate->get(now()->toDateString(), collect())->count();
+        $pendingBookingsCount = $bookings->where('status', 'PENDING')->count();
+        $monthBookingsCount = $bookings->count();
+
+        return view('admin.provider-calendar', [
+            'currentMonth' => $currentMonth,
+            'previousMonth' => $currentMonth->copy()->subMonth()->format('Y-m'),
+            'nextMonth' => $currentMonth->copy()->addMonth()->format('Y-m'),
+            'calendarDays' => $calendarDays,
+            'bookingsByDate' => $bookingsByDate,
+            'selectedDate' => $selectedDate,
+            'selectedBookings' => $selectedBookings,
+            'todayBookingsCount' => $todayBookingsCount,
+            'pendingBookingsCount' => $pendingBookingsCount,
+            'monthBookingsCount' => $monthBookingsCount,
+        ]);
+    }
+
     // Index Settings
     public function setting()
     {

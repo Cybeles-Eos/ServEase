@@ -583,6 +583,44 @@
     font-size: 12px;
 }
 
+.report-receipt {
+    color: #991B1B;
+}
+
+.report-receipt.is-reported {
+    color: #9CA3AF;
+    cursor: not-allowed;
+}
+
+.customer-report-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.customer-report-form label {
+    margin: 6px 0 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #202020;
+}
+
+.customer-report-form select,
+.customer-report-form textarea {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #202020;
+    font-size: 12px;
+}
+
+.customer-report-form textarea {
+    resize: vertical;
+    min-height: 92px;
+}
+
 .customer-rating-submit {
     margin-top: 8px;
     padding: 7px 12px;
@@ -897,5 +935,4 @@
     color: #858688;
     font-size: 13px;
 }
-
 

@@ -22,6 +22,7 @@ class BookingInfoController extends Controller
             'number' => ['required', 'max:50'],
             'date' => ['nullable', 'date'],
             'time' => ['nullable'],
+            'service_id' => ['required', 'exists:tbl_services,id'],
         ]);
 
         if ($validation->fails()) {
@@ -40,6 +41,21 @@ class BookingInfoController extends Controller
                 'title' => 'Account Not Found!',
                 'message' => 'Please Login Your Account To Continue.',
                 'type' => 'error'
+            ]);
+        }
+
+        $existingBooking = BookingInfo::where('customer_id', $customer->id)
+            ->where('service_id', $request->service_id)
+            ->whereHas('bookingRequest', function ($query) {
+                $query->whereNotIn('status', ['DECLINED', 'CANCELLED']);
+            })
+            ->exists();
+
+        if ($existingBooking) {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Already Booked',
+                'message' => 'You already have a booking for this service.',
+                'type' => 'warning',
             ]);
         }
 

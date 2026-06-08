@@ -25,6 +25,7 @@
 @import "admin/prov-reg";
 @import "admin/g-setting";
 @import "admin/applicants";
+@import "admin/reports";
 
 //Provider
 @import "providers/login";
@@ -32,6 +33,7 @@
 @import "providers/provider-bookings";
 @import "providers/provider-service";
 @import "providers/provider-setting";
+@import "providers/provider-calendar";
 
 //Customer
 @import "customer/customer-bookings";

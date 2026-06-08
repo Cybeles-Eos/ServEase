@@ -57,6 +57,10 @@ class Service extends Model
     {
         return $this->hasMany(\App\Models\ServiceRating::class, 'service_id');
     }
+    public function reports()
+    {
+        return $this->hasMany(\App\Models\ServiceReport::class, 'service_id');
+    }
 
     public function averageRating()
     {

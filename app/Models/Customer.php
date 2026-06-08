@@ -28,4 +28,8 @@ class Customer extends Model
     {
         return $this->hasMany(\App\Models\ServiceRating::class, 'customer_id');
     }
+    public function reports()
+    {
+        return $this->hasMany(\App\Models\ServiceReport::class, 'customer_id');
+    }
 }

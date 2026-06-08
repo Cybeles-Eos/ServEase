@@ -189,7 +189,11 @@
                                         empty($customer->phone_number);
                                 @endphp
 
-                                @if($hasIncompleteDetails)
+                                @if($service->has_existing_booking)
+                                    <button type="button" class="btn btn--tertiary" disabled>
+                                        Already Booked
+                                    </button>
+                                @elseif($hasIncompleteDetails)
                                     <button type="button" id="open-book-alert" class="btn btn--tertiary">
                                         Book Now
                                     </button>

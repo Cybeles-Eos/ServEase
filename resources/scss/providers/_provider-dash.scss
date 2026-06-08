@@ -550,17 +550,32 @@
     height: 42px;
     display: flex;
     align-items: center;
+    gap: 18px;
     border-bottom: 1px solid #e5e7eb;
 }
 
-.provider-notification-modal__tabs span {
+.provider-notification-modal__tabs span,
+.provider-notification-modal__tabs button {
     height: 42px;
     display: inline-flex;
     align-items: center;
-    border-bottom: 2px solid #fdb932;
-    color: #b7791f;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: #667085;
     font-size: 12px;
     font-weight: 800;
+    cursor: pointer;
+}
+
+.provider-notification-modal__tabs span,
+.provider-notification-modal__tabs button.is-active {
+    border-bottom-color: #fdb932;
+    color: #b7791f;
+}
+
+.provider-notification-modal__item.is-hidden {
+    display: none;
 }
 
 .provider-notification-modal__body {

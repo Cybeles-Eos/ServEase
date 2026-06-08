@@ -189,7 +189,8 @@
         </div>
 
         <div class="provider-notification-modal__tabs">
-            <span>Latest Updates</span>
+            <button type="button" class="is-active" data-notif-filter="all">Latest Updates</button>
+            <button type="button" data-notif-filter="booking">Booking Requests</button>
         </div>
 
         <div class="provider-notification-modal__body">
@@ -227,7 +228,7 @@
                 @endphp
 
                 @if ($notificationType === 'rating')
-                    <a href="{{ $service ? route('provider.service.reviews', $service) : route('provider.service') }}" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                    <a href="{{ $service ? route('provider.service.reviews', $service) : route('provider.service') }}" data-notification-type="rating" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                         <div class="provider-notification-modal__dot"></div>
 
                         <div class="provider-notification-modal__content">
@@ -249,7 +250,7 @@
                         </div>
                     </a>
                 @else
-                <a href="{{ route('provider.bookings') }}" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                <a href="{{ route('provider.bookings') }}" data-notification-type="booking" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                     <div class="provider-notification-modal__dot"></div>
 
                     <div class="provider-notification-modal__content">
@@ -409,7 +410,8 @@
         </div>
 
         <div class="provider-notification-modal__tabs">
-            <span>Platform Activity</span>
+            <button type="button" class="is-active" data-notif-filter="all">Platform Activity</button>
+            <button type="button" data-notif-filter="booking">Booking Requests</button>
         </div>
 
         <div class="provider-notification-modal__body">
@@ -418,7 +420,7 @@
                     $isUnread = is_null($notification->read_at);
 
                     $statusClass = match ($notification->type) {
-                        'new_provider_application', 'new_booking' => 'provider-notification-modal__status--pending',
+                        'new_provider_application', 'new_booking', 'new_report' => 'provider-notification-modal__status--pending',
                         'new_rating' => 'provider-notification-modal__status--ongoing',
                         'new_service', 'new_customer', 'admin_user_created' => 'provider-notification-modal__status--accepted',
                         default => 'provider-notification-modal__status--pending',
@@ -427,6 +429,7 @@
 
                 <a
                     href="{{ $notification->link ?: route('admin.dashboard') }}"
+                    data-notification-type="{{ $notification->type === 'new_booking' ? 'booking' : 'platform' }}"
                     class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}"
                 >
                     <div class="provider-notification-modal__dot"></div>
@@ -524,6 +527,21 @@
             $('#providerNotificationModal').removeClass('is-open');
             $('#customerNotificationModal').removeClass('is-open');
             $('#adminNotificationModal').removeClass('is-open');
+        });
+
+        $('.provider-notification-modal__tabs button').on('click', function () {
+            const $button = $(this);
+            const filter = $button.data('notif-filter');
+            const $modal = $button.closest('.provider-notification-modal');
+
+            $modal.find('.provider-notification-modal__tabs button').removeClass('is-active');
+            $button.addClass('is-active');
+
+            $modal.find('.provider-notification-modal__item').each(function () {
+                const itemType = $(this).data('notification-type');
+                const shouldShow = filter === 'all' || itemType === filter;
+                $(this).toggleClass('is-hidden', !shouldShow);
+            });
         });
 
         $('#markProviderNotifRead').on('click', function (e) {

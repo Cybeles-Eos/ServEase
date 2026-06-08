@@ -7,6 +7,7 @@ use App\Models\BookingInfo;
 use App\Models\Provider;
 use App\Models\Service;
 use App\Models\ServiceRating;
+use App\Models\ServiceReport;
 use App\Models\User;
 
 class AdminNotificationService
@@ -103,6 +104,28 @@ class AdminNotificationService
             'New Service Rating',
             "{$customerName} rated \"" . ($service?->title ?? 'a service') . "\" with {$rating->rating} star(s).",
             route('admin.dashboard')
+        );
+    }
+
+    public static function newReport(ServiceReport $report): void
+    {
+        $service = $report->service;
+        $customer = $report->customer;
+        $provider = $report->provider;
+
+        $customerName = $customer
+            ? trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? ''))
+            : 'A customer';
+
+        $providerName = $provider
+            ? trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''))
+            : 'a provider';
+
+        self::notify(
+            'new_report',
+            'New Provider Report',
+            "{$customerName} reported {$providerName} for \"" . ($service?->title ?? 'a service') . "\".",
+            route('admin.reports')
         );
     }
 }
