@@ -1,6 +1,9 @@
 @extends('admin.layouts.auth')
 
 @section('content')
+    <div class="form-loading-bar" id="form-loading-bar">
+        <div class="form-loading-bar__progress"></div>
+    </div>
     <main class="provider-register">
         <div class="provider-register__img">
             <img src="{{asset('images/preg-item.png')}}" alt="item">
@@ -54,13 +57,38 @@
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
                                     <label for="email">Email Address <span>*</span></label>
-                                    <input type="text" placeholder="e. g. name@gmail.com" name="email" value="{{ old('email') }}" required autocomplete="off">
-                                    @error('email') <small>{{ $message }}</small> @enderror
+                                    <input
+                                        type="email"
+                                        placeholder="e. g. name@gmail.com"
+                                        name="email"
+                                        value="{{ old('email') }}"
+                                        required
+                                        maxlength="255"
+                                        autocomplete="email"
+                                        inputmode="email"
+                                    >
+                                    @error('email')
+                                        <small>{{ $message }}</small>
+                                    @enderror
                                 </div>
+
                                 <div class="prg-mm-group">
                                     <label for="number">Phone Number <span>*</span></label>
-                                    <input type="text" placeholder="Enter your phone number" name="number" value="{{ old('number') }}" required autocomplete="off">
-                                    @error('number') <small style="align-self: flex-end">{{ $message }}</small> @enderror
+                                    <input
+                                        type="text"
+                                        placeholder="e. g. 09123456789"
+                                        name="number"
+                                        value="{{ old('number') }}"
+                                        required
+                                        maxlength="11"
+                                        inputmode="numeric"
+                                        autocomplete="tel"
+                                        pattern="09[0-9]{9}"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
+                                    >
+                                    @error('number')
+                                        <small style="align-self: flex-end">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="prg-mm-group">
@@ -76,8 +104,21 @@
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="zipcode">ZIP Code <span>*</span></label>
-                                    <input type="number" placeholder="" name="zipcode" value="{{ old('zipcode') }}" required autocomplete="off">
-                                    @error('zipcode') <small style="align-self: flex-end">{{ $message }}</small> @enderror
+                                    <input
+                                        type="text"
+                                        placeholder=""
+                                        name="zipcode"
+                                        value="{{ old('zipcode') }}"
+                                        required
+                                        maxlength="5"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{5}"
+                                        autocomplete="off"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
+                                    >
+                                    @error('zipcode')
+                                        <small style="align-self: flex-end">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -157,7 +198,13 @@
                                 @error('password_confirmation') <small>{{ $message }}</small> @enderror
                                 {{-- <a href="#">Forget Password?</a> --}}
                             </div>
+                            <div class="prg-mm-group">
+                                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
 
+                                @error('g-recaptcha-response')
+                                    <small style="align-self: flex-end">{{ $message }}</small>
+                                @enderror
+                            </div>
 
                             <div class="provreg-mmcf-secpage__btns">
                                 <button type="button" id="provreg-prev" class="btn btn--primary">back</button>
@@ -178,8 +225,8 @@
     </main>
 @endsection
 @push('extrascripts')
-
-    <script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>    
         $(document).ready(function () {
 
             function setStep(step) {

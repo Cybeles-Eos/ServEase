@@ -74,7 +74,72 @@
         @include('admin.layouts.sidebar')
     @endif
     @yield('content')
+    <!-- Modal -->
+    <div class="modal-mobile-nav g-padding">
+        <ul>
+            <li><a href="{{ url('/') }}">Home</a></li>
+            {{-- <li><a href="{{ url('/about-us') }}">About Us</a></li>
+            <li><a href="{{ url('/contact') }}">Contact</a></li> --}}
+            <li>
+                <a href="{{ url('/services') }}">
+                    <svg width="14" class="me-1" height="17" viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0.75 5.625C0.75 3.32725 0.75 2.17756 1.46419 1.46419C2.17756 0.75 3.32725 0.75 5.625 0.75H8.875C11.1728 0.75 12.3224 0.75 13.0358 1.46419C13.75 2.17756 13.75 3.32725 13.75 5.625V12.125C13.75 14.4228 13.75 15.5724 13.0358 16.2858C12.3224 17 11.1728 17 8.875 17H5.625C3.32725 17 2.17756 17 1.46419 16.2858C0.75 15.5724 0.75 14.4228 0.75 12.125V5.625Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M13.6671 12.125H3.91712C3.1615 12.125 2.78369 12.125 2.47331 12.2079C2.06 12.3187 1.68315 12.5364 1.38064 12.839C1.07814 13.1417 0.860634 13.5186 0.75 13.932" stroke="currentColor" stroke-width="1"/>
+                        <path d="M4 4.8125H10.5M4 7.65625H8.0625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Local Services
+                </a>
+            </li>
 
+            @guest
+                <a href="{{ route('login') }}" class="a-mnav-m-link">
+                    Login
+                </a>
+                <a href="{{ route('signup') }}" class="a-mnav-m-link a-mnav-m-link__bg">
+                    Sign up
+                </a>
+            @endguest
+            @auth
+                @if(auth()->user()->isProvider())
+                    {{-- {{ route('provider.dashboard') }} --}}
+                    <a href="{{url('provider/dashboard')}}" class="a-mnav-m-link">
+                        Dashboard
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}" style="width: 100% !important ">
+                        @csrf
+                        <button type="submit" class="btn btn--tertiary mt-2" style="width: 100% !important; border-radius: 66px; color: #171515;">
+                            Logout
+                        </button>
+                    </form>
+                @endif
+            @endauth
+            @auth
+                @if(auth()->user()->isCustomer())
+                    {{-- {{ route('customer.dashboard') }} --}}
+                    <a href="{{url('dashboard')}}" class="a-mnav-m-link">
+                        Dashboard
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}" style="width: 100% !important ">
+                        @csrf
+                        <button type="submit" class="btn btn--tertiary mt-2" style="width: 100% !important; border-radius: 66px; color: #171515;">
+                            Logout
+                        </button>
+                    </form>
+                @endif
+            @endauth
+            {{-- <a href="contact.html " class="a-mnav-m-link">
+                Get In Touch
+                <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6.82287e-06 9C6.82287e-06 4.0293 4.02931 0 9 0C13.9707 0 18 4.0293 18 9C18 13.9707 13.9707 18 9 18H6.82287e-06L2.63611 15.3639C1.79918 14.5291 1.13545 13.5371 0.683068 12.445C0.230682 11.3529 -0.00145088 10.1821 6.82287e-06 9ZM4.34521 16.2H9C10.424 16.2 11.8161 15.7777 13.0001 14.9866C14.1841 14.1954 15.107 13.0709 15.6519 11.7553C16.1969 10.4397 16.3395 8.99201 16.0617 7.59535C15.7838 6.19869 15.0981 4.91577 14.0912 3.90883C13.0842 2.90189 11.8013 2.21616 10.4047 1.93835C9.00799 1.66053 7.56031 1.80312 6.24468 2.34807C4.92906 2.89302 3.80457 3.81586 3.01342 4.99989C2.22228 6.18393 1.80001 7.57597 1.80001 9C1.80001 10.9368 2.56591 12.7485 3.90871 14.0913L5.1813 15.3639L4.34521 16.2ZM5.4 9.9H12.6C12.6 10.8548 12.2207 11.7705 11.5456 12.4456C10.8705 13.1207 9.95478 13.5 9 13.5C8.04522 13.5 7.12955 13.1207 6.45442 12.4456C5.77929 11.7705 5.4 10.8548 5.4 9.9Z" fill="currentColor"/>
+                </svg>
+            </a> --}}
+        </ul>
+
+
+    </div>
+    <!-- Modal -->
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     @stack('extrascripts')
     <script>

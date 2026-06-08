@@ -12,6 +12,8 @@ use App\Models\User;
 use App\Models\BookingInfo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class AuthManagerController extends Controller
 {
@@ -26,195 +28,103 @@ class AuthManagerController extends Controller
         return view('admin.auth.login');
     }
 
-    // public function showDashboard()
-    // {
+    public function login(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
+        ]);
 
-    //     return view('admin.dashboard');
-    // }
-    /**
-     * Handle login request
-     */
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->validate([
-    //         'email'    => ['required', 'email'],
-    //         'password' => ['required', 'string'],
-    //     ]);
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
 
-    //     $remember = $request->boolean('remember');
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
 
-    //     if (Auth::attempt($credentials, $remember)) {
-    //         $request->session()->regenerate();
-    //         //app(BookingStatusService::class)->updateAllDueBookings(); //Update Status
-    //         $user = Auth::user();
+        $credentials = [
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ];
 
-    //         if ($user->role === 'provider') {
-    //             $provider = $user->provider;
+        $remember = $request->boolean('remember');
 
-    //             if (!$provider || $provider->application_status !== 'accepted' || !$user->is_active) {
-    //                 Auth::logout();
+        if (Auth::attempt($credentials, $remember)) {
+            $request->session()->regenerate();
 
-    //                 return redirect()->route('login')->withErrors([
-    //                     'email' => 'Your provider application is still under review. Please wait for admin approval.',
-    //                 ])->withInput();
-    //             }
-    //         }
-    //         $this->updateAllBookingStatuses();
+            $user = Auth::user();
 
-    //         $user = Auth::user();
+            /*
+            |--------------------------------------------------------------------------
+            | Provider application check
+            |--------------------------------------------------------------------------
+            | New providers are created with is_active = 0 and application_status = pending.
+            | So we must check provider application status before the general disabled check.
+            */
+            if ($user->role === 'provider') {
+                $provider = $user->provider;
 
-    //         if (!$user->is_active) {
-    //             Auth::logout();
-    //             $request->session()->invalidate();
-    //             $request->session()->regenerateToken();
+                if (!$provider) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
 
-    //             throw ValidationException::withMessages([
-    //                 'email' => ['This account has been disabled.'],
-    //             ]);
-    //         }
+                    throw ValidationException::withMessages([
+                        'email' => ['Provider profile was not found. Please contact admin.'],
+                    ]);
+                }
 
-    //         if ($user->isAdmin()) {
-    //             return redirect('/admin/dashboard');
-    //         }
+                if ($provider->application_status === 'pending') {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
 
-    //         if ($user->isProvider()) {
-    //             return redirect('/provider/dashboard');
-    //         }
+                    throw ValidationException::withMessages([
+                        'email' => ['Your provider application is still under review.'],
+                    ]);
+                }
 
-    //         return redirect('customer/dashboard'); // customer
-    //     }
+                if ($provider->application_status === 'declined') {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
 
-    //     throw ValidationException::withMessages([
-    //         'email' => ['The provided credentials are incorrect.'],
-    //     ]);
-    // }
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->validate([
-    //         'email'    => ['required', 'email'],
-    //         'password' => ['required', 'string'],
-    //     ]);
+                    throw ValidationException::withMessages([
+                        'email' => ['Your provider application has been declined.'],
+                    ]);
+                }
 
-    //     $remember = $request->boolean('remember');
+                /*
+                |--------------------------------------------------------------------------
+                | Accepted provider but manually disabled by admin
+                |--------------------------------------------------------------------------
+                */
+                if ($provider->application_status === 'accepted' && !$user->is_active) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
 
-    //     if (Auth::attempt($credentials, $remember)) {
-    //         $request->session()->regenerate();
-
-    //         $user = Auth::user();
-
-    //         /*
-    //         |--------------------------------------------------------------------------
-    //         | Block disabled accounts
-    //         |--------------------------------------------------------------------------
-    //         */
-    //         if (!$user->is_active) {
-    //             Auth::logout();
-    //             $request->session()->invalidate();
-    //             $request->session()->regenerateToken();
-
-    //             throw ValidationException::withMessages([
-    //                 'email' => ['This account has been disabled.'],
-    //             ]);
-    //         }
-
-    //         /*
-    //         |--------------------------------------------------------------------------
-    //         | Block pending or declined provider applications
-    //         |--------------------------------------------------------------------------
-    //         */
-    //         if ($user->role === 'provider') {
-    //             $provider = $user->provider;
-
-    //             if (!$provider || $provider->application_status !== 'accepted') {
-    //                 Auth::logout();
-    //                 $request->session()->invalidate();
-    //                 $request->session()->regenerateToken();
-
-    //                 throw ValidationException::withMessages([
-    //                     'email' => ['Your provider application is still under review.'],
-    //                 ]);
-    //             }
-    //         }
-
-    //         $this->updateAllBookingStatuses();
-
-    //         if ($user->isAdmin()) {
-    //             return redirect('/admin/dashboard');
-    //         }
-
-    //         if ($user->isProvider()) {
-    //             session()->flash('provider_application_accepted', true);
-
-    //             return redirect('/provider/dashboard');
-    //         }
-
-    //         return redirect('customer/dashboard');
-    //     }
-
-    //     throw ValidationException::withMessages([
-    //         'email' => ['The provided credentials are incorrect.'],
-    //     ]);
-    // }
-public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email'    => ['required', 'email'],
-        'password' => ['required', 'string'],
-    ]);
-
-    $remember = $request->boolean('remember');
-
-    if (Auth::attempt($credentials, $remember)) {
-        $request->session()->regenerate();
-
-        $user = Auth::user();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Provider application check
-        |--------------------------------------------------------------------------
-        | New providers are created with is_active = 0 and application_status = pending.
-        | So we must check provider application status before the general disabled check.
-        */
-        if ($user->role === 'provider') {
-            $provider = $user->provider;
-
-            if (!$provider) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                throw ValidationException::withMessages([
-                    'email' => ['Provider profile was not found. Please contact admin.'],
-                ]);
-            }
-
-            if ($provider->application_status === 'pending') {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                throw ValidationException::withMessages([
-                    'email' => ['Your provider application is still under review.'],
-                ]);
-            }
-
-            if ($provider->application_status === 'declined') {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                throw ValidationException::withMessages([
-                    'email' => ['Your provider application has been declined.'],
-                ]);
+                    throw ValidationException::withMessages([
+                        'email' => ['This account has been disabled.'],
+                    ]);
+                }
             }
 
             /*
             |--------------------------------------------------------------------------
-            | Accepted provider but manually disabled by admin
+            | General disabled account check
             |--------------------------------------------------------------------------
+            | This applies to admin/customer, and also protects any non-provider account.
             */
-            if ($provider->application_status === 'accepted' && !$user->is_active) {
+            if (!$user->is_active) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -223,41 +133,24 @@ public function login(Request $request)
                     'email' => ['This account has been disabled.'],
                 ]);
             }
+
+            $this->updateAllBookingStatuses();
+
+            if ($user->isAdmin()) {
+                return redirect('/admin/dashboard');
+            }
+
+            if ($user->isProvider()) {
+                return redirect('/provider/dashboard');
+            }
+
+            return redirect('customer/dashboard');
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | General disabled account check
-        |--------------------------------------------------------------------------
-        | This applies to admin/customer, and also protects any non-provider account.
-        */
-        if (!$user->is_active) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            throw ValidationException::withMessages([
-                'email' => ['This account has been disabled.'],
-            ]);
-        }
-
-        $this->updateAllBookingStatuses();
-
-        if ($user->isAdmin()) {
-            return redirect('/admin/dashboard');
-        }
-
-        if ($user->isProvider()) {
-            return redirect('/provider/dashboard');
-        }
-
-        return redirect('customer/dashboard');
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials are incorrect.'],
+        ]);
     }
-
-    throw ValidationException::withMessages([
-        'email' => ['The provided credentials are incorrect.'],
-    ]);
-}
 
     /**
      * Logout authenticated user
@@ -290,7 +183,22 @@ public function login(Request $request)
             'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
+
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
 
         $user = User::create([ 
             'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
@@ -306,59 +214,39 @@ public function login(Request $request)
         return redirect('/login');
     }
 
-    // public function signupProvider(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'fname'      => ['required', 'string', 'max:255'],
-    //         'lname'      => ['required', 'string', 'max:255'],
-    //         'email'      => ['required', 'email', 'unique:users,email'],
-    //         'number'     => ['required', 'string'], // phone_num
-    //         'address'    => ['required', 'string'], // home_address
-    //         'province'   => ['required', 'string'],
-    //         'zipcode'    => ['required', 'string'], // zip
-    //         'profession' => ['required', 'string'],
-    //         'experience' => ['required', 'integer'], // year_exp
-    //         'password'   => ['required', 'min:8', 'confirmed'],
-    //     ]);
-        
-    //     // Create the Base User Account
-    //     $user = User::create([
-    //         'name'     => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
-    //         'email'    => $validated['email'],
-    //         'password' => Hash::make($validated['password']),
-    //         'role'     => 'provider', // Set role to provider
-    //     ]);
-
-    //     // Create the Provider Profile
-    //     $user->provider()->create([
-    //         'first_name' => $validated['fname'],
-    //         'last_name' => $validated['lname'],
-    //         'phone_num'    => $validated['number'],
-    //         'home_address' => $validated['address'],
-    //         'province'     => $validated['province'],
-    //         'zipcode'          => $validated['zipcode'],
-    //         'profession'   => $validated['profession'],
-    //         'year_exp'     => $validated['experience'],
-    //     ]);
-
-    //     return redirect('/login')->with('success', 'Provider account created successfully!');
-    // }
     public function signupProvider(Request $request)
     {
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
             'lname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'number' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'number' => ['required', 'regex:/^09[0-9]{9}$/'],
             'address' => ['required', 'string', 'max:255'],
             'province' => ['required', 'string', 'max:255'],
-            'zipcode' => ['required', 'string', 'max:20'],
+            'zipcode' => ['required', 'digits:5'],
             'profession' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:0'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
+            'zipcode.digits' => 'The ZIP code must be exactly 5 digits.',
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
+
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
 
         DB::transaction(function () use ($request, $validated) {
             $resumePath = null;
@@ -412,7 +300,6 @@ public function login(Request $request)
             ->route('provider-signup')
             ->with('provider_application_submitted', true);
     }
-
 
     // For Status
     private function updateAllBookingStatuses()
@@ -547,5 +434,4 @@ public function login(Request $request)
             ]);
         }
     }
-
 }

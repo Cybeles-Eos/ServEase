@@ -140,17 +140,33 @@
                 </div>
                 <div class="cms-mm-group">
                     <label>Phone Number <span>*</span></label>
-                    <input type="number" name="phone_number" value="{{ old('phone_number', $user->provider->phone_number ?? '') }}" required>
+                    <input 
+                    type="number" 
+                    name="phone_number" 
+                    value="{{ old('phone_number', $user->provider->phone_number ?? '') }}" 
+                    required
+                    maxlength="11"
+                    inputmode="numeric"
+                    pattern="[0-9]{11}"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
                     @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div>
-                <div class="cms-mm-group">
+                {{-- <div class="cms-mm-group">
                     <label>Your Email Address <span>*</span></label>
                     <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
                     @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
-                </div>
+                </div> --}}
                 <div class="cms-mm-group">
-                    <label>Personal Email Address For Booking</label>
-                    <input type="email" name="personal_email" value="{{ old('personal_email', $user->provider->personal_email ?? '') }}">
+                    <label>Personal Email Address For Booking <span>*</span></label>
+                    <input
+                        type="email"
+                        name="personal_email"
+                        value="{{ old('personal_email', $user->provider->personal_email ?? '') }}"
+                        required
+                        maxlength="255"
+                        autocomplete="email"
+                        inputmode="email"
+                    >
                     @error('personal_email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div>
                 <br>
@@ -177,7 +193,16 @@
 
                     <div class="cms-mm-group">
                         <label>Zipcode <span>*</span></label>
-                        <input type="text" name="zipcode" value="{{ old('zipcode', $user->provider->zipcode ?? '') }}" required>
+                        <input 
+                            type="number"
+                            name="zipcode"
+                            value="{{ old('zipcode', $user->provider->zipcode ?? '') }}"
+                            required
+                            maxlength="5"
+                            inputmode="numeric"
+                            pattern="[0-9]{5}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
+                        >
                         @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                 </div>

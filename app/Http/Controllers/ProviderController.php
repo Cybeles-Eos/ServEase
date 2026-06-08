@@ -309,7 +309,7 @@ class ProviderController extends Controller
             'province'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
             'zipcode'      => 'nullable|string|max:20',
-            'email'        => 'nullable|email|max:255',
+            // 'email'        => 'nullable|email|max:255',
             'profession'   => 'nullable|string|max:255',
             'year_exp'     => 'nullable|string|max:20',
 
@@ -370,7 +370,7 @@ class ProviderController extends Controller
         |--------------------------------------------------------------------------
         */
         $user->name  = trim($request->first_name . ' ' . $request->last_name);
-        $user->email = $request->email;
+        // $user->email = $request->email;
         $user->save();
 
         return redirect()->route('provider.setting')->with('flash_message', [

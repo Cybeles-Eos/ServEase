@@ -89,34 +89,6 @@
             <div class="csm-right">
                 <form action="{{ route('customer.setting.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    {{-- <div style="width: 100%; height: 150px;"></div> --}}
-
-                    {{-- <div class="position-relative d-inline-block">
-                        <!-- Avatar Preview -->
-                        <div id="avatarPreview"
-                            class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
-                            style="width:120px;height:120px;font-size:40px;
-                            background-color:#f39c12;overflow:hidden;">
-
-                            @if($user->image)
-                                <img src="{{ asset($user->image) }}"
-                                    class="w-100 h-100 object-fit-cover rounded-circle">
-                            @else
-                                {{ strtoupper(substr($user->first_name,0,1)) }}
-                                {{ strtoupper(substr($user->last_name,0,1)) }}
-                            @endif
-                        </div>
-
-                        <!-- Upload Button -->
-                        <label for="imageUpload"
-                            class="position-absolute bottom-0 end-0 bg-white rounded-circle p-2 shadow"
-                            style="cursor:pointer;">
-                            <i class="fa fa-pen text-dark"></i>
-                        </label>
-
-                        <input type="file" id="imageUpload" name="image" class="d-none" accept="image/*">
-                    </div> --}}
                     <div class="">
                         <label>Profile Image<small>(2MB max)</small></label>
                         @push('extrastylesheets')
@@ -154,17 +126,32 @@
                     </div>
                     <div class="cms-mm-group">
                         <label>Phone Number <span>*</span></label>
-                        <input type="number" name="phone_number" value="{{ old('phone_number', $user->customer->phone_number ?? '') }}" required>
+                        <input type="text"
+                            name="phone_number"
+                            value="{{ old('phone_number', $user->customer->phone_number ?? '') }}"
+                            required
+                            maxlength="11"
+                            inputmode="numeric"
+                            pattern="[0-9]{11}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
                         @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
-                    <div class="cms-mm-group">
+                    {{-- <div class="cms-mm-group">
                         <label>Your Email Address <span>*</span></label>
                         <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
                         @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
-                    </div>
+                    </div> --}}
                     <div class="cms-mm-group">
-                        <label>Personal Email Address For Booking</label>
-                        <input type="email" name="personal_email" value="{{ old('personal_email',$user->customer->personal_email ?? '') }}">
+                        <label>Personal Email Address For Booking <span>*</span></label>
+                        <input
+                            type="email"
+                            name="personal_email"
+                            value="{{ old('personal_email',$user->customer->personal_email ?? '') }}"
+                            required
+                            maxlength="255"
+                            autocomplete="email"
+                            inputmode="email"
+                        >
                         @error('personal_email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                     <br>
@@ -191,7 +178,16 @@
 
                         <div class="cms-mm-group">
                             <label>Zipcode <span>*</span></label>
-                            <input type="text" name="zipcode" value="{{ old('zipcode', $user->customer->zipcode ?? '') }}" required>
+                            <input 
+                                type="number"
+                                name="zipcode"
+                                value="{{ old('zipcode', $user->customer->zipcode ?? '') }}"
+                                required
+                                maxlength="5"
+                                inputmode="numeric"
+                                pattern="[0-9]{5}"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
+                            >
                             @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
                     </div>

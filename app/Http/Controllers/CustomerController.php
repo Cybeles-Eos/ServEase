@@ -216,7 +216,7 @@ class CustomerController extends Controller
             'city'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
             'zipcode'      => 'nullable|string|max:20',
-            'email'        => 'nullable|email|max:255'
+            // 'email'        => 'nullable|email|max:255'
         ]);
 
         $user = auth()->user();
@@ -272,7 +272,7 @@ class CustomerController extends Controller
         |--------------------------------------------------------------------------
         */
         $user->name  = trim($request->first_name . ' ' . $request->last_name);
-        $user->email = $request->email;
+        // $user->email = $request->email;
         $user->save();
 
         return redirect()->route('customer.setting')->with('flash_message', [

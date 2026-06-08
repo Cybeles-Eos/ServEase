@@ -1,7 +1,21 @@
 @extends('admin.layouts.auth')
 
 @section('content')
-    <main class="provider-login">
+    @push('extrastylesheets')
+        <style>
+            .login--btn{
+                margin-right: 15px;
+            }
+            @media screen and (max-width: 992px) {
+                .reg-signin{
+                    padding-top: 120px !important;
+                }
+            }
+            
+        </style>
+    @endpush
+    @include('front.layouts.sections.header')
+    <main class="provider-login reg-signin">
         <section class="provider-login-main">
             <div class="provider-login-main__form">
                 <div class="provider-login-main__form--head">
@@ -55,6 +69,13 @@
                         @error('password_confirmation') <small>{{ $message }}</small> @enderror
                         {{-- <a href="#">Forget Password?</a> --}}
                     </div>
+                    <div class="plm-ff-group">
+                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+
+                        @error('g-recaptcha-response')
+                            <small>{{ $message }}</small>
+                        @enderror
+                    </div>
                     <button class="plm-ff-btn btn btn--tertiary" type="submit">Create Account</button>
                     <p class="plm-ff-cta">Already Have Account? <a href="{{url('/login')}}">Sign in</a></p>
                 </form>
@@ -66,6 +87,7 @@
     </main>
 @endsection
 @push('extrascripts')
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         $(document).ready(function () {
 
