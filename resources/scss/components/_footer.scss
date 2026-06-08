@@ -30,13 +30,24 @@
                 max-width: 300px;
                 font-weight: 300;
             }
-            div{
+            .footer-socials{
                 display: flex;
                 align-items: center;
                 gap: 10px;
 
                 a{
+                    width: 24px;
+                    height: 24px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: $color-primary;
+                    font-size: 18px;
                     text-decoration: none;
+
+                    &:hover{
+                        color: $color-white;
+                    }
                 }
             }
             @media (max-width: 592px) {

@@ -339,6 +339,13 @@ class BookingRequestController extends Controller
                 'provider_seen_at' => now(),
             ]);
 
+        \App\Models\ServiceRating::query()
+            ->where('provider_id', $user->provider->id)
+            ->whereNull('provider_seen_at')
+            ->update([
+                'provider_seen_at' => now(),
+            ]);
+
         return response()->json([
             'success' => true,
         ]);

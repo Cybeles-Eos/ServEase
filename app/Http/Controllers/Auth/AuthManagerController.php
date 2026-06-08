@@ -13,7 +13,7 @@ use App\Models\BookingInfo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Validator;
+use App\Services\AdminNotificationService;
 
 class AuthManagerController extends Controller
 {
@@ -211,6 +211,8 @@ class AuthManagerController extends Controller
             'last_name' => $validated['lname'],
         ]);
 
+        AdminNotificationService::newCustomer($user);
+
         return redirect('/login');
     }
 
@@ -248,7 +250,9 @@ class AuthManagerController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($request, $validated) {
+        $createdUser = null;
+
+        DB::transaction(function () use ($request, $validated, &$createdUser) {
             $resumePath = null;
             $barangayClearancePath = null;
 
@@ -294,7 +298,13 @@ class AuthManagerController extends Controller
                 'application_reviewed_by' => null,
                 'application_remarks' => null,
             ]);
+
+            $createdUser = $user;
         });
+
+        if ($createdUser) {
+            AdminNotificationService::newProviderApplication($createdUser);
+        }
 
         return redirect()
             ->route('provider-signup')

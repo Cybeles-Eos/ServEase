@@ -10,9 +10,126 @@
         border: 1px solid #E0E2E7;
         border-radius: 6px;
         padding: 15px 15px;
+        margin-bottom: 16px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .p-a-gs-card-subtitle {
+        margin: 6px 0 0;
+        font-size: 12px;
+        color: #6b7280;
+        line-height: 1.5;
+        max-width: 620px;
+    }
+
+    .p-a-gs-settings-form {
+        margin: 0;
+    }
+
+    .p-a-gs-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 16px;
+    }
+
+    .p-a-gs-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 0 12px;
+            font-size: 13px;
+            outline: none;
+            color: #111827;
+            background: #fff;
+
+            &:focus {
+                border-color: #111827;
+            }
+        }
+
+        input {
+            height: 36px;
+        }
+
+        textarea {
+            min-height: 88px;
+            padding: 10px 12px;
+            resize: vertical;
+        }
+
+        &.p-a-gs-form-group--full {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .p-a-gs-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #f3f4f6;
+    }
+
+    .p-a-gs-btn-save {
+        height: 36px;
+        border: 1px solid #111827;
+        background: #111827;
+        color: #fff;
+        padding: 0 16px;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+            background: #000;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .p-a-gs-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .p-a-gs-form-actions {
+            justify-content: stretch;
+        }
+
+        .p-a-gs-btn-save {
+            width: 100%;
+        }
     }
 
     .section {
+        &.platform-contact,
+        &.platform-branding {
+            .p-a-gs-card-header {
+                display: block;
+
+                h5 {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #111827;
+                }
+            }
+        }
+
         &.service-category {
             .mct-table-topbar {
                 display: flex;

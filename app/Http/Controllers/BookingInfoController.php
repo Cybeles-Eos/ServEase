@@ -8,6 +8,7 @@ use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Services\AdminNotificationService;
 
 class BookingInfoController extends Controller
 {
@@ -61,6 +62,8 @@ class BookingInfoController extends Controller
             'status' => 'PENDING',
             'responded_at' => null,
         ]);
+
+        AdminNotificationService::newBooking($bookingInfo->load('service'));
 
         return redirect()->route('services.index')->with('flash_message', [
             'title' => 'Book Requested',

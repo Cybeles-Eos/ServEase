@@ -2,15 +2,108 @@
 @import "../components/colors";
 
 .page--contact{
+    background-color: #F7F8FA;
+
     .section{
         &--hero{
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            height: 30rem;
-            // background-color: $color-secondary;
-            padding: 80px 1rem;
+            background-color: $color-white;
+            border-bottom: 1px solid #E6E8EC;
+            padding-block: 4.5rem 3.5rem;
 
+            .m-width{
+                margin: 0 auto;
+            }
+
+            p{
+                margin: 0 0 10px;
+                color: $color-primary;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            h1{
+                margin: 0 0 12px;
+                color: $color-dark;
+                font-family: $font-inter;
+                font-size: 42px;
+                font-weight: 800;
+                line-height: 110%;
+            }
+
+            span{
+                display: block;
+                max-width: 720px;
+                color: #555F6D;
+                font-size: 16px;
+                line-height: 160%;
+            }
+        }
+
+        &--contact-info{
+            padding-block: 3rem 4.5rem;
+
+            .m-width{
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 18px;
+            }
+
+            div{
+                border-top: 3px solid $color-primary;
+                background-color: $color-white;
+                padding: 22px;
+                min-height: 130px;
+            }
+
+            h2{
+                margin: 0 0 12px;
+                color: $color-dark;
+                font-size: 18px !important;
+                font-weight: 800;
+            }
+
+            p,
+            a{
+                margin: 0;
+                color: #4D5562;
+                font-size: 15px;
+                line-height: 150%;
+                overflow-wrap: anywhere;
+            }
+
+            a{
+                text-decoration: underline;
+                text-decoration-color: $color-primary;
+                text-underline-offset: 4px;
+            }
+        }
+    }
+
+    @media (max-width: 992px) {
+        .section--contact-info .m-width{
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 592px) {
+        .section{
+            &--hero{
+                padding-block: 3rem 2.4rem;
+
+                h1{
+                    font-size: 34px;
+                }
+            }
+
+            &--contact-info{
+                padding-block: 2rem 3.5rem;
+
+                .m-width{
+                    grid-template-columns: 1fr;
+                }
+            }
         }
     }
 }

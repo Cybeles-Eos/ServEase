@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ServiceCategory;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use File;
 use Carbon\Carbon;
@@ -146,6 +147,8 @@ class ServiceController extends Controller
             $file_upload_path = $this->uploadFile($request->file('image'), null, 'service_images');
             $service->update(['image' => $file_upload_path]);
         }
+
+        AdminNotificationService::newService($service->load('provider'));
 
         return redirect()->route('provider.service')->with('flash_message', [
             'title' => '',

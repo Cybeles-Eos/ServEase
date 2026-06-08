@@ -26,6 +26,12 @@ Route::get('/about-us', function () {
  * Contact Routes
  */
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::get('/privacy-policy', function () {
+    return view('front.pages.custom-pages.privacy-policy');
+})->name('privacy.policy');
+Route::get('/terms-and-conditions', function () {
+    return view('front.pages.custom-pages.terms-and-conditions');
+})->name('terms.conditions');
 
 /**
  * 
@@ -89,6 +95,14 @@ Route::middleware('auth')->group(function () {
             ->name('admin.setting.service-categories.update');
         Route::delete('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'destroyServiceCategory'])
             ->name('admin.setting.service-categories.destroy');
+
+        Route::put('/admin/setting/platform-contact', [AdminController::class, 'updatePlatformContact'])
+            ->name('admin.setting.platform-contact.update');
+        Route::put('/admin/setting/platform-branding', [AdminController::class, 'updatePlatformBranding'])
+            ->name('admin.setting.platform-branding.update');
+
+        Route::post('/admin/notifications/mark-read', [AdminController::class, 'markAdminNotificationsRead'])
+            ->name('admin.notifications.mark-read');
     });
 
     // Provider
@@ -150,4 +164,3 @@ Route::middleware('auth')->group(function () {
     });
 
 });
-

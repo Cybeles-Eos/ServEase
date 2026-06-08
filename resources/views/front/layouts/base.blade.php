@@ -118,6 +118,21 @@
                     </form>
                 @endif
             @endauth
+            @auth
+                @if(auth()->user()->isAdmin())
+                    {{-- {{ route('customer.dashboard') }} --}}
+                    <a href="{{url('/admin/dashboard')}}" class="a-mnav-m-link">
+                        Dashboard
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}" style="width: 100% !important ">
+                        @csrf
+                        <button type="submit" class="btn btn--tertiary mt-2" style="width: 100% !important; border-radius: 66px; color: #171515;">
+                            Logout
+                        </button>
+                    </form>
+                @endif
+            @endauth
             {{-- <a href="contact.html " class="a-mnav-m-link">
                 Get In Touch
                 <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
