@@ -36,7 +36,7 @@
                         </button>
                     </div>
 
-                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields" enctype="multipart/form-data">
+                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields" enctype="multipart/form-data" novalidate>
                         @csrf
 
                         <div class="provreg-mmcf-firstpage">
@@ -110,9 +110,9 @@
                                         name="zipcode"
                                         value="{{ old('zipcode') }}"
                                         required
-                                        maxlength="5"
+                                        maxlength="4"
                                         inputmode="numeric"
-                                        pattern="[0-9]{5}"
+                                        pattern="[0-9]{4}"
                                         autocomplete="off"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
                                     >
@@ -199,7 +199,12 @@
                                 {{-- <a href="#">Forget Password?</a> --}}
                             </div>
                             <div class="prg-mm-group">
-                                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+                                <div
+                                    class="g-recaptcha"
+                                    data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                                    data-expired-callback="providerSignupRecaptchaExpired"
+                                    data-error-callback="providerSignupRecaptchaExpired"
+                                ></div>
 
                                 @error('g-recaptcha-response')
                                     <small style="align-self: flex-end">{{ $message }}</small>
@@ -225,9 +230,91 @@
     </main>
 @endsection
 @push('extrascripts')
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>    
+        window.providerSignupRecaptchaExpired = function () {
+            if (window.ServeasePageLoader) {
+                window.ServeasePageLoader.reset();
+            }
+        };
+
         $(document).ready(function () {
+            function getInvalidField(scopeSelector) {
+                const fields = document.querySelectorAll(scopeSelector + ' input, ' + scopeSelector + ' select, ' + scopeSelector + ' textarea');
+
+                for (let i = 0; i < fields.length; i++) {
+                    if (typeof fields[i].checkValidity === 'function' && !fields[i].checkValidity()) {
+                        return fields[i];
+                    }
+                }
+
+                return null;
+            }
+
+            function resetPageLoader() {
+                if (window.ServeasePageLoader) {
+                    window.ServeasePageLoader.reset();
+                }
+            }
+
+            $('.provreg-mm-con--fields').on('submit', function (e) {
+                const firstPageInvalid = getInvalidField('.provreg-mmcf-firstpage');
+
+                if (firstPageInvalid) {
+                    e.preventDefault();
+                    resetPageLoader();
+
+                    $('.provreg-mmcf-secpage').hide();
+                    $('.provreg-mmcf-firstpage').show();
+                    setStep(1);
+
+                    setTimeout(function () {
+                        firstPageInvalid.reportValidity();
+                        firstPageInvalid.focus();
+                    }, 50);
+
+                    return;
+                }
+
+                const secondPageInvalid = getInvalidField('.provreg-mmcf-secpage');
+
+                if (secondPageInvalid) {
+                    e.preventDefault();
+                    resetPageLoader();
+
+                    $('.provreg-mmcf-firstpage').hide();
+                    $('.provreg-mmcf-secpage').show();
+                    setStep(2);
+
+                    setTimeout(function () {
+                        secondPageInvalid.reportValidity();
+                        secondPageInvalid.focus();
+                    }, 50);
+
+                    return;
+                }
+
+                if (typeof grecaptcha === 'undefined' || grecaptcha.getResponse().length === 0) {
+                    e.preventDefault();
+                    resetPageLoader();
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Verify reCAPTCHA',
+                        text: 'Please check the reCAPTCHA box again before submitting.',
+                        confirmButtonColor: '#FFBE42',
+                    });
+                }
+            });
+
+            const hasStepTwoErrors = @json(
+                $errors->has('resume') ||
+                $errors->has('barangay_clearance') ||
+                $errors->has('profession') ||
+                $errors->has('experience') ||
+                $errors->has('password') ||
+                $errors->has('password_confirmation') ||
+                $errors->has('g-recaptcha-response')
+            );
 
             function setStep(step) {
                 if (step === 1) {
@@ -246,9 +333,32 @@
             // Default state
             setStep(1);
 
+            if (hasStepTwoErrors) {
+                $('.provreg-mmcf-firstpage').hide();
+                $('.provreg-mmcf-secpage').show();
+                setStep(2);
+            }
+
+            @if($errors->has('g-recaptcha-response'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Verify reCAPTCHA',
+                    text: @json($errors->first('g-recaptcha-response')),
+                    confirmButtonColor: '#FFBE42',
+                });
+            @endif
+
             // Next → go to step 2
             $('#provreg-next').on('click', function (e) {
                 e.preventDefault();
+
+                const firstPageInvalid = getInvalidField('.provreg-mmcf-firstpage');
+
+                if (firstPageInvalid) {
+                    firstPageInvalid.reportValidity();
+                    firstPageInvalid.focus();
+                    return;
+                }
 
                 $('.provreg-mmcf-firstpage').hide();
                 $('.provreg-mmcf-secpage').fadeIn(200);
@@ -351,6 +461,7 @@
 
         });
     </script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     @if(session('provider_application_submitted'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {

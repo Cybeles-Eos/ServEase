@@ -121,7 +121,7 @@
                             </style>
                         @endpush
                         <input type="hidden" name="remove_profile_image" id="remove_profile_image" value="0">
-                        <input type="file" name="profile_image" id="profile" accept="image/*" required/>
+                        <input type="file" name="profile_image" id="profile" accept="image/*"/>
                         @error('profile_image') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div>
 
@@ -198,9 +198,9 @@
                             name="zipcode"
                             value="{{ old('zipcode', $user->provider->zipcode ?? '') }}"
                             required
-                            maxlength="5"
+                            maxlength="4"
                             inputmode="numeric"
-                            pattern="[0-9]{5}"
+                            pattern="[0-9]{4}"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
                         >
                         @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror

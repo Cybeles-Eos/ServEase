@@ -68,6 +68,21 @@
     @livewireStyles
 </head>
 <body class="dashboard-bg-un-ds">
+    @if (Request::is(
+        'login', 
+        'signup', 
+        'provider-signup', 
+        'provider/service/create', 
+        'provider/service/edit/*', 
+        'provider/setting', 
+        'customer/setting',
+        'admin/applicants',
+        'admin/users',
+        'admin/users/*/edit',
+        'admin/users/create',
+        ))
+        @include('shared.page-loading-bar')
+    @endif
     {{-- @include('admin.layouts.header')
     @include('admin.layouts.sidebar') --}}
     @if (!Request::is('login', 'signup', 'provider-signup'))
