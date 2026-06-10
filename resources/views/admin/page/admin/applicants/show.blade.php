@@ -338,7 +338,7 @@
 
                 <div>
                     <h1>{{ $fullName ?: 'Provider Applicant' }}</h1>
-                    <p>{{ $provider->user?->email ?? $provider->personal_email ?? 'No email' }}</p>
+                    <p>{{ $provider->user?->email ?? 'No email' }}</p>
                     <p>{{ $provider->phone_number ?? 'No phone' }}</p>
                 </div>
             </div>
@@ -415,7 +415,7 @@
 
                 <div class="applicant-detail-row">
                     <span>Email</span>
-                    <strong>{{ $provider->user?->email ?? $provider->personal_email ?? 'N/A' }}</strong>
+                    <strong>{{ $provider->user?->email ?? 'N/A' }}</strong>
                 </div>
 
                 <div class="applicant-detail-row">

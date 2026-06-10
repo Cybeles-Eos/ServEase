@@ -27,11 +27,7 @@
 
                                         <div>
                                             <a href="#">
-                                                @if(!empty($ongoingBookings->service->provider->personal_email))
-                                                    {{ $ongoingBookings->service->provider->personal_email }}
-                                                @else
-                                                    {{ $ongoingBookings->service->provider->user->email ?? '' }}
-                                                @endif
+                                                {{ $ongoingBookings->service->provider->user->email ?? '' }}
                                             </a>
                                         </div>
                                     </div>
@@ -139,11 +135,7 @@
 
                                     <div>
                                         <a href="#">
-                                            @if(!empty($booking->service->provider->personal_email))
-                                                {{ $booking->service->provider->personal_email }}
-                                            @else
-                                                {{ $booking->service->provider->user->email ?? '' }}
-                                            @endif
+                                            {{ $booking->service->provider->user->email ?? '' }}
                                         </a>
                                     </div>
                                 </div>

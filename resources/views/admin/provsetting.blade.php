@@ -101,6 +101,60 @@
                         @error('year_exp') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                 </div>
+
+                @php
+                    $selectedAvailabilityDays = old('availability_days', $user->provider?->availabilityDays() ?? $defaultAvailabilityDays);
+                    $availabilityStartTime = old('availability_start_time', $user->provider?->availabilityStartTime() ?? $defaultAvailabilityStartTime);
+                    $availabilityEndTime = old('availability_end_time', $user->provider?->availabilityEndTime() ?? $defaultAvailabilityEndTime);
+                @endphp
+
+                <div class="provider-schedule-card">
+                    <div class="provider-schedule-card__head">
+                        <div>
+                            <h5>Provider Schedule</h5>
+                            <p>Customers can only request bookings within these days and hours.</p>
+                        </div>
+                        <span>{{ $user->provider?->availabilityLabel() ?? 'Mon-Sun' }}</span>
+                    </div>
+
+                    <div class="provider-schedule-card__days">
+                        @foreach($availabilityDays as $dayKey => $dayLabel)
+                            <label class="provider-schedule-day">
+                                <input
+                                    type="checkbox"
+                                    name="availability_days[]"
+                                    value="{{ $dayKey }}"
+                                    {{ in_array($dayKey, $selectedAvailabilityDays ?? [], true) ? 'checked' : '' }}
+                                >
+                                <span>{{ \App\Models\Provider::AVAILABILITY_DAY_SHORT_LABELS[$dayKey] }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('availability_days') <small style="color: red">{{ $message }}</small> @enderror
+                    @error('availability_days.*') <small style="color: red">{{ $message }}</small> @enderror
+
+                    <div class="cms-mm-group-con provider-schedule-card__time">
+                        <div class="cms-mm-group">
+                            <label>Start Time</label>
+                            <input
+                                type="time"
+                                name="availability_start_time"
+                                value="{{ $availabilityStartTime }}"
+                            >
+                            @error('availability_start_time') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="cms-mm-group">
+                            <label>End Time</label>
+                            <input
+                                type="time"
+                                name="availability_end_time"
+                                value="{{ $availabilityEndTime }}"
+                            >
+                            @error('availability_end_time') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="csm-right">
                 <div class="">
@@ -156,19 +210,6 @@
                     <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required>
                     @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div> --}}
-                <div class="cms-mm-group">
-                    <label>Personal Email Address For Booking <span>*</span></label>
-                    <input
-                        type="email"
-                        name="personal_email"
-                        value="{{ old('personal_email', $user->provider->personal_email ?? '') }}"
-                        required
-                        maxlength="255"
-                        autocomplete="email"
-                        inputmode="email"
-                    >
-                    @error('personal_email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
-                </div>
                 <br>
                 <h5>Personal Home Address</h5>
                 <div class="cms-mm-group-con">

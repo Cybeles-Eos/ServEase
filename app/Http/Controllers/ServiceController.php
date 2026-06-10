@@ -212,13 +212,58 @@ class ServiceController extends Controller
             ? $service->ratings->where('is_visible', true)
             : collect();
         $providerRatings = \App\Models\ServiceRating::where('provider_id', $service->provider_id)->get();
+        $providerSchedules = \App\Models\BookingRequest::with('bookingInfo.service')
+            ->where('provider_id', $service->provider_id)
+            ->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING'])
+            ->whereHas('bookingInfo', function ($query) {
+                $query->whereDate('date', '>=', now()->toDateString());
+            })
+            ->get()
+            ->sortBy(function ($booking) {
+                $bookingInfo = $booking->bookingInfo;
+                return trim(($bookingInfo?->date?->format('Y-m-d') ?? '') . ' ' . ($bookingInfo?->time?->format('H:i') ?? ''));
+            })
+            ->map(function ($booking) {
+                $bookingInfo = $booking->bookingInfo;
+
+                return (object) [
+                    'date' => $bookingInfo?->date?->format('M d, Y'),
+                    'time' => $bookingInfo?->time?->format('g:i A'),
+                    'date_value' => $bookingInfo?->date?->format('Y-m-d'),
+                    'time_value' => $bookingInfo?->time?->format('H:i'),
+                    'status' => ucfirst(strtolower($booking->status)),
+                    'service_title' => $bookingInfo?->service?->title ?? 'Booked service',
+                ];
+            })
+            ->values();
+        $providerAvailabilityDays = $service->provider?->availabilityDays() ?? \App\Models\Provider::DEFAULT_AVAILABILITY_DAYS;
+        $providerAvailabilityStartTime = $service->provider?->availabilityStartTime() ?? \App\Models\Provider::DEFAULT_AVAILABILITY_START_TIME;
+        $providerAvailabilityEndTime = $service->provider?->availabilityEndTime() ?? \App\Models\Provider::DEFAULT_AVAILABILITY_END_TIME;
+        $providerAvailabilityData = [
+            'days' => $providerAvailabilityDays,
+            'start_time' => $providerAvailabilityStartTime,
+            'end_time' => $providerAvailabilityEndTime,
+            'label' => $service->provider?->availabilityLabel() ?? 'Mon-Fri, 8:00 AM - 10:00 PM',
+        ];
+        $providerBookedDates = $providerSchedules
+            ->pluck('date_value')
+            ->filter()
+            ->unique()
+            ->values();
+        $providerBookedSlots = $providerSchedules
+            ->map(fn ($schedule) => [
+                'date' => $schedule->date_value,
+                'time' => $schedule->time_value,
+            ])
+            ->filter(fn ($schedule) => !empty($schedule['date']))
+            ->values();
         $hasExistingBooking = false;
 
         if (auth()->check() && auth()->user()->isCustomer() && auth()->user()->customer) {
             $hasExistingBooking = \App\Models\BookingInfo::where('customer_id', auth()->user()->customer->id)
                 ->where('service_id', $service->id)
                 ->whereHas('bookingRequest', function ($query) {
-                    $query->whereNotIn('status', ['DECLINED', 'CANCELLED']);
+                    $query->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING']);
                 })
                 ->exists();
         }
@@ -301,7 +346,12 @@ class ServiceController extends Controller
 
             'provider_exp' => $service->provider->year_exp ?? 0,
             'provider_area' => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
+            'provider_availability' => $providerAvailabilityData['label'],
+            'provider_availability_data' => $providerAvailabilityData,
+            'provider_booked_dates' => $providerBookedDates,
+            'provider_booked_slots' => $providerBookedSlots,
             'has_existing_booking' => $hasExistingBooking,
+            'provider_schedules' => $providerSchedules,
         ];
 
         return view('front.pages.custom-pages.service-detail', [

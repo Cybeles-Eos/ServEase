@@ -325,6 +325,29 @@
         }
     }
 
+    &__dot{
+        &--pending{
+            background-color: #F59E0B !important;
+        }
+
+        &--accepted{
+            background-color: #2563EB !important;
+        }
+
+        &--ongoing{
+            background-color: #7C3AED !important;
+        }
+
+        &--completed{
+            background-color: #16A34A !important;
+        }
+
+        &--declined,
+        &--cancelled{
+            background-color: #DC2626 !important;
+        }
+    }
+
     &__status{
         padding: 4px 8px;
         border-radius: 999px;
@@ -337,15 +360,25 @@
             color: #B7791F;
         }
 
-        &--accepted,
+        &--accepted{
+            background-color: #EFF6FF;
+            color: #175CD3;
+        }
+
         &--ongoing{
+            background-color: #F5F3FF;
+            color: #6D28D9;
+        }
+
+        &--completed{
             background-color: #ECFDF3;
             color: #027A48;
         }
 
-        &--completed{
-            background-color: #EFF6FF;
-            color: #175CD3;
+        &--declined,
+        &--cancelled{
+            background-color: #FEF2F2;
+            color: #B42318;
         }
     }
 

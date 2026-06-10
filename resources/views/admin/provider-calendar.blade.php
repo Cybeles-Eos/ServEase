@@ -10,7 +10,7 @@
             <div>
                 <p>Booking Calendar</p>
                 <h1>{{ $currentMonth->format('F Y') }}</h1>
-                <span>Track scheduled customer bookings by date and review the details for each service request.</span>
+                <span>Track provider-approved customer bookings by date and review the details for each service request.</span>
             </div>
 
             <div class="provider-calendar__actions">
@@ -36,9 +36,9 @@
                 <p>Bookings scheduled today</p>
             </div>
             <div>
-                <span>Pending</span>
-                <strong>{{ number_format($pendingBookingsCount) }}</strong>
-                <p>Requests waiting for action</p>
+                <span>Confirmed</span>
+                <strong>{{ number_format($confirmedBookingsCount) }}</strong>
+                <p>Accepted, ongoing, and completed</p>
             </div>
         </section>
 
@@ -81,9 +81,10 @@
                                         @php
                                             $bookingInfo = $booking->bookingInfo;
                                             $customerName = trim(($bookingInfo->fname ?? '') . ' ' . ($bookingInfo->lname ?? '')) ?: 'Customer';
+                                            $statusClass = strtolower($booking->status);
                                         @endphp
                                         <span>
-                                            <b></b>
+                                            <b class="provider-calendar__dot provider-calendar__dot--{{ $statusClass }}"></b>
                                             {{ \Illuminate\Support\Str::limit($customerName, 16, '...') }}
                                             @if ($bookingInfo?->time)
                                                 {{ $bookingInfo->time->format('g:i A') }}

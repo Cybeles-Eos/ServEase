@@ -47,7 +47,8 @@
         input[type="text"],
         input[type="email"],
         input[type="password"],
-        input[type="number"]{
+        input[type="number"],
+        input[type="time"]{
             width: 100%;
             padding: 7px 13px;
             border: 1px solid $color-border;
@@ -219,6 +220,87 @@
             }
         }
 
+        .provider-schedule-card{
+            margin-top: 10px;
+            padding: 16px;
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            background-color: #FFFDF7;
+
+            &__head{
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 14px;
+
+                h5{
+                    margin: 0 0 4px;
+                    color: $color-dark;
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+
+                p{
+                    margin: 0;
+                    color: #667085;
+                    font-size: 12px;
+                    line-height: 140%;
+                }
+
+                span{
+                    padding: 5px 9px;
+                    border-radius: 999px;
+                    background-color: #FFBE422d;
+                    color: #B7791F;
+                    font-size: 11px;
+                    font-weight: 800;
+                    white-space: nowrap;
+                }
+            }
+
+            &__days{
+                display: grid;
+                grid-template-columns: repeat(7, minmax(0, 1fr));
+                gap: 7px;
+            }
+
+            &__time{
+                margin-top: 14px;
+            }
+        }
+
+        .provider-schedule-day{
+            margin: 0;
+            cursor: pointer;
+
+            input{
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            span{
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #E5E7EB;
+                border-radius: 6px;
+                background-color: $color-white;
+                color: #667085;
+                font-size: 12px;
+                font-weight: 800;
+                transition: .15s ease;
+            }
+
+            input:checked + span{
+                border-color: $color-primary;
+                background-color: $color-primary;
+                color: $color-dark;
+            }
+        }
+
         .csm-right{
             // width: 600px;
             width: 60%;
@@ -230,6 +312,21 @@
             .csm-right,
             .csm-left{
                 width: 100%;
+            }
+
+            .provider-schedule-card__days{
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 420px) {
+            .provider-schedule-card__head,
+            .provider-schedule-card__time{
+                flex-direction: column;
+            }
+
+            .provider-schedule-card__days{
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
     }

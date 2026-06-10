@@ -275,7 +275,7 @@
                                         <path d="M5.13379 8H10.4671" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M4.4668 10.667H9.80013" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                    <p>Availability: Mon–Sun</p>
+                                    <p>Availability: {{ $service->provider_availability }}</p>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -331,7 +331,11 @@
                 @endphp
                 <form action="{{ route('customer.book') }}" method="POST" id="bookingForm">
                     @csrf
-                    <div class="sbf-field-group-con">
+                    <button type="button" id="toggleBookingDetails" class="booking-details-toggle" aria-expanded="false">
+                        <span>Show booking details</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="sbf-field-group-con booking-customer-detail">
                         <div class="sbf-field-group">
                             <label for="fname">First Name <span>*</span></label>
                             <input type="text" name="fname" value="{{ $activeUserFname }}" required placeholder="Enter your first name...">
@@ -341,11 +345,11 @@
                             <input type="text" name="lname" value="{{ $activeUserLname }}" required placeholder="Enter your last name...">
                         </div>
                     </div>
-                    <div class="sbf-field-group">
+                    <div class="sbf-field-group booking-customer-detail">
                         <label for="address">Complete Address <span>*</span></label>
                         <input type="text" name="address" value="{{ $activeUserAddress }}" required placeholder="Enter your address...">
                     </div>
-                    <div class="sbf-field-group-con">
+                    <div class="sbf-field-group-con booking-customer-detail">
                         <div class="sbf-field-group">
                             <label for="email">Email <span>*</span></label>
                             <input type="text" name="email" value="{{ $activeUserEmail }}" required placeholder="Enter your first name...">
@@ -355,15 +359,45 @@
                             <input type="text" name="number" value="{{ $activeUserPhone }}" required placeholder="Enter your last name...">
                         </div>
                     </div>
-                    <div class="sbf-field-group-con mb-2">
-                        <div class="sbf-field-group">
-                            <label for="number">Preferred Date <span>*</span></label>
-                            <input type="date" required name="date" id="date">
+                    <div class="booking-schedule-picker">
+                        <div class="booking-schedule-picker__head">
+                            <div>
+                                <label>Preferred Schedule <span>*</span></label>
+                                <strong id="selectedScheduleLabel">Select a date</strong>
+                            </div>
+                            <button type="button" id="resetSchedule" class="booking-schedule-picker__reset">Reset Schedule</button>
                         </div>
-                        <div class="sbf-field-group">
-                            <label for="number">Preferred Time <span>*</span></label>
-                            <input type="time" required name="time" id="time">
+
+                        <div class="booking-schedule-picker__nav">
+                            <button type="button" id="bookingCalendarPrev" aria-label="Previous month">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span id="bookingCalendarMonth"></span>
+                            <button type="button" id="bookingCalendarToday">Today</button>
+                            <button type="button" id="bookingCalendarNext" aria-label="Next month">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
                         </div>
+
+                        <div class="booking-schedule-picker__weekdays">
+                            <span>Sun</span>
+                            <span>Mon</span>
+                            <span>Tue</span>
+                            <span>Wed</span>
+                            <span>Thu</span>
+                            <span>Fri</span>
+                            <span>Sat</span>
+                        </div>
+
+                        <div id="bookingCalendarGrid" class="booking-schedule-picker__grid"></div>
+
+                        <div id="bookingTimePanel" class="booking-schedule-picker__time" hidden>
+                            <label for="bookingTimePicker">Time</label>
+                            <input type="time" id="bookingTimePicker">
+                        </div>
+
+                        <input type="hidden" name="date" id="date">
+                        <input type="hidden" name="time" id="time">
                     </div>
                     <input type="number" name="service_id" value="{{$service->id}}" hidden>
                     @guest
@@ -406,12 +440,188 @@
 {{-- For Booking Modal --}}
 <script>
     $(document).ready(function () {
+        const providerAvailability = @json($service->provider_availability_data);
+        const providerBookedDates = @json($service->provider_booked_dates);
+        const providerBookedSlots = @json($service->provider_booked_slots);
+        const bookedDateSet = new Set(providerBookedDates);
+        const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+        const today = new Date();
+        let calendarCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        function padDatePart(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function toDateValue(date) {
+            return `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`;
+        }
+
+        function toReadableDate(dateValue) {
+            if (!dateValue) {
+                return 'Select a date';
+            }
+
+            return new Date(dateValue + 'T00:00:00').toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function toReadableTime(timeValue) {
+            if (!timeValue) {
+                return 'choose a time';
+            }
+
+            const [hour, minute] = timeValue.split(':');
+            return new Date(2000, 0, 1, hour, minute).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function isPastDate(date) {
+            const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            return date < todayOnly;
+        }
+
+        function isProviderAvailableDate(date) {
+            const availableDays = providerAvailability.days || dayKeys;
+            return availableDays.includes(dayKeys[date.getDay()]);
+        }
+
+        function isProviderAvailableTime(timeValue) {
+            if (!timeValue) {
+                return false;
+            }
+
+            if (!providerAvailability.start_time || !providerAvailability.end_time) {
+                return true;
+            }
+
+            return timeValue >= providerAvailability.start_time && timeValue <= providerAvailability.end_time;
+        }
+
+        function updateScheduleLabel() {
+            const selectedDate = $('#date').val();
+            const selectedTime = $('#time').val();
+            const label = selectedDate
+                ? `${toReadableDate(selectedDate)} at ${toReadableTime(selectedTime)}`
+                : 'Select a date';
+
+            $('#selectedScheduleLabel').text(label);
+        }
+
+        function clearScheduleSelection() {
+            $('#date').val('');
+            $('#time').val('');
+            $('#bookingTimePicker').val('');
+            $('#bookingTimePanel').attr('hidden', true);
+            updateScheduleLabel();
+            renderBookingCalendar();
+        }
+
+        function selectScheduleDate(dateValue) {
+            const defaultTime = providerAvailability.start_time || '';
+
+            $('#date').val(dateValue);
+            $('#time').val(defaultTime);
+            $('#bookingTimePicker')
+                .val(defaultTime)
+                .attr('min', providerAvailability.start_time || null)
+                .attr('max', providerAvailability.end_time || null);
+            $('#bookingTimePanel').removeAttr('hidden');
+            updateScheduleLabel();
+            renderBookingCalendar();
+        }
+
+        function renderBookingCalendar() {
+            const monthStart = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth(), 1);
+            const calendarStart = new Date(monthStart);
+            calendarStart.setDate(calendarStart.getDate() - calendarStart.getDay());
+
+            $('#bookingCalendarMonth').text(monthStart.toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric'
+            }));
+
+            const selectedDate = $('#date').val();
+            const cells = [];
+
+            for (let index = 0; index < 42; index++) {
+                const day = new Date(calendarStart);
+                day.setDate(calendarStart.getDate() + index);
+
+                const dateValue = toDateValue(day);
+                const isCurrentMonth = day.getMonth() === calendarCursor.getMonth();
+                const isToday = dateValue === toDateValue(today);
+                const isSelected = dateValue === selectedDate;
+                const isBooked = bookedDateSet.has(dateValue);
+                const isUnavailable = isPastDate(day) || !isProviderAvailableDate(day);
+                const isDisabled = isBooked || isUnavailable;
+                const classes = [
+                    'booking-schedule-picker__day',
+                    !isCurrentMonth ? 'is-muted' : '',
+                    isToday ? 'is-today' : '',
+                    isSelected ? 'is-selected' : '',
+                    isBooked ? 'is-booked' : '',
+                    isUnavailable ? 'is-unavailable' : '',
+                    isDisabled ? 'is-disabled' : ''
+                ].filter(Boolean).join(' ');
+
+                cells.push(`
+                    <button type="button" class="${classes}" data-date="${dateValue}" ${isDisabled ? 'disabled' : ''}>
+                        <span>${day.getDate()}</span>
+                        ${isBooked ? '<i aria-label="Booked"></i>' : ''}
+                    </button>
+                `);
+            }
+
+            $('#bookingCalendarGrid').html(cells.join(''));
+        }
 
         /* ------------------------
         OPEN BOOKING MODAL
         ------------------------- */
         $('#open-book').on('click', function () {
+            renderBookingCalendar();
             $('.booking-modal').fadeIn(200);
+        });
+
+        $('#bookingCalendarPrev').on('click', function () {
+            calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() - 1, 1);
+            renderBookingCalendar();
+        });
+
+        $('#bookingCalendarNext').on('click', function () {
+            calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() + 1, 1);
+            renderBookingCalendar();
+        });
+
+        $('#bookingCalendarToday').on('click', function () {
+            calendarCursor = new Date(today.getFullYear(), today.getMonth(), 1);
+            renderBookingCalendar();
+        });
+
+        $('#bookingCalendarGrid').on('click', '.booking-schedule-picker__day:not(:disabled)', function () {
+            selectScheduleDate($(this).data('date'));
+        });
+
+        $('#bookingTimePicker').on('change', function () {
+            $('#time').val($(this).val());
+            updateScheduleLabel();
+        });
+
+        $('#resetSchedule').on('click', function () {
+            clearScheduleSelection();
+        });
+
+        $('#toggleBookingDetails').on('click', function () {
+            const form = $('#bookingForm');
+            const isOpen = form.toggleClass('is-details-open').hasClass('is-details-open');
+
+            $(this).attr('aria-expanded', isOpen ? 'true' : 'false');
+            $(this).find('span').text(isOpen ? 'Hide booking details' : 'Show booking details');
         });
 
         /* ------------------------
@@ -422,6 +632,45 @@
             // optional: simple form validation
             if (!$('#bookingForm')[0].checkValidity()) {
                 $('#bookingForm')[0].reportValidity();
+                return;
+            }
+
+            const selectedDate = $('#date').val();
+            const selectedTime = $('#time').val();
+
+            if (!selectedDate || !selectedTime) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Select Schedule',
+                    text: 'Please select an available date and time before sending your booking request.',
+                    confirmButtonColor: '#FDB932'
+                });
+                return;
+            }
+
+            const selectedDateObject = new Date(selectedDate + 'T00:00:00');
+
+            if (!isProviderAvailableDate(selectedDateObject) || !isProviderAvailableTime(selectedTime)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Schedule Unavailable',
+                    text: 'The provider is not available at your selected date and time. Please choose another schedule.',
+                    confirmButtonColor: '#FDB932'
+                });
+                return;
+            }
+
+            const isSlotBooked = bookedDateSet.has(selectedDate) || providerBookedSlots.some(function (slot) {
+                return slot.date === selectedDate;
+            });
+
+            if (isSlotBooked) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Schedule Unavailable',
+                    text: 'This schedule is already booked. Please choose another date.',
+                    confirmButtonColor: '#FDB932'
+                });
                 return;
             }
 

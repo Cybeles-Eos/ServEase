@@ -283,7 +283,6 @@ class AuthManagerController extends Controller
                 'first_name' => $validated['fname'],
                 'last_name' => $validated['lname'],
                 'phone_number' => $validated['number'],
-                'personal_email' => $validated['email'],
                 'home_address' => $validated['address'],
                 'province' => $validated['province'],
                 'zipcode' => $validated['zipcode'],

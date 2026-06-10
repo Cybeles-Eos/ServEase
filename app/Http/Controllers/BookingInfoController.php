@@ -34,7 +34,7 @@ class BookingInfoController extends Controller
         }
 
         $customer = auth()->user()->customer ?? null;
-        $serviceOwner = \App\Models\Service::where('id', $request->service_id)->firstOrFail();
+        $serviceOwner = \App\Models\Service::with('provider')->where('id', $request->service_id)->firstOrFail();
 
         if (!$customer) {
             return redirect()->back()->with('flash_message', [
@@ -47,7 +47,7 @@ class BookingInfoController extends Controller
         $existingBooking = BookingInfo::where('customer_id', $customer->id)
             ->where('service_id', $request->service_id)
             ->whereHas('bookingRequest', function ($query) {
-                $query->whereNotIn('status', ['DECLINED', 'CANCELLED']);
+                $query->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING']);
             })
             ->exists();
 
@@ -57,6 +57,31 @@ class BookingInfoController extends Controller
                 'message' => 'You already have a booking for this service.',
                 'type' => 'warning',
             ]);
+        }
+
+        if ($request->filled('date') && $request->filled('time') && !$serviceOwner->provider?->isAvailableAt($request->date, $request->time)) {
+            return redirect()->back()->withInput()->with('flash_message', [
+                'title' => 'Schedule Unavailable',
+                'message' => 'The provider is not available at your selected date and time. Please choose another schedule.',
+                'type' => 'error',
+            ]);
+        }
+
+        if ($request->filled('date') && $request->filled('time')) {
+            $scheduleConflict = BookingRequest::where('provider_id', $serviceOwner->provider_id)
+                ->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING'])
+                ->whereHas('bookingInfo', function ($query) use ($request) {
+                    $query->whereDate('date', $request->date);
+                })
+                ->exists();
+
+            if ($scheduleConflict) {
+                return redirect()->back()->withInput()->with('flash_message', [
+                    'title' => 'Schedule Unavailable',
+                    'message' => 'This schedule is already booked. Please choose another date.',
+                    'type' => 'error',
+                ]);
+            }
         }
 
         $bookingInfo = BookingInfo::create([

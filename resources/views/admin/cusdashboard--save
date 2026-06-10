@@ -26,11 +26,7 @@
                                                         <path d="M7.79134 4.125L6.35676 5.27083C5.88467 5.64667 5.11009 5.64667 4.63801 5.27083L3.20801 4.125" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                                     </svg>
                                                     <a href="#">
-                                                        @if(!empty($ongoingBookings->service->provider->personal_email))
-                                                            {{$ongoingBookings->service->provider->personal_email}}
-                                                        @else
-                                                            {{$ongoingBookings->service->provider->user->email}}
-                                                        @endif
+                                                        {{$ongoingBookings->service->provider->user->email}}
                                                     </a>
                                                 </div>
                                             </div>
@@ -140,11 +136,7 @@
                                                     <path d="M7.79134 4.125L6.35676 5.27083C5.88467 5.64667 5.11009 5.64667 4.63801 5.27083L3.20801 4.125" stroke="#FFBE42" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                                 </svg>
                                                 <a href="#">
-                                                    @if(!empty($booking->service->provider->personal_email))
-                                                        {{$booking->service->provider->personal_email}}
-                                                    @else
-                                                        {{$booking->service->provider->user->email}}
-                                                    @endif
+                                                    {{$booking->service->provider->user->email}}
                                                 </a>
                                             </div>
                                         </div>
