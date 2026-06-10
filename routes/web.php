@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/applicants/{provider}/accept', [AdminController::class, 'acceptApplicant'])->name('admin.applicants.accept');
         Route::post('/admin/applicants/{provider}/decline', [AdminController::class, 'declineApplicant'])->name('admin.applicants.decline');
         Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
+        Route::post('/admin/reports/providers/{provider}/deactivate', [AdminReportController::class, 'deactivateProvider'])->name('admin.reports.provider.deactivate');
 
         //Admin General Setting
         Route::get('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');

@@ -169,7 +169,7 @@
 
         <div class="row">
             <span>Category:</span>
-            <span>{{ $service->category ?? 'N/A' }}</span>
+            <span>{{ $service->serviceCategory->name ?? 'N/A' }}</span>
         </div>
 
         <div class="row">

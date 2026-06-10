@@ -37,40 +37,59 @@
             <div>
                 <span>Subject to Disable</span>
                 <strong>{{ number_format($subjectProviderCount) }}</strong>
-                <p>Providers with 20 or more reports</p>
+                <p>Providers with any health signal at 20/20</p>
             </div>
         </section>
 
         <section class="admin-reports__insights">
             <div class="admin-reports__panel">
                 <div class="admin-reports__panel-head">
-                    <h2>Provider Report Status</h2>
-                    <p>Ranked by total reports across all services.</p>
+                    <h2>Provider Account Health</h2>
+                    <p>Ranked by reports, declined requests, and provider cancellations.</p>
                 </div>
 
                 <div class="admin-reports__summary-list">
                     @forelse ($providerSummaries as $provider)
-                        @php
-                            $riskLabel = $provider->reports_count >= 20
-                                ? 'Subject to Disable'
-                                : ($provider->reports_count >= 10 ? 'Needs Review' : 'Monitoring');
-                            $riskClass = $provider->reports_count >= 20
-                                ? 'is-danger'
-                                : ($provider->reports_count >= 10 ? 'is-warning' : 'is-normal');
-                        @endphp
-
-                        <article>
-                            <div>
+                        <article class="admin-reports__health-row">
+                            <div class="admin-reports__health-main">
                                 <strong>{{ $provider->provider_name }}</strong>
                                 <span>{{ $provider->provider_email ?: 'No email' }}</span>
+                                <div class="admin-reports__health-bars">
+                                    <p>
+                                        <span>Reports</span>
+                                        <b>{{ $provider->reports_count }}/{{ \App\Models\Provider::ACCOUNT_HEALTH_LIMIT }}</b>
+                                        <i><u class="{{ $provider->reports_count >= \App\Models\Provider::ACCOUNT_HEALTH_LIMIT ? 'is-danger-bar' : '' }}" style="width: {{ min(100, round(($provider->reports_count / \App\Models\Provider::ACCOUNT_HEALTH_LIMIT) * 100)) }}%"></u></i>
+                                    </p>
+                                    <p>
+                                        <span>Declined</span>
+                                        <b>{{ $provider->declined_count }}/{{ \App\Models\Provider::ACCOUNT_HEALTH_LIMIT }}</b>
+                                        <i><u class="{{ $provider->declined_count >= \App\Models\Provider::ACCOUNT_HEALTH_LIMIT ? 'is-danger-bar' : '' }}" style="width: {{ min(100, round(($provider->declined_count / \App\Models\Provider::ACCOUNT_HEALTH_LIMIT) * 100)) }}%"></u></i>
+                                    </p>
+                                    <p>
+                                        <span>Cancelled</span>
+                                        <b>{{ $provider->provider_cancelled_count }}/{{ \App\Models\Provider::ACCOUNT_HEALTH_LIMIT }}</b>
+                                        <i><u class="{{ $provider->provider_cancelled_count >= \App\Models\Provider::ACCOUNT_HEALTH_LIMIT ? 'is-danger-bar' : '' }}" style="width: {{ min(100, round(($provider->provider_cancelled_count / \App\Models\Provider::ACCOUNT_HEALTH_LIMIT) * 100)) }}%"></u></i>
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <b>{{ number_format($provider->reports_count) }}</b>
-                                <em class="{{ $riskClass }}">{{ $riskLabel }}</em>
+                            <div class="admin-reports__health-action">
+                                <b>{{ number_format($provider->max_count) }}</b>
+                                <em class="{{ $provider->risk_class }}">{{ $provider->risk_label }}</em>
+
+                                @if($provider->is_subject && $provider->user_is_active)
+                                    <form method="POST"
+                                          action="{{ route('admin.reports.provider.deactivate', $provider->provider_id) }}"
+                                          class="admin-reports__deactivate-form">
+                                        @csrf
+                                        <button type="submit">Deactivate Account</button>
+                                    </form>
+                                @elseif(! $provider->user_is_active)
+                                    <span class="admin-reports__disabled-label">Account Disabled</span>
+                                @endif
                             </div>
                         </article>
                     @empty
-                        <p class="admin-reports__empty">No provider reports yet.</p>
+                        <p class="admin-reports__empty">No provider health signals yet.</p>
                     @endforelse
                 </div>
             </div>
@@ -144,11 +163,10 @@
                             @php
                                 $providerName = trim(($report->provider->first_name ?? '') . ' ' . ($report->provider->last_name ?? '')) ?: 'Provider';
                                 $customerName = trim(($report->customer->first_name ?? '') . ' ' . ($report->customer->last_name ?? '')) ?: 'Customer';
-                                $providerCount = $providerSummaries->firstWhere('provider_id', $report->provider_id)?->reports_count
-                                    ?? \App\Models\ServiceReport::where('provider_id', $report->provider_id)->count();
-                                $riskLabel = $providerCount >= 20
-                                    ? 'Subject to Disable'
-                                    : ($providerCount >= 10 ? 'Needs Review' : 'Monitoring');
+                                $providerHealth = $providerHealthById->get($report->provider_id);
+                                $providerCount = $providerHealth?->max_count ?? \App\Models\ServiceReport::where('provider_id', $report->provider_id)->count();
+                                $riskLabel = $providerHealth?->risk_label
+                                    ?? ($providerCount >= 20 ? 'Subject to Deactivation Review' : ($providerCount >= 10 ? 'Needs Review' : 'Monitoring'));
                             @endphp
 
                             <tr>
@@ -190,3 +208,28 @@
         </section>
     </main>
 @endsection
+
+@push('extrascripts')
+    <script>
+        document.querySelectorAll('.admin-reports__deactivate-form').forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: 'Deactivate provider account?',
+                    text: 'The provider will no longer be able to access provider features.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#991B1B',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Deactivate account',
+                    cancelButtonText: 'Cancel'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

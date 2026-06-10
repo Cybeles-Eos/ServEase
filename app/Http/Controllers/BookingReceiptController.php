@@ -12,6 +12,7 @@ class BookingReceiptController extends Controller
                 'bookingInfo',
                 'bookingInfo.customer',
                 'bookingInfo.service',
+                'bookingInfo.service.serviceCategory',
                 'bookingInfo.service.provider',
                 'bookingInfo.service.provider.user',
             ])

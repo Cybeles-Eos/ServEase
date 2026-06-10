@@ -6454,6 +6454,92 @@ h4 span {
   background-color: #ECFDF3;
   color: #027A48;
 }
+.admin-reports__health-row {
+  align-items: stretch !important;
+}
+.admin-reports__health-main {
+  flex: 1;
+  min-width: 0;
+}
+.admin-reports__health-bars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 11px;
+}
+.admin-reports__health-bars p {
+  margin: 0;
+}
+.admin-reports__health-bars span,
+.admin-reports__health-bars b {
+  display: block;
+  text-align: left !important;
+}
+.admin-reports__health-bars span {
+  color: #667085 !important;
+  font-size: 10px !important;
+  font-weight: 800;
+}
+.admin-reports__health-bars b {
+  margin-top: 2px;
+  color: #171515 !important;
+  font-size: 11px !important;
+  line-height: 120%;
+}
+.admin-reports__health-bars i {
+  display: block;
+  width: 100%;
+  height: 6px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: #EAECF0;
+  font-style: normal;
+}
+.admin-reports__health-bars i u {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: #FFBE42;
+  text-decoration: none;
+}
+.admin-reports__health-bars i .is-danger-bar {
+  background-color: #DC2626;
+}
+.admin-reports__health-action {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 150px;
+}
+.admin-reports__deactivate-form {
+  margin: 0;
+}
+.admin-reports__deactivate-form button {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background-color: #991B1B;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.admin-reports__disabled-label {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 0 !important;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background-color: #F3F4F6;
+  color: #4B5563 !important;
+  font-size: 10px !important;
+  font-weight: 900;
+}
 .admin-reports__reason-list {
   padding: 10px 18px 16px;
 }
@@ -6549,6 +6635,17 @@ h4 span {
   }
   .admin-reports__cards {
     grid-template-columns: 1fr;
+  }
+  .admin-reports__summary-list article, .admin-reports__health-row {
+    align-items: flex-start !important;
+    flex-direction: column;
+  }
+  .admin-reports__health-bars {
+    grid-template-columns: 1fr;
+  }
+  .admin-reports__health-action {
+    align-items: flex-start;
+    width: 100%;
   }
 }
 
@@ -6971,6 +7068,89 @@ h4 span {
 .provider--dashboard__holder .pdhldr--right__topserv__con .pdhldr-rtsci-item:last-child {
   border-bottom: none;
   padding-bottom: 0;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card {
+  padding: 20px;
+  border: 1px solid #E0E2E7;
+  border-radius: 6px;
+  background-color: #fff;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__head h3 {
+  margin: 0;
+  color: #171515;
+  font-size: 20px;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__head p {
+  margin: 4px 0 0;
+  color: rgba(119, 121, 128, 0.9450980392);
+  font-size: 12px;
+  line-height: 140%;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__head strong {
+  color: #344054;
+  font-size: 24px;
+  line-height: 100%;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__meter, .provider--dashboard__holder .pdhldr--right .provider-health-card__bar {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: #EAECF0;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__meter span, .provider--dashboard__holder .pdhldr--right .provider-health-card__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: #84E68D;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__meter .is-danger, .provider--dashboard__holder .pdhldr--right .provider-health-card__bar .is-danger {
+  background-color: #DC2626;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__meter {
+  height: 9px;
+  margin-bottom: 15px;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card article {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  padding-top: 12px;
+  border-top: 1px solid #F2F4F7;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__copy strong {
+  display: block;
+  color: #171515;
+  font-size: 13px;
+  line-height: 130%;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__copy span {
+  display: block;
+  margin-top: 3px;
+  color: #667085;
+  font-size: 11px;
+  line-height: 140%;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card b {
+  color: #344054;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.provider--dashboard__holder .pdhldr--right .provider-health-card__bar {
+  grid-column: 1/-1;
+  height: 7px;
 }
 @media (max-width: 992px) {
   .provider--dashboard__holder {

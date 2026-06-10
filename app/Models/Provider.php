@@ -61,6 +61,7 @@ class Provider extends Model
     public const DEFAULT_AVAILABILITY_DAYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
     public const DEFAULT_AVAILABILITY_START_TIME = '08:00';
     public const DEFAULT_AVAILABILITY_END_TIME = '22:00';
+    public const ACCOUNT_HEALTH_LIMIT = 20;
 
     public function availabilityDays(): array
     {
@@ -121,6 +122,52 @@ class Provider extends Model
         $endTime = $this->availabilityEndTime();
 
         return $requestedTime >= $startTime && $requestedTime <= $endTime;
+    }
+
+    public function accountHealth(): array
+    {
+        $limit = self::ACCOUNT_HEALTH_LIMIT;
+
+        $metrics = collect([
+            [
+                'key' => 'declines',
+                'title' => 'Declined Requests',
+                'description' => 'Booking requests declined by the provider.',
+                'count' => \App\Models\BookingRequest::where('provider_id', $this->id)
+                    ->where('status', 'DECLINED')
+                    ->count(),
+            ],
+            [
+                'key' => 'cancellations',
+                'title' => 'Provider Cancellations',
+                'description' => 'Accepted or pending bookings cancelled by the provider.',
+                'count' => \App\Models\BookingRequest::where('provider_id', $this->id)
+                    ->where('status', 'CANCELLED')
+                    ->where('cancelled_by', 'provider')
+                    ->count(),
+            ],
+            [
+                'key' => 'reports',
+                'title' => 'Customer Reports',
+                'description' => 'Completed bookings reported by customers.',
+                'count' => \App\Models\ServiceReport::where('provider_id', $this->id)->count(),
+            ],
+        ])->map(function ($metric) use ($limit) {
+            $metric['limit'] = $limit;
+            $metric['percentage'] = min(100, (int) round(($metric['count'] / $limit) * 100));
+            $metric['is_subject'] = $metric['count'] >= $limit;
+
+            return $metric;
+        })->values()->all();
+
+        $maxPercentage = collect($metrics)->max('percentage') ?? 0;
+
+        return [
+            'limit' => $limit,
+            'overall_percentage' => $maxPercentage,
+            'is_subject' => collect($metrics)->contains(fn ($metric) => $metric['is_subject']),
+            'metrics' => $metrics,
+        ];
     }
 
     // ---------------------

@@ -86,7 +86,7 @@
             <div class="csm-left">
                 <h4>Edit personal information</h4>
                 <p class="csm-left__p">Information that was taken from your resume is noted with a tag pulled from resume. The rest fo the information is already part of your profile.</p>
-                
+
                 <br>
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
@@ -155,6 +155,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             <div class="csm-right">
                 <div class="">
@@ -162,9 +163,9 @@
                         @push('extrastylesheets')
                             <style>
                                 #profile{
-                                    width: 160px !important; 
+                                    width: 160px !important;
                                     /* height: 160px !important; */
-                                    /* width: 150px !important; 
+                                    /* width: 150px !important;
                                     border-radius: 50% !important;
                                     border: 2px solid #ddd !important; */
                                 }
@@ -194,10 +195,10 @@
                 </div>
                 <div class="cms-mm-group">
                     <label>Phone Number <span>*</span></label>
-                    <input 
-                    type="number" 
-                    name="phone_number" 
-                    value="{{ old('phone_number', $user->provider->phone_number ?? '') }}" 
+                    <input
+                    type="number"
+                    name="phone_number"
+                    value="{{ old('phone_number', $user->provider->phone_number ?? '') }}"
                     required
                     maxlength="11"
                     inputmode="numeric"
@@ -211,6 +212,7 @@
                     @error('email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                 </div> --}}
                 <br>
+
                 <h5>Personal Home Address</h5>
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
@@ -234,7 +236,7 @@
 
                     <div class="cms-mm-group">
                         <label>Zipcode <span>*</span></label>
-                        <input 
+                        <input
                             type="number"
                             name="zipcode"
                             value="{{ old('zipcode', $user->provider->zipcode ?? '') }}"
@@ -258,7 +260,7 @@
 
     {{-- Only Show When Someone is login --}}
 
-    
+
 @endsection
 @push('extrascripts')
 
@@ -272,13 +274,13 @@
         // const pond = FilePond.create(document.querySelector('#profile'), {
         //     allowMultiple: false,
         //     maxFiles: 1,
-        //     storeAsFile: true, 
+        //     storeAsFile: true,
         //     acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
         //     maxFileSize: '2MB',
         //     labelIdle: '<i class="fas fa-edit"></i>',
         // });
-        const existingImage = @json(!empty($user->provider->profile_image) 
-            ? asset($user->provider->profile_image) 
+        const existingImage = @json(!empty($user->provider->profile_image)
+            ? asset($user->provider->profile_image)
             : null);
 
         FilePond.registerPlugin(

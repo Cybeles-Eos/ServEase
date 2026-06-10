@@ -16,6 +16,9 @@ class BookingRequest extends Model
         'provider_id',
         'status',
         'responded_at',
+        'customer_seen_at',
+        'provider_seen_at',
+        'cancelled_by',
     ];
 
     protected $casts = [

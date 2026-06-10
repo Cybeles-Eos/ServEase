@@ -458,6 +458,107 @@
                     }
                 }
             }
+
+            .provider-health-card{
+                padding: 20px;
+                border: 1px solid #E0E2E7;
+                border-radius: 6px;
+                background-color: $color-white;
+
+                &__head{
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                    gap: 14px;
+                    margin-bottom: 12px;
+
+                    h3{
+                        margin: 0;
+                        color: $color-dark;
+                        font-size: 20px;
+                    }
+
+                    p{
+                        margin: 4px 0 0;
+                        color: #777980f1;
+                        font-size: 12px;
+                        line-height: 140%;
+                    }
+
+                    strong{
+                        color: #344054;
+                        font-size: 24px;
+                        line-height: 100%;
+                    }
+                }
+
+                &__meter,
+                &__bar{
+                    width: 100%;
+                    overflow: hidden;
+                    border-radius: 999px;
+                    background-color: #EAECF0;
+
+                    span{
+                        display: block;
+                        height: 100%;
+                        border-radius: inherit;
+                        background-color: #84E68D;
+                    }
+
+                    .is-danger{
+                        background-color: #DC2626;
+                    }
+                }
+
+                &__meter{
+                    height: 9px;
+                    margin-bottom: 15px;
+                }
+
+                &__list{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                article{
+                    display: grid;
+                    grid-template-columns: minmax(0, 1fr) auto;
+                    gap: 8px 12px;
+                    padding-top: 12px;
+                    border-top: 1px solid #F2F4F7;
+                }
+
+                &__copy{
+                    strong{
+                        display: block;
+                        color: $color-dark;
+                        font-size: 13px;
+                        line-height: 130%;
+                    }
+
+                    span{
+                        display: block;
+                        margin-top: 3px;
+                        color: #667085;
+                        font-size: 11px;
+                        line-height: 140%;
+                    }
+                }
+
+                b{
+                    color: #344054;
+                    font-size: 12px;
+                    font-weight: 800;
+                    white-space: nowrap;
+                }
+
+                &__bar{
+                    grid-column: 1 / -1;
+                    height: 7px;
+                }
+            }
         }
         @media (max-width: 992px) {
             grid-template-columns: 1fr;

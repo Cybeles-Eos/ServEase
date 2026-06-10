@@ -268,6 +268,8 @@ class ProviderController extends Controller
             ->orderByDesc('earnings_total')
             ->get();
 
+        $accountHealth = $provider->accountHealth();
+
         return view('admin.provdashboard', compact(
             'year',
             'selectedYear',
@@ -287,7 +289,8 @@ class ProviderController extends Controller
             'monthlyEarnings',
             'recentBookings',
             'topCategories',
-            'categoryEarnings'
+            'categoryEarnings',
+            'accountHealth'
         ));
     }
 

@@ -324,7 +324,7 @@
 
             {{-- Modal --}}
             @if($booking->status === 'COMPLETED' && $booking->bookingRequest)
-                <div id="rating-modal-{{ $booking->id }}" class="rating-modal-overlay">
+                <div id="rating-modal-{{ $booking->id }}" class="rating-modal-overlay" wire:ignore.self>
                     <div class="rating-modal-box">
                         <div class="rating-modal-head">
                             <h3>
@@ -405,7 +405,7 @@
                 </div>
 
                 @unless($booking->bookingRequest->report)
-                    <div id="report-modal-{{ $booking->id }}" class="rating-modal-overlay">
+                    <div id="report-modal-{{ $booking->id }}" class="rating-modal-overlay" wire:ignore.self>
                         <div class="rating-modal-box">
                             <div class="rating-modal-head">
                                 <h3>Report Provider</h3>

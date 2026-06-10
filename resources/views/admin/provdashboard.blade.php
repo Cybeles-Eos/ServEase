@@ -479,6 +479,40 @@
                         @endforelse
                     </div>
                 </div>
+
+                <div class="provider-health-card">
+                    <div class="provider-health-card__head">
+                        <div>
+                            <h3>Account Health</h3>
+                            <p>Quality signals used for admin review when a limit reaches {{ $accountHealth['limit'] ?? 20 }}.</p>
+                        </div>
+                        <strong>{{ $accountHealth['overall_percentage'] ?? 0 }}%</strong>
+                    </div>
+
+                    <div class="provider-health-card__meter">
+                        <span style="width: {{ $accountHealth['overall_percentage'] ?? 0 }}%"></span>
+                    </div>
+
+                    <div class="provider-health-card__list">
+                        @foreach(($accountHealth['metrics'] ?? []) as $metric)
+                            <article>
+                                <div class="provider-health-card__copy">
+                                    <strong>{{ $metric['title'] }}</strong>
+                                    <span>{{ $metric['description'] }}</span>
+                                </div>
+
+                                <b>{{ $metric['count'] }}/{{ $metric['limit'] }}</b>
+
+                                <div class="provider-health-card__bar">
+                                    <span
+                                        class="{{ $metric['is_subject'] ? 'is-danger' : '' }}"
+                                        style="width: {{ $metric['percentage'] }}%"
+                                    ></span>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
 
