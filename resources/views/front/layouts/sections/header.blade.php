@@ -21,7 +21,7 @@
 <header class="header-desktop">
     <div class="header-main m-padding m-width">
         <div class="h-con-links">
-            <a href="{{ url('/') }}"><img src="{{ asset('images/new-logo-d.png') }}" alt=""></a>
+            <a href="{{ url('/') }}"><img src="{{ asset('public/images/new-logo-d.png') }}" alt=""></a>
             <div class="h-con-links__divider"></div>
             <ul>
                 <li><a href="{{ url('/') }}">Home</a></li>
@@ -100,7 +100,7 @@
 <header class="header-mobile">
     <div class="text-left">
         <a href="{{ url('/') }}">
-            <img src="{{ asset('images/new-logo-d.png') }}" style="width: 80px" alt="Logo">
+            <img src="{{ asset('public/images/new-logo-d.png') }}" style="width: 80px" alt="Logo">
         </a>
     </div>
 
