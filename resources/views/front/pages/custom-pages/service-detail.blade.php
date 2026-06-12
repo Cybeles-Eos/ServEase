@@ -54,12 +54,12 @@
                 </div>
                 <hr>
                 <a href="{{ url('provider-signup') }}" class="join-now-cta-sd">
-                    <img src="{{ asset('images/cta-join.png') }}" alt="cta-image">
+                    <img src="{{ asset('public/images/cta-join.png') }}" alt="cta-image">
                 </a>
             </div>
             <div class="psd-sl-sdetail">
                 <div class="psd-sl-sdetail__img">
-                    <img src="{{ asset($service->image ?? 'images/default_service_banner.png') }}"  alt="image-detail">
+                    <img src="{{ asset($service->image ?? 'public/images/default_service_banner.png') }}"  alt="image-detail">
                 </div>
                 <div class="psd-sl-sdetail__info">
                     <div class="psd-sl-sdetaili-description">
@@ -216,7 +216,7 @@
                                         <p style="color: white; margin: 0 !important; margin-top: 0px !important; font-size: 17px; letter-spacing: 3%; line-height: 100%; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">{{ strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1)) }}</p>
                                     </div>
                                 @endif
-                                {{-- <img src="{{ asset('images/user.png') }}" alt=""> --}}
+                                {{-- <img src="{{ asset('public/images/user.png') }}" alt=""> --}}
                                 <div>
                                     <h4>{{ $service->provider_name }}</h4>
                                     <p>
@@ -291,7 +291,7 @@
                             </ul>
                             <hr>
                             <a href="{{ url('provider-signup') }}" class="psd-sl-sdetaili-d-service-info__cta">
-                                <img src="{{ asset('images/cta-join.png') }}" alt="cta-image">
+                                <img src="{{ asset('public/images/cta-join.png') }}" alt="cta-image">
                             </a>
                         </div>
                     </div>

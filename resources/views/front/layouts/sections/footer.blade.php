@@ -32,7 +32,7 @@
     <div class="static-footer__main m-width">
         <div class="sfoomain-info">
             <a href="{{ url('/') }}" class="img-cta-foo">
-                <img src="{{ asset('images/new-logo-l.png') }}" alt="{{ $platformName }}">
+                <img src="{{ asset('public/images/new-logo-l.png') }}" alt="{{ $platformName }}">
             </a>
             <p>{{ $tagline }} Serving {{ $serviceArea }}. Support Hours: {{ $supportHours }}.</p>
             <div class="footer-socials">

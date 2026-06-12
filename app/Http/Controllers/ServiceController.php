@@ -308,7 +308,7 @@ class ServiceController extends Controller
 
             'description' => $service->description,
             'content' => $service->content,
-            'image' => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
+            'image' => $service->image ? asset($service->image) : asset('public/images/default_service_banner.png'),
 
             'jobs' => \App\Models\BookingInfo::whereHas('service', function ($query) use ($service) {
                     $query->where('provider_id', $service->provider_id);

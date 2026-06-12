@@ -6,7 +6,7 @@
     </div>
     <main class="provider-register">
         <div class="provider-register__img">
-            <img src="{{asset('images/preg-item.png')}}" alt="item">
+            <img src="{{asset('public/images/preg-item.png')}}" alt="item">
             <h4>Start your provider journey </h4>
             <p>Manage services, track bookings and earnings, and connect with customers using ServEase’s provider dashboard.</p>
         </div>
@@ -225,7 +225,7 @@
 
 
             </div>
-            {{-- <img src="{{asset('images/vector-preg.svg')}}" class="provider-register-main-img" alt="vector"> --}}
+            {{-- <img src="{{asset('public/images/vector-preg.svg')}}" class="provider-register-main-img" alt="vector"> --}}
         </div>
     </main>
 @endsection

@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
             'last_name' => 'User',
             'phone_number' => '09123456789',
             'street_address' => '123 Main St',
-            'profile_image' => '/images/user.png',
+            'profile_image' => 'public/images/user.png',
             'city' => 'Sample City',
             'barangay' => 'Sample Barangay',
             'zipcode' => '1807'

@@ -4,13 +4,13 @@
             <div class="cusdash-right__cards-con--active-box">
                 <div class="cdrcc-ordbox active" wire:key="ongoing-booking-{{ $ongoingBookings->id }}">
                     <div class="cdrcc-ordbox--img">
-                        <img src="{{ asset('images/serv-bg.png') }}" alt="thumbnail">
+                        <img src="{{ asset('public/images/serv-bg.png') }}" alt="thumbnail">
                     </div>
 
                     <div class="cdrcc-ordbox--info">
                         <div class="cdrcc-ordbox-i">
                             <div class="cdrcc-ordbox-i--profile">
-                                <img src="{{ asset($ongoingBookings->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
+                                <img src="{{ asset($ongoingBookings->service->provider->profile_image ?? 'public/images/user.png') }}" alt="profile">
 
                                 <div class="cdrcc-ordbox-i--profile__dtl">
                                     <h3>
@@ -105,13 +105,13 @@
         @forelse ($allBookings as $booking)
             <div class="cdrcc-ordbox" wire:key="customer-booking-{{ $booking->id }}-{{ $booking->status }}">
                 <div class="cdrcc-ordbox--img">
-                    <img src="{{ asset('images/serv-bg.png') }}" alt="thumbnail">
+                    <img src="{{ asset('public/images/serv-bg.png') }}" alt="thumbnail">
                 </div>
 
                 <div class="cdrcc-ordbox--info">
                     <div class="cdrcc-ordbox-i">
                         <div class="cdrcc-ordbox-i--profile">
-                            <img src="{{ asset($booking->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
+                            <img src="{{ asset($booking->service->provider->profile_image ?? 'public/images/user.png') }}" alt="profile">
 
                             <div class="cdrcc-ordbox-i--profile__dtl">
                                 <h3>

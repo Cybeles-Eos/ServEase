@@ -11,8 +11,8 @@
             <a href="{{url('services')}}" class="btn btn--tertiary-n">Book Service Now</a>
         </div>  
         <div class="global-cta__main--img">
-            <img src="{{asset('images/cta-vec.svg')}}" class="global-cta__main--img__vec" alt="vector">
-            <img src="{{asset('images/cta-img.png')}}" class="global-cta__main--img__img" alt="image">
+            <img src="{{asset('public/images/cta-vec.svg')}}" class="global-cta__main--img__vec" alt="vector">
+            <img src="{{asset('public/images/cta-img.png')}}" class="global-cta__main--img__img" alt="image">
         </div>
     </div>
 </section>

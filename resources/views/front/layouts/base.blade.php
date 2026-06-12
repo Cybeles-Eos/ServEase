@@ -148,12 +148,12 @@
     <script src="https://unpkg.com/lenis@1.3.15/dist/lenis.min.js"></script> 
     {{-- <script src="{{asset('js/modernizr.min.js')}}"></script> --}}
     {{-- <script src="{{ asset('js/modernizr-custom.js') }}"></script> --}}
-    <script src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
-    <script src="{{ asset('js/slick.min.js') }}"></script>
+    <script src="{{ asset('public/js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ asset('public/js/slick.min.js') }}"></script>
     {{-- <script src="{{ asset('js/bootstrap/bootstrap.min.js') }}"></script> --}}
-    <script src="{{ asset('js/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('public/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
     {{-- <script src="{{ asset('js/popper.min.js') }}"></script> --}}
-    <script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{ asset('public/js/main.js') }}"></script>
     @stack('extrascripts')
     @if(session('flash_message'))
         <script>
