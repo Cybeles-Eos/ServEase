@@ -106,7 +106,7 @@
             @auth
                 @if(auth()->user()->isCustomer())
                     {{-- {{ route('customer.dashboard') }} --}}
-                    <a href="{{url('dashboard')}}" class="a-mnav-m-link">
+                    <a href="{{url('/customer/dashboard')}}" class="a-mnav-m-link">
                         Dashboard
                     </a>
 
