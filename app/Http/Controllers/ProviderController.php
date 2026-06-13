@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\ProviderDeletedRecord;
 use App\Models\BookingRequest;
 use App\Models\ServiceRating;
+use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
 use File;
@@ -16,6 +19,175 @@ use Carbon\Carbon;
 
 class ProviderController extends Controller
 {
+    public function resubmit()
+    {
+        $user = User::with('provider')->find(auth()->id());
+        $provider = $user?->provider;
+
+        if (! $provider) {
+            abort(403, 'Provider account not found.');
+        }
+
+        if ($provider->application_status === 'accepted') {
+            return redirect()->route('provider.dashboard');
+        }
+
+        if ($provider->application_status !== 'declined') {
+            Auth::logout();
+
+            return redirect()->route('login')->with('flash_message', [
+                'title' => 'Application Under Review',
+                'message' => 'Your provider application is still under review.',
+                'type' => 'info',
+            ]);
+        }
+
+        if (empty($provider->resubmission_required_documents)) {
+            return redirect()->route('provider.declined');
+        }
+
+        return view('admin.provider-resubmit', compact('user', 'provider'));
+    }
+
+    public function declined()
+    {
+        $user = User::with('provider')->find(auth()->id());
+        $provider = $user?->provider;
+
+        if (! $provider) {
+            abort(403, 'Provider account not found.');
+        }
+
+        if ($provider->application_status === 'accepted') {
+            return redirect()->route('provider.dashboard');
+        }
+
+        if ($provider->application_status !== 'declined') {
+            Auth::logout();
+
+            return redirect()->route('login')->with('flash_message', [
+                'title' => 'Application Under Review',
+                'message' => 'Your provider application is still under review.',
+                'type' => 'info',
+            ]);
+        }
+
+        if (!empty($provider->resubmission_required_documents)) {
+            return redirect()->route('provider.resubmit');
+        }
+
+        return view('admin.provider-declined', compact('user', 'provider'));
+    }
+
+    public function deleteDeclinedRecords(Request $request)
+    {
+        $user = auth()->user();
+        $provider = $user?->provider;
+
+        if (! $user || ! $provider || $provider->application_status !== 'declined' || !empty($provider->resubmission_required_documents)) {
+            abort(403);
+        }
+
+        foreach ([$provider->resume_path, $provider->barangay_clearance_path] as $path) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+
+        $deletedRecord = ProviderDeletedRecord::create([
+            'provider_name' => trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? '')) ?: $user->name,
+            'provider_email' => $user->email,
+            'deleted_at' => now(),
+        ]);
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        $user->forceDelete();
+
+        AdminNotificationService::providerDeletedRecords($deletedRecord);
+
+        return redirect()->route('login')->with('flash_message', [
+            'title' => 'Records Deleted',
+            'message' => 'Your provider application records have been deleted.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function updateResubmission(Request $request)
+    {
+        $user = auth()->user();
+        $provider = $user?->provider;
+
+        if (! $provider || $provider->application_status !== 'declined') {
+            abort(403);
+        }
+
+        $requiredDocuments = $provider->resubmission_required_documents ?: ['resume', 'barangay_clearance'];
+
+        $rules = [
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'regex:/^09[0-9]{9}$/'],
+            'home_address' => ['required', 'string', 'max:255'],
+            'province' => ['required', 'string', 'max:255'],
+            'barangay' => ['nullable', 'string', 'max:255'],
+            'zipcode' => ['required', 'regex:/^\d{4}$/'],
+            'profession' => ['required', 'string', 'max:255'],
+            'year_exp' => ['required', 'integer', 'min:0'],
+            'resume' => [in_array('resume', $requiredDocuments, true) ? 'required' : 'nullable', 'file', 'mimes:pdf', 'max:5120'],
+            'barangay_clearance' => [in_array('barangay_clearance', $requiredDocuments, true) ? 'required' : 'nullable', 'file', 'mimes:pdf', 'max:5120'],
+        ];
+
+        $validated = $request->validate($rules, [
+            'phone_number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
+            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
+        ]);
+
+        if ($request->hasFile('resume')) {
+            $provider->resume_path = $request->file('resume')->store('provider-resumes', 'public');
+        }
+
+        if ($request->hasFile('barangay_clearance')) {
+            $provider->barangay_clearance_path = $request->file('barangay_clearance')->store('provider-barangay-clearances', 'public');
+        }
+
+        $provider->fill([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'phone_number' => $validated['phone_number'],
+            'home_address' => $validated['home_address'],
+            'province' => $validated['province'],
+            'barangay' => $validated['barangay'] ?? null,
+            'zipcode' => $validated['zipcode'],
+            'profession' => $validated['profession'],
+            'year_exp' => $validated['year_exp'],
+            'application_status' => 'pending',
+            'application_reviewed_at' => null,
+            'application_reviewed_by' => null,
+            'application_remarks' => null,
+            'resubmission_required_documents' => null,
+        ]);
+        $provider->save();
+
+        $user->update([
+            'name' => trim($validated['first_name'] . ' ' . $validated['last_name']),
+            'is_active' => 0,
+        ]);
+
+        AdminNotificationService::newProviderApplication($user);
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('flash_message', [
+            'title' => 'Application Resubmitted',
+            'message' => 'Your updated application was sent for admin review.',
+            'type' => 'success',
+        ]);
+    }
 
     public function dashboard(Request $request)
     {

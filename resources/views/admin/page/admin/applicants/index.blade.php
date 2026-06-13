@@ -208,7 +208,7 @@
 
         Swal.fire({
             title: 'Decline applicant?',
-            text: 'This provider will remain inactive and will not be able to login.',
+            text: 'This will decline the provider application.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, decline',

@@ -114,39 +114,46 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:provider')->group(function () {
 
         Route::redirect('/provider', '/provider/dashboard');
-        //Route::get('/provider/dashboard', function () {return view('admin.provdashboard');})->name('provider.dashboard');
-        Route::get('/provider/dashboard', [ProviderController::class, 'dashboard'])
-            ->name('provider.dashboard');
-        // Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
-        Route::get('/provider/bookings', [BookingRequestController::class, 'providerRequests'])->name('provider.bookings');
-        Route::get('/provider/booking-calendar', [ProviderController::class, 'bookingCalendar'])->name('provider.booking-calendar');
-        
-        
-        Route::get('/provider/service', [ServiceController::class, 'indexProvider'])->name('provider.service');
+        Route::get('/provider/declined', [ProviderController::class, 'declined'])->name('provider.declined');
+        Route::delete('/provider/declined/records', [ProviderController::class, 'deleteDeclinedRecords'])->name('provider.declined.records.delete');
+        Route::get('/provider/resubmit', [ProviderController::class, 'resubmit'])->name('provider.resubmit');
+        Route::post('/provider/resubmit', [ProviderController::class, 'updateResubmission'])->name('provider.resubmit.update');
 
-        // Provider Service Creation
-        Route::get('/provider/service/create', [ServiceController::class, 'create'])->name('create-service');
-        Route::post('/provider/service/store', [ServiceController::class, 'store'])->name('provider.service.store');
-        Route::get('/provider/service/edit/{id}', [ServiceController::class, 'edit'])->name('edit-service');
-        Route::put('/provider/service/update/{id}', [ServiceController::class, 'update'])->name('provider.service.update');
-        Route::delete('/provider/service/delete/{id}', [ServiceController::class, 'destroy'])->name('provider.service.delete');
-        
-        // Provider Comments Page
-        Route::get('/provider/service/{service}/reviews', [ProviderServiceReviewController::class, 'index'])->name('provider.service.reviews');
-        Route::post('/provider/service-rating/{rating}/toggle-visibility', [ProviderServiceReviewController::class, 'toggle'])->name('provider.service-rating.toggle-visibility');
+        Route::middleware('provider.accepted')->group(function () {
+            //Route::get('/provider/dashboard', function () {return view('admin.provdashboard');})->name('provider.dashboard');
+            Route::get('/provider/dashboard', [ProviderController::class, 'dashboard'])
+                ->name('provider.dashboard');
+            // Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
+            Route::get('/provider/bookings', [BookingRequestController::class, 'providerRequests'])->name('provider.bookings');
+            Route::get('/provider/booking-calendar', [ProviderController::class, 'bookingCalendar'])->name('provider.booking-calendar');
+            
+            
+            Route::get('/provider/service', [ServiceController::class, 'indexProvider'])->name('provider.service');
 
-        // Provider Setting
-        Route::post('/provider/setting/update', [ProviderController::class, 'updateSetting'])->name('provider.setting.update');
-        Route::get('/provider/setting', [ProviderController::class, 'setting'])->name('provider.setting');
+            // Provider Service Creation
+            Route::get('/provider/service/create', [ServiceController::class, 'create'])->name('create-service');
+            Route::post('/provider/service/store', [ServiceController::class, 'store'])->name('provider.service.store');
+            Route::get('/provider/service/edit/{id}', [ServiceController::class, 'edit'])->name('edit-service');
+            Route::put('/provider/service/update/{id}', [ServiceController::class, 'update'])->name('provider.service.update');
+            Route::delete('/provider/service/delete/{id}', [ServiceController::class, 'destroy'])->name('provider.service.delete');
+            
+            // Provider Comments Page
+            Route::get('/provider/service/{service}/reviews', [ProviderServiceReviewController::class, 'index'])->name('provider.service.reviews');
+            Route::post('/provider/service-rating/{rating}/toggle-visibility', [ProviderServiceReviewController::class, 'toggle'])->name('provider.service-rating.toggle-visibility');
 
-        // Provider Booking Actions
-        Route::post('/provider/booking-request/{id}/accept', [BookingRequestController::class, 'accept'])->name('provider.booking-request.accept');
-        Route::post('/provider/booking-request/{id}/decline', [BookingRequestController::class, 'decline'])->name('provider.booking-request.decline');
-        Route::post('/provider/booking-request/{id}/cancel', [BookingRequestController::class, 'cancel'])->name('provider.booking-request.cancel');
-        Route::post('/provider/booking-request/{id}/complete', [BookingRequestController::class, 'markComplete'])->name('provider.booking-request.complete');
+            // Provider Setting
+            Route::post('/provider/setting/update', [ProviderController::class, 'updateSetting'])->name('provider.setting.update');
+            Route::get('/provider/setting', [ProviderController::class, 'setting'])->name('provider.setting');
 
-        // Notification
-        Route::post('/provider/notifications/mark-read', [BookingRequestController::class, 'markProviderNotificationsRead'])->name('provider.notifications.mark-read');
+            // Provider Booking Actions
+            Route::post('/provider/booking-request/{id}/accept', [BookingRequestController::class, 'accept'])->name('provider.booking-request.accept');
+            Route::post('/provider/booking-request/{id}/decline', [BookingRequestController::class, 'decline'])->name('provider.booking-request.decline');
+            Route::post('/provider/booking-request/{id}/cancel', [BookingRequestController::class, 'cancel'])->name('provider.booking-request.cancel');
+            Route::post('/provider/booking-request/{id}/complete', [BookingRequestController::class, 'markComplete'])->name('provider.booking-request.complete');
+
+            // Notification
+            Route::post('/provider/notifications/mark-read', [BookingRequestController::class, 'markProviderNotificationsRead'])->name('provider.notifications.mark-read');
+        });
         
     });
 

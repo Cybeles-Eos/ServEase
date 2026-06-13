@@ -93,13 +93,11 @@ class AuthManagerController extends Controller
                 }
 
                 if ($provider->application_status === 'declined') {
-                    Auth::logout();
-                    $request->session()->invalidate();
-                    $request->session()->regenerateToken();
-
-                    throw ValidationException::withMessages([
-                        'email' => ['Your provider application has been declined.'],
-                    ]);
+                    return redirect()->route(
+                        !empty($provider->resubmission_required_documents)
+                            ? 'provider.resubmit'
+                            : 'provider.declined'
+                    );
                 }
 
                 /*

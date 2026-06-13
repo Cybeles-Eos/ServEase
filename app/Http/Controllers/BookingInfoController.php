@@ -22,6 +22,7 @@ class BookingInfoController extends Controller
             'number' => ['required', 'max:50'],
             'date' => ['nullable', 'date'],
             'time' => ['nullable'],
+            'notes' => ['nullable', 'string', 'max:200'],
             'service_id' => ['required', 'exists:tbl_services,id'],
         ]);
 
@@ -61,8 +62,8 @@ class BookingInfoController extends Controller
 
         if ($request->filled('date') && $request->filled('time') && !$serviceOwner->provider?->isAvailableAt($request->date, $request->time)) {
             return redirect()->back()->withInput()->with('flash_message', [
-                'title' => 'Schedule Unavailable',
-                'message' => 'The provider is not available at your selected date and time. Please choose another schedule.',
+                'title' => 'Provider Unavailable',
+                'message' => 'This provider is not available at the selected time. Please choose a time within their working hours.',
                 'type' => 'error',
             ]);
         }
@@ -94,6 +95,7 @@ class BookingInfoController extends Controller
             'number' => $request->number,
             'date' => $request->date,
             'time' => $request->time,
+            'notes' => $request->notes,
             'status' => 'PENDING',
         ]);
 

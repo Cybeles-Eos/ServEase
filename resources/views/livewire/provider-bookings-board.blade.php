@@ -67,6 +67,22 @@
                                         {{ $request->bookingInfo['address'] ?? '' }}
                                     </p>
                                 </div>
+
+                                @if(!empty(trim($request->bookingInfo['notes'] ?? '')))
+                                    <div style="min-width: 0;">
+                                        <p class="boxss-sd-bking-info-serv-head">Notes:</p>
+                                        @if(\Illuminate\Support\Str::length($request->bookingInfo['notes']) > 90)
+                                            <details style="font-size: 12px; color: #656565;">
+                                                <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
+                                                <p style="margin: 4px 0 0; line-height: 1.35;">{{ $request->bookingInfo['notes'] }}</p>
+                                            </details>
+                                        @else
+                                            <p class="boxss-sd-bking-label" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                {{ $request->bookingInfo['notes'] }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="boxss-sd-bking-foo">
@@ -217,6 +233,22 @@
                                 <p>Address:</p>
                                 <p>{{ $request->bookingInfo['address'] ?? '' }}</p>
                             </div>
+
+                            @if(!empty(trim($request->bookingInfo['notes'] ?? '')))
+                                <div style="min-width: 0;">
+                                    <p>Notes:</p>
+                                    @if(\Illuminate\Support\Str::length($request->bookingInfo['notes']) > 90)
+                                        <details style="font-size: 12px; color: #656565;">
+                                            <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
+                                            <p style="margin: 4px 0 0; line-height: 1.35;">{{ $request->bookingInfo['notes'] }}</p>
+                                        </details>
+                                    @else
+                                        <p style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                            {{ $request->bookingInfo['notes'] }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
 
                         <form action="{{ route('provider.booking-request.complete', $request->id) }}" method="POST" style="margin-top: 10px; width: 100%">

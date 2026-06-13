@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AdminNotification;
 use App\Models\BookingInfo;
 use App\Models\Provider;
+use App\Models\ProviderDeletedRecord;
 use App\Models\Service;
 use App\Models\ServiceRating;
 use App\Models\ServiceReport;
@@ -45,6 +46,16 @@ class AdminNotificationService
             'New Provider Application',
             "{$user->name} submitted a provider application for review.",
             route('admin.applicants.show', $provider)
+        );
+    }
+
+    public static function providerDeletedRecords(ProviderDeletedRecord $record): void
+    {
+        self::notify(
+            'provider_records_deleted',
+            'Provider Records Deleted',
+            "{$record->provider_name} ({$record->provider_email}) deleted their declined provider application records on " . $record->deleted_at->format('M d, Y h:i A') . ".",
+            route('admin.dashboard')
         );
     }
 

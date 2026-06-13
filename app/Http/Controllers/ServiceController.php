@@ -348,6 +348,7 @@ class ServiceController extends Controller
             'provider_area' => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
             'provider_availability' => $providerAvailabilityData['label'],
             'provider_availability_data' => $providerAvailabilityData,
+            'provider_is_available_now' => $service->provider?->isAvailableNow() ?? false,
             'provider_booked_dates' => $providerBookedDates,
             'provider_booked_slots' => $providerBookedSlots,
             'has_existing_booking' => $hasExistingBooking,

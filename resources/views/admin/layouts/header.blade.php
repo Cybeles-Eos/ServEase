@@ -20,6 +20,7 @@
                 'bookingInfo.customer',
             ])
             ->where('provider_id', $authUser->provider->id)
+            ->orderByRaw('provider_seen_at IS NULL DESC')
             ->latest()
             ->limit(10)
             ->get();
@@ -29,6 +30,7 @@
                 'customer',
             ])
             ->where('provider_id', $authUser->provider->id)
+            ->orderByRaw('provider_seen_at IS NULL DESC')
             ->latest()
             ->limit(10)
             ->get();
@@ -36,15 +38,20 @@
         $providerNotifications = $providerBookingNotifications
             ->map(fn ($notification) => [
                 'type' => 'booking',
+                'is_unread' => is_null($notification->provider_seen_at),
                 'created_at' => $notification->created_at,
                 'item' => $notification,
             ])
             ->concat($providerRatingNotifications->map(fn ($notification) => [
                 'type' => 'rating',
+                'is_unread' => is_null($notification->provider_seen_at),
                 'created_at' => $notification->created_at,
                 'item' => $notification,
             ]))
-            ->sortByDesc('created_at')
+            ->sortBy([
+                ['is_unread', 'desc'],
+                ['created_at', 'desc'],
+            ])
             ->take(10)
             ->values();
 
@@ -66,6 +73,7 @@
                 $query->where('customer_id', $authUser->customer->id);
             })
             ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->orderByRaw('customer_seen_at IS NULL DESC')
             ->latest()
             ->limit(10)
             ->get();
@@ -81,6 +89,7 @@
 
     if ($authUser && $authUser->role === 'admin') {
         $adminNotifications = AdminNotification::query()
+            ->orderByRaw('read_at IS NULL DESC')
             ->latest()
             ->limit(10)
             ->get();
@@ -132,7 +141,7 @@
                     </svg>
 
                     @if ($notificationBadgeCount > 0)
-                        <span class="header-notif-btn__badge" id="dashboardNotifBadge">
+                        <span class="header-notif-btn__badge" id="dashboardNotifBadge" data-notification-count="{{ $notificationBadgeCount }}">
                             {{ $notificationBadgeCount > 99 ? '99+' : $notificationBadgeCount }}
                         </span>
                     @endif
@@ -228,7 +237,7 @@
                 @endphp
 
                 @if ($notificationType === 'rating')
-                    <a href="{{ $service ? route('provider.service.reviews', $service) : route('provider.service') }}" data-notification-type="rating" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                    <a href="{{ $service ? route('provider.service.reviews', $service) : route('provider.service') }}" data-notification-id="{{ $notification->id }}" data-notification-type="rating" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                         <div class="provider-notification-modal__dot"></div>
 
                         <div class="provider-notification-modal__content">
@@ -250,7 +259,7 @@
                         </div>
                     </a>
                 @else
-                <a href="{{ route('provider.bookings') }}" data-notification-type="booking" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                <a href="{{ route('provider.bookings') }}" data-notification-id="{{ $notification->id }}" data-notification-type="booking" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                     <div class="provider-notification-modal__dot"></div>
 
                     <div class="provider-notification-modal__content">
@@ -348,7 +357,7 @@
                     };
                 @endphp
 
-                <a href="{{ route('customer.dashboard') }}" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                <a href="{{ route('customer.dashboard') }}" data-notification-id="{{ $notification->id }}" data-notification-type="booking" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                     <div class="provider-notification-modal__dot"></div>
 
                     <div class="provider-notification-modal__content">
@@ -412,6 +421,7 @@
         <div class="provider-notification-modal__tabs">
             <button type="button" class="is-active" data-notif-filter="all">Platform Activity</button>
             <button type="button" data-notif-filter="booking">Booking Requests</button>
+            <button type="button" data-notif-filter="deleted-records">Deleted Records</button>
         </div>
 
         <div class="provider-notification-modal__body">
@@ -420,7 +430,7 @@
                     $isUnread = is_null($notification->read_at);
 
                     $statusClass = match ($notification->type) {
-                        'new_provider_application', 'new_booking', 'new_report' => 'provider-notification-modal__status--pending',
+                        'new_provider_application', 'new_booking', 'new_report', 'provider_records_deleted' => 'provider-notification-modal__status--pending',
                         'new_rating' => 'provider-notification-modal__status--ongoing',
                         'new_service', 'new_customer', 'admin_user_created' => 'provider-notification-modal__status--accepted',
                         default => 'provider-notification-modal__status--pending',
@@ -429,7 +439,12 @@
 
                 <a
                     href="{{ $notification->link ?: route('admin.dashboard') }}"
-                    data-notification-type="{{ $notification->type === 'new_booking' ? 'booking' : 'platform' }}"
+                    data-notification-id="{{ $notification->id }}"
+                    data-notification-type="{{ match ($notification->type) {
+                        'new_booking' => 'booking',
+                        'provider_records_deleted' => 'deleted-records',
+                        default => 'platform',
+                    } }}"
                     class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}"
                 >
                     <div class="provider-notification-modal__dot"></div>
@@ -542,6 +557,95 @@
                 const shouldShow = filter === 'all' || itemType === filter;
                 $(this).toggleClass('is-hidden', !shouldShow);
             });
+        });
+
+        function notificationBadgeValue() {
+            const $badge = $('#dashboardNotifBadge');
+
+            if (! $badge.length) {
+                return 0;
+            }
+
+            return parseInt($badge.data('notification-count'), 10) || 0;
+        }
+
+        function updateNotificationReadUi($item, markAllButtonSelector) {
+            if (! $item.hasClass('is-unread')) {
+                return;
+            }
+
+            $item.removeClass('is-unread');
+
+            const unreadCount = Math.max(notificationBadgeValue() - 1, 0);
+
+            if (unreadCount > 0) {
+                $('#dashboardNotifBadge')
+                    .data('notification-count', unreadCount)
+                    .text(unreadCount > 99 ? '99+' : unreadCount);
+            } else {
+                $('#dashboardNotifBadge').remove();
+                $(markAllButtonSelector).remove();
+            }
+        }
+
+        function markNotificationRead($item, url, markAllButtonSelector, onSuccess) {
+            const notificationId = $item.data('notification-id');
+
+            if (! $item.hasClass('is-unread') || ! notificationId || url === '#') {
+                window.location.href = $item.attr('href');
+                return;
+            }
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    notification_id: notificationId,
+                    notification_type: $item.data('notification-type')
+                },
+                success: function () {
+                    updateNotificationReadUi($item, markAllButtonSelector);
+
+                    if (typeof onSuccess === 'function') {
+                        onSuccess($item);
+                    }
+                },
+                complete: function () {
+
+                    window.location.href = $item.attr('href');
+                }
+            });
+        }
+
+        $('#providerNotificationModal .provider-notification-modal__item').on('click', function (e) {
+            e.preventDefault();
+            markNotificationRead(
+                $(this),
+                "{{ Route::has('provider.notifications.mark-read') ? route('provider.notifications.mark-read') : '#' }}",
+                '#markProviderNotifRead'
+            );
+        });
+
+        $('#customerNotificationModal .provider-notification-modal__item').on('click', function (e) {
+            e.preventDefault();
+            markNotificationRead(
+                $(this),
+                "{{ Route::has('customer.notifications.mark-read') ? route('customer.notifications.mark-read') : '#' }}",
+                '#markCustomerNotifRead'
+            );
+        });
+
+        $('#adminNotificationModal .provider-notification-modal__item').on('click', function (e) {
+            e.preventDefault();
+            markNotificationRead(
+                $(this),
+                "{{ Route::has('admin.notifications.mark-read') ? route('admin.notifications.mark-read') : '#' }}",
+                '#markAdminNotifRead',
+                function ($item) {
+                    $item.find('.provider-notification-modal__status').text('Read');
+                }
+            );
         });
 
         $('#markProviderNotifRead').on('click', function (e) {

@@ -21,6 +21,7 @@ class BookingInfo extends Model
         'number',
         'date',
         'time',
+        'notes',
         'status',
     ];
 

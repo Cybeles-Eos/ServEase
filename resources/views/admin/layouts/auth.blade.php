@@ -75,6 +75,8 @@
         'provider/service/create', 
         'provider/service/edit/*', 
         'provider/setting', 
+        'provider/declined',
+        'provider/resubmit', 
         'customer/setting',
         'admin/applicants',
         'admin/users',

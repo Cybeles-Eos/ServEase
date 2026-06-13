@@ -153,6 +153,15 @@
                         background: #FECACA;
                     }
                 }
+
+                &--text {
+                    width: auto;
+                    min-height: 30px;
+                    padding: 0 10px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    white-space: nowrap;
+                }
             }
         }
 
@@ -354,4 +363,29 @@
             width: 100%;
         }
     }
+}
+
+.page-admin-applicants .resume-actions form {
+    margin: 0;
+}
+
+.page-admin-applicants .applicant-action--text {
+    width: auto;
+    min-height: 30px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FEE2E2;
+    color: #991B1B;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.page-admin-applicants .applicant-action--text:hover {
+    background: #FECACA;
 }

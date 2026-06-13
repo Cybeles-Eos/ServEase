@@ -648,16 +648,34 @@
 
 .provider-notification-modal__tabs {
     padding: 0 16px;
-    height: 42px;
+    height: 46px;
     display: flex;
     align-items: center;
     gap: 18px;
     border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #c9ced6 transparent;
+}
+
+.provider-notification-modal__tabs::-webkit-scrollbar {
+    height: 3px;
+}
+
+.provider-notification-modal__tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.provider-notification-modal__tabs::-webkit-scrollbar-thumb {
+    background: #c9ced6;
+    border-radius: 999px;
 }
 
 .provider-notification-modal__tabs span,
 .provider-notification-modal__tabs button {
-    height: 42px;
+    flex: 0 0 auto;
+    height: 43px;
     display: inline-flex;
     align-items: center;
     border: 0;
@@ -666,6 +684,8 @@
     color: #667085;
     font-size: 12px;
     font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
     cursor: pointer;
 }
 

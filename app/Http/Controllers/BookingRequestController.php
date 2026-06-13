@@ -324,12 +324,36 @@ class BookingRequestController extends Controller
         ]);
     }
 
-    public function markProviderNotificationsRead()
+    public function markProviderNotificationsRead(Request $request)
     {
         $user = auth()->user();
 
         if (! $user || $user->role !== 'provider' || ! $user->provider) {
             abort(403);
+        }
+
+        if ($request->filled('notification_id')) {
+            if ($request->input('notification_type') === 'rating') {
+                \App\Models\ServiceRating::query()
+                    ->where('id', $request->input('notification_id'))
+                    ->where('provider_id', $user->provider->id)
+                    ->whereNull('provider_seen_at')
+                    ->update([
+                        'provider_seen_at' => now(),
+                    ]);
+            } else {
+                \App\Models\BookingRequest::query()
+                    ->where('id', $request->input('notification_id'))
+                    ->where('provider_id', $user->provider->id)
+                    ->whereNull('provider_seen_at')
+                    ->update([
+                        'provider_seen_at' => now(),
+                    ]);
+            }
+
+            return response()->json([
+                'success' => true,
+            ]);
         }
 
         \App\Models\BookingRequest::query()
@@ -397,12 +421,29 @@ class BookingRequestController extends Controller
             'type' => 'warning'
         ]);
     }
-    public function markCustomerNotificationsRead()
+    public function markCustomerNotificationsRead(Request $request)
     {
         $customer = auth()->user()->customer ?? null;
 
         if (! $customer) {
             abort(403);
+        }
+
+        if ($request->filled('notification_id')) {
+            BookingRequest::query()
+                ->where('id', $request->input('notification_id'))
+                ->whereHas('bookingInfo', function ($query) use ($customer) {
+                    $query->where('customer_id', $customer->id);
+                })
+                ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+                ->whereNull('customer_seen_at')
+                ->update([
+                    'customer_seen_at' => now(),
+                ]);
+
+            return response()->json([
+                'success' => true,
+            ]);
         }
 
         BookingRequest::query()

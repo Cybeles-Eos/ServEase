@@ -209,13 +209,20 @@
                                     $lname = explode(' ', $service->provider_lname)[0] ?? '';
                                     $profileImage = $service->provider_profile ?? null;
                                 @endphp
-                                @if ($profileImage)
-                                    <img src="{{asset($profileImage)}}" alt="user_profile">
-                                @else
-                                    <div style="background-color: #FDB932; display: block; object-position: center; object-fit: cover; border-radius: 12px; min-width: 50px; min-height: 50px;">
-                                        <p style="color: white; margin: 0 !important; margin-top: 0px !important; font-size: 17px; letter-spacing: 3%; line-height: 100%; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">{{ strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1)) }}</p>
-                                    </div>
-                                @endif
+                                <div style="position: relative; width: 50px; height: 50px; min-width: 50px; min-height: 50px; padding-top: 0 !important; flex: 0 0 50px;">
+                                    @if ($profileImage)
+                                        <img src="{{asset($profileImage)}}" alt="user_profile">
+                                    @else
+                                        <div style="background-color: #FDB932; display: flex; align-items: center; justify-content: center; object-position: center; object-fit: cover; border-radius: 12px; width: 50px; height: 50px; min-width: 50px; min-height: 50px; padding-top: 0 !important;">
+                                            <p style="color: white; margin: 0 !important; font-size: 17px; letter-spacing: 0; line-height: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">{{ strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1)) }}</p>
+                                        </div>
+                                    @endif
+                                    <span
+                                        title="{{ $service->provider_is_available_now ? 'Available now' : 'Currently unavailable' }}"
+                                        aria-label="{{ $service->provider_is_available_now ? 'Provider is available now' : 'Provider is currently unavailable' }}"
+                                        style="position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 999px; border: 2px solid #fff; background: {{ $service->provider_is_available_now ? '#22C55E' : '#EF4444' }}; box-shadow: 0 1px 4px rgba(0,0,0,.18);"
+                                    ></span>
+                                </div>
                                 {{-- <img src="{{ asset('images/user.png') }}" alt=""> --}}
                                 <div>
                                     <h4>{{ $service->provider_name }}</h4>
@@ -359,6 +366,10 @@
                             <input type="text" name="number" value="{{ $activeUserPhone }}" required placeholder="Enter your last name...">
                         </div>
                     </div>
+                    <div class="sbf-field-group booking-customer-detail">
+                        <label for="notes">Notes</label>
+                        <textarea name="notes" id="notes" maxlength="200" rows="3" placeholder="Optional note for the provider...">{{ old('notes') }}</textarea>
+                    </div>
                     <div class="booking-schedule-picker">
                         <div class="booking-schedule-picker__head">
                             <div>
@@ -499,7 +510,7 @@
                 return true;
             }
 
-            return timeValue >= providerAvailability.start_time && timeValue <= providerAvailability.end_time;
+            return timeValue >= providerAvailability.start_time && timeValue < providerAvailability.end_time;
         }
 
         function updateScheduleLabel() {
@@ -653,8 +664,8 @@
             if (!isProviderAvailableDate(selectedDateObject) || !isProviderAvailableTime(selectedTime)) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Schedule Unavailable',
-                    text: 'The provider is not available at your selected date and time. Please choose another schedule.',
+                    title: 'Provider Unavailable',
+                    text: 'This provider is not available at the selected time. Please choose a time within their working hours.',
                     confirmButtonColor: '#FDB932'
                 });
                 return;

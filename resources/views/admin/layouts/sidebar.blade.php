@@ -8,6 +8,35 @@
             {{-- Provider Links --}}
             @auth
                 @if(auth()->user()->isProvider())
+                    @if(auth()->user()->provider?->application_status === 'declined')
+                    @if(!empty(auth()->user()->provider?->resubmission_required_documents))
+                    <li>
+                        <a href="{{ route('provider.resubmit') }}" class="{{ Request::is('provider/resubmit') ? 'active' : '' }}">
+                            <div>
+                            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 12.75V14.25H6L14.25 6L12.75 4.5L4.5 12.75Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                <path d="M11.625 5.625L12.75 4.5C13.1642 4.08579 13.8358 4.08579 14.25 4.5C14.6642 4.91421 14.6642 5.58579 14.25 6L13.125 7.125" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M3.75 15.75H14.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            </div>
+                            Resubmit
+                        </a>
+                    </li>
+                    @else
+                    <li>
+                        <a href="{{ route('provider.declined') }}" class="{{ Request::is('provider/declined') ? 'active' : '' }}">
+                            <div>
+                            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 2.25L16.125 14.625H1.875L9 2.25Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                <path d="M9 6.75V10.125" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M9 12.75H9.0075" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                            </div>
+                            Declined
+                        </a>
+                    </li>
+                    @endif
+                    @else
                     <li>
                         <a href="{{url('/provider/dashboard')}}" class="{{ Request::is('provider/dashboard') ? 'active' : '' }}">
                             <div>
@@ -77,6 +106,7 @@
                             Setting
                         </a>
                     </li>
+                    @endif
                 @endif
             @endauth
 

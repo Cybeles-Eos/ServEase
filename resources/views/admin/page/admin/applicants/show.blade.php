@@ -504,6 +504,14 @@
                     Open in new tab
                 </a>
             @endif
+            @if($provider->application_status !== 'declined')
+                <form method="POST" action="{{ route('admin.applicants.decline', $provider->id) }}" class="applicant-decline-form applicant-resubmit-form">
+                    @csrf
+                    <input type="hidden" name="remarks" value="Please resubmit your barangay clearance.">
+                    <input type="hidden" name="resubmission_required_documents[]" value="barangay_clearance">
+                    <button type="submit" class="applicant-action applicant-action--decline applicant-action--text">Request resubmit</button>
+                </form>
+            @endif
         </div>
 
         @if($barangayClearanceUrl)
@@ -525,6 +533,14 @@
                 <a href="{{ $resumeUrl }}" target="_blank">
                     Open in new tab
                 </a>
+            @endif
+            @if($provider->application_status !== 'declined')
+                <form method="POST" action="{{ route('admin.applicants.decline', $provider->id) }}" class="applicant-decline-form applicant-resubmit-form">
+                    @csrf
+                    <input type="hidden" name="remarks" value="Please resubmit your resume.">
+                    <input type="hidden" name="resubmission_required_documents[]" value="resume">
+                    <button type="submit" class="applicant-action applicant-action--decline applicant-action--text">Request resubmit</button>
+                </form>
             @endif
         </div>
 
@@ -572,12 +588,16 @@
 
         const form = this;
 
+        const isResubmitRequest = form.classList.contains('applicant-resubmit-form');
+
         Swal.fire({
-            title: 'Decline applicant?',
-            text: 'This provider will remain inactive and will not be able to login.',
+            title: isResubmitRequest ? 'Request resubmission?' : 'Decline applicant?',
+            text: isResubmitRequest
+                ? 'This will decline the current application and ask the provider to upload the selected document again.'
+                : 'This will decline the provider application.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, decline',
+            confirmButtonText: isResubmitRequest ? 'Request resubmit' : 'Yes, decline',
             cancelButtonText: 'Cancel',
             confirmButtonColor: '#DF4545',
             cancelButtonColor: '#6B7280',

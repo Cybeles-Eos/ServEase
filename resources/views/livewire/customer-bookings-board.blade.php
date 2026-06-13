@@ -63,6 +63,22 @@
                                         </span>
                                     </p>
                                 </div>
+
+                                @if(!empty(trim($ongoingBookings->notes ?? '')))
+                                    <div class="cdrcc-ordbox-d-l--sched" style="min-width: 0;">
+                                        <p class="cdrcc-ordbox-d-l--sched__label">Notes:</p>
+                                        @if(\Illuminate\Support\Str::length($ongoingBookings->notes) > 90)
+                                            <details style="font-size: 12px; color: #656565;">
+                                                <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
+                                                <p style="margin: 4px 0 0; line-height: 1.35;">{{ $ongoingBookings->notes }}</p>
+                                            </details>
+                                        @else
+                                            <p class="cdrcc-ordbox-d-l--sched__txt" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                {{ $ongoingBookings->notes }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="cdrcc-ordbox-d-r">
@@ -250,6 +266,22 @@
                                     </span>
                                 </p>
                             </div>
+
+                            @if(!empty(trim($booking->notes ?? '')))
+                                <div class="cdrcc-ordbox-d-l--sched" style="min-width: 0;">
+                                    <p class="cdrcc-ordbox-d-l--sched__label">Notes:</p>
+                                    @if(\Illuminate\Support\Str::length($booking->notes) > 90)
+                                        <details style="font-size: 12px; color: #656565;">
+                                            <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
+                                            <p style="margin: 4px 0 0; line-height: 1.35;">{{ $booking->notes }}</p>
+                                        </details>
+                                    @else
+                                        <p class="cdrcc-ordbox-d-l--sched__txt" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                            {{ $booking->notes }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
 
                         <div class="cdrcc-ordbox-d-r">

@@ -32,10 +32,12 @@ class Provider extends Model
         'application_reviewed_at',
         'application_reviewed_by',
         'application_remarks',
+        'resubmission_required_documents',
     ];
 
     protected $casts = [
         'availability_days' => 'array',
+        'resubmission_required_documents' => 'array',
     ];
 
     public const AVAILABILITY_DAYS = [
@@ -121,7 +123,23 @@ class Provider extends Model
         $startTime = $this->availabilityStartTime();
         $endTime = $this->availabilityEndTime();
 
-        return $requestedTime >= $startTime && $requestedTime <= $endTime;
+        return $requestedTime >= $startTime && $requestedTime < $endTime;
+    }
+
+    public function isAvailableNow(): bool
+    {
+        return $this->isAvailableAt(
+            now(config('app.timezone'))->toDateString(),
+            now(config('app.timezone'))->format('H:i')
+        );
+    }
+
+    public function isWithinWorkingHoursNow(): bool
+    {
+        $currentTime = now(config('app.timezone'))->format('H:i');
+
+        return $currentTime >= $this->availabilityStartTime()
+            && $currentTime < $this->availabilityEndTime();
     }
 
     public function accountHealth(): array

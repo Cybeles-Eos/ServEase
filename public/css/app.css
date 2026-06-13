@@ -3346,16 +3346,24 @@ h4 span {
   color: #f60000;
   margin-top: 3px;
 }
-.page--services-detail .booking-modal .booking-con-main input {
+.page--services-detail .booking-modal .booking-con-main input,
+.page--services-detail .booking-modal .booking-con-main textarea {
   width: 100% !important;
-  height: 43px;
   border-radius: 6px;
   border: 1px solid #DADADA;
   padding: 5px 13px;
   font-size: 14px;
 }
-.page--services-detail .booking-modal .booking-con-main input::placeholder {
+.page--services-detail .booking-modal .booking-con-main input::placeholder,
+.page--services-detail .booking-modal .booking-con-main textarea::placeholder {
   color: rgba(23, 21, 21, 0.2392156863);
+}
+.page--services-detail .booking-modal .booking-con-main input {
+  height: 43px;
+}
+.page--services-detail .booking-modal .booking-con-main textarea {
+  min-height: 96px;
+  resize: none;
 }
 .page--services-detail .booking-modal .booking-con-main button {
   margin-top: 1rem;
@@ -5307,13 +5315,13 @@ h4 span {
 }
 .provider-register__main .provider-register-main-m .provreg-mm-con--fields .file-field .file-input-wrapper .file-name {
   font-size: 13px;
-  color: #D9D9D9;
+  color: #171515;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .provider-register__main .provider-register-main-m .provreg-mm-con--fields .file-field .file-input-wrapper .file-name::placeholder {
-  color: #D9D9D9;
+  color: #171515;
   user-select: none !important;
 }
 .provider-register__main .provider-register-main-m .provreg-mm-con--fields button {
@@ -6064,6 +6072,14 @@ h4 span {
 .page-admin-applicants .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act .applicant-action--decline:hover {
   background: #FECACA;
 }
+.page-admin-applicants .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody .prvstble-mctb-act .applicant-action--text {
+  width: auto;
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 .page-admin-applicants .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody:nth-child(even) {
   background-color: #F9F9F9;
 }
@@ -6085,6 +6101,28 @@ h4 span {
   width: 100%;
   background-color: #F5F7FA;
   padding: 15px 15px 25px;
+}
+.page-admin-applicants .resume-actions form {
+  margin: 0;
+}
+.page-admin-applicants .applicant-action--text {
+  width: auto;
+  min-height: 30px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #FEE2E2;
+  color: #991B1B;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.page-admin-applicants .applicant-action--text:hover {
+  background: #FECACA;
 }
 .page-admin-applicants__table-head {
   display: flex;
@@ -7232,16 +7270,34 @@ h4 span {
 
 .provider-notification-modal__tabs {
   padding: 0 16px;
-  height: 42px;
+  height: 46px;
   display: flex;
   align-items: center;
   gap: 18px;
   border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #c9ced6 transparent;
+}
+
+.provider-notification-modal__tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.provider-notification-modal__tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.provider-notification-modal__tabs::-webkit-scrollbar-thumb {
+  background: #c9ced6;
+  border-radius: 999px;
 }
 
 .provider-notification-modal__tabs span,
 .provider-notification-modal__tabs button {
-  height: 42px;
+  flex: 0 0 auto;
+  height: 43px;
   display: inline-flex;
   align-items: center;
   border: 0;
@@ -7250,6 +7306,8 @@ h4 span {
   color: #667085;
   font-size: 12px;
   font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
 }
 

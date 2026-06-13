@@ -142,6 +142,22 @@
                                     {{ $bookingInfo?->address ?: 'No address provided' }}
                                 </li>
                             </ul>
+
+                            @if(!empty(trim($bookingInfo?->notes ?? '')))
+                                <div style="margin-top: 8px; font-size: 12px; color: #656565; min-width: 0;">
+                                    <strong style="display: block; color: #202020; margin-bottom: 3px;">Notes:</strong>
+                                    @if(\Illuminate\Support\Str::length($bookingInfo->notes) > 90)
+                                        <details>
+                                            <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
+                                            <p style="margin: 4px 0 0; line-height: 1.35;">{{ $bookingInfo->notes }}</p>
+                                        </details>
+                                    @else
+                                        <p style="margin: 0; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                            {{ $bookingInfo->notes }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
                         </article>
                     @empty
                         <div class="provider-calendar__empty">

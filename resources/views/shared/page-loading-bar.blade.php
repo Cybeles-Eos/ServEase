@@ -98,36 +98,39 @@
             }, 260);
         }
 
-        function shouldIgnoreLink(link, event) {
-            var rawHref = link.getAttribute('href');
+        function shouldShowForForm(form) {
+            var method = (form.getAttribute('method') || 'get').toLowerCase();
 
-            if (!rawHref || rawHref.charAt(0) === '#' || rawHref.indexOf('javascript:') === 0) {
-                return true;
+            if (method !== 'post') {
+                return false;
             }
 
-            if (link.hasAttribute('download') || link.target && link.target !== '_self') {
-                return true;
-            }
-
-            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+            if (form.hasAttribute('data-page-loading-form')) {
                 return true;
             }
 
             var url;
 
             try {
-                url = new URL(link.href, window.location.href);
+                url = new URL(form.getAttribute('action') || window.location.href, window.location.href);
             } catch (error) {
-                return true;
+                return false;
             }
 
             if (url.origin !== window.location.origin) {
-                return true;
+                return false;
             }
 
-            return url.pathname === window.location.pathname
-                && url.search === window.location.search
-                && (url.hash !== '' || url.href === window.location.href);
+            return [
+                '/login',
+                '/register',
+                '/provider-signup-c',
+                '/provider/service/store',
+                '/provider/setting/update',
+                '/customer/setting/update',
+                '/provider/resubmit'
+            ].indexOf(url.pathname) !== -1
+                || /^\/provider\/service\/update\/[^/]+$/.test(url.pathname);
         }
 
         window.ServeasePageLoader = {
@@ -137,33 +140,14 @@
             reset: reset
         };
 
-        document.addEventListener('click', function (event) {
-            var link = event.target.closest ? event.target.closest('a[href]') : null;
-            var submitter = event.target.closest ? event.target.closest('button[type="submit"], input[type="submit"], button:not([type])') : null;
-
-            if (!link || event.defaultPrevented || shouldIgnoreLink(link, event)) {
-                if (!submitter || event.defaultPrevented) {
-                    return;
-                }
-
-                show();
-
-                window.setTimeout(function () {
-                    if (activeRequests === 0 && document.visibilityState === 'visible') {
-                        finish();
-                    }
-                }, 900);
-
-                return;
-            }
-
-            show();
-        });
-
         document.addEventListener('submit', function (event) {
             var form = event.target;
 
             if (!form || event.defaultPrevented || form.target && form.target !== '_self') {
+                return;
+            }
+
+            if (!shouldShowForForm(form)) {
                 return;
             }
 
@@ -177,28 +161,6 @@
 
         document.addEventListener('invalid', reset, true);
 
-        if (window.fetch) {
-            var originalFetch = window.fetch;
-
-            window.fetch = function () {
-                start();
-
-                return originalFetch.apply(this, arguments).finally(function () {
-                    finish();
-                });
-            };
-        }
-
-        if (window.XMLHttpRequest) {
-            var originalSend = window.XMLHttpRequest.prototype.send;
-
-            window.XMLHttpRequest.prototype.send = function () {
-                start();
-                this.addEventListener('loadend', finish, { once: true });
-                return originalSend.apply(this, arguments);
-            };
-        }
-
         window.addEventListener('beforeunload', function () {
             if (progress > 0 && progress < 95) {
                 setProgress(95);
@@ -209,38 +171,5 @@
             reset();
         });
 
-        document.addEventListener('livewire:load', function () {
-            if (!window.Livewire || !window.Livewire.hook) {
-                return;
-            }
-
-            try {
-                window.Livewire.hook('message.sent', start);
-                window.Livewire.hook('message.processed', finish);
-                window.Livewire.hook('message.failed', finish);
-            } catch (error) {
-                reset();
-            }
-        });
-
-        document.addEventListener('livewire:init', function () {
-            if (!window.Livewire || !window.Livewire.hook) {
-                return;
-            }
-
-            try {
-                window.Livewire.hook('request', function (payload) {
-                    start();
-
-                    if (payload && typeof payload.respond === 'function') {
-                        payload.respond(finish);
-                    } else if (payload && typeof payload.succeed === 'function') {
-                        payload.succeed(finish);
-                    }
-                });
-            } catch (error) {
-                reset();
-            }
-        });
     })();
 </script>

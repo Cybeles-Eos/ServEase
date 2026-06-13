@@ -596,6 +596,8 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'remarks' => ['nullable', 'string', 'max:1000'],
+            'resubmission_required_documents' => ['nullable', 'array'],
+            'resubmission_required_documents.*' => ['in:resume,barangay_clearance'],
         ]);
 
         $provider->update([
@@ -603,11 +605,12 @@ class AdminController extends Controller
             'application_reviewed_at' => now(),
             'application_reviewed_by' => auth()->id(),
             'application_remarks' => $validated['remarks'] ?? null,
+            'resubmission_required_documents' => $validated['resubmission_required_documents'] ?? null,
         ]);
 
         if ($provider->user) {
             $provider->user->update([
-                'is_active' => 0,
+                'is_active' => 1,
             ]);
         }
 
@@ -686,12 +689,25 @@ class AdminController extends Controller
         ]);
     }
 
-    public function markAdminNotificationsRead()
+    public function markAdminNotificationsRead(Request $request)
     {
         $user = auth()->user();
 
         if (! $user || ! $user->isAdmin()) {
             abort(403);
+        }
+
+        if ($request->filled('notification_id')) {
+            AdminNotification::query()
+                ->where('id', $request->input('notification_id'))
+                ->whereNull('read_at')
+                ->update([
+                    'read_at' => now(),
+                ]);
+
+            return response()->json([
+                'message' => 'Notification marked as read.',
+            ]);
         }
 
         AdminNotification::query()

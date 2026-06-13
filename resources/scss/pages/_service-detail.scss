@@ -559,9 +559,9 @@
                     margin-top: 3px;
                 }
             }
-            input{
+            input,
+            textarea{
                 width: 100% !important;
-                height: 43px;
                 border-radius: 6px;
                 border: 1px solid #DADADA;
                 padding: 5px 13px;
@@ -570,6 +570,13 @@
                 &::placeholder{
                     color: #1715153d;
                 }
+            }
+            input{
+                height: 43px;
+            }
+            textarea{
+                min-height: 96px;
+                resize: none;
             }
             button{
                 margin-top: 1rem;
@@ -841,8 +848,6 @@
 
     }
 }
-
-
 
 
 
