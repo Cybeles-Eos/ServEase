@@ -24,7 +24,7 @@
         </section>
         <section class="section--about m-width m-padding">  
             <div class="section--about__img">
-                <img src="{{asset('images/abt-2.png')}}" alt="about-img">
+                <img src="{{asset('images/abt-2.webp')}}" alt="about-img">
             </div>
             <div class="section--about__detail">
                 <p class="section--about__detail--pret">Why Choose Brgy BATAsan for local services</p>
@@ -61,7 +61,7 @@
                     </div>
                 </div>  
                 <div class="sec-rm-right">
-                    <img src="{{asset('images/reg-lap.png')}}" alt="laptop">
+                    <img src="{{asset('images/reg-lap.webp')}}" alt="laptop">
                 </div>
             </div>
         </section>
@@ -147,7 +147,7 @@
         </section>
         <section class="section--closing m-width m-padding">
             <div class="section--closing__img">
-                <img src="{{asset('images/closing-1.png')}}" alt="closing-img">
+                <img src="{{asset('images/closing-1.webp')}}" alt="closing-img">
             </div>
             <div class="section--closing__detail">
                 <h2>Your Trusted Partner for Local Services</h2>

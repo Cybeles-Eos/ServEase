@@ -139,7 +139,7 @@
                                 </div>
 
                                 @error('resume')
-                                    <small style="align-self: flex-end">{{ $message }}</small> 
+                                    <small style="align-self: flex-end; color: red">{{ $message }}</small> 
                                 @enderror
                             </div>
                             <div class="file-field">
@@ -156,12 +156,12 @@
                                 </div>
 
                                 @error('barangay_clearance')
-                                    <small style="align-self: flex-end">{{ $message }}</small> 
+                                    <small style="align-self: flex-end; color: red">{{ $message }}</small> 
                                 @enderror
                             </div>
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
-                                    <label for="name">Professional Details <span>*</span></label>
+                                    <label for="name">Expertise <span>*</span></label>
                                     <input type="text" placeholder="" name="profession" value="{{ old('profession') }}" required autocomplete="off">
                                     @error('profession') <small>{{ $message }}</small> @enderror
                                 </div>

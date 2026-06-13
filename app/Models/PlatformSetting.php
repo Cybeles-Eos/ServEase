@@ -24,7 +24,7 @@ class PlatformSetting extends Model
         return static::query()->firstOrCreate([], [
             'platform_name' => 'ServEase',
             'platform_tagline' => 'Service help with ease and convenience.',
-            'service_area' => 'Barangay Batasan Hills, Quezon City',
+            'service_area' => 'Burgos Barangay Hall Rodriguez, Rizal',
             'support_hours' => 'Mon-Sat, 8:00 AM - 5:00 PM',
         ]);
     }

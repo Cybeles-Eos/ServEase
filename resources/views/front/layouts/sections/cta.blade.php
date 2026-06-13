@@ -1,7 +1,7 @@
 <section class="global-cta">
     @php
         $platform = getPlatformSettings();
-        $serviceArea = $platform->service_area ?: 'Barangay Batasan Hills, Quezon City';
+        $serviceArea = $platform->service_area ?: 'Burgos Barangay Hall Rodriguez, Rizal';
     @endphp
 
     <div class="global-cta__main">

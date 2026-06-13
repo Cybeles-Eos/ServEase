@@ -7,7 +7,7 @@
         };
         $platformName = $platform->platform_name ?: 'ServEase';
         $tagline = $platform->platform_tagline ?: 'Service help with ease and convenience.';
-        $serviceArea = $platform->service_area ?: 'Barangay Batasan Hills, Quezon City';
+        $serviceArea = $platform->service_area ?: 'Burgos Barangay Hall Rodriguez, Rizal';
         $supportHours = $cleanSupportHours($platform->support_hours) ?: 'Mon-Sat, 8:00 AM - 5:00 PM';
         $privacyUrl = $platform->privacy_policy_url ?: route('privacy.policy');
         $termsUrl = $platform->terms_url ?: route('terms.conditions');

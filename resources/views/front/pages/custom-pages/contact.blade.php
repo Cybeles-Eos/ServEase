@@ -9,7 +9,7 @@
         $platformName = $platform->platform_name ?: 'ServEase';
         $supportEmail = $platform->platform_email ?: 'support@servease.com';
         $phoneNumber = $platform->phone_number ?: '09XXXXXXXXX';
-        $officeAddress = $platform->office_address ?: 'Barangay Batasan Hills, Quezon City';
+        $officeAddress = $platform->office_address ?: 'Burgos Barangay Hall Rodriguez, Rizal';
         $supportHours = preg_replace('/-{2,}/', '-', preg_replace('/[^\x20-\x7E]/', '-', (string) $platform->support_hours)) ?: 'Mon-Sat, 8:00 AM - 5:00 PM';
     @endphp
 

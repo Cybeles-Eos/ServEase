@@ -56,7 +56,7 @@
                 </form>
             </div>
             <div class="provider-login-main__image">
-                <img src="{{asset('images/provider-auth-img.png')}}" alt="">
+                <img src="{{asset('images/provider-auth-img.webp')}}" alt="">
             </div>
         </section>
     </main>

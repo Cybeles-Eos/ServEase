@@ -256,7 +256,7 @@
                             id="office_address"
                             name="office_address"
                             rows="3"
-                            placeholder="Barangay Batasan Hills, Quezon City"
+                            placeholder="Burgos Barangay Hall Rodriguez, Rizal"
                         >{{ old('office_address', $platformSettings->office_address) }}</textarea>
                         @error('office_address')
                             <small class="mct-form-error">{{ $message }}</small>
@@ -312,7 +312,7 @@
                             id="service_area"
                             name="service_area"
                             value="{{ old('service_area', $platformSettings->service_area) }}"
-                            placeholder="Barangay Batasan Hills, Quezon City"
+                            placeholder="Burgos Barangay Hall Rodriguez, Rizal"
                         >
                         @error('service_area')
                             <small class="mct-form-error">{{ $message }}</small>

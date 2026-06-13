@@ -43,7 +43,7 @@ class ServiceTableSeeder extends Seeder
             ',
             'specialization' => 'Pipe Installation',
             'price' => 1500.00,
-            'image' => 'public/images/service-detail-img.png',
+            'image' => 'public/images/service-detail-img.webp',
             'rating' => 4.80,
         ]);
 
@@ -75,7 +75,7 @@ class ServiceTableSeeder extends Seeder
             ',
             'specialization' => 'Wiring & Installation',
             'price' => 2000.00,
-            'image' => 'public/images/service-detail-img.png',
+            'image' => 'public/images/electrician.webp',
             'rating' => 4.95,
         ]);
 
@@ -107,7 +107,7 @@ class ServiceTableSeeder extends Seeder
             ',
             'specialization' => 'paint, graphic design',
             'price' => 5000.00,
-            'image' => 'public/images/service-detail-img.png',
+            'image' => 'public/images/painter.webp',
             'rating' => 4.60,
         ]);
     }

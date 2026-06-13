@@ -6,7 +6,7 @@
     @php
         $platform = getPlatformSettings();
         $platformName = $platform->platform_name ?: 'ServEase';
-        $serviceArea = $platform->service_area ?: 'Barangay Batasan Hills, Quezon City';
+        $serviceArea = $platform->service_area ?: 'Burgos Barangay Hall Rodriguez, Rizal';
         $supportEmail = $platform->platform_email ?: 'support@servease.com';
     @endphp
 
