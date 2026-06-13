@@ -417,11 +417,11 @@
 
         if ($user->role === 'provider' && $profile) {
             $resumeUrl = !empty($profile->resume_path)
-                ? asset('storage/'.$profile->resume_path)
+                ? route('admin.applicants.document', [$profile, 'resume'])
                 : null;
 
             $barangayClearanceUrl = !empty($profile->barangay_clearance_path)
-                ? asset('storage/'.$profile->barangay_clearance_path)
+                ? route('admin.applicants.document', [$profile, 'barangay-clearance'])
                 : null;
         }
     @endphp

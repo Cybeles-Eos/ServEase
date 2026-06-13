@@ -300,11 +300,11 @@
     $initials = strtoupper(substr($provider->first_name ?? 'P', 0, 1) . substr($provider->last_name ?? '', 0, 1));
 
     $resumeUrl = $provider->resume_path
-        ? asset('storage/'.$provider->resume_path)
+        ? route('admin.applicants.document', [$provider, 'resume'])
         : null;
 
     $barangayClearanceUrl = $provider->barangay_clearance_path
-        ? asset('storage/'.$provider->barangay_clearance_path)
+        ? route('admin.applicants.document', [$provider, 'barangay-clearance'])
         : null;
 @endphp
 

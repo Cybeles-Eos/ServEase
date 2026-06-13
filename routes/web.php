@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
         // Applicants
         Route::get('/admin/applicants', [AdminController::class, 'applicants'])->name('admin.applicants');
         Route::get('/admin/applicants/{provider}', [AdminController::class, 'showApplicant'])->name('admin.applicants.show');
+        Route::get('/admin/applicants/{provider}/document/{document}', [AdminController::class, 'showApplicantDocument'])->name('admin.applicants.document');
         Route::post('/admin/applicants/{provider}/accept', [AdminController::class, 'acceptApplicant'])->name('admin.applicants.accept');
         Route::post('/admin/applicants/{provider}/decline', [AdminController::class, 'declineApplicant'])->name('admin.applicants.decline');
         Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');

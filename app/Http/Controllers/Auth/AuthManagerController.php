@@ -213,7 +213,11 @@ class AuthManagerController extends Controller
 
         AdminNotificationService::newCustomer($user);
 
-        return redirect('/login');
+        return redirect('/login')->with('flash_message', [
+            'title' => 'Account Created',
+            'message' => 'Customer account created successfully. You can now login.',
+            'type' => 'success',
+        ]);
     }
 
     public function signupProvider(Request $request)
