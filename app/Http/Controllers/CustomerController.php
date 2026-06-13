@@ -288,7 +288,7 @@ class CustomerController extends Controller
         $extension = $file->getClientOriginalExtension();
         $file_name = substr(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 0, 30) . '-' . time() . ($type ? '-' . $type : '') . '.' . $extension;
         $file_name = preg_replace("/[^a-z0-9\_\-\.]/i", '', $file_name);
-        $file_path = '/uploads/' . $path;
+        $file_path = 'public/uploads/' . $path;
         $directory = public_path() . $file_path;
 
         if (!File::exists($directory)) {

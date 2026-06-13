@@ -76,7 +76,7 @@
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="zipcode">ZIP Code <span>*</span></label>
-                                    <input type="number" placeholder="" name="zipcode" value="{{ old('zipcode') }}" required autocomplete="off">
+                                    <input type="text" placeholder="" name="zipcode" value="{{ old('zipcode') }}" required autocomplete="off" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" title="ZIP Code must be 4 digits">
                                     @error('zipcode') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>

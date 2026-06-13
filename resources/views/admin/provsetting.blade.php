@@ -211,9 +211,7 @@
         //     maxFileSize: '2MB',
         //     labelIdle: '<i class="fas fa-edit"></i>',
         // });
-        const existingImage = @json(!empty($user->provider->profile_image) 
-            ? asset($user->provider->profile_image) 
-            : null);
+        const existingImage = @json(!empty($user->provider->profile_image) ? asset($user->provider->profile_image) : null);
 
         FilePond.registerPlugin(
             FilePondPluginImagePreview,
