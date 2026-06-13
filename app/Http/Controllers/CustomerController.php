@@ -214,8 +214,10 @@ class CustomerController extends Controller
             'street_address' => 'nullable|string|max:255',
             'city'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
-            'zipcode'      => 'nullable|string|max:20',
+            'zipcode'      => ['nullable', 'string', 'regex:/^\d{4}$/'],
             // 'email'        => 'nullable|email|max:255'
+        ], [
+            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
         ]);
 
         $user = auth()->user();
@@ -286,8 +288,8 @@ class CustomerController extends Controller
         $extension = $file->getClientOriginalExtension();
         $file_name = substr(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 0, 30) . '-' . time() . ($type ? '-' . $type : '') . '.' . $extension;
         $file_name = preg_replace("/[^a-z0-9\_\-\.]/i", '', $file_name);
-        $file_path = 'public/uploads/' . $path;
-        $directory = public_path() . $file_path;
+        $file_path = 'uploads/' . $path;
+        $directory = public_path($file_path);
 
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0777, true);

@@ -6,7 +6,7 @@
     </div>
     <main class="provider-register">
         <div class="provider-register__img">
-            <img src="{{asset('public/images/preg-item.png')}}" alt="item">
+            <img src="{{asset('images/preg-item.png')}}" alt="item">
             <h4>Start your provider journey </h4>
             <p>Manage services, track bookings and earnings, and connect with customers using ServEase’s provider dashboard.</p>
         </div>
@@ -114,7 +114,8 @@
                                         inputmode="numeric"
                                         pattern="[0-9]{4}"
                                         autocomplete="off"
-                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
+                                        title="ZIP Code must be 4 digits"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
                                     >
                                     @error('zipcode')
                                         <small style="align-self: flex-end">{{ $message }}</small>
@@ -225,7 +226,7 @@
 
 
             </div>
-            {{-- <img src="{{asset('public/images/vector-preg.svg')}}" class="provider-register-main-img" alt="vector"> --}}
+            {{-- <img src="{{asset('images/vector-preg.svg')}}" class="provider-register-main-img" alt="vector"> --}}
         </div>
     </main>
 @endsection

@@ -17,7 +17,7 @@
         <section class="provider-login-main">
             <div class="provider-login-main__form">
                 {{-- <a href="{{url('/')}}">
-                    <img src="{{asset('public/images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
+                    <img src="{{asset('images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
                 </a> --}}
                 <div class="provider-login-main__form--head">
                     <h3>Let’s Get You Back In</h3>
@@ -56,7 +56,7 @@
                 </form>
             </div>
             <div class="provider-login-main__image">
-                <img src="{{asset('public/images/provider-auth-img.png')}}" alt="">
+                <img src="{{asset('images/provider-auth-img.png')}}" alt="">
             </div>
         </section>
     </main>

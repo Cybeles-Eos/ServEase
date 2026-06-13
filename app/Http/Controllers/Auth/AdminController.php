@@ -239,7 +239,9 @@ class AdminController extends Controller
     // }
     public function users(Request $request)
     {
-        $query = User::with(['customer', 'provider'])->latest();
+        $query = User::with(['customer', 'provider'])
+            ->whereIn('role', ['customer', 'provider'])
+            ->latest();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -263,7 +265,7 @@ class AdminController extends Controller
             });
         }
 
-        if ($request->filled('role')) {
+        if ($request->filled('role') && in_array($request->role, ['customer', 'provider'], true)) {
             $query->where('role', $request->role);
         }
 
@@ -299,7 +301,7 @@ class AdminController extends Controller
             $rules['street_address'] = ['nullable', 'string', 'max:255'];
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
-            $rules['zipcode'] = ['nullable', 'string', 'max:255'];
+            $rules['zipcode'] = ['nullable', 'string', 'regex:/^\d{4}$/'];
         } else {
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
@@ -307,12 +309,14 @@ class AdminController extends Controller
             $rules['home_address'] = ['required', 'string', 'max:255'];
             $rules['province'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
-            $rules['zipcode'] = ['required', 'string', 'max:255'];
+            $rules['zipcode'] = ['required', 'string', 'regex:/^\d{4}$/'];
             $rules['profession'] = ['required', 'string', 'max:255'];
             $rules['year_exp'] = ['required', 'integer', 'min:0'];
         }
 
-        $validated = $request->validate($rules);
+        $validated = $request->validate($rules, [
+            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
+        ]);
 
         $createdUser = null;
 
@@ -401,7 +405,7 @@ class AdminController extends Controller
             $rules['street_address'] = ['nullable', 'string', 'max:255'];
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
-            $rules['zipcode'] = ['nullable', 'string', 'max:255'];
+            $rules['zipcode'] = ['nullable', 'string', 'regex:/^\d{4}$/'];
         } else {
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
@@ -409,12 +413,14 @@ class AdminController extends Controller
             $rules['home_address'] = ['required', 'string', 'max:255'];
             $rules['province'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
-            $rules['zipcode'] = ['required', 'string', 'max:255'];
+            $rules['zipcode'] = ['required', 'string', 'regex:/^\d{4}$/'];
             $rules['profession'] = ['required', 'string', 'max:255'];
             $rules['year_exp'] = ['required', 'integer', 'min:0'];
         }
 
-        $validated = $request->validate($rules);
+        $validated = $request->validate($rules, [
+            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
+        ]);
 
         DB::transaction(function () use ($validated, $user) {
             $payload = [

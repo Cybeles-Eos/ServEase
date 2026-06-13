@@ -20,7 +20,7 @@
                     @forelse($scheduleRequests as $request)
                         <div class="boxss-sd" wire:key="accepted-{{ $request->id }}">
                             <div class="boxss-sd-bking">
-                                <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'public/images/user.png') }}"
+                                <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
                                      class="boxss-sd-bking__pfp"
                                      alt="profile-image">
 
@@ -175,7 +175,7 @@
                     <div class="pb-md-right-active__body" wire:key="ongoing-{{ $request->id }}">
                         <div class="pb-md-right-active__body__head">
                             <div class="pbmd-rabh-box">
-                                <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'public/images/user.png') }}"
+                                <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
                                      class="pbmd-rabh-box__pfp"
                                      alt="profile-image">
 
@@ -245,11 +245,11 @@
                 @forelse($completedRequests as $request)
                     <div class="pb-md-right-completed__body" wire:key="completed-{{ $request->id }}">
                         <div class="pbmdr-cb-box">
-                            <img src="{{ asset('public/images/complete-book.svg') }}" class="icon-cb-book" alt="icon">
+                            <img src="{{ asset('images/complete-book.svg') }}" class="icon-cb-book" alt="icon">
 
                             <div class="pbmdr-cb-box__det">
                                 <div class="pbmdr-cb-boxdet-p">
-                                    <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'public/images/user.png') }}"
+                                    <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
                                          class="pbmdr-cb-boxdet-p__pfp"
                                          alt="profile-image">
 

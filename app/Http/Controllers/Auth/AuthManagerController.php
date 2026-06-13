@@ -225,7 +225,7 @@ class AuthManagerController extends Controller
             'number' => ['required', 'regex:/^09[0-9]{9}$/'],
             'address' => ['required', 'string', 'max:255'],
             'province' => ['required', 'string', 'max:255'],
-            'zipcode' => ['required', 'digits:5'],
+            'zipcode' => ['required', 'regex:/^\d{4}$/'],
             'profession' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:0'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
@@ -234,7 +234,7 @@ class AuthManagerController extends Controller
             'g-recaptcha-response' => ['required'],
         ], [
             'number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
-            'zipcode.digits' => 'The ZIP code must be exactly 5 digits.',
+            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 

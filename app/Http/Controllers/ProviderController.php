@@ -395,7 +395,7 @@ class ProviderController extends Controller
             'home_address' => 'nullable|string|max:255',
             'province'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
-            'zipcode'      => 'nullable|string|max:20',
+            'zipcode'      => ['nullable', 'string', 'regex:/^\d{4}$/'],
             // 'email'        => 'nullable|email|max:255',
             'profession'   => 'nullable|string|max:255',
             'year_exp'     => 'nullable|string|max:20',
@@ -403,7 +403,8 @@ class ProviderController extends Controller
             'availability_days.*' => 'in:' . implode(',', array_keys(Provider::AVAILABILITY_DAYS)),
             'availability_start_time' => 'nullable|required_with:availability_end_time|date_format:H:i',
             'availability_end_time' => 'nullable|required_with:availability_start_time|date_format:H:i|after:availability_start_time',
-
+        ], [
+            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
         ]);
 
         $user = auth()->user();
@@ -479,8 +480,8 @@ class ProviderController extends Controller
         $extension = $file->getClientOriginalExtension();
         $file_name = substr(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 0, 30) . '-' . time() . ($type ? '-' . $type : '') . '.' . $extension;
         $file_name = preg_replace("/[^a-z0-9\_\-\.]/i", '', $file_name);
-        $file_path = 'public/uploads/' . $path;
-        $directory = public_path() . $file_path;
+        $file_path = 'uploads/' . $path;
+        $directory = public_path($file_path);
 
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0777, true);

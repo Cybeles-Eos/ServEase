@@ -438,7 +438,7 @@
         </div>
 
         <section class="service-review-admin__banner">
-            <img src="{{ asset($service->image ?? 'public/images/default_service_banner.png') }}" alt="{{ $service->title }}">
+            <img src="{{ asset($service->image ?? 'images/default_service_banner.png') }}" alt="{{ $service->title }}">
 
             <div class="service-review-admin__banner-content">
                 <small>{{ $service->serviceCategory?->name ?? 'No Category' }}</small>

@@ -101,7 +101,7 @@
                             </div>
                             <div class="prg-mm-group">
                                 <label>Zip code</label>
-                                <input type="text" name="zipcode" value="{{ old('zipcode') }}">
+                                <input type="text" name="zipcode" value="{{ old('zipcode') }}" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" title="ZIP Code must be 4 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
                                 @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                         </div>
@@ -140,7 +140,7 @@
                             </div>
                             <div class="prg-mm-group">
                                 <label>Zip code <span>*</span></label>
-                                <input type="text" name="zipcode" value="{{ old('zipcode') }}">
+                                <input type="text" name="zipcode" value="{{ old('zipcode') }}" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" title="ZIP Code must be 4 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
                                 @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">

@@ -53,7 +53,6 @@
                 <option value="">All Roles</option>
                 <option value="customer" {{ request('role') === 'customer' ? 'selected' : '' }}>Customer</option>
                 <option value="provider" {{ request('role') === 'provider' ? 'selected' : '' }}>Provider</option>
-                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
             </select>
 
             <select name="status" class="page-admin-users__select">

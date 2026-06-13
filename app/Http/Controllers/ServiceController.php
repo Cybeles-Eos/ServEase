@@ -168,8 +168,8 @@ class ServiceController extends Controller
         $extension = $file->getClientOriginalExtension();
         $file_name = substr(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 0, 30) . '-' . time() . ($type ? '-' . $type : '') . '.' . $extension;
         $file_name = preg_replace("/[^a-z0-9\_\-\.]/i", '', $file_name);
-        $file_path = 'public/uploads/' . $path;
-        $directory = public_path() . $file_path;
+        $file_path = 'uploads/' . $path;
+        $directory = public_path($file_path);
 
         if (!File::exists($directory)) {
             File::makeDirectory($directory, 0777, true);
@@ -308,7 +308,7 @@ class ServiceController extends Controller
 
             'description' => $service->description,
             'content' => $service->content,
-            'image' => $service->image ? asset($service->image) : asset('public/images/default_service_banner.png'),
+            'image' => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
 
             'jobs' => \App\Models\BookingInfo::whereHas('service', function ($query) use ($service) {
                     $query->where('provider_id', $service->provider_id);

@@ -166,14 +166,15 @@
                         <div class="cms-mm-group">
                             <label>Zipcode <span>*</span></label>
                             <input 
-                                type="number"
+                                type="text"
                                 name="zipcode"
                                 value="{{ old('zipcode', $user->customer->zipcode ?? '') }}"
                                 required
-                                maxlength="5"
+                                maxlength="4"
                                 inputmode="numeric"
-                                pattern="[0-9]{5}"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
+                                pattern="[0-9]{4}"
+                                title="ZIP Code must be 4 digits"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
                             >
                             @error('zipcode') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>

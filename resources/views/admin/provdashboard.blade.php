@@ -265,7 +265,7 @@
                                 #12003
                             </div>
                             <div>
-                                <img src="{{asset('public/images/user.png')}}" alt="">
+                                <img src="{{asset('images/user.png')}}" alt="">
                                 Daniella Barcelon
                             </div>
                             <div class="txt-div-d">
@@ -285,7 +285,7 @@
                                 #12003
                             </div>
                             <div>
-                                <img src="{{asset('public/images/user.png')}}" alt="">
+                                <img src="{{asset('images/user.png')}}" alt="">
                                 Daniella Barcelon
                             </div>
                             <div class="txt-div-d">
@@ -305,7 +305,7 @@
                                 #12003
                             </div>
                             <div>
-                                <img src="{{asset('public/images/user.png')}}" alt="">
+                                <img src="{{asset('images/user.png')}}" alt="">
                                 Daniella Barcelon
                             </div>
                             <div class="txt-div-d">
@@ -342,7 +342,7 @@
                                 </div>
 
                                 <div>
-                                    <img src="{{ asset('public/images/user.png') }}" alt="">
+                                    <img src="{{ asset('images/user.png') }}" alt="">
                                     {{ $customerName ?: 'No client name' }}
                                 </div>
 
