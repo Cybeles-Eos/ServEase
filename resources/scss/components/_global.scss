@@ -38,6 +38,10 @@ h5{
 .m-width{
     max-width: 1400px;
 }
+.m-width-legal{
+    max-width: 900px;
+    margin: 0 auto;
+}
 
 .main-page{
     //margin-top: 6.599rem;
@@ -69,6 +73,10 @@ h5{
     font-size: 15px;
     margin-right: 1.3rem;
     line-height: 100%;
+}
+
+.hamburger-m{
+    outline: none !important;
 }
 
 .dash-sp{

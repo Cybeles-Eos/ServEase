@@ -92,7 +92,7 @@
                         $fullName = trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''));
                         $fullName = $fullName !== '' ? $fullName : 'Provider Applicant';
 
-                        $email = $provider->user?->email ?? $provider->personal_email ?? 'No email';
+                        $email = $provider->user?->email ?? 'No email';
                         $phone = $provider->phone_number ?? 'No phone';
                         $profession = $provider->profession ?? 'N/A';
                         $experience = ($provider->year_exp ?? 0) . ' years';

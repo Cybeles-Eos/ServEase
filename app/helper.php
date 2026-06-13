@@ -31,3 +31,8 @@ function getActiveServiceCategories()
         ->orderBy('name')
         ->get();
 }
+
+function getPlatformSettings()
+{
+    return \App\Models\PlatformSetting::current();
+}

@@ -15,10 +15,12 @@ class ServiceRating extends Model
         'rating',
         'comment',
         'is_visible',
+        'provider_seen_at',
     ];
 
     protected $casts = [
         'is_visible' => 'boolean',
+        'provider_seen_at' => 'datetime',
     ];
     
     public function bookingRequest()

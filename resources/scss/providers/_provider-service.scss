@@ -8,6 +8,47 @@
     padding: 10px 15px;
     padding-top: 15px;
     padding-bottom: 25px;
+
+    .provider-service-report-summary{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+
+        div{
+            padding: 16px;
+            background-color: $color-white;
+            border: 1px solid #E0E2E7;
+            border-left: 4px solid $color-primary;
+            border-radius: 4px;
+        }
+
+        span{
+            display: block;
+            margin-bottom: 5px;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        strong{
+            display: block;
+            color: $color-dark;
+            font-size: 20px;
+            line-height: 120%;
+        }
+
+        p{
+            margin: 5px 0 0;
+            color: #6B7280;
+            font-size: 12px;
+            line-height: 140%;
+        }
+
+        @media (max-width: 792px) {
+            grid-template-columns: 1fr;
+        }
+    }
     
     &__btn{
         display: block;
@@ -97,7 +138,7 @@
                     // height: 40px;
                     border-bottom: 1px solid #E0E2E7;
                     display: grid;
-                    grid-template-columns: 140px 1fr 15% 1fr 15% 120px;
+                    grid-template-columns: 120px 1fr 14% 1fr 13% 90px 120px;
 
                     div{
                         height: 40px;
@@ -120,7 +161,7 @@
                     // height: 40px;
                     border-bottom: 1px solid #E0E2E7;
                     display: grid;
-                    grid-template-columns: 140px 1fr 15% 1fr 15% 120px;
+                    grid-template-columns: 120px 1fr 14% 1fr 13% 90px 120px;
 
                     div{
                         height: 100%;
@@ -153,6 +194,28 @@
                     .prvstble-mctb-slug{
                         color: #006DCC;
                         word-break: break-all;
+                    }
+                    .prvstble-mctb-reports{
+                        span{
+                            min-width: 30px;
+                            padding: 4px 8px;
+                            border-radius: 999px;
+                            background-color: #F3F4F6;
+                            color: #4B5563;
+                            font-size: 11px;
+                            font-weight: 800;
+                            text-align: center;
+                        }
+
+                        .is-warning{
+                            background-color: #FFF8E8;
+                            color: #B7791F;
+                        }
+
+                        .is-danger{
+                            background-color: #FEE2E2;
+                            color: #991B1B;
+                        }
                     }
                     .prvstble-mctb-act{
                         gap: 8px;

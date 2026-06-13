@@ -8,6 +8,7 @@ use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Services\AdminNotificationService;
 
 class BookingInfoController extends Controller
 {
@@ -21,6 +22,7 @@ class BookingInfoController extends Controller
             'number' => ['required', 'max:50'],
             'date' => ['nullable', 'date'],
             'time' => ['nullable'],
+            'service_id' => ['required', 'exists:tbl_services,id'],
         ]);
 
         if ($validation->fails()) {
@@ -32,7 +34,7 @@ class BookingInfoController extends Controller
         }
 
         $customer = auth()->user()->customer ?? null;
-        $serviceOwner = \App\Models\Service::where('id', $request->service_id)->firstOrFail();
+        $serviceOwner = \App\Models\Service::with('provider')->where('id', $request->service_id)->firstOrFail();
 
         if (!$customer) {
             return redirect()->back()->with('flash_message', [
@@ -40,6 +42,46 @@ class BookingInfoController extends Controller
                 'message' => 'Please Login Your Account To Continue.',
                 'type' => 'error'
             ]);
+        }
+
+        $existingBooking = BookingInfo::where('customer_id', $customer->id)
+            ->where('service_id', $request->service_id)
+            ->whereHas('bookingRequest', function ($query) {
+                $query->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING']);
+            })
+            ->exists();
+
+        if ($existingBooking) {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Already Booked',
+                'message' => 'You already have a booking for this service.',
+                'type' => 'warning',
+            ]);
+        }
+
+        if ($request->filled('date') && $request->filled('time') && !$serviceOwner->provider?->isAvailableAt($request->date, $request->time)) {
+            return redirect()->back()->withInput()->with('flash_message', [
+                'title' => 'Schedule Unavailable',
+                'message' => 'The provider is not available at your selected date and time. Please choose another schedule.',
+                'type' => 'error',
+            ]);
+        }
+
+        if ($request->filled('date') && $request->filled('time')) {
+            $scheduleConflict = BookingRequest::where('provider_id', $serviceOwner->provider_id)
+                ->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING'])
+                ->whereHas('bookingInfo', function ($query) use ($request) {
+                    $query->whereDate('date', $request->date);
+                })
+                ->exists();
+
+            if ($scheduleConflict) {
+                return redirect()->back()->withInput()->with('flash_message', [
+                    'title' => 'Schedule Unavailable',
+                    'message' => 'This schedule is already booked. Please choose another date.',
+                    'type' => 'error',
+                ]);
+            }
         }
 
         $bookingInfo = BookingInfo::create([
@@ -61,6 +103,8 @@ class BookingInfoController extends Controller
             'status' => 'PENDING',
             'responded_at' => null,
         ]);
+
+        AdminNotificationService::newBooking($bookingInfo->load('service'));
 
         return redirect()->route('services.index')->with('flash_message', [
             'title' => 'Book Requested',

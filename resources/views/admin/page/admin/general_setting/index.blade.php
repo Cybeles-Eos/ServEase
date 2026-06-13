@@ -1,12 +1,11 @@
 @extends('admin.layouts.auth')
 
 {{-- Meta Section --}}
-@section('title', 'Admin Users Page')
+@section('title', 'General Settings')
 
 {{-- Page Content --}}
 @section('content')
     @include('admin.layouts.header')
-    {{-- @include('admin.layouts.sidebar') --}}
 
     <main class="main-dash-uix page-admin-setting dash-sp">
         <p style="margin: 0; font-size: 14px; opacity: .6">General Setting</p>
@@ -175,6 +174,203 @@
 
             @endif
         </section>
+        
+        <section class="p-a-gs-card section platform-contact">
+            <div class="p-a-gs-card-header">
+                <div>
+                    <h5>Platform Contact Settings</h5>
+                    <p class="p-a-gs-card-subtitle">Contact details shown across the site footer, contact page, email templates, and admin support.</p>
+                </div>
+            </div>
+
+            <hr style="margin-bottom: 16px">
+
+            <form
+                action="{{ route('admin.setting.platform-contact.update') }}"
+                method="POST"
+                class="p-a-gs-settings-form"
+            >
+                @csrf
+                @method('PUT')
+
+                <div class="p-a-gs-form-grid">
+                    <div class="p-a-gs-form-group">
+                        <label for="platform_email">Platform Email</label>
+                        <input
+                            type="email"
+                            id="platform_email"
+                            name="platform_email"
+                            value="{{ old('platform_email', $platformSettings->platform_email) }}"
+                            placeholder="support@servease.com"
+                        >
+                        @error('platform_email')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="phone_number">Phone Number</label>
+                        <input
+                            type="text"
+                            id="phone_number"
+                            name="phone_number"
+                            value="{{ old('phone_number', $platformSettings->phone_number) }}"
+                            placeholder="09XXXXXXXXX"
+                        >
+                        @error('phone_number')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="facebook_page">Facebook Page</label>
+                        <input
+                            type="url"
+                            id="facebook_page"
+                            name="facebook_page"
+                            value="{{ old('facebook_page', $platformSettings->facebook_page) }}"
+                            placeholder="https://facebook.com/yourpage"
+                        >
+                        @error('facebook_page')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="support_hours">Support Hours</label>
+                        <input
+                            type="text"
+                            id="support_hours"
+                            name="support_hours"
+                            value="{{ old('support_hours', $platformSettings->support_hours) }}"
+                            placeholder="Mon–Sat, 8:00 AM – 5:00 PM"
+                        >
+                        @error('support_hours')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group p-a-gs-form-group--full">
+                        <label for="office_address">Office Address</label>
+                        <textarea
+                            id="office_address"
+                            name="office_address"
+                            rows="3"
+                            placeholder="Barangay Batasan Hills, Quezon City"
+                        >{{ old('office_address', $platformSettings->office_address) }}</textarea>
+                        @error('office_address')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="p-a-gs-form-actions">
+                    <button type="submit" class="p-a-gs-btn-save">
+                        Save Contact Settings
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="p-a-gs-card section platform-branding">
+            <div class="p-a-gs-card-header">
+                <div>
+                    <h5>Platform Branding &amp; Legal</h5>
+                    <p class="p-a-gs-card-subtitle">Platform identity and legal links used in the footer, emails, and public pages.</p>
+                </div>
+            </div>
+
+            <hr style="margin-bottom: 16px">
+
+            <form
+                action="{{ route('admin.setting.platform-branding.update') }}"
+                method="POST"
+                class="p-a-gs-settings-form"
+            >
+                @csrf
+                @method('PUT')
+
+                <div class="p-a-gs-form-grid">
+                    <div class="p-a-gs-form-group">
+                        <label for="platform_name">Platform Name</label>
+                        <input
+                            type="text"
+                            id="platform_name"
+                            name="platform_name"
+                            value="{{ old('platform_name', $platformSettings->platform_name) }}"
+                            placeholder="ServEase"
+                        >
+                        @error('platform_name')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="service_area">Service Area</label>
+                        <input
+                            type="text"
+                            id="service_area"
+                            name="service_area"
+                            value="{{ old('service_area', $platformSettings->service_area) }}"
+                            placeholder="Barangay Batasan Hills, Quezon City"
+                        >
+                        @error('service_area')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group p-a-gs-form-group--full">
+                        <label for="platform_tagline">Platform Tagline</label>
+                        <input
+                            type="text"
+                            id="platform_tagline"
+                            name="platform_tagline"
+                            value="{{ old('platform_tagline', $platformSettings->platform_tagline) }}"
+                            placeholder="Service help with ease and convenience."
+                        >
+                        @error('platform_tagline')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="privacy_policy_url">Privacy Policy URL</label>
+                        <input
+                            type="url"
+                            id="privacy_policy_url"
+                            name="privacy_policy_url"
+                            value="{{ old('privacy_policy_url', $platformSettings->privacy_policy_url) }}"
+                            placeholder="https://yoursite.com/privacy"
+                        >
+                        @error('privacy_policy_url')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="terms_url">Terms &amp; Conditions URL</label>
+                        <input
+                            type="url"
+                            id="terms_url"
+                            name="terms_url"
+                            value="{{ old('terms_url', $platformSettings->terms_url) }}"
+                            placeholder="https://yoursite.com/terms"
+                        >
+                        @error('terms_url')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="p-a-gs-form-actions">
+                    <button type="submit" class="p-a-gs-btn-save">
+                        Save Branding Settings
+                    </button>
+                </div>
+            </form>
+        </section>
+
+
     </main>
 
     {{-- Modals For Service Category --}}

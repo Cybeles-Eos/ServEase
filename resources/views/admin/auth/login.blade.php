@@ -5,12 +5,20 @@
 
 
 @section('content')
+@push('extrastylesheets')
+    <style>
+        .login--btn{
+            margin-right: 15px;
+        }
+    </style>
+@endpush
+@include('front.layouts.sections.header')
     <main class="provider-login">
         <section class="provider-login-main">
             <div class="provider-login-main__form">
-                <a href="{{url('/')}}">
-                    <img src="{{asset('images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
-                </a>
+                {{-- <a href="{{url('/')}}">
+                    <img src="{{asset('public/images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
+                </a> --}}
                 <div class="provider-login-main__form--head">
                     <h3>Let’s Get You Back In</h3>
                     <p>Enter your credentials to access your account</p>                    
@@ -36,17 +44,25 @@
                         @error('password') <small>{{ $message }}</small> @enderror
                         {{-- <a href="#">Forget Password?</a> --}}
                     </div>
+                    <div class="plm-ff-group">
+                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+
+                        @error('g-recaptcha-response')
+                            <small>{{ $message }}</small>
+                        @enderror
+                    </div>
                     <button class="plm-ff-btn btn btn--tertiary" type="submit">Login</button>
                     <p class="plm-ff-cta">Don't have account yet? <a href="{{url('signup')}}">Join now</a></p>
                 </form>
             </div>
             <div class="provider-login-main__image">
-                <img src="{{asset('images/provider-auth-img.png')}}" alt="">
+                <img src="{{asset('public/images/provider-auth-img.png')}}" alt="">
             </div>
         </section>
     </main>
 @endsection
 @push('extrascripts')
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         $(document).ready(function () {
 

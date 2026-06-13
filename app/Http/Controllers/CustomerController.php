@@ -211,12 +211,11 @@ class CustomerController extends Controller
             'last_name'    => 'nullable|string|max:255',
             'profile_image'=> 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'phone_number' => 'nullable|string|max:20',
-            'personal_email' => 'nullable|email|max:255',
             'street_address' => 'nullable|string|max:255',
             'city'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
             'zipcode'      => 'nullable|string|max:20',
-            'email'        => 'nullable|email|max:255'
+            // 'email'        => 'nullable|email|max:255'
         ]);
 
         $user = auth()->user();
@@ -259,7 +258,6 @@ class CustomerController extends Controller
         $customer->first_name  = $request->first_name;
         $customer->last_name   = $request->last_name;
         $customer->phone_number= $request->phone_number;
-        $customer->personal_email= $request->personal_email;
         $customer->street_address     = $request->street_address;
         $customer->city        = $request->city;
         $customer->barangay     = $request->barangay;
@@ -272,7 +270,7 @@ class CustomerController extends Controller
         |--------------------------------------------------------------------------
         */
         $user->name  = trim($request->first_name . ' ' . $request->last_name);
-        $user->email = $request->email;
+        // $user->email = $request->email;
         $user->save();
 
         return redirect()->route('customer.setting')->with('flash_message', [

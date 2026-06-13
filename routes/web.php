@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\BookingReceiptController;
 use App\Http\Controllers\ServiceRatingController;
 use App\Http\Controllers\ProviderServiceReviewController;
+use App\Http\Controllers\ServiceReportController;
+use App\Http\Controllers\AdminReportController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -26,6 +28,12 @@ Route::get('/about-us', function () {
  * Contact Routes
  */
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::get('/privacy-policy', function () {
+    return view('front.pages.custom-pages.privacy-policy');
+})->name('privacy.policy');
+Route::get('/terms-and-conditions', function () {
+    return view('front.pages.custom-pages.terms-and-conditions');
+})->name('terms.conditions');
 
 /**
  * 
@@ -78,6 +86,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/applicants/{provider}', [AdminController::class, 'showApplicant'])->name('admin.applicants.show');
         Route::post('/admin/applicants/{provider}/accept', [AdminController::class, 'acceptApplicant'])->name('admin.applicants.accept');
         Route::post('/admin/applicants/{provider}/decline', [AdminController::class, 'declineApplicant'])->name('admin.applicants.decline');
+        Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
+        Route::post('/admin/reports/providers/{provider}/deactivate', [AdminReportController::class, 'deactivateProvider'])->name('admin.reports.provider.deactivate');
 
         //Admin General Setting
         Route::get('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');
@@ -89,6 +99,14 @@ Route::middleware('auth')->group(function () {
             ->name('admin.setting.service-categories.update');
         Route::delete('/admin/setting/service-categories/{serviceCategory}', [AdminController::class, 'destroyServiceCategory'])
             ->name('admin.setting.service-categories.destroy');
+
+        Route::put('/admin/setting/platform-contact', [AdminController::class, 'updatePlatformContact'])
+            ->name('admin.setting.platform-contact.update');
+        Route::put('/admin/setting/platform-branding', [AdminController::class, 'updatePlatformBranding'])
+            ->name('admin.setting.platform-branding.update');
+
+        Route::post('/admin/notifications/mark-read', [AdminController::class, 'markAdminNotificationsRead'])
+            ->name('admin.notifications.mark-read');
     });
 
     // Provider
@@ -100,6 +118,7 @@ Route::middleware('auth')->group(function () {
             ->name('provider.dashboard');
         // Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
         Route::get('/provider/bookings', [BookingRequestController::class, 'providerRequests'])->name('provider.bookings');
+        Route::get('/provider/booking-calendar', [ProviderController::class, 'bookingCalendar'])->name('provider.booking-calendar');
         
         
         Route::get('/provider/service', [ServiceController::class, 'indexProvider'])->name('provider.service');
@@ -145,9 +164,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/customer/booking-request/{id}/cancel', [BookingRequestController::class, 'customerCancel'])->name('customer.booking.cancel');
 
         Route::post('/booking/{bookingRequest}/rate-service', [ServiceRatingController::class, 'store'])->name('customer.booking.rate-service');
+        Route::post('/booking/{bookingRequest}/report-service', [ServiceReportController::class, 'store'])->name('customer.booking.report-service');
         Route::post('/customer/notifications/mark-read', [BookingRequestController::class, 'markCustomerNotificationsRead'])->name('customer.notifications.mark-read');
 
     });
 
 });
-

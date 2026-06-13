@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminNotification;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use App\Models\PlatformSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +15,7 @@ use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Provider;
+use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -293,7 +296,6 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['nullable', 'string', 'max:255'];
-            $rules['personal_email'] = ['nullable', 'email', 'max:255'];
             $rules['street_address'] = ['nullable', 'string', 'max:255'];
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -302,7 +304,6 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
-            $rules['personal_email'] = ['nullable', 'email', 'max:255'];
             $rules['home_address'] = ['required', 'string', 'max:255'];
             $rules['province'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -313,7 +314,9 @@ class AdminController extends Controller
 
         $validated = $request->validate($rules);
 
-        DB::transaction(function () use ($validated, $role) {
+        $createdUser = null;
+
+        DB::transaction(function () use ($validated, $role, &$createdUser) {
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -327,7 +330,6 @@ class AdminController extends Controller
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
                     'phone_number' => $validated['phone_number'] ?? null,
-                    'personal_email' => $validated['personal_email'] ?? null,
                     'street_address' => $validated['street_address'] ?? null,
                     'city' => $validated['city'] ?? null,
                     'barangay' => $validated['barangay'] ?? null,
@@ -338,7 +340,6 @@ class AdminController extends Controller
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
                     'phone_number' => $validated['phone_number'],
-                    'personal_email' => $validated['personal_email'] ?? null,
                     'home_address' => $validated['home_address'],
                     'province' => $validated['province'],
                     'barangay' => $validated['barangay'] ?? null,
@@ -347,7 +348,13 @@ class AdminController extends Controller
                     'year_exp' => $validated['year_exp'],
                 ]);
             }
+
+            $createdUser = $user;
         });
+
+        if ($createdUser) {
+            AdminNotificationService::adminCreatedUser($createdUser, $role);
+        }
 
         return redirect()->route('admin.users')->with('flash_message', [
             'title' => '',
@@ -391,7 +398,6 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['nullable', 'string', 'max:255'];
-            $rules['personal_email'] = ['nullable', 'email', 'max:255'];
             $rules['street_address'] = ['nullable', 'string', 'max:255'];
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -400,7 +406,6 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
-            $rules['personal_email'] = ['nullable', 'email', 'max:255'];
             $rules['home_address'] = ['required', 'string', 'max:255'];
             $rules['province'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -431,7 +436,6 @@ class AdminController extends Controller
                         'first_name' => $validated['first_name'],
                         'last_name' => $validated['last_name'],
                         'phone_number' => $validated['phone_number'] ?? null,
-                        'personal_email' => $validated['personal_email'] ?? null,
                         'street_address' => $validated['street_address'] ?? null,
                         'city' => $validated['city'] ?? null,
                         'barangay' => $validated['barangay'] ?? null,
@@ -445,7 +449,6 @@ class AdminController extends Controller
                         'first_name' => $validated['first_name'],
                         'last_name' => $validated['last_name'],
                         'phone_number' => $validated['phone_number'],
-                        'personal_email' => $validated['personal_email'] ?? null,
                         'home_address' => $validated['home_address'],
                         'province' => $validated['province'],
                         'barangay' => $validated['barangay'] ?? null,
@@ -492,20 +495,6 @@ class AdminController extends Controller
         }
     }
 
-
-    // public function applicants()
-    // {
-    //     if (! auth()->user()->isAdmin()) {
-    //         abort(403);
-    //     }
-
-    //     $applicants = Provider::with('user')
-    //         ->whereIn('application_status', ['pending', 'declined'])
-    //         ->latest()
-    //         ->get();
-
-    //     return view('admin.page.admin.applicants.index', compact('applicants'));
-    // }
     public function applicants(Request $request)
     {
         $query = Provider::with('user')
@@ -519,7 +508,6 @@ class AdminController extends Controller
                 $q->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('phone_number', 'like', "%{$search}%")
-                    ->orWhere('personal_email', 'like', "%{$search}%")
                     ->orWhere('profession', 'like', "%{$search}%")
                     ->orWhere('province', 'like', "%{$search}%")
                     ->orWhere('barangay', 'like', "%{$search}%")
@@ -616,6 +604,7 @@ class AdminController extends Controller
     public function setting(Request $request)
     {
         $categorySearch = $request->input('category_search');
+        $platformSettings = PlatformSetting::current();
 
         $serviceCategories = ServiceCategory::query()
             ->when($categorySearch, function ($query) use ($categorySearch) {
@@ -627,8 +616,66 @@ class AdminController extends Controller
 
         return view('admin.page.admin.general_setting.index', compact(
             'serviceCategories',
-            'categorySearch'
+            'categorySearch',
+            'platformSettings'
         ));
+    }
+
+    public function updatePlatformContact(Request $request)
+    {
+        $validated = $request->validate([
+            'platform_email' => ['nullable', 'email', 'max:255'],
+            'phone_number' => ['nullable', 'string', 'max:50'],
+            'facebook_page' => ['nullable', 'url', 'max:255'],
+            'office_address' => ['nullable', 'string', 'max:1000'],
+            'support_hours' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        PlatformSetting::current()->update($validated);
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => 'Platform contact settings saved successfully.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function updatePlatformBranding(Request $request)
+    {
+        $validated = $request->validate([
+            'platform_name' => ['nullable', 'string', 'max:255'],
+            'platform_tagline' => ['nullable', 'string', 'max:500'],
+            'service_area' => ['nullable', 'string', 'max:255'],
+            'privacy_policy_url' => ['nullable', 'url', 'max:255'],
+            'terms_url' => ['nullable', 'url', 'max:255'],
+        ]);
+
+        PlatformSetting::current()->update($validated);
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => 'Platform branding and legal settings saved successfully.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function markAdminNotificationsRead()
+    {
+        $user = auth()->user();
+
+        if (! $user || ! $user->isAdmin()) {
+            abort(403);
+        }
+
+        AdminNotification::query()
+            ->whereNull('read_at')
+            ->update([
+                'read_at' => now(),
+            ]);
+
+        return response()->json([
+            'message' => 'Notifications marked as read.',
+        ]);
     }
     public function storeServiceCategory(Request $request)
     {

@@ -13,7 +13,6 @@ class Customer extends Model
         'last_name', 
         'profile_image',
         'phone_number',
-        'personal_email',
         'street_address',
         'city',
         'barangay',
@@ -27,5 +26,9 @@ class Customer extends Model
     public function ratings()
     {
         return $this->hasMany(\App\Models\ServiceRating::class, 'customer_id');
+    }
+    public function reports()
+    {
+        return $this->hasMany(\App\Models\ServiceReport::class, 'customer_id');
     }
 }

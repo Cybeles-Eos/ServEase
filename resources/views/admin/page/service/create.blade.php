@@ -191,7 +191,7 @@
 
                         <div class="prg-mm-group">
                             <label>Price</label>
-                            <input type="number" step="0.01" min="0" max="100000" name="price" value="{{ old('price') }}">
+                            <input type="number" step="0.01" min="100" max="1000000" oninput="this.value = this.value.slice(0, 7)" name="price" value="{{ old('price') }}">
                             @error('price') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 

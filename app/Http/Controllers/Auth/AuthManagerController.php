@@ -12,6 +12,8 @@ use App\Models\User;
 use App\Models\BookingInfo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use App\Services\AdminNotificationService;
 
 class AuthManagerController extends Controller
 {
@@ -28,10 +30,30 @@ class AuthManagerController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
+
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
+
+        $credentials = [
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ];
 
         $remember = $request->boolean('remember');
 
@@ -161,7 +183,22 @@ class AuthManagerController extends Controller
             'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
+
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
 
         $user = User::create([ 
             'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
@@ -174,6 +211,8 @@ class AuthManagerController extends Controller
             'last_name' => $validated['lname'],
         ]);
 
+        AdminNotificationService::newCustomer($user);
+
         return redirect('/login');
     }
 
@@ -182,21 +221,38 @@ class AuthManagerController extends Controller
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
             'lname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'number' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'number' => ['required', 'regex:/^09[0-9]{9}$/'],
             'address' => ['required', 'string', 'max:255'],
             'province' => ['required', 'string', 'max:255'],
-            'zipcode' => ['required', 'string', 'regex:/^\d{4}$/'],
+            'zipcode' => ['required', 'digits:5'],
             'profession' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:0'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required'],
         ], [
-            'zipcode.regex' => 'The ZIP Code must be 4 digits.',
+            'number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
+            'zipcode.digits' => 'The ZIP code must be exactly 5 digits.',
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 
-        DB::transaction(function () use ($request, $validated) {
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
+
+        $createdUser = null;
+
+        DB::transaction(function () use ($request, $validated, &$createdUser) {
             $resumePath = null;
             $barangayClearancePath = null;
 
@@ -227,7 +283,6 @@ class AuthManagerController extends Controller
                 'first_name' => $validated['fname'],
                 'last_name' => $validated['lname'],
                 'phone_number' => $validated['number'],
-                'personal_email' => $validated['email'],
                 'home_address' => $validated['address'],
                 'province' => $validated['province'],
                 'zipcode' => $validated['zipcode'],
@@ -242,13 +297,18 @@ class AuthManagerController extends Controller
                 'application_reviewed_by' => null,
                 'application_remarks' => null,
             ]);
+
+            $createdUser = $user;
         });
+
+        if ($createdUser) {
+            AdminNotificationService::newProviderApplication($createdUser);
+        }
 
         return redirect()
             ->route('provider-signup')
             ->with('provider_application_submitted', true);
     }
-
 
     // For Status
     private function updateAllBookingStatuses()
@@ -383,5 +443,4 @@ class AuthManagerController extends Controller
             ]);
         }
     }
-
 }

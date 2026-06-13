@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BookingRequest;
 use App\Models\ServiceRating;
 use Illuminate\Http\Request;
+use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\DB;
 
 class ServiceRatingController extends Controller
@@ -60,11 +61,13 @@ class ServiceRatingController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($request, $bookingRequest, $customer) {
+        $rating = null;
+
+        DB::transaction(function () use ($request, $bookingRequest, $customer, &$rating) {
             $bookingInfo = $bookingRequest->bookingInfo;
             $service = $bookingInfo->service;
 
-            ServiceRating::create([
+            $rating = ServiceRating::create([
                 'booking_request_id' => $bookingRequest->id,
                 'booking_info_id' => $bookingInfo->id,
                 'customer_id' => $customer->id,
@@ -74,6 +77,10 @@ class ServiceRatingController extends Controller
                 'comment' => $request->comment,
             ]);
         });
+
+        if ($rating) {
+            AdminNotificationService::newRating($rating->load(['service', 'customer']));
+        }
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Rating Submitted',

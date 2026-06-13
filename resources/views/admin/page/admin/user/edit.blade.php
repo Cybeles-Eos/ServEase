@@ -116,11 +116,6 @@
                                 @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
-                                <label>Personal email</label>
-                                <input type="email" name="personal_email" value="{{ old('personal_email', $profile?->personal_email) }}">
-                                @error('personal_email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
-                            </div>
-                            <div class="prg-mm-group">
                                 <label>Street address</label>
                                 <input type="text" name="street_address" value="{{ old('street_address', $profile?->street_address) }}">
                                 @error('street_address') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
@@ -156,11 +151,6 @@
                                 <label>Phone <span>*</span></label>
                                 <input type="text" name="phone_number" value="{{ old('phone_number', $profile?->phone_number) }}">
                                 @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
-                            </div>
-                            <div class="prg-mm-group">
-                                <label>Personal email</label>
-                                <input type="email" name="personal_email" value="{{ old('personal_email', $profile?->personal_email) }}">
-                                @error('personal_email') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
                                 <label>Home address <span>*</span></label>

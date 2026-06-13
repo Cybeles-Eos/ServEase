@@ -498,7 +498,7 @@
         z-index: 2;
         display: none;
         .booking-con-main{
-            width: 600px;
+            width: min(1120px, calc(100% - 32px));
             position: absolute;
             top: 5rem;
             background-color: $color-white;
@@ -519,6 +519,22 @@
                 margin-bottom: 1.6rem;
                 font-size: 24px;
                 line-height: 120%;
+            }
+            #bookingForm{
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+            .booking-customer-detail{
+                order: 3;
+                display: none !important;
+            }
+            #bookingForm.is-details-open .sbf-field-group-con.booking-customer-detail,
+            #bookingForm.is-details-open .sbf-field-group.booking-customer-detail{
+                display: flex !important;
+            }
+            #bookingForm.is-details-open .sbf-field-group.booking-customer-detail{
+                flex-direction: column;
             }
             .sbf-field-group-con{
                 display: flex;
@@ -558,7 +574,210 @@
             button{
                 margin-top: 1rem;
             }
+            .booking-details-toggle{
+                order: 2;
+                width: 100%;
+                margin: 0 !important;
+                padding: 0;
+                border: 0;
+                background-color: transparent;
+                color: #667085 !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 13px;
+                font-weight: 800;
+
+                i{
+                    color: #B7791F;
+                    transition: transform .15s ease;
+                }
+            }
+            #bookingForm.is-details-open .booking-details-toggle i{
+                transform: rotate(180deg);
+            }
+            .booking-schedule-picker{
+                order: 1;
+                padding: 16px;
+                border: 1px solid #E5E7EB;
+                border-radius: 8px;
+                background-color: #FAFAFA;
+
+                &__head{
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: space-between;
+                    gap: 12px;
+                    margin-bottom: 12px;
+
+                    label{
+                        margin: 0 0 5px;
+                    }
+
+                    strong{
+                        display: block;
+                        color: $color-dark;
+                        font-size: 14px;
+                        line-height: 130%;
+                    }
+                }
+
+                &__reset{
+                    width: auto !important;
+                    margin: 0 !important;
+                    padding: 6px 10px;
+                    border: 0;
+                    border-radius: 4px;
+                    background-color: #FEF2F2;
+                    color: #B42318 !important;
+                    font-size: 11px;
+                    font-weight: 800;
+                    white-space: nowrap;
+                }
+
+                &__nav{
+                    display: grid;
+                    grid-template-columns: 36px 1fr auto 36px;
+                    gap: 8px;
+                    align-items: center;
+                    margin-bottom: 12px;
+
+                    span{
+                        color: $color-dark;
+                        font-size: 15px;
+                        font-weight: 800;
+                    }
+
+                    button{
+                        width: 100%;
+                        height: 36px;
+                        margin: 0;
+                        padding: 0 10px;
+                        border: 1px solid #E5E7EB;
+                        border-radius: 6px;
+                        background-color: $color-white;
+                        color: $color-dark !important;
+                        font-size: 12px;
+                        font-weight: 800;
+
+                        &:hover{
+                            border-color: $color-primary;
+                            background-color: #FFF8E8;
+                        }
+                    }
+                }
+
+                &__weekdays,
+                &__grid{
+                    display: grid;
+                    grid-template-columns: repeat(7, minmax(0, 1fr));
+                }
+
+                &__weekdays{
+                    border: 1px solid #E5E7EB;
+                    border-bottom: 0;
+                    border-radius: 6px 6px 0 0;
+                    background-color: $color-white;
+
+                    span{
+                        padding: 9px 4px;
+                        color: #667085;
+                        font-size: 10px;
+                        font-weight: 800;
+                        text-align: center;
+                    }
+                }
+
+                &__grid{
+                    border-left: 1px solid #E5E7EB;
+                    border-top: 1px solid #E5E7EB;
+                }
+
+                &__day{
+                    position: relative;
+                    min-height: 58px;
+                    margin: 0 !important;
+                    padding: 8px;
+                    border: 0;
+                    border-right: 1px solid #E5E7EB;
+                    border-bottom: 1px solid #E5E7EB;
+                    border-radius: 0;
+                    background-color: $color-white;
+                    color: $color-dark !important;
+                    text-align: left;
+
+                    span{
+                        width: 24px;
+                        height: 24px;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 999px;
+                        font-size: 11px;
+                        font-weight: 900;
+                    }
+
+                    i{
+                        position: absolute;
+                        right: 8px;
+                        bottom: 8px;
+                        width: 9px;
+                        height: 9px;
+                        border-radius: 999px;
+                        background-color: #DC2626;
+                        box-shadow: 0 0 0 3px #FEE2E2;
+                    }
+
+                    &:hover:not(:disabled){
+                        background-color: #FFF8E8;
+                    }
+
+                    &.is-muted{
+                        background-color: #F8FAFC;
+                        color: #98A2B3 !important;
+                    }
+
+                    &.is-today span{
+                        background-color: $color-dark;
+                        color: $color-white;
+                    }
+
+                    &.is-selected{
+                        outline: 2px solid $color-primary;
+                        outline-offset: -2px;
+                        background-color: #FFF8E8;
+                    }
+
+                    &.is-booked{
+                        background-color: #FEF2F2;
+                    }
+
+                    &.is-unavailable{
+                        background-color: #F3F4F6;
+                        color: #98A2B3 !important;
+
+                        span{
+                            color: #98A2B3;
+                        }
+                    }
+
+                    &.is-disabled{
+                        cursor: not-allowed;
+                        opacity: 1;
+                    }
+                }
+
+                &__time{
+                    margin-top: 14px;
+
+                    input{
+                        background-color: $color-white;
+                    }
+                }
+            }
             .glb-btn-a{
+                order: 4;
                 background-color: $color-primary;
                 color: $color-dark;
                 border-radius: 4px;
@@ -566,6 +785,9 @@
                 font-size: 14px;
                 font-weight: 600;
                 font-family: $font-primary;
+            }
+            .glb-btn{
+                order: 4;
             }
             @media (max-width: 665px) {
                 width: 90% !important;
@@ -619,11 +841,6 @@
 
     }
 }
-
-
-
-
-
 
 
 

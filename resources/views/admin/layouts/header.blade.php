@@ -1,5 +1,7 @@
 @php
+    use App\Models\AdminNotification;
     use App\Models\BookingRequest;
+    use App\Models\ServiceRating;
 
     $providerNotifications = collect();
     $providerUnreadNotificationCount = 0;
@@ -7,10 +9,13 @@
     $customerNotifications = collect();
     $customerUnreadNotificationCount = 0;
 
+    $adminNotifications = collect();
+    $adminUnreadNotificationCount = 0;
+
     $authUser = auth()->user();
 
     if ($authUser && $authUser->role === 'provider' && $authUser->provider) {
-        $providerNotifications = BookingRequest::with([
+        $providerBookingNotifications = BookingRequest::with([
                 'bookingInfo.service',
                 'bookingInfo.customer',
             ])
@@ -19,10 +24,38 @@
             ->limit(10)
             ->get();
 
+        $providerRatingNotifications = ServiceRating::with([
+                'service',
+                'customer',
+            ])
+            ->where('provider_id', $authUser->provider->id)
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $providerNotifications = $providerBookingNotifications
+            ->map(fn ($notification) => [
+                'type' => 'booking',
+                'created_at' => $notification->created_at,
+                'item' => $notification,
+            ])
+            ->concat($providerRatingNotifications->map(fn ($notification) => [
+                'type' => 'rating',
+                'created_at' => $notification->created_at,
+                'item' => $notification,
+            ]))
+            ->sortByDesc('created_at')
+            ->take(10)
+            ->values();
+
         $providerUnreadNotificationCount = BookingRequest::query()
             ->where('provider_id', $authUser->provider->id)
             ->whereNull('provider_seen_at')
-            ->count();
+            ->count()
+            + ServiceRating::query()
+                ->where('provider_id', $authUser->provider->id)
+                ->whereNull('provider_seen_at')
+                ->count();
     }
 
     if ($authUser && $authUser->role === 'customer' && $authUser->customer) {
@@ -46,9 +79,22 @@
             ->count();
     }
 
-    $notificationBadgeCount = $authUser?->role === 'customer'
-        ? $customerUnreadNotificationCount
-        : $providerUnreadNotificationCount;
+    if ($authUser && $authUser->role === 'admin') {
+        $adminNotifications = AdminNotification::query()
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $adminUnreadNotificationCount = AdminNotification::query()
+            ->whereNull('read_at')
+            ->count();
+    }
+
+    $notificationBadgeCount = match ($authUser?->role) {
+        'customer' => $customerUnreadNotificationCount,
+        'admin' => $adminUnreadNotificationCount,
+        default => $providerUnreadNotificationCount,
+    };
 @endphp
 <div class="main-headerdash-uix header--dashboard">
 
@@ -131,8 +177,8 @@
     <div class="provider-notification-modal" id="providerNotificationModal">
         <div class="provider-notification-modal__header">
             <div>
-                <h4>Booking Notifications</h4>
-                <p>New booking requests for your services</p>
+                <h4>Provider Notifications</h4>
+                <p>Bookings and customer ratings for your services</p>
             </div>
 
             @if ($providerUnreadNotificationCount > 0)
@@ -143,32 +189,68 @@
         </div>
 
         <div class="provider-notification-modal__tabs">
-            <span>Booking Requests</span>
+            <button type="button" class="is-active" data-notif-filter="all">Latest Updates</button>
+            <button type="button" data-notif-filter="booking">Booking Requests</button>
         </div>
 
         <div class="provider-notification-modal__body">
-            @forelse ($providerNotifications as $notification)
+            @forelse ($providerNotifications as $notificationEntry)
                 @php
-                    $bookingInfo = $notification->bookingInfo;
-                    $service = $bookingInfo?->service;
-                    $customerName = trim(($bookingInfo->fname ?? '') . ' ' . ($bookingInfo->lname ?? ''));
+                    $notificationType = $notificationEntry['type'];
+                    $notification = $notificationEntry['item'];
 
-                    if (! $customerName && $bookingInfo?->customer) {
-                        $customerName = trim(($bookingInfo->customer->first_name ?? '') . ' ' . ($bookingInfo->customer->last_name ?? ''));
+                    if ($notificationType === 'rating') {
+                        $service = $notification->service;
+                        $customer = $notification->customer;
+                        $customerName = $customer
+                            ? trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? ''))
+                            : '';
+                        $isUnread = is_null($notification->provider_seen_at);
+                    } else {
+                        $bookingInfo = $notification->bookingInfo;
+                        $service = $bookingInfo?->service;
+                        $customerName = trim(($bookingInfo->fname ?? '') . ' ' . ($bookingInfo->lname ?? ''));
+
+                        if (! $customerName && $bookingInfo?->customer) {
+                            $customerName = trim(($bookingInfo->customer->first_name ?? '') . ' ' . ($bookingInfo->customer->last_name ?? ''));
+                        }
+
+                        $isUnread = is_null($notification->provider_seen_at);
+
+                        $statusClass = match ($notification->status) {
+                            'PENDING' => 'provider-notification-modal__status--pending',
+                            'ACCEPTED' => 'provider-notification-modal__status--accepted',
+                            'COMPLETED' => 'provider-notification-modal__status--completed',
+                            'DECLINED', 'CANCELLED' => 'provider-notification-modal__status--cancelled',
+                            default => 'provider-notification-modal__status--pending',
+                        };
                     }
-
-                    $isUnread = is_null($notification->provider_seen_at);
-
-                    $statusClass = match ($notification->status) {
-                        'PENDING' => 'provider-notification-modal__status--pending',
-                        'ACCEPTED' => 'provider-notification-modal__status--accepted',
-                        'COMPLETED' => 'provider-notification-modal__status--completed',
-                        'DECLINED', 'CANCELLED' => 'provider-notification-modal__status--cancelled',
-                        default => 'provider-notification-modal__status--pending',
-                    };
                 @endphp
 
-                <a href="{{ route('provider.bookings') }}" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                @if ($notificationType === 'rating')
+                    <a href="{{ $service ? route('provider.service.reviews', $service) : route('provider.service') }}" data-notification-type="rating" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                        <div class="provider-notification-modal__dot"></div>
+
+                        <div class="provider-notification-modal__content">
+                            <div class="provider-notification-modal__topline">
+                                <strong>New Service Rating</strong>
+
+                                <span class="provider-notification-modal__status provider-notification-modal__status--ongoing">
+                                    {{ $notification->rating }} star{{ (int) $notification->rating === 1 ? '' : 's' }}
+                                </span>
+                            </div>
+
+                            <p>
+                                {{ $customerName ?: 'A customer' }}
+                                rated
+                                <b>{{ $service?->title ?? 'your service' }}</b>.
+                            </p>
+
+                            <small>{{ $notification->created_at?->diffForHumans() }}</small>
+                        </div>
+                    </a>
+                @else
+                <a href="{{ route('provider.bookings') }}" data-notification-type="booking" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                     <div class="provider-notification-modal__dot"></div>
 
                     <div class="provider-notification-modal__content">
@@ -203,10 +285,11 @@
                         </small>
                     </div>
                 </a>
+                @endif
             @empty
                 <div class="provider-notification-modal__empty">
-                    <strong>No booking notifications yet</strong>
-                    <p>New customer bookings will appear here.</p>
+                    <strong>No provider notifications yet</strong>
+                    <p>New bookings and customer ratings will appear here.</p>
                 </div>
             @endforelse
         </div>
@@ -311,6 +394,75 @@
         </div>
     </div>
 @endif
+@if ($authUser && $authUser->role === 'admin')
+    <div class="provider-notification-modal" id="adminNotificationModal">
+        <div class="provider-notification-modal__header">
+            <div>
+                <h4>Dashboard Notifications</h4>
+                <p>Updates about accounts, services, bookings, and ratings</p>
+            </div>
+
+            @if ($adminUnreadNotificationCount > 0)
+                <button type="button" id="markAdminNotifRead">
+                    Mark all as read
+                </button>
+            @endif
+        </div>
+
+        <div class="provider-notification-modal__tabs">
+            <button type="button" class="is-active" data-notif-filter="all">Platform Activity</button>
+            <button type="button" data-notif-filter="booking">Booking Requests</button>
+        </div>
+
+        <div class="provider-notification-modal__body">
+            @forelse ($adminNotifications as $notification)
+                @php
+                    $isUnread = is_null($notification->read_at);
+
+                    $statusClass = match ($notification->type) {
+                        'new_provider_application', 'new_booking', 'new_report' => 'provider-notification-modal__status--pending',
+                        'new_rating' => 'provider-notification-modal__status--ongoing',
+                        'new_service', 'new_customer', 'admin_user_created' => 'provider-notification-modal__status--accepted',
+                        default => 'provider-notification-modal__status--pending',
+                    };
+                @endphp
+
+                <a
+                    href="{{ $notification->link ?: route('admin.dashboard') }}"
+                    data-notification-type="{{ $notification->type === 'new_booking' ? 'booking' : 'platform' }}"
+                    class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}"
+                >
+                    <div class="provider-notification-modal__dot"></div>
+
+                    <div class="provider-notification-modal__content">
+                        <div class="provider-notification-modal__topline">
+                            <strong>{{ $notification->title }}</strong>
+
+                            <span class="provider-notification-modal__status {{ $statusClass }}">
+                                {{ $isUnread ? 'New' : 'Read' }}
+                            </span>
+                        </div>
+
+                        <p>{{ $notification->message }}</p>
+
+                        <small>
+                            {{ $notification->created_at?->diffForHumans() }}
+                        </small>
+                    </div>
+                </a>
+            @empty
+                <div class="provider-notification-modal__empty">
+                    <strong>No dashboard notifications yet</strong>
+                    <p>New platform activity will appear here.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="provider-notification-modal__footer">
+            <a href="{{ route('admin.dashboard') }}">Go to dashboard</a>
+        </div>
+    </div>
+@endif
 <div id="user-menu">
     <ul>
         {{-- <li><a href="{{ route('admin.profile') }}">Profile</a></li> --}}
@@ -361,18 +513,35 @@
 
             $('#providerNotificationModal').toggleClass('is-open');
             $('#customerNotificationModal').toggleClass('is-open');
+            $('#adminNotificationModal').toggleClass('is-open');
 
             $('#user-menu').removeClass('is-open');
             $('.menu-icon').removeClass('is-rotated');
         });
 
-        $('#providerNotificationModal, #customerNotificationModal').on('click', function (e) {
+        $('#providerNotificationModal, #customerNotificationModal, #adminNotificationModal').on('click', function (e) {
             e.stopPropagation();
         });
 
         $(document).on('click', function () {
             $('#providerNotificationModal').removeClass('is-open');
             $('#customerNotificationModal').removeClass('is-open');
+            $('#adminNotificationModal').removeClass('is-open');
+        });
+
+        $('.provider-notification-modal__tabs button').on('click', function () {
+            const $button = $(this);
+            const filter = $button.data('notif-filter');
+            const $modal = $button.closest('.provider-notification-modal');
+
+            $modal.find('.provider-notification-modal__tabs button').removeClass('is-active');
+            $button.addClass('is-active');
+
+            $modal.find('.provider-notification-modal__item').each(function () {
+                const itemType = $(this).data('notification-type');
+                const shouldShow = filter === 'all' || itemType === filter;
+                $(this).toggleClass('is-hidden', !shouldShow);
+            });
         });
 
         $('#markProviderNotifRead').on('click', function (e) {
@@ -407,6 +576,25 @@
                     $('#dashboardNotifBadge').remove();
                     $('#customerNotificationModal .provider-notification-modal__item').removeClass('is-unread');
                     $('#markCustomerNotifRead').remove();
+                }
+            });
+        });
+
+        $('#markAdminNotifRead').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            $.ajax({
+                url: "{{ Route::has('admin.notifications.mark-read') ? route('admin.notifications.mark-read') : '#' }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function () {
+                    $('#dashboardNotifBadge').remove();
+                    $('#adminNotificationModal .provider-notification-modal__item').removeClass('is-unread');
+                    $('#markAdminNotifRead').remove();
+                    $('#adminNotificationModal .provider-notification-modal__status').text('Read');
                 }
             });
         });

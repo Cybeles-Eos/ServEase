@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ServiceCategory;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use File;
 use Carbon\Carbon;
@@ -67,11 +68,17 @@ class ServiceController extends Controller
         $provider = auth()->user()->provider;
 
         $services = Service::with('serviceCategory')
+            ->withCount('reports')
             ->where('provider_id', $provider->id)
             ->latest()
             ->get();
 
-        return view('admin.provserv', compact('services'));
+        $providerReportCount = \App\Models\ServiceReport::where('provider_id', $provider->id)->count();
+        $providerReportStatus = $providerReportCount >= 20
+            ? 'Subject to Disable'
+            : ($providerReportCount >= 10 ? 'Needs Admin Review' : 'Normal');
+
+        return view('admin.provserv', compact('services', 'providerReportCount', 'providerReportStatus'));
     }
 
 
@@ -99,7 +106,7 @@ class ServiceController extends Controller
             'content'        => 'nullable|string',
             // 'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
-            'price'          => 'required|numeric|max:30000',
+            'price'          => 'required|numeric|min:100|max:1000000',
             'image'          => 'image|mimes:jpg,jpeg,png,webp|max:5048',
             'is_active' => 'required|in:0,1',
         ]);
@@ -146,6 +153,8 @@ class ServiceController extends Controller
             $file_upload_path = $this->uploadFile($request->file('image'), null, 'service_images');
             $service->update(['image' => $file_upload_path]);
         }
+
+        AdminNotificationService::newService($service->load('provider'));
 
         return redirect()->route('provider.service')->with('flash_message', [
             'title' => '',
@@ -203,6 +212,61 @@ class ServiceController extends Controller
             ? $service->ratings->where('is_visible', true)
             : collect();
         $providerRatings = \App\Models\ServiceRating::where('provider_id', $service->provider_id)->get();
+        $providerSchedules = \App\Models\BookingRequest::with('bookingInfo.service')
+            ->where('provider_id', $service->provider_id)
+            ->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING'])
+            ->whereHas('bookingInfo', function ($query) {
+                $query->whereDate('date', '>=', now()->toDateString());
+            })
+            ->get()
+            ->sortBy(function ($booking) {
+                $bookingInfo = $booking->bookingInfo;
+                return trim(($bookingInfo?->date?->format('Y-m-d') ?? '') . ' ' . ($bookingInfo?->time?->format('H:i') ?? ''));
+            })
+            ->map(function ($booking) {
+                $bookingInfo = $booking->bookingInfo;
+
+                return (object) [
+                    'date' => $bookingInfo?->date?->format('M d, Y'),
+                    'time' => $bookingInfo?->time?->format('g:i A'),
+                    'date_value' => $bookingInfo?->date?->format('Y-m-d'),
+                    'time_value' => $bookingInfo?->time?->format('H:i'),
+                    'status' => ucfirst(strtolower($booking->status)),
+                    'service_title' => $bookingInfo?->service?->title ?? 'Booked service',
+                ];
+            })
+            ->values();
+        $providerAvailabilityDays = $service->provider?->availabilityDays() ?? \App\Models\Provider::DEFAULT_AVAILABILITY_DAYS;
+        $providerAvailabilityStartTime = $service->provider?->availabilityStartTime() ?? \App\Models\Provider::DEFAULT_AVAILABILITY_START_TIME;
+        $providerAvailabilityEndTime = $service->provider?->availabilityEndTime() ?? \App\Models\Provider::DEFAULT_AVAILABILITY_END_TIME;
+        $providerAvailabilityData = [
+            'days' => $providerAvailabilityDays,
+            'start_time' => $providerAvailabilityStartTime,
+            'end_time' => $providerAvailabilityEndTime,
+            'label' => $service->provider?->availabilityLabel() ?? 'Mon-Fri, 8:00 AM - 10:00 PM',
+        ];
+        $providerBookedDates = $providerSchedules
+            ->pluck('date_value')
+            ->filter()
+            ->unique()
+            ->values();
+        $providerBookedSlots = $providerSchedules
+            ->map(fn ($schedule) => [
+                'date' => $schedule->date_value,
+                'time' => $schedule->time_value,
+            ])
+            ->filter(fn ($schedule) => !empty($schedule['date']))
+            ->values();
+        $hasExistingBooking = false;
+
+        if (auth()->check() && auth()->user()->isCustomer() && auth()->user()->customer) {
+            $hasExistingBooking = \App\Models\BookingInfo::where('customer_id', auth()->user()->customer->id)
+                ->where('service_id', $service->id)
+                ->whereHas('bookingRequest', function ($query) {
+                    $query->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING']);
+                })
+                ->exists();
+        }
 
         $reviews = $ratings
             ->sortByDesc('created_at')
@@ -244,7 +308,7 @@ class ServiceController extends Controller
 
             'description' => $service->description,
             'content' => $service->content,
-            'image' => $service->image ? asset($service->image) : asset('images/default_service_banner.png'),
+            'image' => $service->image ? asset($service->image) : asset('public/images/default_service_banner.png'),
 
             'jobs' => \App\Models\BookingInfo::whereHas('service', function ($query) use ($service) {
                     $query->where('provider_id', $service->provider_id);
@@ -282,6 +346,12 @@ class ServiceController extends Controller
 
             'provider_exp' => $service->provider->year_exp ?? 0,
             'provider_area' => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
+            'provider_availability' => $providerAvailabilityData['label'],
+            'provider_availability_data' => $providerAvailabilityData,
+            'provider_booked_dates' => $providerBookedDates,
+            'provider_booked_slots' => $providerBookedSlots,
+            'has_existing_booking' => $hasExistingBooking,
+            'provider_schedules' => $providerSchedules,
         ];
 
         return view('front.pages.custom-pages.service-detail', [

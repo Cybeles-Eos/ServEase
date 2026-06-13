@@ -1,9 +1,12 @@
 @extends('admin.layouts.auth')
 
 @section('content')
+    <div class="form-loading-bar" id="form-loading-bar">
+        <div class="form-loading-bar__progress"></div>
+    </div>
     <main class="provider-register">
         <div class="provider-register__img">
-            <img src="{{asset('images/preg-item.png')}}" alt="item">
+            <img src="{{asset('public/images/preg-item.png')}}" alt="item">
             <h4>Start your provider journey </h4>
             <p>Manage services, track bookings and earnings, and connect with customers using ServEase’s provider dashboard.</p>
         </div>
@@ -33,7 +36,7 @@
                         </button>
                     </div>
 
-                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields" enctype="multipart/form-data">
+                    <form method="POST" action="{{ url('/provider-signup-c') }}" class="provreg-mm-con--fields" enctype="multipart/form-data" novalidate>
                         @csrf
 
                         <div class="provreg-mmcf-firstpage">
@@ -54,13 +57,38 @@
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
                                     <label for="email">Email Address <span>*</span></label>
-                                    <input type="text" placeholder="e. g. name@gmail.com" name="email" value="{{ old('email') }}" required autocomplete="off">
-                                    @error('email') <small>{{ $message }}</small> @enderror
+                                    <input
+                                        type="email"
+                                        placeholder="e. g. name@gmail.com"
+                                        name="email"
+                                        value="{{ old('email') }}"
+                                        required
+                                        maxlength="255"
+                                        autocomplete="email"
+                                        inputmode="email"
+                                    >
+                                    @error('email')
+                                        <small>{{ $message }}</small>
+                                    @enderror
                                 </div>
+
                                 <div class="prg-mm-group">
                                     <label for="number">Phone Number <span>*</span></label>
-                                    <input type="text" placeholder="Enter your phone number" name="number" value="{{ old('number') }}" required autocomplete="off">
-                                    @error('number') <small style="align-self: flex-end">{{ $message }}</small> @enderror
+                                    <input
+                                        type="text"
+                                        placeholder="e. g. 09123456789"
+                                        name="number"
+                                        value="{{ old('number') }}"
+                                        required
+                                        maxlength="11"
+                                        inputmode="numeric"
+                                        autocomplete="tel"
+                                        pattern="09[0-9]{9}"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
+                                    >
+                                    @error('number')
+                                        <small style="align-self: flex-end">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="prg-mm-group">
@@ -76,8 +104,21 @@
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="zipcode">ZIP Code <span>*</span></label>
-                                    <input type="text" placeholder="" name="zipcode" value="{{ old('zipcode') }}" required autocomplete="off" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" title="ZIP Code must be 4 digits">
-                                    @error('zipcode') <small style="align-self: flex-end">{{ $message }}</small> @enderror
+                                    <input
+                                        type="text"
+                                        placeholder=""
+                                        name="zipcode"
+                                        value="{{ old('zipcode') }}"
+                                        required
+                                        maxlength="4"
+                                        inputmode="numeric"
+                                        pattern="[0-9]{4}"
+                                        autocomplete="off"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 5)"
+                                    >
+                                    @error('zipcode')
+                                        <small style="align-self: flex-end">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -157,7 +198,18 @@
                                 @error('password_confirmation') <small>{{ $message }}</small> @enderror
                                 {{-- <a href="#">Forget Password?</a> --}}
                             </div>
+                            <div class="prg-mm-group">
+                                <div
+                                    class="g-recaptcha"
+                                    data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                                    data-expired-callback="providerSignupRecaptchaExpired"
+                                    data-error-callback="providerSignupRecaptchaExpired"
+                                ></div>
 
+                                @error('g-recaptcha-response')
+                                    <small style="align-self: flex-end">{{ $message }}</small>
+                                @enderror
+                            </div>
 
                             <div class="provreg-mmcf-secpage__btns">
                                 <button type="button" id="provreg-prev" class="btn btn--primary">back</button>
@@ -173,14 +225,96 @@
 
 
             </div>
-            {{-- <img src="{{asset('images/vector-preg.svg')}}" class="provider-register-main-img" alt="vector"> --}}
+            {{-- <img src="{{asset('public/images/vector-preg.svg')}}" class="provider-register-main-img" alt="vector"> --}}
         </div>
     </main>
 @endsection
 @push('extrascripts')
+    <script>    
+        window.providerSignupRecaptchaExpired = function () {
+            if (window.ServeasePageLoader) {
+                window.ServeasePageLoader.reset();
+            }
+        };
 
-    <script>
         $(document).ready(function () {
+            function getInvalidField(scopeSelector) {
+                const fields = document.querySelectorAll(scopeSelector + ' input, ' + scopeSelector + ' select, ' + scopeSelector + ' textarea');
+
+                for (let i = 0; i < fields.length; i++) {
+                    if (typeof fields[i].checkValidity === 'function' && !fields[i].checkValidity()) {
+                        return fields[i];
+                    }
+                }
+
+                return null;
+            }
+
+            function resetPageLoader() {
+                if (window.ServeasePageLoader) {
+                    window.ServeasePageLoader.reset();
+                }
+            }
+
+            $('.provreg-mm-con--fields').on('submit', function (e) {
+                const firstPageInvalid = getInvalidField('.provreg-mmcf-firstpage');
+
+                if (firstPageInvalid) {
+                    e.preventDefault();
+                    resetPageLoader();
+
+                    $('.provreg-mmcf-secpage').hide();
+                    $('.provreg-mmcf-firstpage').show();
+                    setStep(1);
+
+                    setTimeout(function () {
+                        firstPageInvalid.reportValidity();
+                        firstPageInvalid.focus();
+                    }, 50);
+
+                    return;
+                }
+
+                const secondPageInvalid = getInvalidField('.provreg-mmcf-secpage');
+
+                if (secondPageInvalid) {
+                    e.preventDefault();
+                    resetPageLoader();
+
+                    $('.provreg-mmcf-firstpage').hide();
+                    $('.provreg-mmcf-secpage').show();
+                    setStep(2);
+
+                    setTimeout(function () {
+                        secondPageInvalid.reportValidity();
+                        secondPageInvalid.focus();
+                    }, 50);
+
+                    return;
+                }
+
+                if (typeof grecaptcha === 'undefined' || grecaptcha.getResponse().length === 0) {
+                    e.preventDefault();
+                    resetPageLoader();
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Verify reCAPTCHA',
+                        text: 'Please check the reCAPTCHA box again before submitting.',
+                        confirmButtonColor: '#FFBE42',
+                    });
+                }
+            });
+
+            const hasStepTwoErrors = @json(
+                $errors->has('resume') ||
+                $errors->has('barangay_clearance') ||
+                $errors->has('profession') ||
+                $errors->has('experience') ||
+                $errors->has('password') ||
+                $errors->has('password_confirmation') ||
+                $errors->has('g-recaptcha-response')
+            );
 
             function setStep(step) {
                 if (step === 1) {
@@ -199,9 +333,32 @@
             // Default state
             setStep(1);
 
+            if (hasStepTwoErrors) {
+                $('.provreg-mmcf-firstpage').hide();
+                $('.provreg-mmcf-secpage').show();
+                setStep(2);
+            }
+
+            @if($errors->has('g-recaptcha-response'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Verify reCAPTCHA',
+                    text: @json($errors->first('g-recaptcha-response')),
+                    confirmButtonColor: '#FFBE42',
+                });
+            @endif
+
             // Next → go to step 2
             $('#provreg-next').on('click', function (e) {
                 e.preventDefault();
+
+                const firstPageInvalid = getInvalidField('.provreg-mmcf-firstpage');
+
+                if (firstPageInvalid) {
+                    firstPageInvalid.reportValidity();
+                    firstPageInvalid.focus();
+                    return;
+                }
 
                 $('.provreg-mmcf-firstpage').hide();
                 $('.provreg-mmcf-secpage').fadeIn(200);
@@ -304,6 +461,7 @@
 
         });
     </script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     @if(session('provider_application_submitted'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {

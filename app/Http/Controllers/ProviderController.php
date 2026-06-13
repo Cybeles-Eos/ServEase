@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Provider;
 use App\Models\BookingRequest;
 use App\Models\ServiceRating;
 use Illuminate\Support\Facades\DB;
@@ -267,6 +268,8 @@ class ProviderController extends Controller
             ->orderByDesc('earnings_total')
             ->get();
 
+        $accountHealth = $provider->accountHealth();
+
         return view('admin.provdashboard', compact(
             'year',
             'selectedYear',
@@ -286,15 +289,100 @@ class ProviderController extends Controller
             'monthlyEarnings',
             'recentBookings',
             'topCategories',
-            'categoryEarnings'
+            'categoryEarnings',
+            'accountHealth'
         ));
+    }
+
+    public function bookingCalendar(Request $request)
+    {
+        $provider = auth()->user()->provider ?? null;
+
+        if (!$provider) {
+            abort(403, 'Provider account not found.');
+        }
+
+        $monthInput = $request->input('month', now()->format('Y-m'));
+
+        try {
+            $currentMonth = Carbon::createFromFormat('Y-m', $monthInput)->startOfMonth();
+        } catch (\Exception $e) {
+            $currentMonth = now()->startOfMonth();
+        }
+
+        $selectedDate = $request->input('date', now()->toDateString());
+
+        try {
+            $selectedDate = Carbon::parse($selectedDate)->toDateString();
+        } catch (\Exception $e) {
+            $selectedDate = now()->toDateString();
+        }
+
+        $startOfMonth = $currentMonth->copy()->startOfMonth();
+        $endOfMonth = $currentMonth->copy()->endOfMonth();
+        $calendarStart = $startOfMonth->copy()->startOfWeek(Carbon::SUNDAY);
+        $calendarEnd = $endOfMonth->copy()->endOfWeek(Carbon::SATURDAY);
+
+        $calendarDays = collect();
+        for ($date = $calendarStart->copy(); $date->lte($calendarEnd); $date->addDay()) {
+            $calendarDays->push($date->copy());
+        }
+
+        $bookings = BookingRequest::with([
+                'bookingInfo.service',
+                'bookingInfo.customer',
+            ])
+            ->where('provider_id', $provider->id)
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED'])
+            ->whereHas('bookingInfo', function ($query) use ($calendarStart, $calendarEnd) {
+                $query->whereBetween('date', [
+                    $calendarStart->toDateString(),
+                    $calendarEnd->toDateString(),
+                ]);
+            })
+            ->get()
+            ->sortBy(function ($booking) {
+                $bookingInfo = $booking->bookingInfo;
+                return trim(($bookingInfo?->date?->format('Y-m-d') ?? '') . ' ' . ($bookingInfo?->time?->format('H:i') ?? ''));
+            });
+
+        $bookingsByDate = $bookings->groupBy(fn ($booking) => $booking->bookingInfo?->date?->toDateString());
+        $selectedBookings = $bookingsByDate->get($selectedDate, collect());
+
+        $todayBookingsCount = $bookingsByDate->get(now()->toDateString(), collect())->count();
+        $confirmedBookingsCount = $bookings->count();
+        $monthBookingsCount = $bookings->count();
+
+        return view('admin.provider-calendar', [
+            'currentMonth' => $currentMonth,
+            'previousMonth' => $currentMonth->copy()->subMonth()->format('Y-m'),
+            'nextMonth' => $currentMonth->copy()->addMonth()->format('Y-m'),
+            'calendarDays' => $calendarDays,
+            'bookingsByDate' => $bookingsByDate,
+            'selectedDate' => $selectedDate,
+            'selectedBookings' => $selectedBookings,
+            'todayBookingsCount' => $todayBookingsCount,
+            'confirmedBookingsCount' => $confirmedBookingsCount,
+            'monthBookingsCount' => $monthBookingsCount,
+        ]);
     }
 
     // Index Settings
     public function setting()
     {
         $user = User::with('provider')->find(auth()->id());
-        return view('admin.provsetting', compact('user'));
+        $availabilityDays = Provider::AVAILABILITY_DAYS;
+        $defaultAvailabilityDays = Provider::DEFAULT_AVAILABILITY_DAYS;
+        $defaultAvailabilityStartTime = Provider::DEFAULT_AVAILABILITY_START_TIME;
+        $defaultAvailabilityEndTime = Provider::DEFAULT_AVAILABILITY_END_TIME;
+
+        return view('admin.provsetting', compact(
+            'user',
+            'availabilityDays',
+            'defaultAvailabilityDays',
+            'defaultAvailabilityStartTime',
+            'defaultAvailabilityEndTime'
+        ));
     }
 
     public function updateSetting(Request $request)
@@ -304,14 +392,17 @@ class ProviderController extends Controller
             'last_name'    => 'nullable|string|max:255',
             'profile_image'=> 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'phone_number' => 'nullable|string|max:20',
-            'personal_email' => 'nullable|email|max:255',
             'home_address' => 'nullable|string|max:255',
             'province'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
             'zipcode'      => 'nullable|string|max:20',
-            'email'        => 'nullable|email|max:255',
+            // 'email'        => 'nullable|email|max:255',
             'profession'   => 'nullable|string|max:255',
             'year_exp'     => 'nullable|string|max:20',
+            'availability_days' => 'required|array|min:1',
+            'availability_days.*' => 'in:' . implode(',', array_keys(Provider::AVAILABILITY_DAYS)),
+            'availability_start_time' => 'nullable|required_with:availability_end_time|date_format:H:i',
+            'availability_end_time' => 'nullable|required_with:availability_start_time|date_format:H:i|after:availability_start_time',
 
         ]);
 
@@ -355,13 +446,15 @@ class ProviderController extends Controller
         $provider->first_name  = $request->first_name;
         $provider->last_name   = $request->last_name;
         $provider->phone_number= $request->phone_number;
-        $provider->personal_email= $request->personal_email;
         $provider->home_address     = $request->home_address;
         $provider->province        = $request->province;
         $provider->barangay     = $request->barangay;
         $provider->zipcode     = $request->zipcode;
         $provider->profession     = $request->profession;
         $provider->year_exp     = $request->year_exp;
+        $provider->availability_days = $request->input('availability_days', Provider::DEFAULT_AVAILABILITY_DAYS);
+        $provider->availability_start_time = $request->availability_start_time ?: Provider::DEFAULT_AVAILABILITY_START_TIME;
+        $provider->availability_end_time = $request->availability_end_time ?: Provider::DEFAULT_AVAILABILITY_END_TIME;
         $provider->save();
 
         /*
@@ -370,7 +463,7 @@ class ProviderController extends Controller
         |--------------------------------------------------------------------------
         */
         $user->name  = trim($request->first_name . ' ' . $request->last_name);
-        $user->email = $request->email;
+        // $user->email = $request->email;
         $user->save();
 
         return redirect()->route('provider.setting')->with('flash_message', [

@@ -4,13 +4,13 @@
             <div class="cusdash-right__cards-con--active-box">
                 <div class="cdrcc-ordbox active" wire:key="ongoing-booking-{{ $ongoingBookings->id }}">
                     <div class="cdrcc-ordbox--img">
-                        <img src="{{ asset('images/serv-bg.png') }}" alt="thumbnail">
+                        <img src="{{ asset('public/images/serv-bg.png') }}" alt="thumbnail">
                     </div>
 
                     <div class="cdrcc-ordbox--info">
                         <div class="cdrcc-ordbox-i">
                             <div class="cdrcc-ordbox-i--profile">
-                                <img src="{{ asset($ongoingBookings->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
+                                <img src="{{ asset($ongoingBookings->service->provider->profile_image ?? 'public/images/user.png') }}" alt="profile">
 
                                 <div class="cdrcc-ordbox-i--profile__dtl">
                                     <h3>
@@ -27,11 +27,7 @@
 
                                         <div>
                                             <a href="#">
-                                                @if(!empty($ongoingBookings->service->provider->personal_email))
-                                                    {{ $ongoingBookings->service->provider->personal_email }}
-                                                @else
-                                                    {{ $ongoingBookings->service->provider->user->email ?? '' }}
-                                                @endif
+                                                {{ $ongoingBookings->service->provider->user->email ?? '' }}
                                             </a>
                                         </div>
                                     </div>
@@ -109,13 +105,13 @@
         @forelse ($allBookings as $booking)
             <div class="cdrcc-ordbox" wire:key="customer-booking-{{ $booking->id }}-{{ $booking->status }}">
                 <div class="cdrcc-ordbox--img">
-                    <img src="{{ asset('images/serv-bg.png') }}" alt="thumbnail">
+                    <img src="{{ asset('public/images/serv-bg.png') }}" alt="thumbnail">
                 </div>
 
                 <div class="cdrcc-ordbox--info">
                     <div class="cdrcc-ordbox-i">
                         <div class="cdrcc-ordbox-i--profile">
-                            <img src="{{ asset($booking->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
+                            <img src="{{ asset($booking->service->provider->profile_image ?? 'public/images/user.png') }}" alt="profile">
 
                             <div class="cdrcc-ordbox-i--profile__dtl">
                                 <h3>
@@ -139,11 +135,7 @@
 
                                     <div>
                                         <a href="#">
-                                            @if(!empty($booking->service->provider->personal_email))
-                                                {{ $booking->service->provider->personal_email }}
-                                            @else
-                                                {{ $booking->service->provider->user->email ?? '' }}
-                                            @endif
+                                            {{ $booking->service->provider->user->email ?? '' }}
                                         </a>
                                     </div>
                                 </div>
@@ -192,6 +184,24 @@
                                         onclick="openRatingModal('rating-modal-{{ $booking->id }}')">
                                     {!! $booking->bookingRequest?->rating ? '<svg width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.125 7.5H4.14063C4.22396 7.5 4.30479 7.48438 4.38313 7.45313C4.46146 7.42188 4.53167 7.375 4.59375 7.3125L7.53125 4.375C7.625 4.28125 7.69542 4.17438 7.7425 4.05438C7.78958 3.93438 7.81292 3.81729 7.8125 3.70313C7.81208 3.58896 7.78604 3.47708 7.73438 3.3675C7.68271 3.25792 7.615 3.15625 7.53125 3.0625L6.96875 2.46875C6.875 2.375 6.77083 2.30479 6.65625 2.25812C6.54167 2.21146 6.42188 2.18792 6.29688 2.1875C6.18229 2.1875 6.06521 2.21104 5.94563 2.25812C5.82604 2.30521 5.71917 2.37542 5.625 2.46875L2.6875 5.40625C2.625 5.46875 2.57813 5.53917 2.54688 5.6175C2.51563 5.69583 2.5 5.77646 2.5 5.85938V6.875C2.5 7.05208 2.56 7.20063 2.68 7.32063C2.8 7.44063 2.94833 7.50042 3.125 7.5ZM3.4375 6.5625V5.96875L5.01563 4.39062L5.32813 4.67188L5.60938 4.98438L4.03125 6.5625H3.4375ZM5.32813 4.67188L5.60938 4.98438L5.01563 4.39062L5.32813 4.67188ZM5.73438 7.5H9.375C9.55208 7.5 9.70063 7.44 9.82063 7.32C9.94063 7.2 10.0004 7.05167 10 6.875C9.99958 6.69833 9.93958 6.55 9.82 6.43C9.70042 6.31 9.55208 6.25 9.375 6.25H6.98438L5.73438 7.5ZM2.5 10L1.0625 11.4375C0.864584 11.6354 0.637918 11.6798 0.382501 11.5706C0.127084 11.4615 -0.000415649 11.266 1.01792e-06 10.9844V1.25C1.01792e-06 0.90625 0.122501 0.612083 0.367501 0.3675C0.612501 0.122917 0.906668 0.000416667 1.25 0H11.25C11.5938 0 11.8881 0.1225 12.1331 0.3675C12.3781 0.6125 12.5004 0.906667 12.5 1.25V8.75C12.5 9.09375 12.3777 9.38813 12.1331 9.63313C11.8885 9.87813 11.5942 10.0004 11.25 10H2.5ZM1.96875 8.75H11.25V1.25H1.25V9.45312L1.96875 8.75Z" fill="#202020"/></svg>' : '<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.22529 9.28986L5.50023 7.55476L7.77517 9.28986L6.92207 6.42928L9.05483 4.92865H6.40073L5.50023 2.02117L4.59973 4.92865H1.94564L4.07839 6.42928L3.22529 9.28986ZM5.50023 8.74588L2.63096 10.9077C2.52985 10.9765 2.42843 11.0068 2.32669 10.9987C2.22495 10.9906 2.13142 10.9621 2.04611 10.9134C1.9608 10.8646 1.89603 10.7911 1.85179 10.693C1.80756 10.5948 1.80661 10.4907 1.84895 10.3806L2.94471 6.81851L0.219525 4.87237C0.114625 4.80734 0.0476404 4.7245 0.0185717 4.62383C-0.0104969 4.52316 -0.00544172 4.42281 0.0337378 4.32276C0.0729174 4.22272 0.131687 4.14238 0.210046 4.08173C0.288405 4.02107 0.383826 3.99075 0.496309 3.99075H3.9182L5.03671 0.354525C5.07968 0.243853 5.14161 0.156941 5.2225 0.0937895C5.30275 0.0312631 5.39533 0 5.50023 0C5.60513 0 5.69771 0.0312631 5.77796 0.0937895C5.85885 0.156941 5.92078 0.243853 5.96375 0.354525L7.08226 3.99075H10.5042C10.616 3.99075 10.7114 4.02107 10.7904 4.08173C10.8694 4.14238 10.9282 4.22272 10.9667 4.32276C11.0053 4.42281 11.0103 4.52316 10.9819 4.62383C10.9522 4.72512 10.8852 4.80828 10.7809 4.87331L8.05575 6.81851L9.15151 10.3806C9.19385 10.4913 9.1929 10.5954 9.14867 10.693C9.10443 10.7905 9.03966 10.864 8.95435 10.9134C8.86904 10.9628 8.77551 10.9912 8.67377 10.9987C8.57203 11.0062 8.47061 10.9759 8.3695 10.9077L5.50023 8.74588Z" fill="#202020"/></svg>' !!}
                                 </button>
+
+                                @if($booking->bookingRequest?->report)
+                                    <button type="button"
+                                            class="receipt report-receipt is-reported"
+                                            style="background: transparent; border: 1px solid #E0E2E7; border-radius: 6px"
+                                            title="Already reported"
+                                            disabled>
+                                        <i class="fas fa-flag"></i>
+                                    </button>
+                                @else
+                                    <button type="button"
+                                            class="receipt report-receipt"
+                                            style="background: transparent; border: 1px solid #E0E2E7; border-radius: 6px"
+                                            title="Report provider"
+                                            onclick="openRatingModal('report-modal-{{ $booking->id }}')">
+                                        <i class="far fa-flag"></i>
+                                    </button>
+                                @endif
 
                                 <a href="{{ route('booking.receipt', $booking->bookingRequest?->id) }}"
                                 target="_blank"
@@ -314,7 +324,7 @@
 
             {{-- Modal --}}
             @if($booking->status === 'COMPLETED' && $booking->bookingRequest)
-                <div id="rating-modal-{{ $booking->id }}" class="rating-modal-overlay">
+                <div id="rating-modal-{{ $booking->id }}" class="rating-modal-overlay" wire:ignore.self>
                     <div class="rating-modal-box">
                         <div class="rating-modal-head">
                             <h3>
@@ -393,6 +403,71 @@
                         </div>
                     </div>
                 </div>
+
+                @unless($booking->bookingRequest->report)
+                    <div id="report-modal-{{ $booking->id }}" class="rating-modal-overlay" wire:ignore.self>
+                        <div class="rating-modal-box">
+                            <div class="rating-modal-head">
+                                <h3>Report Provider</h3>
+
+                                <button type="button"
+                                        class="rating-modal-close"
+                                        onclick="closeRatingModal('report-modal-{{ $booking->id }}')">
+                                    x
+                                </button>
+                            </div>
+
+                            <div class="rating-modal-body">
+                                <p class="rating-modal-service-title">
+                                    {{ $booking->service->title ?? '' }}
+                                </p>
+
+                                <p class="rating-modal-provider-name">
+                                    Provider:
+                                    <strong>
+                                        {{ $booking->service->provider->first_name ?? '' }}
+                                        {{ $booking->service->provider->last_name ?? '' }}
+                                    </strong>
+                                </p>
+
+                                <form method="POST"
+                                    action="{{ route('customer.booking.report-service', $booking->bookingRequest->id) }}"
+                                    class="customer-report-form">
+                                    @csrf
+
+                                    <label for="report-reason-{{ $booking->id }}">Reason</label>
+                                    <select id="report-reason-{{ $booking->id }}" name="reason" required>
+                                        <option value="">Select a reason</option>
+                                        <option value="Poor service quality">Poor service quality</option>
+                                        <option value="Unprofessional behavior">Unprofessional behavior</option>
+                                        <option value="Late or no-show">Late or no-show</option>
+                                        <option value="Unsafe or suspicious conduct">Unsafe or suspicious conduct</option>
+                                        <option value="Incorrect pricing or payment issue">Incorrect pricing or payment issue</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+
+                                    <label for="report-details-{{ $booking->id }}">Details</label>
+                                    <textarea id="report-details-{{ $booking->id }}"
+                                            name="details"
+                                            rows="4"
+                                            placeholder="Describe what happened."></textarea>
+
+                                    <div class="rating-modal-actions">
+                                        <button type="button"
+                                                class="rating-cancel-btn"
+                                                onclick="closeRatingModal('report-modal-{{ $booking->id }}')">
+                                            Cancel
+                                        </button>
+
+                                        <button type="submit" class="customer-rating-submit">
+                                            Submit Report
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endunless
             @endif
         @empty
             <div style="display: flex;justify-content: center;align-items: center;height: 60px;color: rgba(0, 0, 0, 0.3);font-size: 14px;font-weight: 500;text-align: center;">

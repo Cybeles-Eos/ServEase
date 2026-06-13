@@ -16,6 +16,9 @@ class BookingRequest extends Model
         'provider_id',
         'status',
         'responded_at',
+        'customer_seen_at',
+        'provider_seen_at',
+        'cancelled_by',
     ];
 
     protected $casts = [
@@ -33,5 +36,10 @@ class BookingRequest extends Model
     public function rating()
     {
         return $this->hasOne(\App\Models\ServiceRating::class, 'booking_request_id');
+    }
+
+    public function report()
+    {
+        return $this->hasOne(\App\Models\ServiceReport::class, 'booking_request_id');
     }
 }

@@ -37,6 +37,7 @@ class CustomerBookingsBoard extends Component
             'service.provider.ratings',
             'bookingRequest',
             'bookingRequest.rating',
+            'bookingRequest.report',
         ];
 
         $query = BookingInfo::with($relations)

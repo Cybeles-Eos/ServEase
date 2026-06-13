@@ -1,7 +1,7 @@
 <div class="main-sidebar-uix sidebar-dashboard">
     <div class="sidebar-dashboard--logo">
-        <img src="{{ asset('images/dashboard-logo.svg') }}" alt="logo" class="sdl-d">
-        <img src="{{ asset('images/dashboard-logo-m.svg') }}" alt="logo" class="sdl-m">
+        <img src="{{ asset('public/images/dashboard-logo.svg') }}" alt="logo" class="sdl-d">
+        <img src="{{ asset('public/images/dashboard-logo-m.svg') }}" alt="logo" class="sdl-m">
     </div>
     <div class="sidebar-dashboard--links">
         <ul>
@@ -41,6 +41,17 @@
                                 </svg>
                             </div>
                             Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('provider.booking-calendar') }}" class="{{ Request::is('provider/booking-calendar') ? 'active' : '' }}">
+                            <div>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 3V6M17 3V6M4 9H20M6.5 21H17.5C19.1569 21 20.5 19.6569 20.5 18V7.5C20.5 5.84315 19.1569 4.5 17.5 4.5H6.5C4.84315 4.5 3.5 5.84315 3.5 7.5V18C3.5 19.6569 4.84315 21 6.5 21Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M8 13H8.01M12 13H12.01M16 13H16.01M8 17H8.01M12 17H12.01M16 17H16.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            Booking Calendar
                         </a>
                     </li>
                     {{-- <li>
@@ -155,6 +166,16 @@
                                 </svg>
                             </div>
                             Applicants
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.reports') }}" class="{{ Request::is('admin/reports') ? 'active' : '' }}">
+                            <div>
+                                <svg width="16" height="15" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 6.75V9.75M9 12.75H9.0075M3.75 15.75H14.25C15.0784 15.75 15.75 15.0784 15.75 14.25V5.56066C15.75 5.16283 15.592 4.7813 15.3107 4.5L13.5 2.68934C13.2187 2.40804 12.8372 2.25 12.4393 2.25H3.75C2.92157 2.25 2.25 2.92157 2.25 3.75V14.25C2.25 15.0784 2.92157 15.75 3.75 15.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            Reports
                         </a>
                     </li>
                     <li>

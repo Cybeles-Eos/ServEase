@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <hr>
-                <a href="{{ url('provider-signup') }}" class="join-now-cta"><img src="{{ asset('images/cta-join.png') }}" alt=""></a>
+                <a href="{{ url('provider-signup') }}" class="join-now-cta"><img src="{{ asset('public/images/cta-join.png') }}" alt=""></a>
             </div>
             <div class="ps-sl-cards">
 
@@ -157,7 +157,7 @@
                 <div class="ps-sl-cards__list ps-sl-cards-conm">
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="{{asset('images/serv-bg.png')}}" alt="">
+                            <img src="{{asset('public/images/serv-bg.png')}}" alt="">
                             <span class="ps-sl-c-box__head--cat">Plumber</span>
                         </div>
                         <div class="ps-sl-c-box__body">
@@ -207,7 +207,7 @@
                     </div>
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="{{asset('images/serv-bg.png')}}" alt="">
+                            <img src="{{asset('public/images/serv-bg.png')}}" alt="">
                             <span class="ps-sl-c-box__head--cat">Plumber</span>
                         </div>
                         <div class="ps-sl-c-box__body">
@@ -257,7 +257,7 @@
                     </div>
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="{{asset('images/serv-bg.png')}}" alt="">
+                            <img src="{{asset('public/images/serv-bg.png')}}" alt="">
                             <span class="ps-sl-c-box__head--cat">Plumber</span>
                         </div>
                         <div class="ps-sl-c-box__body">
@@ -307,7 +307,7 @@
                     </div>
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="{{asset('images/serv-bg.png')}}" alt="">
+                            <img src="{{asset('public/images/serv-bg.png')}}" alt="">
                             <span class="ps-sl-c-box__head--cat">Plumber</span>
                         </div>
                         <div class="ps-sl-c-box__body">
@@ -357,7 +357,7 @@
                     </div>
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="{{asset('images/serv-bg.png')}}" alt="">
+                            <img src="{{asset('public/images/serv-bg.png')}}" alt="">
                             <span class="ps-sl-c-box__head--cat">Plumber</span>
                         </div>
                         <div class="ps-sl-c-box__body">
@@ -463,7 +463,7 @@
                 $wrap.append(`
                     <div class="ps-sl-c-box">
                         <div class="ps-sl-c-box__head">
-                            <img src="${assetBase}${service.image ?? 'images/default_service_banner.png'}" alt="${service.title}">
+                            <img src="${assetBase}${service.image ?? 'public/images/default_service_banner.png'}" alt="${service.title}">
                             ${service.category ? `<span class="ps-sl-c-box__head--cat">${service.category}</span>` : ''}
                         </div>
 
