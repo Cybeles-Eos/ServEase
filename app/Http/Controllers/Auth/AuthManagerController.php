@@ -173,16 +173,70 @@ class AuthManagerController extends Controller
         return view('admin.auth.provider-register');
     }
 
+    // public function signup(Request $request)
+    // {
+    //     // Customer Creation Account
+    //     $validated = $request->validate([
+    //         'fname' => ['required', 'string', 'max:255'],
+    //         'lname' => ['required', 'string', 'max:255'],
+    //         'email' => ['required', 'email', 'unique:users,email'],
+    //         'password' => ['required', 'min:8', 'confirmed'],
+    //         'g-recaptcha-response' => ['required'],
+    //     ], [
+    //         'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
+    //     ]);
+
+    //     $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+    //         'secret' => config('services.recaptcha.secret_key'),
+    //         'response' => $request->input('g-recaptcha-response'),
+    //         'remoteip' => $request->ip(),
+    //     ]);
+
+    //     if (! $recaptcha->json('success')) {
+    //         throw ValidationException::withMessages([
+    //             'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+    //         ]);
+    //     }
+
+    //     $user = User::create([ 
+    //         'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
+    //         'email'    => $validated['email'],
+    //         'password' => Hash::make($validated['password']),
+    //         'role'     => 'customer', 
+    //     ]);
+    //     $user->customer()->create([
+    //         'first_name' => $validated['fname'],
+    //         'last_name' => $validated['lname'],
+    //     ]);
+
+    //     AdminNotificationService::newCustomer($user);
+
+    //     return redirect('/login')->with('flash_message', [
+    //         'title' => 'Account Created',
+    //         'message' => 'Customer account created successfully. You can now login.',
+    //         'type' => 'success',
+    //     ]);
+    // }
     public function signup(Request $request)
     {
         // Customer Creation Account
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
             'lname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone_number' => ['required', 'regex:/^09[0-9]{9}$/', 'unique:tbl_customers,phone_number'],
+            'street_address' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'barangay' => ['required', 'string', 'max:255'],
+            'zipcode' => ['required', 'regex:/^[0-9]{4}$/'],
             'password' => ['required', 'min:8', 'confirmed'],
             'g-recaptcha-response' => ['required'],
         ], [
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email address is already registered.',
+            'phone_number.regex' => 'Phone number must start with 09 and must be exactly 11 digits.',
+            'phone_number.unique' => 'This phone number is already registered.',
+            'zipcode.regex' => 'ZIP code must be exactly 4 digits.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 
@@ -198,15 +252,21 @@ class AuthManagerController extends Controller
             ]);
         }
 
-        $user = User::create([ 
-            'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
-            'email'    => $validated['email'],
+        $user = User::create([
+            'name' => $validated['fname'] . ' ' . $validated['lname'],
+            'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role'     => 'customer', 
+            'role' => 'customer',
         ]);
+
         $user->customer()->create([
             'first_name' => $validated['fname'],
             'last_name' => $validated['lname'],
+            'phone_number' => $validated['phone_number'],
+            'street_address' => $validated['street_address'],
+            'city' => $validated['city'],
+            'barangay' => $validated['barangay'],
+            'zipcode' => $validated['zipcode'],
         ]);
 
         AdminNotificationService::newCustomer($user);
