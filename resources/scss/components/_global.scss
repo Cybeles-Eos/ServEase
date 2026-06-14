@@ -1198,3 +1198,29 @@ h5{
     width: 14px;
     height: 14px;
 }
+
+
+
+
+.auth-form__privacy {
+    margin: 2px 0 5px;
+    
+    p {
+        margin: 0;
+        color: #667085;
+        font-size: 12px;
+        line-height: 160%;
+        text-align: left;
+        opacity: 1 !important;
+    }
+
+    a {
+        color: $color-primary;
+        font-weight: 400;
+        text-decoration: none;
+        text-decoration: underline;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

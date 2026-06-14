@@ -69,15 +69,27 @@
                         @error('password_confirmation') <small>{{ $message }}</small> @enderror
                         {{-- <a href="#">Forget Password?</a> --}}
                     </div>
-                    <div class="plm-ff-group">
+                    <div class="plm-ff-group" style="margin-bottom: 5px">
                         <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
 
                         @error('g-recaptcha-response')
                             <small>{{ $message }}</small>
                         @enderror
                     </div>
+                    <div class="auth-form__privacy">
+                        <p>
+                            By signing up, you agree to our
+                            <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                        </p>
+                    </div>
                     <button class="plm-ff-btn btn btn--tertiary" type="submit">Create Account</button>
                     <p class="plm-ff-cta">Already Have Account? <a href="{{url('/login')}}">Sign in</a></p>
+                    {{-- <div class="auth-form__privacy">
+                        <p>
+                            By signing up, you agree to our
+                            <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                        </p>
+                    </div> --}}
                 </form>
             </div>
             <div class="provider-login-main__image">

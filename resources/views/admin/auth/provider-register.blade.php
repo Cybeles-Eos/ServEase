@@ -199,7 +199,7 @@
                                 @error('password_confirmation') <small>{{ $message }}</small> @enderror
                                 {{-- <a href="#">Forget Password?</a> --}}
                             </div>
-                            <div class="prg-mm-group">
+                            <div class="prg-mm-group" style="margin-bottom: 5px !important">
                                 <div
                                     class="g-recaptcha"
                                     data-sitekey="{{ config('services.recaptcha.site_key') }}"
@@ -211,7 +211,12 @@
                                     <small style="align-self: flex-end">{{ $message }}</small>
                                 @enderror
                             </div>
-
+                    <div class="auth-form__privacy">
+                        <p>
+                            By signing up, you agree to our
+                            <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                        </p>
+                    </div>
                             <div class="provreg-mmcf-secpage__btns">
                                 <button type="button" id="provreg-prev" class="btn btn--primary">back</button>
                                 <button type="submit" class="btn btn--tertiary">Submit</button>
