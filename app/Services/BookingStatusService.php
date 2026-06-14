@@ -19,7 +19,7 @@ class BookingStatusService
     | true  = complete after 1 minute
     | false = complete after 16 hours
     */
-    private bool $useMinuteTesting = true;
+    private bool $useMinuteTesting = false;
 
     public function updateAllDueBookings(): array
     {
@@ -154,6 +154,8 @@ class BookingStatusService
             DB::transaction(function () use ($bookingRequest) {
                 $bookingRequest->update([
                     'status' => 'COMPLETED',
+                    'responded_at' => now(),
+                    'cancelled_by' => null,
                 ]);
 
                 $bookingRequest->bookingInfo->update([

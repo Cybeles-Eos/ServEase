@@ -129,9 +129,9 @@
                                 @error('home_address') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
-                                <label>Province <span>*</span></label>
-                                <input type="text" name="province" value="{{ old('province') }}">
-                                @error('province') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                                <label>City <span>*</span></label>
+                                <input type="text" name="city" value="{{ old('city') }}">
+                                @error('city') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
                                 <label>Barangay</label>
@@ -150,7 +150,7 @@
                             </div>
                             <div class="prg-mm-group">
                                 <label>Years experience <span>*</span></label>
-                                <input type="number" name="year_exp" min="0" value="{{ old('year_exp', 0) }}">
+                                <input type="number" name="year_exp" min="1" max="100" value="{{ old('year_exp', 1) }}">
                                 @error('year_exp') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                         </div>

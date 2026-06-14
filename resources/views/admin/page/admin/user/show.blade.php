@@ -538,8 +538,8 @@
                             <span class="admin-user-show__value">{{ $detail($profile->home_address) }}</span>
                         </div>
                         <div class="admin-user-show__row">
-                            <span class="admin-user-show__label">Province</span>
-                            <span class="admin-user-show__value">{{ $detail($profile->province) }}</span>
+                            <span class="admin-user-show__label">City</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->city ?? $profile->province) }}</span>
                         </div>
                         <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Barangay</span>

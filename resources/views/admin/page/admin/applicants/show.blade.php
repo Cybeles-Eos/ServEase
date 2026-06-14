@@ -439,8 +439,8 @@
                 </div>
 
                 <div class="applicant-detail-row">
-                    <span>Province</span>
-                    <strong>{{ $provider->province ?? 'N/A' }}</strong>
+                    <span>City</span>
+                    <strong>{{ $provider->city ?? $provider->province ?? 'N/A' }}</strong>
                 </div>
 
                 <div class="applicant-detail-row">

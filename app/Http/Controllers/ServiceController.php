@@ -20,7 +20,7 @@ class ServiceController extends Controller
     public function index()
     {
         $services = Service::with(['provider', 'serviceCategory', 'ratings'])
-            ->where('is_active', 1)
+            ->visibleToCustomers()
             ->latest()
             ->get()
             ->map(function ($service) {
@@ -142,7 +142,6 @@ class ServiceController extends Controller
             'slug'           => $slug,
             'description'    => $request->description,
             'content'        => $request->content,
-            'category'       => $request->category,
             'specialization' => $request->specialization,
             'price'          => $request->price,
             'image'          => null,
@@ -191,6 +190,7 @@ class ServiceController extends Controller
                 'ratings.customer',
                 'ratings.customer.user',
             ])
+            ->visibleToCustomers()
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -201,7 +201,7 @@ class ServiceController extends Controller
             ])
             ->where('service_category_id', $service->service_category_id)
             ->where('id', '!=', $service->id)
-            ->where('is_active', 1)
+            ->visibleToCustomers()
             ->latest()
             ->limit(3)
             ->get();
@@ -345,7 +345,7 @@ class ServiceController extends Controller
             'provider_profile' => $service->provider?->profile_image,
 
             'provider_exp' => $service->provider->year_exp ?? 0,
-            'provider_area' => ($service->provider->province ?? 'Unknown Area') . ' & nearby',
+            'provider_area' => ($service->provider->city ?? $service->provider->province ?? 'Unknown Area') . ' & nearby',
             'provider_availability' => $providerAvailabilityData['label'],
             'provider_availability_data' => $providerAvailabilityData,
             'provider_is_available_now' => $service->provider?->isAvailableNow() ?? false,
@@ -405,7 +405,6 @@ class ServiceController extends Controller
             'service_category_id' => $request->service_category_id,
             'description'    => $request->description,
             'content'        => $request->content,
-            'category'       => $request->category,
             'specialization' => $request->specialization,
             'price'          => $request->price,
             'is_active'      => $request->is_active

@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
             'phone_number' => '09123456789',
             'profession' => 'Software Engineer',
             'home_address' => 'Test Antipolo City',
-            'province' => 'Rizal',
+            'city' => 'Antipolo City',
             'barangay' => 'Mambugan',
             'zipcode' => '1870',
             'year_exp' => 3
@@ -54,7 +54,7 @@ class UserSeeder extends Seeder
             'phone_number' => '09123456781',
             'profession' => 'Software Engineer',
             'home_address' => 'Test Antipolo City',
-            'province' => 'Rizal',
+            'city' => 'Antipolo City',
             'barangay' => 'Mambugan',
             'zipcode' => '1870',
             'year_exp' => 3

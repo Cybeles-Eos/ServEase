@@ -35,12 +35,20 @@ class Service extends Model
         'slug',
         'description',
         'content',
-        'category',
         'price',
         'image',
         'specialization',
         'is_active',
     ];
+
+    public function scopeVisibleToCustomers($query)
+    {
+        return $query
+            ->where('is_active', 1)
+            ->whereHas('provider', function ($providerQuery) {
+                $providerQuery->where('application_status', 'accepted');
+            });
+    }
 
     // ---------------------
     // Relationship

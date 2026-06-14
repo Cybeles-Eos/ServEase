@@ -163,6 +163,68 @@ body, html{
                             user-select: none !important;
                         }
                     }
+                    .location-combobox{
+                        position: relative;
+                        width: 100%;
+
+                        input[type="text"]{
+                            padding-right: 34px;
+                        }
+
+                        &__arrow{
+                            position: absolute;
+                            right: 12px;
+                            top: 46%;
+                            width: 7px;
+                            height: 7px;
+                            border-right: 1.5px solid #656565;
+                            border-bottom: 1.5px solid #656565;
+                            transform: translateY(-50%) rotate(45deg);
+                            pointer-events: none;
+                        }
+
+                        &__menu{
+                            display: none;
+                            position: absolute;
+                            top: calc(100% + 5px);
+                            left: 0;
+                            right: 0;
+                            max-height: 210px;
+                            overflow-y: auto;
+                            background-color: #fff;
+                            border: 1px solid #D9D9D9;
+                            border-radius: 6px;
+                            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+                            padding: 6px;
+                            z-index: 40;
+                        }
+
+                        &.is-open .location-combobox__menu{
+                            display: block;
+                        }
+
+                        &__option{
+                            width: 100%;
+                            border: 0;
+                            background-color: transparent;
+                            border-radius: 5px;
+                            padding: 8px 9px;
+                            text-align: left;
+                            font-size: 13px;
+                            color: #202124;
+                            cursor: pointer;
+
+                            &:hover{
+                                background-color: #fff6e3;
+                            }
+                        }
+
+                        &__empty{
+                            padding: 8px 9px;
+                            font-size: 12px;
+                            color: #8b95a1;
+                        }
+                    }
                     .file-field{
                         margin-bottom: 15px;
                         .file-input-wrapper {

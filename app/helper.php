@@ -20,7 +20,7 @@ function custom_flash($title = null, $message = null) {
 }
 
 function services(){
-    $services = \App\Models\Service::with('serviceCategory')->where('is_active', 1)->latest()->get();
+    $services = \App\Models\Service::with('serviceCategory')->visibleToCustomers()->latest()->get();
     return $services;
 }
 

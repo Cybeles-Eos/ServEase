@@ -152,14 +152,24 @@
 
                         <div class="cms-mm-group">
                             <label>City <span>*</span></label>
-                            <input type="text" name="city" value="{{ old('city', $user->customer->city ?? '') }}" required>
+                            <input type="hidden" name="city" value="{{ old('city', $user->customer->city ?? '') }}" data-ph-city-value>
+                            <div class="location-combobox" data-ph-combobox="city">
+                                <input type="text" value="{{ old('city', $user->customer->city ?? '') }}" required autocomplete="off" data-ph-city>
+                                <span class="location-combobox__arrow" aria-hidden="true"></span>
+                                <div class="location-combobox__menu" data-ph-city-menu></div>
+                            </div>
                             @error('city') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
                     </div>
                     <div class="cms-mm-group-con">
                         <div class="cms-mm-group">
                             <label>Barangay <span>*</span></label>
-                            <input type="text" name="barangay" value="{{ old('barangay', $user->customer->barangay ?? '') }}" required>
+                            <input type="hidden" name="barangay" value="{{ old('barangay', $user->customer->barangay ?? '') }}" data-ph-barangay-value>
+                            <div class="location-combobox" data-ph-combobox="barangay">
+                                <input type="text" value="{{ old('barangay', $user->customer->barangay ?? '') }}" required autocomplete="off" data-ph-barangay>
+                                <span class="location-combobox__arrow" aria-hidden="true"></span>
+                                <div class="location-combobox__menu" data-ph-barangay-menu></div>
+                            </div>
                             @error('barangay') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
@@ -199,6 +209,163 @@
 @push('extrascripts')
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cityInput = document.querySelector('[data-ph-city]');
+            const cityValue = document.querySelector('[data-ph-city-value]');
+            const cityMenu = document.querySelector('[data-ph-city-menu]');
+            const barangayInput = document.querySelector('[data-ph-barangay]');
+            const barangayValue = document.querySelector('[data-ph-barangay-value]');
+            const barangayMenu = document.querySelector('[data-ph-barangay-menu]');
+            const psgcBaseUrl = 'https://psgc.gitlab.io/api';
+            let cityRecords = [];
+            let barangayRecords = [];
+            let selectedCityCode = null;
+
+            function recordLabel(record) {
+                return [record.name, record.provinceName || record.districtName || record.regionName].filter(Boolean).join(', ');
+            }
+
+            function renderMenu(menu, records, onSelect) {
+                if (!menu) return;
+                menu.innerHTML = '';
+
+                if (!records.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'location-combobox__empty';
+                    empty.textContent = 'No results found';
+                    menu.appendChild(empty);
+                    return;
+                }
+
+                records.slice(0, 80).forEach((record) => {
+                    const option = document.createElement('button');
+                    option.type = 'button';
+                    option.className = 'location-combobox__option';
+                    option.textContent = recordLabel(record);
+                    option.addEventListener('click', function () {
+                        onSelect(record);
+                    });
+                    menu.appendChild(option);
+                });
+            }
+
+            function filterRecords(records, term) {
+                const normalizedTerm = term.trim().toLowerCase();
+                return normalizedTerm
+                    ? records.filter((record) => recordLabel(record).toLowerCase().includes(normalizedTerm))
+                    : records;
+            }
+
+            function openCombo(input) {
+                input?.closest('.location-combobox')?.classList.add('is-open');
+            }
+
+            function closeCombos() {
+                document.querySelectorAll('.location-combobox.is-open').forEach((combo) => combo.classList.remove('is-open'));
+            }
+
+            function resolveCityFromInput() {
+                const typedCity = cityInput.value.trim().toLowerCase();
+                if (!typedCity) return null;
+
+                const exactLabel = cityRecords.find((record) => recordLabel(record).toLowerCase() === typedCity);
+                if (exactLabel) return exactLabel;
+
+                const exactNameMatches = cityRecords.filter((record) => record.name.toLowerCase() === typedCity);
+                return exactNameMatches.length === 1 ? exactNameMatches[0] : null;
+            }
+
+            function selectCity(record) {
+                selectedCityCode = record.code;
+                cityInput.value = recordLabel(record);
+                cityValue.value = record.name;
+                barangayInput.value = '';
+                barangayValue.value = '';
+                closeCombos();
+                loadBarangays();
+            }
+
+            function selectBarangay(record) {
+                barangayInput.value = record.name;
+                barangayValue.value = record.name;
+                closeCombos();
+            }
+
+            function loadBarangays() {
+                if (!selectedCityCode || !barangayMenu) {
+                    barangayRecords = [];
+                    renderMenu(barangayMenu, [], selectBarangay);
+                    return;
+                }
+
+                fetch(`${psgcBaseUrl}/cities-municipalities/${selectedCityCode}/barangays/`)
+                    .then((response) => response.ok ? response.json() : [])
+                    .then((records) => {
+                        barangayRecords = records;
+                        renderMenu(barangayMenu, filterRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    })
+                    .catch(() => {
+                        barangayRecords = [];
+                        renderMenu(barangayMenu, [], selectBarangay);
+                    });
+            }
+
+            if (cityInput && cityValue && cityMenu && barangayInput && barangayValue && barangayMenu) {
+                fetch(`${psgcBaseUrl}/cities-municipalities/`)
+                    .then((response) => response.ok ? response.json() : [])
+                    .then((records) => {
+                        cityRecords = records;
+                        renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
+                        const city = resolveCityFromInput();
+                        selectedCityCode = city?.code || null;
+                        loadBarangays();
+                    })
+                    .catch(() => {
+                        cityRecords = [];
+                        renderMenu(cityMenu, [], selectCity);
+                    });
+
+                cityInput.addEventListener('focus', function () {
+                    renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
+                    openCombo(cityInput);
+                });
+
+                cityInput.addEventListener('input', function () {
+                    const exactCity = resolveCityFromInput();
+                    selectedCityCode = exactCity?.code || null;
+                    cityValue.value = exactCity ? exactCity.name : cityInput.value;
+                    renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
+                    openCombo(cityInput);
+                    barangayInput.value = '';
+                    barangayValue.value = '';
+
+                    if (selectedCityCode) {
+                        loadBarangays();
+                    } else {
+                        barangayRecords = [];
+                        renderMenu(barangayMenu, [], selectBarangay);
+                    }
+                });
+
+                barangayInput.addEventListener('focus', function () {
+                    renderMenu(barangayMenu, filterRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    openCombo(barangayInput);
+                });
+
+                barangayInput.addEventListener('input', function () {
+                    barangayValue.value = barangayInput.value;
+                    renderMenu(barangayMenu, filterRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    openCombo(barangayInput);
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (!event.target.closest('.location-combobox')) {
+                        closeCombos();
+                    }
+                });
+            }
+        });
+
         // FilePond.registerPlugin(
         //     FilePondPluginImagePreview,
         //     FilePondPluginFileValidateType,

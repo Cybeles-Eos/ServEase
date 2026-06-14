@@ -98,29 +98,44 @@
                             </div>
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
-                                    <label for="province">Province <span>*</span></label>
-                                    <input type="text" placeholder="" name="province" value="{{ old('province') }}" required autocomplete="off">
-                                    @error('province') <small>{{ $message }}</small> @enderror
+                                    <label for="city">City <span>*</span></label>
+                                    <input type="hidden" name="city" value="{{ old('city') }}" data-ph-city-value>
+                                    <div class="location-combobox" data-ph-combobox="city">
+                                        <input type="text" placeholder="Search city or municipality" value="{{ old('city') }}" required autocomplete="off" data-ph-city>
+                                        <span class="location-combobox__arrow" aria-hidden="true"></span>
+                                        <div class="location-combobox__menu" data-ph-city-menu></div>
+                                    </div>
+                                    @error('city') <small>{{ $message }}</small> @enderror
                                 </div>
                                 <div class="prg-mm-group">
-                                    <label for="zipcode">ZIP Code <span>*</span></label>
-                                    <input
-                                        type="text"
-                                        placeholder=""
-                                        name="zipcode"
-                                        value="{{ old('zipcode') }}"
-                                        required
-                                        maxlength="4"
-                                        inputmode="numeric"
-                                        pattern="[0-9]{4}"
-                                        autocomplete="off"
-                                        title="ZIP Code must be 4 digits"
-                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
-                                    >
-                                    @error('zipcode')
-                                        <small style="align-self: flex-end">{{ $message }}</small>
-                                    @enderror
+                                    <label for="barangay">Barangay <span>*</span></label>
+                                    <input type="hidden" name="barangay" value="{{ old('barangay') }}" data-ph-barangay-value>
+                                    <div class="location-combobox" data-ph-combobox="barangay">
+                                        <input type="text" placeholder="Select city first" value="{{ old('barangay') }}" required autocomplete="off" data-ph-barangay>
+                                        <span class="location-combobox__arrow" aria-hidden="true"></span>
+                                        <div class="location-combobox__menu" data-ph-barangay-menu></div>
+                                    </div>
+                                    @error('barangay') <small>{{ $message }}</small> @enderror
                                 </div>
+                            </div>
+                            <div class="prg-mm-group">
+                                <label for="zipcode">ZIP Code <span>*</span></label>
+                                <input
+                                    type="text"
+                                    placeholder=""
+                                    name="zipcode"
+                                    value="{{ old('zipcode') }}"
+                                    required
+                                    maxlength="4"
+                                    inputmode="numeric"
+                                    pattern="[0-9]{4}"
+                                    autocomplete="off"
+                                    title="ZIP Code must be 4 digits"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
+                                >
+                                @error('zipcode')
+                                    <small style="align-self: flex-end">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             <button type="button" id="provreg-next" class="btn btn--primary">Next</button>
@@ -167,7 +182,7 @@
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="lname">Years of experience <span>*</span></label>
-                                    <input type="number" placeholder="" name="experience" value="{{ old('experience') }}" required autocomplete="off">
+                                    <input type="number" placeholder="" name="experience" value="{{ old('experience') }}" min="1" max="100"  maxlength="3" inputmode="numeric" title="Years of experience must be 1 to 3 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)" required autocomplete="off">
                                     @error('experience') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>
@@ -354,7 +369,179 @@
                 });
             @endif
 
-            // Next → go to step 2
+            const cityInput = document.querySelector('[data-ph-city]');
+            const cityValue = document.querySelector('[data-ph-city-value]');
+            const cityMenu = document.querySelector('[data-ph-city-menu]');
+            const barangayInput = document.querySelector('[data-ph-barangay]');
+            const barangayValue = document.querySelector('[data-ph-barangay-value]');
+            const barangayMenu = document.querySelector('[data-ph-barangay-menu]');
+            const psgcBaseUrl = 'https://psgc.gitlab.io/api';
+            let cityRecords = [];
+            let barangayRecords = [];
+            let selectedCityCode = null;
+
+            function recordLabel(record) {
+                return [record.name, record.provinceName || record.districtName || record.regionName]
+                    .filter(Boolean)
+                    .join(', ');
+            }
+
+            function renderLocationMenu(menu, records, onSelect) {
+                if (!menu) {
+                    return;
+                }
+
+                menu.innerHTML = '';
+
+                if (!records.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'location-combobox__empty';
+                    empty.textContent = 'No results found';
+                    menu.appendChild(empty);
+                    return;
+                }
+
+                records.slice(0, 80).forEach((record) => {
+                    const option = document.createElement('button');
+                    option.type = 'button';
+                    option.className = 'location-combobox__option';
+                    option.textContent = recordLabel(record);
+                    option.addEventListener('click', function () {
+                        onSelect(record);
+                    });
+                    menu.appendChild(option);
+                });
+            }
+
+            function filterLocationRecords(records, term) {
+                const normalizedTerm = term.trim().toLowerCase();
+
+                if (!normalizedTerm) {
+                    return records;
+                }
+
+                return records.filter((record) => recordLabel(record).toLowerCase().includes(normalizedTerm));
+            }
+
+            function openLocationCombo(input) {
+                input?.closest('.location-combobox')?.classList.add('is-open');
+            }
+
+            function closeLocationCombos() {
+                document.querySelectorAll('.location-combobox.is-open').forEach((combo) => {
+                    combo.classList.remove('is-open');
+                });
+            }
+
+            function resolveCityFromInput() {
+                const typedCity = cityInput.value.trim().toLowerCase();
+
+                if (!typedCity) {
+                    return null;
+                }
+
+                const exactLabel = cityRecords.find((record) => recordLabel(record).toLowerCase() === typedCity);
+
+                if (exactLabel) {
+                    return exactLabel;
+                }
+
+                const exactNameMatches = cityRecords.filter((record) => record.name.toLowerCase() === typedCity);
+
+                return exactNameMatches.length === 1 ? exactNameMatches[0] : null;
+            }
+
+            function selectCity(record) {
+                selectedCityCode = record.code;
+                cityInput.value = recordLabel(record);
+                cityValue.value = record.name;
+                barangayInput.value = '';
+                barangayValue.value = '';
+                closeLocationCombos();
+                loadBarangays();
+            }
+
+            function selectBarangay(record) {
+                barangayInput.value = record.name;
+                barangayValue.value = record.name;
+                closeLocationCombos();
+            }
+
+            function loadBarangays() {
+                if (!selectedCityCode || !barangayMenu) {
+                    barangayRecords = [];
+                    renderLocationMenu(barangayMenu, [], selectBarangay);
+                    return;
+                }
+
+                fetch(`${psgcBaseUrl}/cities-municipalities/${selectedCityCode}/barangays/`)
+                    .then((response) => response.ok ? response.json() : [])
+                    .then((records) => {
+                        barangayRecords = records;
+                        renderLocationMenu(barangayMenu, filterLocationRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    })
+                    .catch(() => {
+                        barangayRecords = [];
+                        renderLocationMenu(barangayMenu, [], selectBarangay);
+                    });
+            }
+
+            if (cityInput && cityValue && cityMenu && barangayInput && barangayValue && barangayMenu) {
+                fetch(`${psgcBaseUrl}/cities-municipalities/`)
+                    .then((response) => response.ok ? response.json() : [])
+                    .then((records) => {
+                        cityRecords = records;
+                        renderLocationMenu(cityMenu, filterLocationRecords(cityRecords, cityInput.value), selectCity);
+
+                        const city = resolveCityFromInput();
+                        selectedCityCode = city?.code || null;
+                        loadBarangays();
+                    })
+                    .catch(() => {
+                        cityRecords = [];
+                        renderLocationMenu(cityMenu, [], selectCity);
+                    });
+
+                cityInput.addEventListener('focus', function () {
+                    renderLocationMenu(cityMenu, filterLocationRecords(cityRecords, cityInput.value), selectCity);
+                    openLocationCombo(cityInput);
+                });
+
+                cityInput.addEventListener('input', function () {
+                    const exactCity = resolveCityFromInput();
+                    selectedCityCode = exactCity?.code || null;
+                    cityValue.value = exactCity ? exactCity.name : cityInput.value;
+                    renderLocationMenu(cityMenu, filterLocationRecords(cityRecords, cityInput.value), selectCity);
+                    openLocationCombo(cityInput);
+                    barangayInput.value = '';
+                    barangayValue.value = '';
+
+                    if (selectedCityCode) {
+                        loadBarangays();
+                    } else {
+                        barangayRecords = [];
+                        renderLocationMenu(barangayMenu, [], selectBarangay);
+                    }
+                });
+
+                barangayInput.addEventListener('focus', function () {
+                    renderLocationMenu(barangayMenu, filterLocationRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    openLocationCombo(barangayInput);
+                });
+
+                barangayInput.addEventListener('input', function () {
+                    barangayValue.value = barangayInput.value;
+                    renderLocationMenu(barangayMenu, filterLocationRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    openLocationCombo(barangayInput);
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (!event.target.closest('.location-combobox')) {
+                        closeLocationCombos();
+                    }
+                });
+            }
+
             $('#provreg-next').on('click', function (e) {
                 e.preventDefault();
 

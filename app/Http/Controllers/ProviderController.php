@@ -131,11 +131,11 @@ class ProviderController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'phone_number' => ['required', 'regex:/^09[0-9]{9}$/'],
             'home_address' => ['required', 'string', 'max:255'],
-            'province' => ['required', 'string', 'max:255'],
-            'barangay' => ['nullable', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^\d{4}$/'],
             'profession' => ['required', 'string', 'max:255'],
-            'year_exp' => ['required', 'integer', 'min:0'],
+            'year_exp' => ['required', 'integer', 'min:1', 'max:100'],
             'resume' => [in_array('resume', $requiredDocuments, true) ? 'required' : 'nullable', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => [in_array('barangay_clearance', $requiredDocuments, true) ? 'required' : 'nullable', 'file', 'mimes:pdf', 'max:5120'],
         ];
@@ -158,8 +158,8 @@ class ProviderController extends Controller
             'last_name' => $validated['last_name'],
             'phone_number' => $validated['phone_number'],
             'home_address' => $validated['home_address'],
-            'province' => $validated['province'],
-            'barangay' => $validated['barangay'] ?? null,
+            'city' => $validated['city'],
+            'barangay' => $validated['barangay'],
             'zipcode' => $validated['zipcode'],
             'profession' => $validated['profession'],
             'year_exp' => $validated['year_exp'],
@@ -565,12 +565,12 @@ class ProviderController extends Controller
             'profile_image'=> 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'phone_number' => 'nullable|string|max:20',
             'home_address' => 'nullable|string|max:255',
-            'province'         => 'nullable|string|max:255',
+            'city'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
             'zipcode'      => ['nullable', 'string', 'regex:/^\d{4}$/'],
             // 'email'        => 'nullable|email|max:255',
             'profession'   => 'nullable|string|max:255',
-            'year_exp'     => 'nullable|string|max:20',
+            'year_exp'     => 'required|integer|min:1|max:100',
             'availability_days' => 'required|array|min:1',
             'availability_days.*' => 'in:' . implode(',', array_keys(Provider::AVAILABILITY_DAYS)),
             'availability_start_time' => 'nullable|required_with:availability_end_time|date_format:H:i',
@@ -620,7 +620,7 @@ class ProviderController extends Controller
         $provider->last_name   = $request->last_name;
         $provider->phone_number= $request->phone_number;
         $provider->home_address     = $request->home_address;
-        $provider->province        = $request->province;
+        $provider->city        = $request->city;
         $provider->barangay     = $request->barangay;
         $provider->zipcode     = $request->zipcode;
         $provider->profession     = $request->profession;

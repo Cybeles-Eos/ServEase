@@ -17,7 +17,7 @@ class ProviderFactory extends Factory
      */
     public function definition(): array
     {
-        $ph_sample_province = [ 'Metro Manila', 'Cavite', 'Laguna', 'Batangas', 'Rizal', 'Bulacan', 'Pampanga', 'Nueva Ecija', 'Tarlac', 'Pangasinan', 'Cebu', 'Iloilo', 'Negros Occidental', 'Davao del Sur', 'Bukidnon', 'Misamis Oriental', 'Zamboanga del Sur', 'South Cotabato', 'Leyte', 'Samar'];
+        $ph_sample_city = ['Quezon City', 'Antipolo City', 'Pasig City', 'Makati City', 'Taguig City', 'Manila City', 'Caloocan City', 'Cebu City', 'Davao City', 'Iloilo City'];
 
         return [
             'user_id'      => User::factory(), // Creates a user if one isn't passed
@@ -26,7 +26,7 @@ class ProviderFactory extends Factory
             'phone_num'    => $this->faker->phoneNumber(),
 
             'home_address' => $this->faker->streetAddress(),
-            'province'     => $this->faker->randomElement($ph_sample_province),
+            'city'         => $this->faker->randomElement($ph_sample_city),
             'zip'          => $this->faker->postcode(),
 
             'profession'   => $this->faker->jobTitle(),

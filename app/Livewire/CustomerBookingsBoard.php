@@ -10,6 +10,30 @@ class CustomerBookingsBoard extends Component
 {
     public string $selectedStatus = '';
 
+    public function providerAvatarData($provider): array
+    {
+        $firstName = trim((string) ($provider?->first_name ?? ''));
+        $lastName = trim((string) ($provider?->last_name ?? ''));
+        $displayName = trim($firstName . ' ' . $lastName);
+
+        if ($displayName === '') {
+            $displayName = 'Provider';
+        }
+
+        $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+        $profileImage = $provider?->profile_image;
+        $normalizedProfileImage = trim((string) $profileImage, '/');
+        $hasProfileImage = $normalizedProfileImage !== ''
+            && !in_array($normalizedProfileImage, ['images/user.png', 'public/images/user.png'], true);
+
+        return [
+            'name' => $displayName,
+            'initials' => $initials !== '' ? $initials : 'P',
+            'profile_image' => $profileImage,
+            'has_profile_image' => $hasProfileImage,
+        ];
+    }
+
     public function mount()
     {
         $this->selectedStatus = request('status', '');

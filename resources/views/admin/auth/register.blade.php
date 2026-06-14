@@ -10,7 +10,7 @@
             .customer-register-page {
                 background: #f4f6f9 !important;
                 min-height: calc(100vh - 80px) !important;
-                padding: 85px 20px 70px !important;
+                padding: 35px 20px 35px !important;
             }
 
             .customer-register-page .provider-login-main {
@@ -108,6 +108,69 @@
                 border-color: #ffb73e !important;
             }
 
+            .customer-register-page .location-combobox {
+                position: relative !important;
+                width: 100% !important;
+            }
+
+            .customer-register-page .location-combobox input {
+                padding-right: 34px !important;
+            }
+
+            .customer-register-page .location-combobox__arrow {
+                position: absolute !important;
+                right: 12px !important;
+                top: 46% !important;
+                width: 7px !important;
+                height: 7px !important;
+                border-right: 1.5px solid #656565 !important;
+                border-bottom: 1.5px solid #656565 !important;
+                transform: translateY(-50%) rotate(45deg) !important;
+                pointer-events: none !important;
+            }
+
+            .customer-register-page .location-combobox__menu {
+                display: none !important;
+                position: absolute !important;
+                top: calc(100% + 5px) !important;
+                left: 0 !important;
+                right: 0 !important;
+                max-height: 210px !important;
+                overflow-y: auto !important;
+                background: #ffffff !important;
+                border: 1px solid #d9dee7 !important;
+                border-radius: 7px !important;
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14) !important;
+                z-index: 40 !important;
+                padding: 6px !important;
+            }
+
+            .customer-register-page .location-combobox.is-open .location-combobox__menu {
+                display: block !important;
+            }
+
+            .customer-register-page .location-combobox__option {
+                width: 100% !important;
+                border: 0 !important;
+                background: transparent !important;
+                border-radius: 5px !important;
+                padding: 8px 9px !important;
+                text-align: left !important;
+                font-size: 13px !important;
+                color: #202124 !important;
+                cursor: pointer !important;
+            }
+
+            .customer-register-page .location-combobox__option:hover {
+                background: #fff6e3 !important;
+            }
+
+            .customer-register-page .location-combobox__empty {
+                padding: 8px 9px !important;
+                font-size: 12px !important;
+                color: #8b95a1 !important;
+            }
+
             .customer-register-page .plm-ff-group-pass {
                 width: 100% !important;
                 position: relative !important;
@@ -198,6 +261,7 @@
                 .customer-register-page {
                     padding-left: 16px !important;
                     padding-right: 16px !important;
+                    padding-top: 85px !important;
                 }
 
                 .customer-register-page .register-grid,
@@ -219,7 +283,7 @@
 
     @include('front.layouts.sections.header')
 
-    <main class="provider-login reg-signin customer-register-page" style="padding-top: 35px !important;padding-bottom: 15px !important;">
+    <main class="provider-login reg-signin customer-register-page">
         <section class="provider-login-main" style="margin-bottom: 5px !important; height: fit-content !important;">
             <div class="provider-login-main__form">
                 <div class="provider-login-main__form--head">
@@ -312,29 +376,39 @@
 
                         <div class="plm-ff-group">
                             <label for="city">City <span class="required">*</span></label>
-                            <input
-                                type="text"
-                                id="city"
-                                name="city"
-                                placeholder="Enter your city"
-                                value="{{ old('city') }}"
-                                required
-                                autocomplete="off"
-                            >
+                            <input type="hidden" id="city" name="city" value="{{ old('city') }}" data-ph-city-value>
+                            <div class="location-combobox" data-ph-combobox="city">
+                                <input
+                                    type="text"
+                                    id="city_search"
+                                    placeholder="Search city or municipality"
+                                    value="{{ old('city') }}"
+                                    required
+                                    data-ph-city
+                                    autocomplete="off"
+                                >
+                                <span class="location-combobox__arrow" aria-hidden="true"></span>
+                                <div class="location-combobox__menu" data-ph-city-menu></div>
+                            </div>
                             @error('city') <small>{{ $message }}</small> @enderror
                         </div>
 
                         <div class="plm-ff-group">
                             <label for="barangay">Barangay <span class="required">*</span></label>
-                            <input
-                                type="text"
-                                id="barangay"
-                                name="barangay"
-                                placeholder="Enter your barangay"
-                                value="{{ old('barangay') }}"
-                                required
-                                autocomplete="off"
-                            >
+                            <input type="hidden" id="barangay" name="barangay" value="{{ old('barangay') }}" data-ph-barangay-value>
+                            <div class="location-combobox" data-ph-combobox="barangay">
+                                <input
+                                    type="text"
+                                    id="barangay_search"
+                                    placeholder="Select city first"
+                                    value="{{ old('barangay') }}"
+                                    required
+                                    data-ph-barangay
+                                    autocomplete="off"
+                                >
+                                <span class="location-combobox__arrow" aria-hidden="true"></span>
+                                <div class="location-combobox__menu" data-ph-barangay-menu></div>
+                            </div>
                             @error('barangay') <small>{{ $message }}</small> @enderror
                         </div>
 
@@ -476,6 +550,179 @@
                     $(this).html(hideSvg);
                 }
             });
+
+            const cityInput = document.querySelector('[data-ph-city]');
+            const cityValue = document.querySelector('[data-ph-city-value]');
+            const cityMenu = document.querySelector('[data-ph-city-menu]');
+            const barangayInput = document.querySelector('[data-ph-barangay]');
+            const barangayValue = document.querySelector('[data-ph-barangay-value]');
+            const barangayMenu = document.querySelector('[data-ph-barangay-menu]');
+            const psgcBaseUrl = 'https://psgc.gitlab.io/api';
+            let cityRecords = [];
+            let barangayRecords = [];
+            let selectedCityCode = null;
+
+            function recordLabel(record) {
+                return [record.name, record.provinceName || record.districtName || record.regionName]
+                    .filter(Boolean)
+                    .join(', ');
+            }
+
+            function renderMenu(menu, records, onSelect) {
+                if (!menu) {
+                    return;
+                }
+
+                menu.innerHTML = '';
+
+                if (!records.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'location-combobox__empty';
+                    empty.textContent = 'No results found';
+                    menu.appendChild(empty);
+                    return;
+                }
+
+                records.slice(0, 80).forEach((record) => {
+                    const option = document.createElement('button');
+                    option.type = 'button';
+                    option.className = 'location-combobox__option';
+                    option.textContent = recordLabel(record);
+                    option.addEventListener('click', function () {
+                        onSelect(record);
+                    });
+                    menu.appendChild(option);
+                });
+            }
+
+            function openCombo(input) {
+                input?.closest('.location-combobox')?.classList.add('is-open');
+            }
+
+            function closeCombos() {
+                document.querySelectorAll('.location-combobox.is-open').forEach((combo) => {
+                    combo.classList.remove('is-open');
+                });
+            }
+
+            function filterRecords(records, term) {
+                const normalizedTerm = term.trim().toLowerCase();
+
+                if (!normalizedTerm) {
+                    return records;
+                }
+
+                return records.filter((record) => recordLabel(record).toLowerCase().includes(normalizedTerm));
+            }
+
+            function resolveCityFromInput() {
+                const typedCity = cityInput.value.trim().toLowerCase();
+
+                if (!typedCity) {
+                    return null;
+                }
+
+                const exactLabel = cityRecords.find((record) => recordLabel(record).toLowerCase() === typedCity);
+
+                if (exactLabel) {
+                    return exactLabel;
+                }
+
+                const exactNameMatches = cityRecords.filter((record) => record.name.toLowerCase() === typedCity);
+
+                return exactNameMatches.length === 1 ? exactNameMatches[0] : null;
+            }
+
+            function selectCity(record) {
+                selectedCityCode = record.code;
+                cityInput.value = recordLabel(record);
+                cityValue.value = record.name;
+                barangayInput.value = '';
+                barangayValue.value = '';
+                closeCombos();
+                loadBarangays();
+            }
+
+            function selectBarangay(record) {
+                barangayInput.value = record.name;
+                barangayValue.value = record.name;
+                closeCombos();
+            }
+
+            function loadBarangays() {
+                if (!selectedCityCode || !barangayMenu) {
+                    barangayRecords = [];
+                    renderMenu(barangayMenu, [], selectBarangay);
+                    return;
+                }
+
+                fetch(`${psgcBaseUrl}/cities-municipalities/${selectedCityCode}/barangays/`)
+                    .then((response) => response.ok ? response.json() : [])
+                    .then((records) => {
+                        barangayRecords = records;
+                        renderMenu(barangayMenu, filterRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    })
+                    .catch(() => {
+                        barangayRecords = [];
+                        renderMenu(barangayMenu, [], selectBarangay);
+                    });
+            }
+
+            if (cityInput && cityValue && cityMenu && barangayInput && barangayValue && barangayMenu) {
+                fetch(`${psgcBaseUrl}/cities-municipalities/`)
+                    .then((response) => response.ok ? response.json() : [])
+                    .then((records) => {
+                        cityRecords = records;
+                        renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
+
+                        const city = resolveCityFromInput();
+                        selectedCityCode = city?.code || null;
+                        loadBarangays();
+                    })
+                    .catch(() => {
+                        cityRecords = [];
+                        renderMenu(cityMenu, [], selectCity);
+                    });
+
+                cityInput.addEventListener('focus', function () {
+                    renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
+                    openCombo(cityInput);
+                });
+
+                cityInput.addEventListener('input', function () {
+                    const exactCity = resolveCityFromInput();
+                    selectedCityCode = exactCity?.code || null;
+                    cityValue.value = exactCity ? exactCity.name : cityInput.value;
+                    renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
+                    openCombo(cityInput);
+                    barangayInput.value = '';
+                    barangayValue.value = '';
+
+                    if (selectedCityCode) {
+                        loadBarangays();
+                    } else {
+                        barangayRecords = [];
+                        renderMenu(barangayMenu, [], selectBarangay);
+                    }
+                });
+
+                barangayInput.addEventListener('focus', function () {
+                    renderMenu(barangayMenu, filterRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    openCombo(barangayInput);
+                });
+
+                barangayInput.addEventListener('input', function () {
+                    barangayValue.value = barangayInput.value;
+                    renderMenu(barangayMenu, filterRecords(barangayRecords, barangayInput.value), selectBarangay);
+                    openCombo(barangayInput);
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (!event.target.closest('.location-combobox')) {
+                        closeCombos();
+                    }
+                });
+            }
         });
     </script>
 @endpush

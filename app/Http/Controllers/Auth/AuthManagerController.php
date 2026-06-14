@@ -8,18 +8,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
-// use App\Services\BookingStatusService;
-use App\Models\BookingInfo;
-use Carbon\Carbon;
+use App\Services\BookingStatusService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use App\Services\AdminNotificationService;
 
 class AuthManagerController extends Controller
 {
-    private int $bookingDurationHours = 16; // Production
-    private int $bookingDurationMinutes = 1; // Testing only
-    private bool $useMinuteTesting = true; // Set false after testing
     /**
      * Show login page
      */
@@ -132,7 +127,7 @@ class AuthManagerController extends Controller
                 ]);
             }
 
-            $this->updateAllBookingStatuses();
+            app(BookingStatusService::class)->updateAllDueBookings();
 
             if ($user->isAdmin()) {
                 return redirect('/admin/dashboard');
@@ -173,50 +168,6 @@ class AuthManagerController extends Controller
         return view('admin.auth.provider-register');
     }
 
-    // public function signup(Request $request)
-    // {
-    //     // Customer Creation Account
-    //     $validated = $request->validate([
-    //         'fname' => ['required', 'string', 'max:255'],
-    //         'lname' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'email', 'unique:users,email'],
-    //         'password' => ['required', 'min:8', 'confirmed'],
-    //         'g-recaptcha-response' => ['required'],
-    //     ], [
-    //         'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
-    //     ]);
-
-    //     $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-    //         'secret' => config('services.recaptcha.secret_key'),
-    //         'response' => $request->input('g-recaptcha-response'),
-    //         'remoteip' => $request->ip(),
-    //     ]);
-
-    //     if (! $recaptcha->json('success')) {
-    //         throw ValidationException::withMessages([
-    //             'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
-    //         ]);
-    //     }
-
-    //     $user = User::create([ 
-    //         'name' => $validated['fname'] . ' ' . $validated['lname'],      // temporary, soon this data will be removed or act as username
-    //         'email'    => $validated['email'],
-    //         'password' => Hash::make($validated['password']),
-    //         'role'     => 'customer', 
-    //     ]);
-    //     $user->customer()->create([
-    //         'first_name' => $validated['fname'],
-    //         'last_name' => $validated['lname'],
-    //     ]);
-
-    //     AdminNotificationService::newCustomer($user);
-
-    //     return redirect('/login')->with('flash_message', [
-    //         'title' => 'Account Created',
-    //         'message' => 'Customer account created successfully. You can now login.',
-    //         'type' => 'success',
-    //     ]);
-    // }
     public function signup(Request $request)
     {
         // Customer Creation Account
@@ -286,10 +237,11 @@ class AuthManagerController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'number' => ['required', 'regex:/^09[0-9]{9}$/'],
             'address' => ['required', 'string', 'max:255'],
-            'province' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^\d{4}$/'],
             'profession' => ['required', 'string', 'max:255'],
-            'experience' => ['required', 'integer', 'min:0'],
+            'experience' => ['required', 'integer', 'min:1', 'max:100'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'password' => ['required', 'min:8', 'confirmed'],
@@ -346,7 +298,8 @@ class AuthManagerController extends Controller
                 'last_name' => $validated['lname'],
                 'phone_number' => $validated['number'],
                 'home_address' => $validated['address'],
-                'province' => $validated['province'],
+                'city' => $validated['city'],
+                'barangay' => $validated['barangay'],
                 'zipcode' => $validated['zipcode'],
                 'profession' => $validated['profession'],
                 'year_exp' => $validated['experience'],
@@ -372,137 +325,4 @@ class AuthManagerController extends Controller
             ->with('provider_application_submitted', true);
     }
 
-    // For Status
-    private function updateAllBookingStatuses()
-    {
-        // Check all bookings, not only one customer/provider
-        $bookingsToCheck = BookingInfo::with('bookingRequest')
-            ->whereIn('status', ['ACCEPTED', 'ONGOING'])
-            ->whereNotNull('date')
-            ->whereNotNull('time')
-            ->get();
-
-        foreach ($bookingsToCheck as $bookingInfo) {
-            $this->updateToOngoingIfDue($bookingInfo);
-            $this->updateToCompletedIfDue($bookingInfo);
-        }
-    }
-
-    private function updateToOngoingIfDue($bookingInfo)
-    {
-        if (
-            $bookingInfo->status !== 'ACCEPTED' ||
-            empty($bookingInfo->date) ||
-            empty($bookingInfo->time)
-        ) {
-            return;
-        }
-
-        try {
-            $bookingDate = Carbon::parse($bookingInfo->date)->toDateString();
-            $bookingTime = Carbon::parse($bookingInfo->time)->format('H:i:s');
-
-            $scheduleDateTime = Carbon::parse(
-                $bookingDate . ' ' . $bookingTime,
-                config('app.timezone')
-            );
-
-            $now = Carbon::now(config('app.timezone'));
-
-            \Log::info('Login auto ongoing check', [
-                'booking_info_id' => $bookingInfo->id,
-                'booking_request_id' => $bookingInfo->bookingRequest->id ?? null,
-                'booking_info_status' => $bookingInfo->status,
-                'booking_request_status' => $bookingInfo->bookingRequest->status ?? null,
-                'schedule' => $scheduleDateTime->toDateTimeString(),
-                'now' => $now->toDateTimeString(),
-            ]);
-
-            if ($now->greaterThanOrEqualTo($scheduleDateTime)) {
-                $bookingInfo->update([
-                    'status' => 'ONGOING',
-                ]);
-
-                if ($bookingInfo->bookingRequest) {
-                    $bookingInfo->bookingRequest->update([
-                        'status' => 'ONGOING',
-                    ]);
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error('Login updateToOngoingIfDue failed', [
-                'booking_info_id' => $bookingInfo->id ?? null,
-                'date' => $bookingInfo->date ?? null,
-                'time' => $bookingInfo->time ?? null,
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    private function updateToCompletedIfDue($bookingInfo)
-    {
-        if (
-            $bookingInfo->status !== 'ONGOING' ||
-            empty($bookingInfo->date) ||
-            empty($bookingInfo->time)
-        ) {
-            return;
-        }
-
-        try {
-            $bookingDate = Carbon::parse($bookingInfo->date)->toDateString();
-            $bookingTime = Carbon::parse($bookingInfo->time)->format('H:i:s');
-
-            $scheduleDateTime = Carbon::parse(
-                $bookingDate . ' ' . $bookingTime,
-                config('app.timezone')
-            );
-
-            if ($this->useMinuteTesting) {
-                $completedDateTime = $scheduleDateTime
-                    ->copy()
-                    ->addMinutes($this->bookingDurationMinutes);
-            } else {
-                $completedDateTime = $scheduleDateTime
-                    ->copy()
-                    ->addHours($this->bookingDurationHours);
-            }
-
-            $now = Carbon::now(config('app.timezone'));
-
-            \Log::info('Login auto completed check', [
-                'booking_info_id' => $bookingInfo->id,
-                'booking_request_id' => $bookingInfo->bookingRequest->id ?? null,
-                'booking_info_status' => $bookingInfo->status,
-                'booking_request_status' => $bookingInfo->bookingRequest->status ?? null,
-                'duration_hours' => $this->bookingDurationHours,
-                'duration_minutes' => $this->bookingDurationMinutes,
-                'use_minute_testing' => $this->useMinuteTesting,
-                'schedule' => $scheduleDateTime->toDateTimeString(),
-                'completed_at' => $completedDateTime->toDateTimeString(),
-                'now' => $now->toDateTimeString(),
-            ]);
-
-            if ($now->greaterThanOrEqualTo($completedDateTime)) {
-                $bookingInfo->update([
-                    'status' => 'COMPLETED',
-                ]);
-
-                if ($bookingInfo->bookingRequest) {
-                    $bookingInfo->bookingRequest->update([
-                        'status' => 'COMPLETED',
-                    ]);
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error('Login updateToCompletedIfDue failed', [
-                'booking_info_id' => $bookingInfo->id ?? null,
-                'date' => $bookingInfo->date ?? null,
-                'time' => $bookingInfo->time ?? null,
-                'duration_hours' => $this->bookingDurationHours,
-                'duration_minutes' => $this->bookingDurationMinutes,
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
 }

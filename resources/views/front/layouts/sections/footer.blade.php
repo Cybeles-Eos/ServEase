@@ -12,7 +12,7 @@
         $privacyUrl = $platform->privacy_policy_url ?: route('privacy.policy');
         $termsUrl = $platform->terms_url ?: route('terms.conditions');
         $popularServices = \App\Models\Service::query()
-            ->where('is_active', true)
+            ->visibleToCustomers()
             ->whereHas('ratings', fn ($query) => $query->where('is_visible', true))
             ->withAvg(['ratings as average_rating' => fn ($query) => $query->where('is_visible', true)], 'rating')
             ->withCount(['ratings as visible_ratings_count' => fn ($query) => $query->where('is_visible', true)])

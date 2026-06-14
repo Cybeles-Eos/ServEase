@@ -18,11 +18,22 @@
                     @endphp
 
                     @forelse($scheduleRequests as $request)
+                        @php
+                            $customerAvatar = $this->customerAvatarData($request);
+                        @endphp
                         <div class="boxss-sd" wire:key="accepted-{{ $request->id }}">
                             <div class="boxss-sd-bking">
-                                <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
-                                     class="boxss-sd-bking__pfp"
-                                     alt="profile-image">
+                                @if($customerAvatar['has_profile_image'])
+                                    <img src="{{ asset($customerAvatar['profile_image']) }}"
+                                         class="boxss-sd-bking__pfp"
+                                         alt="{{ $customerAvatar['name'] }}">
+                                @else
+                                    <div class="boxss-sd-bking__pfp provider-booking-avatar"
+                                         role="img"
+                                         aria-label="{{ $customerAvatar['name'] }}">
+                                        {{ $customerAvatar['initials'] }}
+                                    </div>
+                                @endif
 
                                 <div class="boxss-sd-bking__pfp-d">
                                     <p class="boxss-sd-bking__pfp-d__name">
@@ -68,21 +79,6 @@
                                     </p>
                                 </div>
 
-                                @if(!empty(trim($request->bookingInfo['notes'] ?? '')))
-                                    <div style="min-width: 0;">
-                                        <p class="boxss-sd-bking-info-serv-head">Notes:</p>
-                                        @if(\Illuminate\Support\Str::length($request->bookingInfo['notes']) > 90)
-                                            <details style="font-size: 12px; color: #656565;">
-                                                <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
-                                                <p style="margin: 4px 0 0; line-height: 1.35;">{{ $request->bookingInfo['notes'] }}</p>
-                                            </details>
-                                        @else
-                                            <p class="boxss-sd-bking-label" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                                {{ $request->bookingInfo['notes'] }}
-                                            </p>
-                                        @endif
-                                    </div>
-                                @endif
                             </div>
 
                             <div class="boxss-sd-bking-foo">
@@ -188,12 +184,24 @@
                 @endphp
 
                 @forelse($ongoingRequests as $request)
-                    <div class="pb-md-right-active__body" wire:key="ongoing-{{ $request->id }}">
+                    @php
+                        $customerAvatar = $this->customerAvatarData($request);
+                        $ongoingStartedAt = $request->updated_at;
+                    @endphp
+                    <div class="pb-md-right-active__body provider-ongoing-card" wire:key="ongoing-{{ $request->id }}">
                         <div class="pb-md-right-active__body__head">
                             <div class="pbmd-rabh-box">
-                                <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
-                                     class="pbmd-rabh-box__pfp"
-                                     alt="profile-image">
+                                @if($customerAvatar['has_profile_image'])
+                                    <img src="{{ asset($customerAvatar['profile_image']) }}"
+                                         class="pbmd-rabh-box__pfp"
+                                         alt="{{ $customerAvatar['name'] }}">
+                                @else
+                                    <div class="pbmd-rabh-box__pfp provider-booking-avatar"
+                                         role="img"
+                                         aria-label="{{ $customerAvatar['name'] }}">
+                                        {{ $customerAvatar['initials'] }}
+                                    </div>
+                                @endif
 
                                 <div class="pbmd-rabh-box__pfp-d">
                                     <p class="pbmd-rabh-box__pfp-d__name">
@@ -216,12 +224,18 @@
 
                         <hr>
 
-                        <div class="pb-md-right-active__body__details">
+                        <div class="pb-md-right-active__body__details provider-ongoing-card__details">
                             <div>
                                 <p class="pdmdrabd-label">{{ $request->bookingInfo->service['category'] ?? '' }}</p>
                                 <p class="pdmdrabd-title">
                                     {{ \Illuminate\Support\Str::limit($request->bookingInfo->service['title'] ?? '', 40) }}
                                 </p>
+                            </div>
+
+                            <div>
+                                <p>Booking Ref:</p>
+                                <p>#{{ $request->id }}</p>
+                                <p>Started: {{ $ongoingStartedAt ? \Carbon\Carbon::parse($ongoingStartedAt)->format('g:i A') : 'Not recorded' }}</p>
                             </div>
 
                             <div>
@@ -237,7 +251,7 @@
                             @if(!empty(trim($request->bookingInfo['notes'] ?? '')))
                                 <div style="min-width: 0;">
                                     <p>Notes:</p>
-                                    @if(\Illuminate\Support\Str::length($request->bookingInfo['notes']) > 90)
+                                    @if(\Illuminate\Support\Str::length($request->bookingInfo['notes']) > 120)
                                         <details style="font-size: 12px; color: #656565;">
                                             <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
                                             <p style="margin: 4px 0 0; line-height: 1.35;">{{ $request->bookingInfo['notes'] }}</p>
@@ -251,12 +265,21 @@
                             @endif
                         </div>
 
-                        <form action="{{ route('provider.booking-request.complete', $request->id) }}" method="POST" style="margin-top: 10px; width: 100%">
-                            @csrf
-                            <button type="submit" class="btn-sm btn-success" style="border-radius: 5px; border: none; width: 100%">
-                                Mark as Complete
-                            </button>
-                        </form>
+                        <div class="provider-ongoing-card__actions">
+                            <form action="{{ route('provider.booking-request.complete', $request->id) }}" method="POST" class="provider-booking-action-form" data-action="complete">
+                                @csrf
+                                <button type="submit" class="provider-ongoing-card__btn provider-ongoing-card__btn--complete">
+                                    Mark Complete
+                                </button>
+                            </form>
+
+                            <form action="{{ route('provider.booking-request.cancel', $request->id) }}" method="POST" class="provider-booking-action-form" data-action="cancel">
+                                @csrf
+                                <button type="submit" class="provider-ongoing-card__btn provider-ongoing-card__btn--cancel">
+                                    Cancel Service
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 @empty
                     <div style="width: 100%; height: 200px; background-color: #fff; display: flex; justify-content: center; align-items: center;">
@@ -268,22 +291,39 @@
             <div class="pb-md-right-completed">
                 <div class="pb-md-right-completed__head">
                     <h3>Service History</h3>
+                    <select wire:model.live="historyStatus" class="provider-history-filter">
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELLED">Cancelled</option>
+                    </select>
                 </div>
 
                 @php
-                    $completedRequests = $bookRequests->where('status', 'COMPLETED');
+                    $historyRequests = $bookRequests->where('status', $historyStatus);
                 @endphp
 
-                @forelse($completedRequests as $request)
-                    <div class="pb-md-right-completed__body" wire:key="completed-{{ $request->id }}">
-                        <div class="pbmdr-cb-box">
+                @forelse($historyRequests as $request)
+                    @php
+                        $customerAvatar = $this->customerAvatarData($request);
+                        $historyEndedAt = $request->responded_at ?? $request->updated_at;
+                        $historyStatusLabel = ucfirst(strtolower($request->status));
+                    @endphp
+                    <div class="pb-md-right-completed__body" wire:key="history-{{ $request->id }}-{{ $request->status }}">
+                        <div class="pbmdr-cb-box {{ $request->status === 'CANCELLED' ? 'pbmdr-cb-box--cancelled' : '' }}">
                             <img src="{{ asset('images/complete-book.svg') }}" class="icon-cb-book" alt="icon">
 
                             <div class="pbmdr-cb-box__det">
                                 <div class="pbmdr-cb-boxdet-p">
-                                    <img src="{{ asset($request->bookingInfo->customer['profile_image'] ?? 'images/user.png') }}"
-                                         class="pbmdr-cb-boxdet-p__pfp"
-                                         alt="profile-image">
+                                    @if($customerAvatar['has_profile_image'])
+                                        <img src="{{ asset($customerAvatar['profile_image']) }}"
+                                             class="pbmdr-cb-boxdet-p__pfp"
+                                             alt="{{ $customerAvatar['name'] }}">
+                                    @else
+                                        <div class="pbmdr-cb-boxdet-p__pfp provider-booking-avatar"
+                                             role="img"
+                                             aria-label="{{ $customerAvatar['name'] }}">
+                                            {{ $customerAvatar['initials'] }}
+                                        </div>
+                                    @endif
 
                                     <div class="pbmdr-cb-boxdet-p__pfp-d">
                                         <p class="pbmdr-cb-boxdet-p__pfp-d__name">
@@ -317,6 +357,10 @@
                                     <p style="margin: 5px 0 0; font-size: 12px; font-weight: 600;">
                                         Fixed Rate: ₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}
                                     </p>
+                                    <p class="provider-history-ended">
+                                        {{ $historyStatusLabel }}:
+                                        <span>{{ $historyEndedAt ? \Carbon\Carbon::parse($historyEndedAt)->format('M d, Y g:i A') : 'Not recorded' }}</span>
+                                    </p>
                                 </div>
                             </div>
 
@@ -325,6 +369,7 @@
                                     $ratingValue = $request->rating?->rating ?? 0;
                                 @endphp
 
+                                @if($request->status === 'COMPLETED')
                                 <p>
                                     Rated:
                                     @if($ratingValue > 0)
@@ -344,15 +389,59 @@
                                 class="download-receipt-btn">
                                     Download Receipt
                                 </a>
+                                @else
+                                    <p class="provider-history-cancelled">
+                                        Cancelled by {{ $request->cancelled_by ? ucfirst($request->cancelled_by) : 'User' }}
+                                    </p>
+                                    <span style="font-size: 12px; color: #9CA3AF;">
+                                        No receipt
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </div>
                 @empty
                     <div style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">
-                        <p style="font-size: 14px; color: hsla(43, 64%, 2%, 0.6)">No Complete Booking</p>
+                        <p style="font-size: 14px; color: hsla(43, 64%, 2%, 0.6)">No {{ strtolower($historyStatus) }} booking</p>
                     </div>
                 @endforelse
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    if (!window.providerBookingActionConfirmBound) {
+        window.providerBookingActionConfirmBound = true;
+
+        document.addEventListener('submit', function (event) {
+            const form = event.target.closest('.provider-booking-action-form');
+
+            if (!form || form.dataset.confirmed === 'true') {
+                return;
+            }
+
+            event.preventDefault();
+
+            const isCancel = form.dataset.action === 'cancel';
+
+            Swal.fire({
+                title: isCancel ? 'Cancel this ongoing service?' : 'Mark this service complete?',
+                text: isCancel
+                    ? 'This will end the ongoing booking and notify the customer.'
+                    : 'This will move the booking to service history.',
+                icon: isCancel ? 'warning' : 'question',
+                showCancelButton: true,
+                confirmButtonColor: isCancel ? '#DF4545' : '#16A34A',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: isCancel ? 'Yes, cancel service' : 'Yes, complete service',
+                cancelButtonText: 'Go back'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.dataset.confirmed = 'true';
+                    form.submit();
+                }
+            });
+        });
+    }
+</script>

@@ -106,14 +106,18 @@
 @push('extrascripts')
 <script>
     $(document).ready(function () {
-        $('.customer-cancel-booking-form').on('submit', function (e) {
+        $(document).on('submit', '.customer-cancel-booking-form', function (e) {
+            if (this.dataset.confirmed === 'true') {
+                return;
+            }
+
             e.preventDefault();
 
             const form = this;
 
             Swal.fire({
                 title: 'Cancel this booking?',
-                text: 'This action will cancel your booking request. The provider will be notified.',
+                text: 'This action will end the booking and notify the provider.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#DF4545',
@@ -122,6 +126,7 @@
                 cancelButtonText: 'Keep booking'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    form.dataset.confirmed = 'true';
                     form.submit();
                 }
             });

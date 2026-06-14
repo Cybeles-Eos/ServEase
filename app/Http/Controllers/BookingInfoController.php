@@ -35,13 +35,24 @@ class BookingInfoController extends Controller
         }
 
         $customer = auth()->user()->customer ?? null;
-        $serviceOwner = \App\Models\Service::with('provider')->where('id', $request->service_id)->firstOrFail();
+        $serviceOwner = Service::with('provider')
+            ->visibleToCustomers()
+            ->where('id', $request->service_id)
+            ->first();
 
         if (!$customer) {
             return redirect()->back()->with('flash_message', [
                 'title' => 'Account Not Found!',
                 'message' => 'Please Login Your Account To Continue.',
                 'type' => 'error'
+            ]);
+        }
+
+        if (!$serviceOwner) {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Service Unavailable',
+                'message' => 'This service is not available for booking.',
+                'type' => 'warning'
             ]);
         }
 

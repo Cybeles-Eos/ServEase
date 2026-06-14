@@ -8,6 +8,41 @@ use App\Services\BookingStatusService;
 
 class ProviderBookingsBoard extends Component
 {
+    public string $historyStatus = 'COMPLETED';
+
+    public function customerAvatarData($request): array
+    {
+        $bookingInfo = $request->bookingInfo;
+        $customer = $bookingInfo?->customer;
+
+        $firstName = trim((string) ($customer->first_name ?? $bookingInfo?->fname ?? ''));
+        $lastName = trim((string) ($customer->last_name ?? $bookingInfo?->lname ?? ''));
+        $displayName = trim($firstName . ' ' . $lastName);
+
+        if ($displayName === '') {
+            $displayName = trim((string) ($bookingInfo?->name ?? 'Customer'));
+        }
+
+        if ($firstName === '' && $lastName === '' && $displayName !== '') {
+            $nameParts = preg_split('/\s+/', $displayName);
+            $firstName = $nameParts[0] ?? '';
+            $lastName = count($nameParts) > 1 ? end($nameParts) : '';
+        }
+
+        $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+        $profileImage = $customer?->profile_image;
+        $normalizedProfileImage = trim((string) $profileImage, '/');
+        $hasProfileImage = $normalizedProfileImage !== ''
+            && !in_array($normalizedProfileImage, ['images/user.png', 'public/images/user.png'], true);
+
+        return [
+            'name' => $displayName,
+            'initials' => $initials !== '' ? $initials : 'C',
+            'profile_image' => $profileImage,
+            'has_profile_image' => $hasProfileImage,
+        ];
+    }
+
     public function refreshBookings(BookingStatusService $bookingStatusService)
     {
         /*

@@ -446,8 +446,8 @@
                     service.category === category
                 ).length;
 
-                $(this).find('.ps-category-count')
-                    .html(`<span></span> ${count} Providers`);
+            $(this).find('.ps-category-count')
+                .html(`<span></span> ${count} ${count === 1 ? 'Provider' : 'Providers'}`);
             });
         }
         function renderServices(data) {
@@ -572,7 +572,7 @@
                         </div>
                         <p class="ps-category-count">
                             <span></span>
-                            ${count} Providers
+                            ${count} ${count === 1 ? 'Provider' : 'Providers'}
                         </p>
                     </div>
                 `);

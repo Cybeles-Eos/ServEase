@@ -1,5 +1,9 @@
 <section class="cusdash-right" wire:poll.10s="refreshBookings">
     @if (!empty($ongoingBookings))
+        @php
+            $ongoingProviderAvatar = $this->providerAvatarData($ongoingBookings->service?->provider);
+        @endphp
+
         <div class="cusdash-right__cards-con">
             <div class="cusdash-right__cards-con--active-box">
                 <div class="cdrcc-ordbox active" wire:key="ongoing-booking-{{ $ongoingBookings->id }}">
@@ -10,7 +14,15 @@
                     <div class="cdrcc-ordbox--info">
                         <div class="cdrcc-ordbox-i">
                             <div class="cdrcc-ordbox-i--profile">
-                                <img src="{{ asset($ongoingBookings->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
+                                @if($ongoingProviderAvatar['has_profile_image'])
+                                    <img src="{{ asset($ongoingProviderAvatar['profile_image']) }}" alt="{{ $ongoingProviderAvatar['name'] }}">
+                                @else
+                                    <div class="customer-provider-avatar"
+                                         role="img"
+                                         aria-label="{{ $ongoingProviderAvatar['name'] }}">
+                                        {{ $ongoingProviderAvatar['initials'] }}
+                                    </div>
+                                @endif
 
                                 <div class="cdrcc-ordbox-i--profile__dtl">
                                     <h3>
@@ -38,6 +50,12 @@
                                 <button disabled class="cus-tbns-sty cus-tbns-sty__ongoing">
                                     <span></span> Service Ongoing
                                 </button>
+                                <form method="POST" action="{{ route('customer.booking.cancel', $ongoingBookings->bookingRequest?->id) }}" class="customer-cancel-booking-form">
+                                    @csrf
+                                    <button type="submit" class="btn-sm btn-danger">
+                                        Cancel
+                                    </button>
+                                </form>
                             </div>
                         </div>
 
@@ -119,6 +137,10 @@
 
     <div class="cusdash-right__cards-con">
         @forelse ($allBookings as $booking)
+            @php
+                $providerAvatar = $this->providerAvatarData($booking->service?->provider);
+            @endphp
+
             <div class="cdrcc-ordbox" wire:key="customer-booking-{{ $booking->id }}-{{ $booking->status }}">
                 <div class="cdrcc-ordbox--img">
                     <img src="{{ asset('images/serv-bg.png') }}" alt="thumbnail">
@@ -127,7 +149,15 @@
                 <div class="cdrcc-ordbox--info">
                     <div class="cdrcc-ordbox-i">
                         <div class="cdrcc-ordbox-i--profile">
-                            <img src="{{ asset($booking->service->provider->profile_image ?? 'images/user.png') }}" alt="profile">
+                            @if($providerAvatar['has_profile_image'])
+                                <img src="{{ asset($providerAvatar['profile_image']) }}" alt="{{ $providerAvatar['name'] }}">
+                            @else
+                                <div class="customer-provider-avatar"
+                                     role="img"
+                                     aria-label="{{ $providerAvatar['name'] }}">
+                                    {{ $providerAvatar['initials'] }}
+                                </div>
+                            @endif
 
                             <div class="cdrcc-ordbox-i--profile__dtl">
                                 <h3>
@@ -175,7 +205,7 @@
                                 <span></span> {{ ucfirst(strtolower($booking->status)) }}
                             </button>
 
-                            @if(in_array($booking->status, ['PENDING', 'ACCEPTED']))
+                            @if(in_array($booking->status, ['PENDING', 'ACCEPTED', 'ONGOING']))
                                 <form method="POST" action="{{ route('customer.booking.cancel', $booking->bookingRequest?->id) }}" class="customer-cancel-booking-form">
                                     @csrf
                                     <button type="submit" class="btn-sm btn-danger">
@@ -264,24 +294,17 @@
                                     <span>
                                         {{ !empty($booking->time) ? \Carbon\Carbon::parse($booking->time)->format('g:i A') : '' }}
                                     </span>
-                                </p>
-                            </div>
-
-                            @if(!empty(trim($booking->notes ?? '')))
-                                <div class="cdrcc-ordbox-d-l--sched" style="min-width: 0;">
-                                    <p class="cdrcc-ordbox-d-l--sched__label">Notes:</p>
-                                    @if(\Illuminate\Support\Str::length($booking->notes) > 90)
-                                        <details style="font-size: 12px; color: #656565;">
-                                            <summary style="cursor: pointer; color: #202020; font-weight: 600;">Read note</summary>
-                                            <p style="margin: 4px 0 0; line-height: 1.35;">{{ $booking->notes }}</p>
-                                        </details>
-                                    @else
-                                        <p class="cdrcc-ordbox-d-l--sched__txt" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                            {{ $booking->notes }}
+                                    </p>
+                                    @if(in_array($booking->status, ['COMPLETED', 'CANCELLED']))
+                                        <p class="cdrcc-ordbox-d-l--sched__txt">
+                                            Ended:
+                                            <span>
+                                                {{ $booking->bookingRequest?->responded_at ? \Carbon\Carbon::parse($booking->bookingRequest->responded_at)->format('M d, Y g:i A') : 'Not recorded' }}
+                                            </span>
                                         </p>
                                     @endif
                                 </div>
-                            @endif
+
                         </div>
 
                         <div class="cdrcc-ordbox-d-r">

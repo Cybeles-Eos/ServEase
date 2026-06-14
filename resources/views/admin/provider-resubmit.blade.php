@@ -236,9 +236,9 @@
                     </div>
 
                     <div class="provider-resubmit__field">
-                        <label>Province</label>
-                        <input type="text" name="province" value="{{ old('province', $provider->province) }}" required>
-                        @error('province') <span class="provider-resubmit__error">{{ $message }}</span> @enderror
+                        <label>City</label>
+                        <input type="text" name="city" value="{{ old('city', $provider->city ?? $provider->province) }}" required>
+                        @error('city') <span class="provider-resubmit__error">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="provider-resubmit__field provider-resubmit__field--full">
@@ -267,7 +267,7 @@
 
                     <div class="provider-resubmit__field">
                         <label>Years of Experience</label>
-                        <input type="number" name="year_exp" value="{{ old('year_exp', $provider->year_exp) }}" min="0" required>
+                        <input type="number" name="year_exp" value="{{ old('year_exp', $provider->year_exp) }}" min="1" max="100" required>
                         @error('year_exp') <span class="provider-resubmit__error">{{ $message }}</span> @enderror
                     </div>
 

@@ -307,11 +307,11 @@ class AdminController extends Controller
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
             $rules['home_address'] = ['required', 'string', 'max:255'];
-            $rules['province'] = ['required', 'string', 'max:255'];
+            $rules['city'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
             $rules['zipcode'] = ['required', 'string', 'regex:/^\d{4}$/'];
             $rules['profession'] = ['required', 'string', 'max:255'];
-            $rules['year_exp'] = ['required', 'integer', 'min:0'];
+            $rules['year_exp'] = ['required', 'integer', 'min:1', 'max:100'];
         }
 
         $validated = $request->validate($rules, [
@@ -345,7 +345,7 @@ class AdminController extends Controller
                     'last_name' => $validated['last_name'],
                     'phone_number' => $validated['phone_number'],
                     'home_address' => $validated['home_address'],
-                    'province' => $validated['province'],
+                    'city' => $validated['city'],
                     'barangay' => $validated['barangay'] ?? null,
                     'zipcode' => $validated['zipcode'],
                     'profession' => $validated['profession'],
@@ -411,11 +411,11 @@ class AdminController extends Controller
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
             $rules['home_address'] = ['required', 'string', 'max:255'];
-            $rules['province'] = ['required', 'string', 'max:255'];
+            $rules['city'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
             $rules['zipcode'] = ['required', 'string', 'regex:/^\d{4}$/'];
             $rules['profession'] = ['required', 'string', 'max:255'];
-            $rules['year_exp'] = ['required', 'integer', 'min:0'];
+            $rules['year_exp'] = ['required', 'integer', 'min:1', 'max:100'];
         }
 
         $validated = $request->validate($rules, [
@@ -456,7 +456,7 @@ class AdminController extends Controller
                         'last_name' => $validated['last_name'],
                         'phone_number' => $validated['phone_number'],
                         'home_address' => $validated['home_address'],
-                        'province' => $validated['province'],
+                        'city' => $validated['city'],
                         'barangay' => $validated['barangay'] ?? null,
                         'zipcode' => $validated['zipcode'],
                         'profession' => $validated['profession'],
@@ -515,6 +515,7 @@ class AdminController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('phone_number', 'like', "%{$search}%")
                     ->orWhere('profession', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
                     ->orWhere('province', 'like', "%{$search}%")
                     ->orWhere('barangay', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($userQuery) use ($search) {
