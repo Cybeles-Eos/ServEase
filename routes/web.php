@@ -4,6 +4,7 @@ use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\AuthManagerController;
+use App\Http\Controllers\Auth\RegisterOtpController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\BookingInfoController;
@@ -61,6 +62,15 @@ Route::post('/register', [AuthManagerController::class, 'signup'])->name('signup
 
 Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup');
 Route::post('/provider-signup-c', [AuthManagerController::class, 'signupProvider'])->name('provider-signup.post');
+
+Route::get('/verify-email-otp', [RegisterOtpController::class, 'showVerifyForm'])
+    ->name('otp.verify.page');
+
+Route::post('/verify-email-otp', [RegisterOtpController::class, 'verifyOtp'])
+    ->name('otp.verify');
+
+Route::post('/resend-email-otp', [RegisterOtpController::class, 'resendOtp'])
+    ->name('otp.resend');
 
 Route::middleware('auth')->group(function () {
 
