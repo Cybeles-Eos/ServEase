@@ -181,6 +181,7 @@ class AuthManagerController extends Controller
             'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^[0-9]{4}$/'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'privacy_policy_accepted' => ['required', 'accepted'],
             'g-recaptcha-response' => ['required'],
         ], [
             'email.email' => 'Please enter a valid email address.',
@@ -188,6 +189,8 @@ class AuthManagerController extends Controller
             'phone_number.regex' => 'Phone number must start with 09 and must be exactly 11 digits.',
             'phone_number.unique' => 'This phone number is already registered.',
             'zipcode.regex' => 'ZIP code must be exactly 4 digits.',
+            'privacy_policy_accepted.accepted' => 'Please confirm that you agree to the Privacy Policy.',
+            'privacy_policy_accepted.required' => 'Please confirm that you agree to the Privacy Policy.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 
@@ -208,6 +211,7 @@ class AuthManagerController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => 'customer',
+            'privacy_policy_accepted_at' => now(),
         ]);
 
         $user->customer()->create([
@@ -245,10 +249,13 @@ class AuthManagerController extends Controller
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'privacy_policy_accepted' => ['required', 'accepted'],
             'g-recaptcha-response' => ['required'],
         ], [
             'number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
             'zipcode.regex' => 'The ZIP Code must be 4 digits.',
+            'privacy_policy_accepted.accepted' => 'Please confirm that you agree to the Privacy Policy.',
+            'privacy_policy_accepted.required' => 'Please confirm that you agree to the Privacy Policy.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 
@@ -283,6 +290,7 @@ class AuthManagerController extends Controller
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'provider',
+                'privacy_policy_accepted_at' => now(),
 
                 /*
                 |--------------------------------------------------------------------------

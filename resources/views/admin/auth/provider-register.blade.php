@@ -226,12 +226,22 @@
                                     <small style="align-self: flex-end">{{ $message }}</small>
                                 @enderror
                             </div>
-                    <div class="auth-form__privacy">
-                        <p>
-                            By signing up, you agree to our
-                            <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
-                        </p>
-                    </div>
+                            <div class="auth-form__privacy">
+                                <label for="provider_privacy_policy_accepted">
+                                    <input
+                                        type="checkbox"
+                                        id="provider_privacy_policy_accepted"
+                                        name="privacy_policy_accepted"
+                                        value="1"
+                                        {{ old('privacy_policy_accepted') ? 'checked' : '' }}
+                                        required
+                                        style="margin-top: 3px"
+                                    >
+                                    By signing up, you agree to our
+                                    <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                                </label>
+                                @error('privacy_policy_accepted') <small>{{ $message }}</small> @enderror
+                            </div>
                             <div class="provreg-mmcf-secpage__btns">
                                 <button type="button" id="provreg-prev" class="btn btn--primary">back</button>
                                 <button type="submit" class="btn btn--tertiary">Submit</button>
@@ -334,6 +344,7 @@
                 $errors->has('experience') ||
                 $errors->has('password') ||
                 $errors->has('password_confirmation') ||
+                $errors->has('privacy_policy_accepted') ||
                 $errors->has('g-recaptcha-response')
             );
 

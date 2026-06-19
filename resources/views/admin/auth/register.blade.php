@@ -214,6 +214,27 @@
                 margin: 0 !important;
             }
 
+            .customer-register-page .auth-form__privacy label {
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+                font-size: 12px !important;
+                line-height: 1.5 !important;
+                color: #8b95a1 !important;
+                margin: 0 !important;
+                cursor: pointer !important;
+            }
+
+            .customer-register-page .auth-form__privacy input[type="checkbox"] {
+                width: auto !important;
+                height: auto !important;
+                min-width: 0 !important;
+                -webkit-appearance: checkbox !important;
+                appearance: auto !important;
+                margin-top: 2px !important;
+                cursor: pointer !important;
+            }
+
             .customer-register-page .auth-form__privacy a {
                 color: #6b7280 !important;
                 text-decoration: underline !important;
@@ -485,10 +506,19 @@
                     </div>
 
                     <div class="auth-form__privacy">
-                        <p>
+                        <label for="privacy_policy_accepted">
+                            <input
+                                type="checkbox"
+                                id="privacy_policy_accepted"
+                                name="privacy_policy_accepted"
+                                value="1"
+                                {{ old('privacy_policy_accepted') ? 'checked' : '' }}
+                                required
+                            >
                             By signing up, you agree to our
                             <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
-                        </p>
+                        </label>
+                        @error('privacy_policy_accepted') <small>{{ $message }}</small> @enderror
                     </div>
 
                     <button class="plm-ff-btn btn btn--tertiary" type="submit">
