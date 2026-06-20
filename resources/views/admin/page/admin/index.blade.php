@@ -73,89 +73,210 @@
                 </div>
             </div>
         </section>
+        <section class="section section--header">
+            <div class="section--header__card">
+                <div class="section--header__card-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M18 3V6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M5 5H19C20.1046 5 21 5.89543 21 7V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V7C3 5.89543 3.89543 5 5 5Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M8 16H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
 
-<section class="section section--analytics">
-    <div class="section--analytics__main">
-        <div class="section--analytics__header">
-            <div>
-                <h3>
-                    {{ $selectedMonth ? 'Daily Provider Booking Analytics' : 'Monthly Provider Booking Analytics' }}
-                </h3>
-
-                <p>
-                    Platform-wide provider bookings and completed-booking earnings
-                    @if ($selectedMonth)
-                        for {{ \Carbon\Carbon::create()->month($selectedMonth)->format('F') }} {{ $selectedYear }}
-                    @else
-                        for {{ $selectedYear }}
-                    @endif
-                </p>
+                <div class="section--header__card-content">
+                    <p class="section--header__card-label">Overall Provider Bookings</p>
+                    <h3 class="section--header__card-value">{{ number_format($totalBookings) }}</h3>
+                    <span class="section--header__card-desc">Providers and customers</span>
+                </div>
             </div>
 
-            <form method="GET" action="{{ route('admin.dashboard') }}" class="admin-chart-filter">
-                <select name="year" onchange="this.form.submit()">
-                    @for ($filterYear = now()->year; $filterYear >= now()->year - 5; $filterYear--)
-                        <option value="{{ $filterYear }}" {{ $selectedYear == $filterYear ? 'selected' : '' }}>
-                            {{ $filterYear }}
-                        </option>
-                    @endfor
-                </select>
+            <div class="section--header__card">
+                <div class="section--header__card-icon">
+                    <svg width="17" height="19" viewBox="0 0 17 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.3857 19L9.71429 16.1726L10.8411 15.0794L12.3857 16.5779L15.8731 13.1944L17 14.5233L12.3857 19ZM13.6 0C14.6686 0 15.5429 0.848214 15.5429 1.88492V10.6875C14.9309 10.4802 14.28 10.3671 13.6 10.3671V1.88492H8.74286V9.4246L6.31429 7.30407L3.88571 9.4246V1.88492H1.94286V16.9643H7.84914C7.96571 17.6429 8.20857 18.2743 8.54857 18.8492H1.94286C0.874286 18.8492 0 18.001 0 16.9643V1.88492C0 0.848214 0.874286 0 1.94286 0H13.6Z" fill="#FFBE42"/>
+                    </svg>
+                </div>
 
-                <select name="month" onchange="this.form.submit()">
-                    <option value="" {{ empty($selectedMonth) ? 'selected' : '' }}>
-                        All Months
-                    </option>
+                <div class="section--header__card-content">
+                    <p class="section--header__card-label">Completed Provider Jobs</p>
+                    <h3 class="section--header__card-value">{{ number_format($completedBookings) }}</h3>
+                    <span class="section--header__card-desc">Finished bookings from all providers</span>
+                </div>
+            </div>
 
-                    @for ($month = 1; $month <= 12; $month++)
-                        <option value="{{ $month }}" {{ $selectedMonth == $month ? 'selected' : '' }}>
-                            {{ \Carbon\Carbon::create()->month($month)->format('F') }}
-                        </option>
-                    @endfor
-                </select>
-            </form>
-        </div>
+            <div class="section--header__card">
+                <div class="section--header__card-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
 
-        <div class="section--analytics__legend">
-            <span class="section--analytics__legend-item section--analytics__legend-item--earnings">
-                <i></i> Earnings
-            </span>
+                <div class="section--header__card-content">
+                    <p class="section--header__card-label">Pending Provider Requests</p>
+                    <h3 class="section--header__card-value">{{ number_format($pendingBookings) }}</h3>
+                    <span class="section--header__card-desc">Booking requests waiting for provider action</span>
+                </div>
+            </div>
 
-            <span class="section--analytics__legend-item section--analytics__legend-item--bookings">
-                <i></i> Bookings
-            </span>
-        </div>
+            <div class="section--header__card">
+                <div class="section--analytics__mini-card section--analytics__mini-card--earnings samcsamce" style="width: 100%">
+                    <span>Overall Provider Earnings</span>
+                    <strong>₱{{ number_format($totalEarnings, 2) }}</strong>
+                    <p>Total earnings from completed provider bookings</p>
+                </div>
+            </div>
+        </section>
 
-        <div class="section--analytics__chart">
-            <canvas id="adminBookingAnalyticsChart"></canvas>
-        </div>
-    </div>
+        <section class="section section--analytics">
+            <div class="section--analytics__main">
+                <div class="section--analytics__header">
+                    <div>
+                        <h3>
+                            {{ $selectedMonth ? 'Daily Provider Booking Analytics' : 'Monthly Provider Booking Analytics' }}
+                        </h3>
 
-    <div class="section--analytics__side">
-        <div class="section--analytics__mini-card">
-            <span>Overall Provider Bookings</span>
-            <strong>{{ number_format($totalBookings) }}</strong>
-            <p>Total booking requests across all providers</p>
-        </div>
+                        <p>
+                            Platform-wide provider bookings and completed-booking earnings
+                            @if ($selectedMonth)
+                                for {{ \Carbon\Carbon::create()->month($selectedMonth)->format('F') }} {{ $selectedYear }}
+                            @else
+                                for {{ $selectedYear }}
+                            @endif
+                        </p>
+                    </div>
 
-        <div class="section--analytics__mini-card">
-            <span>Completed Provider Jobs</span>
-            <strong>{{ number_format($completedBookings) }}</strong>
-            <p>Finished bookings from all providers</p>
-        </div>
+                    <form method="GET" action="{{ route('admin.dashboard') }}" class="admin-chart-filter">
+                        <input type="hidden" name="provider_ranking" value="{{ $providerRankingMode }}">
 
-        <div class="section--analytics__mini-card">
-            <span>Pending Provider Requests</span>
-            <strong>{{ number_format($pendingBookings) }}</strong>
-            <p>Booking requests waiting for provider action</p>
-        </div>
+                        <select name="year" onchange="this.form.submit()">
+                            @for ($filterYear = now()->year; $filterYear >= now()->year - 5; $filterYear--)
+                                <option value="{{ $filterYear }}" {{ $selectedYear == $filterYear ? 'selected' : '' }}>
+                                    {{ $filterYear }}
+                                </option>
+                            @endfor
+                        </select>
 
-        <div class="section--analytics__mini-card section--analytics__mini-card--earnings">
-            <span>Overall Provider Earnings</span>
-            <strong>₱{{ number_format($totalEarnings, 2) }}</strong>
-            <p>Total earnings from completed provider bookings</p>
-        </div>
-    </div>
-</section>
+                        <select name="month" onchange="this.form.submit()">
+                            <option value="" {{ empty($selectedMonth) ? 'selected' : '' }}>
+                                All Months
+                            </option>
+
+                            @for ($month = 1; $month <= 12; $month++)
+                                <option value="{{ $month }}" {{ $selectedMonth == $month ? 'selected' : '' }}>
+                                    {{ \Carbon\Carbon::create()->month($month)->format('F') }}
+                                </option>
+                            @endfor
+                        </select>
+                    </form>
+                </div>
+
+                <div class="section--analytics__legend">
+                    <span class="section--analytics__legend-item section--analytics__legend-item--earnings">
+                        <i></i> Earnings
+                    </span>
+
+                    <span class="section--analytics__legend-item section--analytics__legend-item--bookings">
+                        <i></i> Bookings
+                    </span>
+                </div>
+
+                <div class="section--analytics__chart">
+                    <canvas id="adminBookingAnalyticsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section--analytics__side">
+                <h3 style="font-size: 18px; font-weight: 700">Top Providers</h3>
+                <div class="section--analytics__side-header">
+                    <form method="GET" action="{{ route('admin.dashboard') }}">
+                        <input type="hidden" name="year" value="{{ $selectedYear }}">
+                        <input type="hidden" name="month" value="{{ $selectedMonth }}">
+
+                        <select name="provider_ranking" onchange="this.form.submit()">
+                            <option value="bookings" {{ $providerRankingMode === 'bookings' ? 'selected' : '' }}>
+                                Ranking by bookings
+                            </option>
+                            <option value="ratings" {{ $providerRankingMode === 'ratings' ? 'selected' : '' }}>
+                                Ranking by ratings
+                            </option>
+                        </select>
+                    </form>
+                </div>
+
+                <div class="provider-ranking-list">
+                    @forelse ($topProviders as $rankIndex => $provider)
+                        @php
+                            $providerName = trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? '')) ?: ($provider->user?->name ?? 'Provider');
+                            $providerDate = $provider->created_at ? $provider->created_at->format('Y-m-d') : 'No date';
+                        @endphp
+
+                        <div class="provider-ranking-item">
+                            <div class="provider-ranking-item__rank provider-ranking-item__rank--{{ $rankIndex + 1 }}">
+                                <div class="provider-ranking-item__rank-icon"></div>
+                            </div>
+
+                            <div class="provider-ranking-item__avatar">
+                                @if (!empty($provider->profile_image))
+                                    <img src="{{ asset($provider->profile_image) }}" alt="{{ $providerName }}" loading="lazy">
+                                @else
+                                    <span>{{ strtoupper(substr($providerName, 0, 1)) }}</span>
+                                @endif
+                            </div>
+
+                            <div class="provider-ranking-item__info">
+                                <strong title="{{ $providerName }}">{{ \Illuminate\Support\Str::limit($providerName, 24) }}</strong>
+                                <span>
+                                    @if ($providerRankingMode === 'ratings')
+                                        {{ number_format($provider->ratings_count) }} {{ \Illuminate\Support\Str::plural('rating', $provider->ratings_count) }}
+                                    @else
+                                        {{ $providerDate }}
+                                    @endif
+                                </span>
+                            </div>
+
+                            <div class="provider-ranking-item__bookings">
+                                @if ($providerRankingMode === 'ratings')
+                                    {{ number_format((float) $provider->average_rating, 1) }}
+                                @else
+                                    {{ number_format($provider->total_bookings) }}
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="provider-ranking-empty">
+                            No provider ranking data yet.
+                        </div>
+                    @endforelse
+                </div>
+                {{-- <div class="section--analytics__mini-card">
+                    <span>Overall Provider Bookings</span>
+                    <strong>{{ number_format($totalBookings) }}</strong>
+                    <p>Total booking requests across all providers</p>
+                </div>
+
+                <div class="section--analytics__mini-card">
+                    <span>Completed Provider Jobs</span>
+                    <strong>{{ number_format($completedBookings) }}</strong>
+                    <p>Finished bookings from all providers</p>
+                </div>
+
+                <div class="section--analytics__mini-card">
+                    <span>Pending Provider Requests</span>
+                    <strong>{{ number_format($pendingBookings) }}</strong>
+                    <p>Booking requests waiting for provider action</p>
+                </div>
+
+                <div class="section--analytics__mini-card section--analytics__mini-card--earnings">
+                    <span>Overall Provider Earnings</span>
+                    <strong>₱{{ number_format($totalEarnings, 2) }}</strong>
+                    <p>Total earnings from completed provider bookings</p>
+                </div> --}}
+            </div>
+        </section>
 
         {{-- <section class="section section--recent">
             <div class="section--recent__card">

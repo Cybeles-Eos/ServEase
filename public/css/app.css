@@ -1258,6 +1258,13 @@ h5 {
   text-decoration: underline;
 }
 
+.samcsamce p {
+  display: -webkit-box;
+  -webkit-line-clamp: 1; /* number of lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 p {
   font-size: 15px;
   font-weight: 400;
@@ -4213,6 +4220,9 @@ h4 span {
   font-size: 13px;
   font-weight: 500;
   color: #6B7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .admin--dash .section--header__card-value {
   margin: 4px 0;
@@ -4296,6 +4306,128 @@ h4 span {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
+}
+.admin--dash .section--analytics__side > h3 {
+  margin: 0;
+}
+.admin--dash .section--analytics__side-header {
+  display: flex;
+  justify-content: flex-end;
+}
+.admin--dash .section--analytics__side-header form {
+  width: 100%;
+}
+.admin--dash .section--analytics__side-header select {
+  width: 100%;
+  height: 34px;
+  border: 1px solid #E0E2E7;
+  border-radius: 6px;
+  padding: 0 32px 0 10px;
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%23656565' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.admin--dash .section--analytics .provider-ranking-list {
+  max-height: 318px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.admin--dash .section--analytics .provider-ranking-list::-webkit-scrollbar {
+  width: 5px;
+}
+.admin--dash .section--analytics .provider-ranking-list::-webkit-scrollbar-track {
+  background-color: #F3F4F6;
+  border-radius: 999px;
+}
+.admin--dash .section--analytics .provider-ranking-list::-webkit-scrollbar-thumb {
+  background-color: #D1D5DB;
+  border-radius: 999px;
+}
+.admin--dash .section--analytics .provider-ranking-item {
+  display: grid;
+  grid-template-columns: 24px 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F3F4F6;
+}
+.admin--dash .section--analytics .provider-ranking-item__rank-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background-color: #E5E7EB;
+}
+.admin--dash .section--analytics .provider-ranking-item__rank--1 .provider-ranking-item__rank-icon {
+  background-color: #FDB932;
+}
+.admin--dash .section--analytics .provider-ranking-item__rank--2 .provider-ranking-item__rank-icon {
+  background-color: #C4C4C4;
+}
+.admin--dash .section--analytics .provider-ranking-item__rank--3 .provider-ranking-item__rank-icon {
+  background-color: #C79A58;
+}
+.admin--dash .section--analytics .provider-ranking-item__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: #FFF7E8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #B7791F;
+  font-size: 12px;
+  font-weight: 800;
+}
+.admin--dash .section--analytics .provider-ranking-item__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.admin--dash .section--analytics .provider-ranking-item__info {
+  min-width: 0;
+}
+.admin--dash .section--analytics .provider-ranking-item__info strong,
+.admin--dash .section--analytics .provider-ranking-item__info span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin--dash .section--analytics .provider-ranking-item__info strong {
+  color: #111827;
+  font-size: 12px;
+  font-weight: 800;
+}
+.admin--dash .section--analytics .provider-ranking-item__info span {
+  margin-top: 2px;
+  color: #9CA3AF;
+  font-size: 11px;
+}
+.admin--dash .section--analytics .provider-ranking-item__bookings {
+  min-width: 48px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background-color: #FFF7E8;
+  color: #B7791F;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+.admin--dash .section--analytics .provider-ranking-empty {
+  padding: 18px 10px;
+  border: 1px dashed #E0E2E7;
+  border-radius: 8px;
+  color: #9CA3AF;
+  font-size: 12px;
+  text-align: center;
 }
 .admin--dash .section--analytics__mini-card {
   padding: 14px;
@@ -4718,7 +4850,7 @@ h4 span {
     grid-template-columns: 1fr;
   }
   .admin--dash .section--analytics__side {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
   .admin--dash .section--recent {
     grid-template-columns: 1fr;
@@ -4729,7 +4861,7 @@ h4 span {
     flex-direction: column;
   }
   .admin--dash .section--analytics__side {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
   .admin--dash .admin-chart-filter {
     width: 100%;
@@ -4753,6 +4885,41 @@ h4 span {
   }
   .admin--dash .section--analytics__side {
     grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+    overflow: hidden;
+  }
+  .admin--dash .section--analytics__side-header select {
+    height: 38px;
+  }
+  .admin--dash .section--analytics .provider-ranking-list {
+    max-height: 360px;
+    padding-right: 2px;
+    overflow-x: hidden;
+  }
+  .admin--dash .section--analytics .provider-ranking-item {
+    grid-template-columns: 20px 32px minmax(0, 1fr) 44px;
+    gap: 8px;
+    padding: 9px 0;
+  }
+  .admin--dash .section--analytics .provider-ranking-item__rank-icon {
+    width: 16px;
+    height: 16px;
+  }
+  .admin--dash .section--analytics .provider-ranking-item__avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .admin--dash .section--analytics .provider-ranking-item__info strong {
+    font-size: 11px;
+  }
+  .admin--dash .section--analytics .provider-ranking-item__info span {
+    font-size: 10px;
+  }
+  .admin--dash .section--analytics .provider-ranking-item__bookings {
+    min-width: 44px;
+    padding: 5px 7px;
+    font-size: 11px;
   }
   .admin--dash .section--recent__card {
     padding: 12px;

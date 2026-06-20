@@ -1317,3 +1317,11 @@ h5{
         }
     }
 }
+
+
+.samcsamce p{
+    display: -webkit-box;
+    -webkit-line-clamp: 1;   /* number of lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

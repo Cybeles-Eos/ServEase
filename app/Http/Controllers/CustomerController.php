@@ -7,6 +7,7 @@ use App\Models\BookingInfo;
 use App\Services\BookingStatusService;
 use App\Models\User;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use File;
 
@@ -105,7 +106,7 @@ class CustomerController extends Controller
 
     public function updateSetting(Request $request)
     {
-        $request->validate([
+        $rules = [
             'first_name'   => 'nullable|string|max:255',
             'last_name'    => 'nullable|string|max:255',
             'profile_image'=> 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -114,8 +115,15 @@ class CustomerController extends Controller
             'city'         => 'nullable|string|max:255',
             'barangay'     => 'nullable|string|max:255',
             'zipcode'      => ['nullable', 'string', 'regex:/^\d{4}$/'],
+            'change_password' => ['required', 'in:0,1'],
             // 'email'        => 'nullable|email|max:255'
-        ], [
+        ];
+
+        if ($request->boolean('change_password')) {
+            $rules['password'] = ['required', 'string', 'min:8', 'confirmed'];
+        }
+
+        $request->validate($rules, [
             'zipcode.regex' => 'The ZIP Code must be 4 digits.',
         ]);
 
@@ -171,6 +179,11 @@ class CustomerController extends Controller
         |--------------------------------------------------------------------------
         */
         $user->name  = trim($request->first_name . ' ' . $request->last_name);
+
+        if ($request->boolean('change_password')) {
+            $user->password = Hash::make($request->password);
+        }
+
         // $user->email = $request->email;
         $user->save();
 

@@ -41,6 +41,8 @@ class AdminController extends Controller
             ? (int) $selectedMonth
             : null;
 
+        $providerRankingMode = $request->get('provider_ranking') === 'ratings' ? 'ratings' : 'bookings';
+
         /*
         |--------------------------------------------------------------------------
         | Header Cards
@@ -208,6 +210,47 @@ class AdminController extends Controller
             ->paginate(4, ['*'], 'users_page')
             ->withQueryString();
 
+        $providerBookingStats = DB::table('booking_requests')
+            ->select('provider_id', DB::raw('COUNT(*) as total_bookings'))
+            ->groupBy('provider_id');
+
+        $providerRatingStats = DB::table('service_ratings')
+            ->select(
+                'provider_id',
+                DB::raw('AVG(rating) as average_rating'),
+                DB::raw('COUNT(*) as ratings_count')
+            )
+            ->groupBy('provider_id');
+
+        $topProvidersQuery = Provider::query()
+            ->with('user')
+            ->leftJoinSub($providerBookingStats, 'provider_booking_stats', function ($join) {
+                $join->on('provider_booking_stats.provider_id', '=', 'tbl_providers.id');
+            })
+            ->leftJoinSub($providerRatingStats, 'provider_rating_stats', function ($join) {
+                $join->on('provider_rating_stats.provider_id', '=', 'tbl_providers.id');
+            })
+            ->select('tbl_providers.*')
+            ->selectRaw('COALESCE(provider_booking_stats.total_bookings, 0) as total_bookings')
+            ->selectRaw('COALESCE(provider_rating_stats.average_rating, 0) as average_rating')
+            ->selectRaw('COALESCE(provider_rating_stats.ratings_count, 0) as ratings_count');
+
+        if ($providerRankingMode === 'ratings') {
+            $topProvidersQuery
+                ->orderByDesc('average_rating')
+                ->orderByDesc('ratings_count')
+                ->orderByDesc('total_bookings');
+        } else {
+            $topProvidersQuery
+                ->orderByDesc('total_bookings')
+                ->orderByDesc('average_rating');
+        }
+
+        $topProviders = $topProvidersQuery
+            ->latest('tbl_providers.created_at')
+            ->limit(10)
+            ->get();
+
         return view('admin.page.admin.index', compact(
             'totalUsers',
             'totalProviders',
@@ -223,7 +266,9 @@ class AdminController extends Controller
             'analyticsBookings',
             'analyticsEarnings',
             'recentServices',
-            'recentUsers'
+            'recentUsers',
+            'providerRankingMode',
+            'topProviders'
         ));
     }
 

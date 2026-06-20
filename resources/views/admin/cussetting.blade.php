@@ -73,12 +73,68 @@
             content: "Remove";
         }
 
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            top: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        .switch input:checked + .slider {
+            background-color: #FFBE42;
+        }
+        .switch input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        .setting-password-fields {
+            display: none;
+            margin: 6px 0 12px;
+        }
+        .setting-password-fields.is-visible {
+            display: block;
+        }
+        .setting-password-fields h5 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
     </style>
 @endpush
 {{-- Page Content --}}
 @section('content')
     @include('admin.layouts.header')
     {{-- @include('admin.layouts.sidebar') --}}
+
+    @php
+        $showPasswordFields = old('change_password') == '1'
+            || $errors->has('password')
+            || $errors->has('password_confirmation');
+    @endphp
 
     <main class="main-dash-uix dash-sp customer--setting">
         <div class="customer--setting--main">
@@ -87,7 +143,7 @@
                 <p class="csm-left__p">Information that was taken from your resume is noted with a tag pulled from resume. The rest fo the information is already part of your profile.</p>
             </div>
             <div class="csm-right">
-                <form action="{{ route('customer.setting.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="customer-setting-form" action="{{ route('customer.setting.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="">
                         <label>Profile Image<small>(2MB max)</small></label>
@@ -190,6 +246,35 @@
                         </div>
                     </div>
 
+                    <div class="cms-mm-group">
+                        <label>Change password?</label>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label class="switch">
+                                <input type="hidden" name="change_password" value="0">
+                                <input type="checkbox" name="change_password" value="1" id="customer-change-password-toggle" {{ $showPasswordFields ? 'checked' : '' }}>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        @error('change_password') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                    </div>
+
+                    <div id="customer-password-fields" class="setting-password-fields {{ $showPasswordFields ? 'is-visible' : '' }}">
+                        <h5>Change password</h5>
+                        <div class="cms-mm-group-con">
+                            <div class="cms-mm-group">
+                                <label>New password <span>*</span></label>
+                                <input type="password" name="password" autocomplete="new-password" placeholder="Minimum 8 characters">
+                                @error('password') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                            </div>
+
+                            <div class="cms-mm-group">
+                                <label>Confirm new password <span>*</span></label>
+                                <input type="password" name="password_confirmation" autocomplete="new-password">
+                                @error('password_confirmation') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                            </div>
+                        </div>
+                    </div>
+
 
 
                     <button type="submit" style="align-self: flex-end;" class="btn btn--primary">Save</button>
@@ -209,6 +294,27 @@
 @push('extrascripts')
 
     <script>
+        (function () {
+            var form = document.getElementById('customer-setting-form');
+            var toggle = document.getElementById('customer-change-password-toggle');
+            var wrap = document.getElementById('customer-password-fields');
+            if (!form || !toggle || !wrap) return;
+
+            var inputs = wrap.querySelectorAll('input[type="password"]');
+
+            function sync() {
+                var on = toggle.checked;
+                wrap.classList.toggle('is-visible', on);
+                inputs.forEach(function (el) {
+                    el.disabled = !on;
+                });
+            }
+
+            toggle.addEventListener('change', sync);
+            form.addEventListener('submit', sync);
+            sync();
+        })();
+
         document.addEventListener('DOMContentLoaded', function () {
             const cityInput = document.querySelector('[data-ph-city]');
             const cityValue = document.querySelector('[data-ph-city-value]');
