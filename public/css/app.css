@@ -4842,6 +4842,12 @@ h4 span {
   border-color: #2563EB;
 }
 
+@media (min-width: 1101px) {
+  .admin--dash .section--analytics__side {
+    align-content: start;
+    align-items: start;
+  }
+}
 @media (max-width: 1100px) {
   .admin--dash .section--header {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5237,7 +5243,7 @@ h4 span {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   display: grid;
-  grid-template-columns: 190px 1fr 1fr 15% 100px 90px 148px;
+  grid-template-columns: 180px 1fr 150px 150px 100px 95px 130px 112px;
 }
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__head div {
   height: 40px;
@@ -5253,11 +5259,21 @@ h4 span {
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__head div:last-child {
   border-right: none;
 }
+@media (max-width: 1440px) {
+  .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__head {
+    grid-template-columns: 180px 200px 150px 150px 100px 95px 130px 112px;
+  }
+}
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody {
   width: 100%;
   border-bottom: 1px solid #E0E2E7;
   display: grid;
-  grid-template-columns: 190px 1fr 1fr 15% 100px 90px 148px;
+  grid-template-columns: 180px 1fr 150px 150px 100px 95px 130px 112px;
+}
+@media (max-width: 1440px) {
+  .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody {
+    grid-template-columns: 180px 200px 150px 150px 100px 95px 130px 112px;
+  }
 }
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody div {
   height: 100%;
@@ -5303,12 +5319,12 @@ h4 span {
 .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c__tbody:last-child {
   border-bottom: none;
 }
-@media (max-width: 1300px) {
+@media (max-width: 1400px) {
   .page-admin-users .section__table .admin-ustbl-main .admin-ustbl-main-c {
-    width: 1200px;
+    width: 1137px;
   }
 }
-@media (max-width: 1300px) {
+@media (max-width: 1400px) {
   .page-admin-users .section__table .admin-ustbl-main {
     overflow-x: scroll;
   }

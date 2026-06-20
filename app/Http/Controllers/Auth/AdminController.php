@@ -56,6 +56,9 @@ class AdminController extends Controller
         $totalProviders = User::query()
             ->where('is_active', 1)
             ->where('role', 'provider')
+            ->whereHas('provider', function ($query) {
+                $query->where('application_status', 'accepted');
+            })
             ->count();
 
         $totalCustomers = User::query()
@@ -64,7 +67,7 @@ class AdminController extends Controller
             ->count();
 
         $totalServices = Service::query()
-            ->where('is_active', 1)
+            ->visibleToCustomers()
             ->count();
 
         /*
@@ -72,21 +75,21 @@ class AdminController extends Controller
         | Booking / Earnings Analytics
         |--------------------------------------------------------------------------
         */
-        $totalBookings = DB::table('booking_requests')->count();
+        $activeProviderBookingsQuery = $this->activeProviderBookingsQuery();
 
-        $completedBookings = DB::table('booking_requests')
-            ->where('status', 'COMPLETED')
-            ->count();
+        $totalBookings = (clone $activeProviderBookingsQuery)
+            ->count('booking_requests.id');
 
-        $pendingBookings = DB::table('booking_requests')
-            ->where('status', 'PENDING')
-            ->count();
-
-        $totalEarnings = DB::table('booking_requests')
-            ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
-            ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+        $completedBookings = (clone $activeProviderBookingsQuery)
             ->where('booking_requests.status', 'COMPLETED')
-            ->whereNull('tbl_services.deleted_at')
+            ->count('booking_requests.id');
+
+        $pendingBookings = (clone $activeProviderBookingsQuery)
+            ->where('booking_requests.status', 'PENDING')
+            ->count('booking_requests.id');
+
+        $totalEarnings = (clone $activeProviderBookingsQuery)
+            ->where('booking_requests.status', 'COMPLETED')
             ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
 
         /*
@@ -104,11 +107,8 @@ class AdminController extends Controller
             $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
             $endDate = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth();
 
-            $dailyStats = DB::table('booking_requests')
-                ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
-                ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            $dailyStats = $this->activeProviderBookingsQuery()
                 ->whereBetween('booking_infos.date', [$startDate->toDateString(), $endDate->toDateString()])
-                ->whereNull('tbl_services.deleted_at')
                 ->selectRaw('
                     DAY(booking_infos.date) as day,
                     COUNT(booking_requests.id) as bookings_count,
@@ -132,11 +132,8 @@ class AdminController extends Controller
                 $analyticsEarnings[] = (float) ($dailyStats[$day]->earnings_total ?? 0);
             }
         } else {
-            $monthlyStats = DB::table('booking_requests')
-                ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
-                ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            $monthlyStats = $this->activeProviderBookingsQuery()
                 ->whereYear('booking_infos.date', $selectedYear)
-                ->whereNull('tbl_services.deleted_at')
                 ->selectRaw('
                     MONTH(booking_infos.date) as month,
                     COUNT(booking_requests.id) as bookings_count,
@@ -174,7 +171,11 @@ class AdminController extends Controller
         $serviceStats = DB::table('booking_infos')
             ->join('booking_requests', 'booking_requests.booking_info_id', '=', 'booking_infos.id')
             ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            ->join('tbl_providers', 'tbl_providers.id', '=', 'tbl_services.provider_id')
+            ->join('users', 'users.id', '=', 'tbl_providers.user_id')
             ->whereIn('booking_infos.service_id', $serviceIds)
+            ->where('users.is_active', 1)
+            ->where('tbl_providers.application_status', 'accepted')
             ->selectRaw('
                 booking_infos.service_id,
                 COUNT(booking_requests.id) as bookings_count,
@@ -224,6 +225,10 @@ class AdminController extends Controller
 
         $topProvidersQuery = Provider::query()
             ->with('user')
+            ->where('tbl_providers.application_status', 'accepted')
+            ->whereHas('user', function ($query) {
+                $query->where('is_active', 1);
+            })
             ->leftJoinSub($providerBookingStats, 'provider_booking_stats', function ($join) {
                 $join->on('provider_booking_stats.provider_id', '=', 'tbl_providers.id');
             })
@@ -270,6 +275,18 @@ class AdminController extends Controller
             'providerRankingMode',
             'topProviders'
         ));
+    }
+
+    private function activeProviderBookingsQuery()
+    {
+        return DB::table('booking_requests')
+            ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
+            ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            ->join('tbl_providers', 'tbl_providers.id', '=', 'tbl_services.provider_id')
+            ->join('users', 'users.id', '=', 'tbl_providers.user_id')
+            ->where('users.is_active', 1)
+            ->where('tbl_providers.application_status', 'accepted')
+            ->whereNull('tbl_services.deleted_at');
     }
 
     // public function users()
@@ -395,6 +412,9 @@ class AdminController extends Controller
                     'zipcode' => $validated['zipcode'],
                     'profession' => $validated['profession'],
                     'year_exp' => $validated['year_exp'],
+                    'application_status' => 'accepted',
+                    'application_reviewed_at' => now(),
+                    'application_reviewed_by' => auth()->id(),
                 ]);
             }
 
@@ -424,6 +444,14 @@ class AdminController extends Controller
     {
         $this->assertManagedUser($user);
         $user->load(['provider', 'customer']);
+
+        if (! $this->canEditManagedUser($user)) {
+            return redirect()->route('admin.users.show', $user)->with('flash_message', [
+                'title' => 'Application Pending',
+                'message' => 'Review the provider application before editing this account.',
+                'type' => 'warning',
+            ]);
+        }
 
         return view('admin.page.admin.user.edit', compact('user'));
     }
@@ -471,7 +499,9 @@ class AdminController extends Controller
             $payload = [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                'is_active' => (bool) $validated['is_active'],
+                'is_active' => $user->role === 'provider' && $user->provider?->application_status === 'declined'
+                    ? false
+                    : (bool) $validated['is_active'],
             ];
 
             if (($validated['change_password'] ?? '0') === '1') {
@@ -544,6 +574,15 @@ class AdminController extends Controller
         if (! in_array($user->role, ['provider', 'customer'], true)) {
             abort(404);
         }
+    }
+
+    private function canEditManagedUser(User $user): bool
+    {
+        if ($user->role !== 'provider') {
+            return true;
+        }
+
+        return in_array($user->provider?->application_status, ['accepted', 'declined'], true);
     }
 
     public function applicants(Request $request)
@@ -656,7 +695,7 @@ class AdminController extends Controller
 
         if ($provider->user) {
             $provider->user->update([
-                'is_active' => 1,
+                'is_active' => 0,
             ]);
         }
 

@@ -205,6 +205,16 @@
             color: #991B1B;
         }
 
+        .admin-user-show__status--pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .admin-user-show__status--neutral {
+            background: #E5E7EB;
+            color: #374151;
+        }
+
         .admin-user-show__documents {
             margin-top: 18px;
         }
@@ -407,6 +417,19 @@
             }
         }
 
+        $canEditUser = $user->role !== 'provider'
+            || in_array($user->provider?->application_status, ['accepted', 'declined'], true);
+        $reviewLabel = 'N/A';
+        $reviewStatusClass = 'admin-user-show__status--neutral';
+
+        if ($user->role === 'provider') {
+            [$reviewLabel, $reviewStatusClass] = match ($user->provider?->application_status) {
+                'accepted' => ['Accepted', 'admin-user-show__status--active'],
+                'declined' => ['Declined', 'admin-user-show__status--disabled'],
+                default => ['Pending Review', 'admin-user-show__status--pending'],
+            };
+        }
+
         $detail = function (?string $value): string {
             return ($value !== null && trim($value) !== '') ? trim($value) : '—';
         };
@@ -449,9 +472,11 @@
                         Cancel
                     </a>
 
-                    <a href="{{ route('admin.users.edit', $user) }}" class="admin-user-show__btn admin-user-show__btn--primary">
-                        Edit user
-                    </a>
+                    @if ($canEditUser)
+                        <a href="{{ route('admin.users.edit', $user) }}" class="admin-user-show__btn admin-user-show__btn--primary">
+                            Edit user
+                        </a>
+                    @endif
                 </div>
             </section>
 
@@ -473,6 +498,14 @@
                         <span class="admin-user-show__value">
                             <span class="admin-user-show__status {{ $user->is_active ? 'admin-user-show__status--active' : 'admin-user-show__status--disabled' }}">
                                 {{ $user->is_active ? 'Active' : 'Disabled' }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="admin-user-show__row">
+                        <span class="admin-user-show__label">Review</span>
+                        <span class="admin-user-show__value">
+                            <span class="admin-user-show__status {{ $reviewStatusClass }}">
+                                {{ $reviewLabel }}
                             </span>
                         </span>
                     </div>

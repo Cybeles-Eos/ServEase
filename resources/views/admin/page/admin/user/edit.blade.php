@@ -81,6 +81,7 @@
 
     @php
         $profile = $user->role === 'customer' ? $user->customer : $user->provider;
+        $isDeclinedProvider = $user->role === 'provider' && $user->provider?->application_status === 'declined';
         $showPasswordFields = old('change_password') == '1'
             || $errors->has('password')
             || $errors->has('password_confirmation');
@@ -208,10 +209,19 @@
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <label class="switch">
                                     <input type="hidden" name="is_active" value="0">
-                                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $user->is_active ? '1' : '0') == '1' ? 'checked' : '' }}>
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        value="1"
+                                        {{ old('is_active', $user->is_active ? '1' : '0') == '1' && ! $isDeclinedProvider ? 'checked' : '' }}
+                                        {{ $isDeclinedProvider ? 'disabled' : '' }}
+                                    >
                                     <span class="slider round"></span>
                                 </label>
                             </div>
+                            @if ($isDeclinedProvider)
+                                <small style="align-self: flex-end; color: #991B1B">Declined provider accounts remain disabled.</small>
+                            @endif
                             @error('is_active')
                                 <small style="align-self: flex-end; color: red">{{ $message }}</small>
                             @enderror
