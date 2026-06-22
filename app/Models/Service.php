@@ -46,7 +46,11 @@ class Service extends Model
         return $query
             ->where('is_active', 1)
             ->whereHas('provider', function ($providerQuery) {
-                $providerQuery->where('application_status', 'accepted');
+                $providerQuery
+                    ->where('application_status', 'accepted')
+                    ->whereHas('user', function ($userQuery) {
+                        $userQuery->where('is_active', 1);
+                    });
             });
     }
 

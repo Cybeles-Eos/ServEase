@@ -7,6 +7,7 @@ use App\Models\EmailOtp;
 use App\Models\User;
 use App\Services\OtpService;
 use App\Services\AdminNotificationService;
+use App\Exceptions\DailyOtpLimitReachedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -135,6 +136,7 @@ class RegisterOtpController extends Controller
                     'first_name'     => $pendingCustomer['fname'],
                     'last_name'      => $pendingCustomer['lname'],
                     'phone_number'   => $pendingCustomer['phone_number'],
+                    'gender'         => $pendingCustomer['gender'],
                     'street_address' => $pendingCustomer['street_address'],
                     'city'           => $pendingCustomer['city'],
                     'barangay'       => $pendingCustomer['barangay'],
@@ -200,6 +202,7 @@ class RegisterOtpController extends Controller
                     'first_name' => $pendingProvider['fname'],
                     'last_name' => $pendingProvider['lname'],
                     'phone_number' => $pendingProvider['number'],
+                    'gender' => $pendingProvider['gender'],
                     'home_address' => $pendingProvider['address'],
                     'city' => $pendingProvider['city'],
                     'barangay' => $pendingProvider['barangay'],
@@ -287,19 +290,28 @@ class RegisterOtpController extends Controller
     {
         $email = session('otp_email');
         $name = session('otp_name');
+        $otpService = app(OtpService::class);
 
         if (!$email) {
             return redirect()->route('signup')
                 ->withErrors(['otp' => 'Session expired. Please register again.']);
         }
 
+        if ($otpService->hasReachedDailyLimit()) {
+            return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+        }
+
         $pendingCustomer = session('pending_customer_registration');
 
         if ($pendingCustomer) {
-            app(OtpService::class)->sendOtpToEmail(
-                email: $pendingCustomer['email'],
-                name: $pendingCustomer['name']
-            );
+            try {
+                $otpService->sendOtpToEmail(
+                    email: $pendingCustomer['email'],
+                    name: $pendingCustomer['name']
+                );
+            } catch (DailyOtpLimitReachedException $exception) {
+                return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+            }
 
             return back()->with('success', 'A new OTP has been sent to your email.');
         }
@@ -307,10 +319,14 @@ class RegisterOtpController extends Controller
         $pendingProvider = session('pending_provider_registration');
 
         if ($pendingProvider) {
-            app(OtpService::class)->sendOtpToEmail(
-                email: $pendingProvider['email'],
-                name: $pendingProvider['name']
-            );
+            try {
+                $otpService->sendOtpToEmail(
+                    email: $pendingProvider['email'],
+                    name: $pendingProvider['name']
+                );
+            } catch (DailyOtpLimitReachedException $exception) {
+                return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+            }
 
             return back()->with('success', 'A new OTP has been sent to your email.');
         }
@@ -322,7 +338,11 @@ class RegisterOtpController extends Controller
                 ->withErrors(['otp' => 'User not found. Please register again.']);
         }
 
-        app(OtpService::class)->sendRegistrationOtp($user);
+        try {
+            $otpService->sendRegistrationOtp($user);
+        } catch (DailyOtpLimitReachedException $exception) {
+            return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+        }
 
         return back()->with('success', 'A new OTP has been sent to your email.');
     }

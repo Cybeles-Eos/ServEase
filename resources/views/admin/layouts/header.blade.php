@@ -504,6 +504,7 @@
             $('#btn-menu').on('click', function (e) {
                 e.stopPropagation();
 
+                $('#providerNotificationModal, #customerNotificationModal, #adminNotificationModal').removeClass('is-open');
                 $('#user-menu').toggleClass('is-open');
                 $('.menu-icon').toggleClass('is-rotated'); // 👈 rotate SVG
             });

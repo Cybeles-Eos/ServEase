@@ -58,7 +58,7 @@
 
             .customer-register-page .register-grid {
                 display: grid !important;
-                grid-template-columns: repeat(4, 1fr) !important;
+                grid-template-columns: repeat(3, 1fr) !important;
                 gap: 22px 14px !important;
                 width: 100% !important;
             }
@@ -87,7 +87,8 @@
                 color: #ff3b30 !important;
             }
 
-            .customer-register-page .plm-ff-group input {
+            .customer-register-page .plm-ff-group input,
+            .customer-register-page .plm-ff-group select {
                 width: 100% !important;
                 height: 42px !important;
                 border: 1px solid #d9dee7 !important;
@@ -104,8 +105,31 @@
                 color: #b3bac5 !important;
             }
 
-            .customer-register-page .plm-ff-group input:focus {
+            .customer-register-page .plm-ff-group input:focus,
+            .customer-register-page .plm-ff-group select:focus {
                 border-color: #ffb73e !important;
+            }
+
+            .customer-register-page .register-select {
+                position: relative !important;
+                width: 100% !important;
+            }
+
+            .customer-register-page .register-select select {
+                appearance: none !important;
+                padding-right: 34px !important;
+            }
+
+            .customer-register-page .register-select__arrow {
+                position: absolute !important;
+                right: 12px !important;
+                top: 46% !important;
+                width: 7px !important;
+                height: 7px !important;
+                border-right: 1.5px solid #656565 !important;
+                border-bottom: 1.5px solid #656565 !important;
+                transform: translateY(-50%) rotate(45deg) !important;
+                pointer-events: none !important;
             }
 
             .customer-register-page .location-combobox {
@@ -207,7 +231,25 @@
                 margin-top: 2px !important;
             }
 
-            .customer-register-page .auth-form__privacy p {
+            .customer-register-page .auth-form__privacy label {
+                display: flex !important;
+                align-items: flex-start !important;
+                gap: 6px !important;
+                margin: 0 !important;
+                cursor: pointer !important;
+            }
+
+            .customer-register-page .auth-form__privacy input[type="checkbox"] {
+                width: 12px !important;
+                height: 12px !important;
+                min-width: 12px !important;
+                margin-top: 4px !important;
+                border: 1px solid #c7ced8 !important;
+                border-radius: 3px !important;
+                appearance: auto !important;
+            }
+
+            .customer-register-page .auth-form__privacy span {
                 font-size: 12px !important;
                 line-height: 1.5 !important;
                 color: #8b95a1 !important;
@@ -361,6 +403,39 @@
                         </div>
 
                         <div class="plm-ff-group">
+                            <label for="gender">Gender <span class="required">*</span></label>
+                            <div class="register-select">
+                                <select id="gender" name="gender" required>
+                                    <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Select gender</option>
+                                    <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                                    <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                    <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>Prefer not to say</option>
+                                </select>
+                                <span class="register-select__arrow" aria-hidden="true"></span>
+                            </div>
+                            @error('gender') <small>{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="plm-ff-group">
+                            <label for="zipcode">Zipcode <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="zipcode"
+                                name="zipcode"
+                                placeholder="Enter your zipcode"
+                                value="{{ old('zipcode') }}"
+                                required
+                                maxlength="4"
+                                inputmode="numeric"
+                                pattern="[0-9]{4}"
+                                autocomplete="off"
+                                title="ZIP code must be 4 digits"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
+                            >
+                            @error('zipcode') <small>{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="plm-ff-group">
                             <label for="street_address">Street Address <span class="required">*</span></label>
                             <input
                                 type="text"
@@ -410,25 +485,6 @@
                                 <div class="location-combobox__menu" data-ph-barangay-menu></div>
                             </div>
                             @error('barangay') <small>{{ $message }}</small> @enderror
-                        </div>
-
-                        <div class="plm-ff-group">
-                            <label for="zipcode">Zipcode <span class="required">*</span></label>
-                            <input
-                                type="text"
-                                id="zipcode"
-                                name="zipcode"
-                                placeholder="Enter your zipcode"
-                                value="{{ old('zipcode') }}"
-                                required
-                                maxlength="4"
-                                inputmode="numeric"
-                                pattern="[0-9]{4}"
-                                autocomplete="off"
-                                title="ZIP code must be 4 digits"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
-                            >
-                            @error('zipcode') <small>{{ $message }}</small> @enderror
                         </div>
                     </div>
 
@@ -485,10 +541,21 @@
                     </div>
 
                     <div class="auth-form__privacy">
-                        <p>
-                            By signing up, you agree to our
-                            <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
-                        </p>
+                        <label for="privacy_accepted">
+                            <input
+                                type="checkbox"
+                                id="privacy_accepted"
+                                name="privacy_accepted"
+                                value="1"
+                                required
+                                {{ old('privacy_accepted') ? 'checked' : '' }}
+                            >
+                            <span>
+                                By signing up, you agree to our
+                                <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                            </span>
+                        </label>
+                        @error('privacy_accepted') <small>{{ $message }}</small> @enderror
                     </div>
 
                     <button class="plm-ff-btn btn btn--tertiary" type="submit">

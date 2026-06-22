@@ -11,8 +11,10 @@ use App\Models\User;
 use App\Services\BookingStatusService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use App\Services\AdminNotificationService;
 use App\Services\OtpService;
+use App\Exceptions\DailyOtpLimitReachedException;
 
 class AuthManagerController extends Controller
 {
@@ -172,23 +174,30 @@ class AuthManagerController extends Controller
     public function signup(Request $request)
     {
         // Customer Creation Account
+        $otpService = app(OtpService::class);
+
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
             'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone_number' => ['required', 'regex:/^09[0-9]{9}$/', 'unique:tbl_customers,phone_number'],
+            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
             'street_address' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^[0-9]{4}$/'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'privacy_accepted' => ['accepted'],
             'g-recaptcha-response' => ['required'],
         ], [
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'This email address is already registered.',
             'phone_number.regex' => 'Phone number must start with 09 and must be exactly 11 digits.',
             'phone_number.unique' => 'This phone number is already registered.',
+            'gender.required' => 'Please select your gender.',
+            'gender.in' => 'Please select a valid gender.',
             'zipcode.regex' => 'ZIP code must be exactly 4 digits.',
+            'privacy_accepted.accepted' => 'Please agree to the Privacy Policy before creating your account.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 
@@ -204,6 +213,13 @@ class AuthManagerController extends Controller
             ]);
         }
 
+        if ($otpService->hasReachedDailyLimit()) {
+            return redirect()
+                ->route('signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->with('flash_message', $otpService->limitFlashMessage());
+        }
+
         $name = $validated['fname'] . ' ' . $validated['lname'];
 
         session([
@@ -213,6 +229,7 @@ class AuthManagerController extends Controller
                 'name'           => $name,
                 'email'          => $validated['email'],
                 'phone_number'   => $validated['phone_number'],
+                'gender'         => $validated['gender'],
                 'street_address' => $validated['street_address'],
                 'city'           => $validated['city'],
                 'barangay'       => $validated['barangay'],
@@ -223,10 +240,23 @@ class AuthManagerController extends Controller
             'otp_name'  => $name,
         ]);
 
-        app(OtpService::class)->sendOtpToEmail(
-            email: $validated['email'],
-            name: $name
-        );
+        try {
+            $otpService->sendOtpToEmail(
+                email: $validated['email'],
+                name: $name
+            );
+        } catch (DailyOtpLimitReachedException $exception) {
+            session()->forget([
+                'pending_customer_registration',
+                'otp_email',
+                'otp_name',
+            ]);
+
+            return redirect()
+                ->route('signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->with('flash_message', $otpService->limitFlashMessage());
+        }
 
         return redirect()->route('otp.verify.page')->with('flash_message', [
             'title' => 'Verify Your Email',
@@ -345,6 +375,8 @@ class AuthManagerController extends Controller
     // }
     public function signupProvider(Request $request)
     {
+        $otpService = app(OtpService::class);
+
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
             'lname' => ['required', 'string', 'max:255'],
@@ -354,15 +386,20 @@ class AuthManagerController extends Controller
             'city' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^\d{4}$/'],
+            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
             'profession' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:1', 'max:100'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'password' => ['required', 'min:8', 'confirmed'],
+            'privacy_accepted' => ['accepted'],
             'g-recaptcha-response' => ['required'],
         ], [
             'number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
             'zipcode.regex' => 'The ZIP Code must be 4 digits.',
+            'gender.required' => 'Please select your gender.',
+            'gender.in' => 'Please select a valid gender.',
+            'privacy_accepted.accepted' => 'Please agree to the Privacy Policy before submitting your application.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
 
@@ -376,6 +413,13 @@ class AuthManagerController extends Controller
             throw ValidationException::withMessages([
                 'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
             ]);
+        }
+
+        if ($otpService->hasReachedDailyLimit()) {
+            return redirect()
+                ->route('provider-signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->with('flash_message', $otpService->limitFlashMessage());
         }
 
         $name = $validated['fname'] . ' ' . $validated['lname'];
@@ -402,6 +446,7 @@ class AuthManagerController extends Controller
                 'city' => $validated['city'],
                 'barangay' => $validated['barangay'],
                 'zipcode' => $validated['zipcode'],
+                'gender' => $validated['gender'],
                 'profession' => $validated['profession'],
                 'experience' => $validated['experience'],
                 'resume_path' => $resumePath,
@@ -412,10 +457,29 @@ class AuthManagerController extends Controller
             'otp_name' => $name,
         ]);
 
-        app(OtpService::class)->sendOtpToEmail(
-            email: $validated['email'],
-            name: $name
-        );
+        try {
+            $otpService->sendOtpToEmail(
+                email: $validated['email'],
+                name: $name
+            );
+        } catch (DailyOtpLimitReachedException $exception) {
+            foreach ([$resumePath, $barangayClearancePath] as $pendingPath) {
+                if (!empty($pendingPath) && Storage::disk('public')->exists($pendingPath)) {
+                    Storage::disk('public')->delete($pendingPath);
+                }
+            }
+
+            session()->forget([
+                'pending_provider_registration',
+                'otp_email',
+                'otp_name',
+            ]);
+
+            return redirect()
+                ->route('provider-signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->with('flash_message', $otpService->limitFlashMessage());
+        }
 
         return redirect()->route('otp.verify.page')->with('flash_message', [
             'title' => 'Verify Your Email',

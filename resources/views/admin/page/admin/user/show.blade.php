@@ -502,6 +502,10 @@
                             <span class="admin-user-show__value">{{ $detail($profile->phone_number) }}</span>
                         </div>
                         <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Gender</span>
+                            <span class="admin-user-show__value">{{ $detail(ucwords(str_replace('_', ' ', (string) $profile->gender))) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Street address</span>
                             <span class="admin-user-show__value">{{ $detail($profile->street_address) }}</span>
                         </div>
@@ -532,6 +536,10 @@
                         <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Phone</span>
                             <span class="admin-user-show__value">{{ $detail($profile->phone_number) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">Gender</span>
+                            <span class="admin-user-show__value">{{ $detail(ucwords(str_replace('_', ' ', (string) $profile->gender))) }}</span>
                         </div>
                         <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Home address</span>

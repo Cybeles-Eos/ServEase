@@ -1,5 +1,133 @@
 @extends('admin.layouts.auth')
 
+@push('extrastylesheets')
+    <style>
+        .provider-register .provider-select {
+            position: relative;
+            width: 100%;
+        }
+
+        .provider-register .provider-select select {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d9dee7;
+            border-radius: 7px;
+            background: #ffffff;
+            padding: 0 34px 0 14px;
+            font-size: 13px;
+            color: #202124;
+            appearance: none;
+        }
+
+        .provider-register .provider-select select:focus {
+            border-color: #ffb73e;
+        }
+
+        .provider-register .provider-select__arrow {
+            position: absolute;
+            right: 12px;
+            top: 46%;
+            width: 7px;
+            height: 7px;
+            border-right: 1.5px solid #656565;
+            border-bottom: 1.5px solid #656565;
+            transform: translateY(-50%) rotate(45deg);
+            pointer-events: none;
+        }
+
+        .provider-register .auth-form__privacy label {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .provider-register .auth-form__privacy input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            min-width: 15px;
+            margin-top: 2px;
+            border: 1px solid #c7ced8;
+            border-radius: 3px;
+            appearance: auto;
+        }
+
+        .provider-register .auth-form__privacy span,
+        .provider-register__main .provider-register-main-m .provreg-mm-con--fields .auth-form__privacy label span {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #8b95a1 !important;
+        }
+
+        .provider-register .auth-form__privacy a {
+            color: #6b7280;
+            text-decoration: underline;
+        }
+
+        @media screen and (max-width: 576px) {
+            .provider-register__main .provider-register-main-m {
+                padding: 24px 18px;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con {
+                max-width: 100%;
+                margin-top: 2rem;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields {
+                margin-top: 2rem;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields .prg-mm-con {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields .file-field .file-input-wrapper {
+                width: 100%;
+                padding-left: 96px;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields .file-field .file-input-wrapper .file-btn {
+                width: 96px;
+                padding-inline: 10px;
+                white-space: nowrap;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields .file-field .file-input-wrapper .file-name {
+                min-width: 0;
+            }
+
+            .provider-register .g-recaptcha {
+                transform: scale(0.86);
+                transform-origin: left top;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields .provreg-mmcf-secpage__btns {
+                justify-content: stretch;
+            }
+
+            .provider-register__main .provider-register-main-m .provreg-mm-con--fields .provreg-mmcf-secpage__btns button {
+                flex: 1;
+                min-width: 0;
+                padding-inline: 16px;
+            }
+        }
+
+        @media screen and (max-width: 360px) {
+            .provider-register__main .provider-register-main-m {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .provider-register .g-recaptcha {
+                transform: scale(0.8);
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="form-loading-bar" id="form-loading-bar">
         <div class="form-loading-bar__progress"></div>
@@ -92,6 +220,21 @@
                                 </div>
                             </div>
                             <div class="prg-mm-group">
+                                <label for="gender">Gender <span>*</span></label>
+                                <div class="provider-select">
+                                    <select id="gender" name="gender" required>
+                                        <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Select gender</option>
+                                        <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                                        <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                        <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>Prefer not to say</option>
+                                    </select>
+                                    <span class="provider-select__arrow" aria-hidden="true"></span>
+                                </div>
+                                @error('gender')
+                                    <small style="align-self: flex-end">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="prg-mm-group">
                                 <label for="address">Personal Home Address <span>*</span></label>
                                 <input type="text" placeholder="" name="address" value="{{ old('address') }}" required autocomplete="off">
                                 @error('address') <small>{{ $message }}</small> @enderror
@@ -150,7 +293,7 @@
                                     <button type="button" class="file-btn" data-target="resume">
                                         Choose File
                                     </button>
-                                    <span class="file-name">No file chosen</span>
+                                    <span class="file-name ml-2">No file chosen</span>
                                 </div>
 
                                 @error('resume')
@@ -167,7 +310,7 @@
                                         Choose File
                                     </button>
 
-                                    <span class="file-name">No file chosen</span>
+                                    <span class="file-name ml-2">No file chosen</span>
                                 </div>
 
                                 @error('barangay_clearance')
@@ -227,10 +370,23 @@
                                 @enderror
                             </div>
                     <div class="auth-form__privacy">
-                        <p>
-                            By signing up, you agree to our
-                            <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
-                        </p>
+                        <label for="privacy_accepted">
+                            <input
+                                type="checkbox"
+                                id="privacy_accepted"
+                                name="privacy_accepted"
+                                value="1"
+                                required
+                                {{ old('privacy_accepted') ? 'checked' : '' }}
+                            >
+                            <span>
+                                By signing up, you agree to our
+                                <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                            </span>
+                        </label>
+                        @error('privacy_accepted')
+                            <small style="align-self: flex-end">{{ $message }}</small>
+                        @enderror
                     </div>
                             <div class="provreg-mmcf-secpage__btns">
                                 <button type="button" id="provreg-prev" class="btn btn--primary">back</button>
@@ -334,6 +490,7 @@
                 $errors->has('experience') ||
                 $errors->has('password') ||
                 $errors->has('password_confirmation') ||
+                $errors->has('privacy_accepted') ||
                 $errors->has('g-recaptcha-response')
             );
 

@@ -73,6 +73,66 @@
             content: "Remove";
         }
 
+        .settings-password-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .settings-password-switch .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            margin-bottom: 0;
+            opacity: 1;
+        }
+
+        .settings-password-switch .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .settings-password-switch .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .settings-password-switch .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            top: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        .settings-password-switch .switch input:checked + .slider {
+            background-color: #FFBE42;
+        }
+
+        .settings-password-switch .switch input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .settings-password-fields {
+            display: none;
+        }
+
+        .settings-password-fields.is-visible {
+            display: block;
+        }
+
     </style>
 @endpush
 {{-- Page Content --}}
@@ -80,8 +140,14 @@
     @include('admin.layouts.header')
     @include('admin.layouts.sidebar')
 
+    @php
+        $showPasswordFields = old('change_password') == '1'
+            || $errors->has('password')
+            || $errors->has('password_confirmation');
+    @endphp
+
     <main class="main-dash-uix dash-sp provider--setting">
-        <form action="{{ route('provider.setting.update') }}" class="provider--setting--main" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('provider.setting.update') }}" class="provider--setting--main" id="provider-setting-form" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="csm-left">
                 <h4>Edit personal information</h4>
@@ -271,6 +337,34 @@
                     </div>
                 </div>
 
+                <br>
+                <h5>Account security</h5>
+                <div class="cms-mm-group">
+                    <label>Change password?</label>
+                    <div class="settings-password-switch">
+                        <label class="switch">
+                            <input type="hidden" name="change_password" value="0">
+                            <input type="checkbox" name="change_password" value="1" id="provider-change-password-toggle" {{ $showPasswordFields ? 'checked' : '' }}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    @error('change_password') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                </div>
+
+                <div id="provider-password-fields" class="settings-password-fields {{ $showPasswordFields ? 'is-visible' : '' }}">
+                    <div class="cms-mm-group">
+                        <label>New password <span>*</span></label>
+                        <input type="password" name="password" autocomplete="new-password" placeholder="Minimum 8 characters">
+                        @error('password') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                    </div>
+
+                    <div class="cms-mm-group">
+                        <label>Confirm new password <span>*</span></label>
+                        <input type="password" name="password_confirmation" autocomplete="new-password">
+                        @error('password_confirmation') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                    </div>
+                </div>
+
 
 
                 <button type="submit" style="align-self: flex-end;" class="btn btn--primary">Save</button>
@@ -287,6 +381,26 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const passwordForm = document.getElementById('provider-setting-form');
+            const passwordToggle = document.getElementById('provider-change-password-toggle');
+            const passwordFields = document.getElementById('provider-password-fields');
+
+            if (passwordForm && passwordToggle && passwordFields) {
+                const passwordInputs = passwordFields.querySelectorAll('input[type="password"]');
+
+                function syncPasswordFields() {
+                    const enabled = passwordToggle.checked;
+                    passwordFields.classList.toggle('is-visible', enabled);
+                    passwordInputs.forEach((input) => {
+                        input.disabled = !enabled;
+                    });
+                }
+
+                passwordToggle.addEventListener('change', syncPasswordFields);
+                passwordForm.addEventListener('submit', syncPasswordFields);
+                syncPasswordFields();
+            }
+
             const cityInput = document.querySelector('[data-ph-city]');
             const cityValue = document.querySelector('[data-ph-city-value]');
             const cityMenu = document.querySelector('[data-ph-city-menu]');

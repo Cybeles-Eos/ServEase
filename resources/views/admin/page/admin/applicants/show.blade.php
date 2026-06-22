@@ -424,6 +424,11 @@
                 </div>
 
                 <div class="applicant-detail-row">
+                    <span>Gender</span>
+                    <strong>{{ !empty($provider->gender) ? ucwords(str_replace('_', ' ', $provider->gender)) : 'N/A' }}</strong>
+                </div>
+
+                <div class="applicant-detail-row">
                     <span>Profession</span>
                     <strong>{{ $provider->profession ?? 'N/A' }}</strong>
                 </div>

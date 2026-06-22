@@ -2,6 +2,34 @@
 
 @section('title', 'Provider Reports')
 
+@push('extrastylesheets')
+    <style>
+        .admin-reports__status-select {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .admin-reports__status-select select {
+            padding-right: 34px;
+        }
+
+        .admin-reports__status-select::after {
+            content: "";
+            position: absolute;
+            right: 12px;
+            top: 47%;
+            width: 7px;
+            height: 7px;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            transform: translateY(-50%) rotate(45deg);
+            pointer-events: none;
+            opacity: .75;
+        }
+    </style>
+@endpush
+
 @section('content')
     @include('admin.layouts.header')
 
@@ -14,12 +42,14 @@
             </div>
 
             <form method="GET" action="{{ route('admin.reports') }}">
-                <select name="status" onchange="this.form.submit()">
-                    <option value="">All Status</option>
-                    <option value="OPEN" {{ $status === 'OPEN' ? 'selected' : '' }}>Open</option>
-                    <option value="REVIEWED" {{ $status === 'REVIEWED' ? 'selected' : '' }}>Reviewed</option>
-                    <option value="DISMISSED" {{ $status === 'DISMISSED' ? 'selected' : '' }}>Dismissed</option>
-                </select>
+                <div class="admin-reports__status-select">
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="OPEN" {{ $status === 'OPEN' ? 'selected' : '' }}>Open</option>
+                        <option value="REVIEWED" {{ $status === 'REVIEWED' ? 'selected' : '' }}>Reviewed</option>
+                        <option value="DISMISSED" {{ $status === 'DISMISSED' ? 'selected' : '' }}>Dismissed</option>
+                    </select>
+                </div>
             </form>
         </section>
 

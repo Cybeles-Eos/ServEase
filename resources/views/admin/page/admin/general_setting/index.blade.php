@@ -7,9 +7,186 @@
 @section('content')
     @include('admin.layouts.header')
 
+    @push('extrastylesheets')
+        <style>
+            .smtp-usage-summary {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 18px;
+                align-items: start;
+                margin-bottom: 18px;
+            }
+
+            .smtp-usage-copy h5,
+            .smtp-usage-card h5 {
+                margin: 0;
+            }
+
+            .smtp-usage-copy p {
+                margin: 6px 0 0;
+                font-size: 13px;
+                line-height: 1.5;
+                color: #6b7280;
+            }
+
+            .smtp-usage-metrics {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(120px, 1fr));
+                gap: 12px;
+                margin: 16px 0;
+            }
+
+            .smtp-usage-metric {
+                border: 1px solid #e6e8ec;
+                border-radius: 8px;
+                padding: 12px 14px;
+                background: #fff;
+            }
+
+            .smtp-usage-metric span {
+                display: block;
+                font-size: 12px;
+                color: #7a818c;
+                margin-bottom: 6px;
+            }
+
+            .smtp-usage-metric strong {
+                display: block;
+                font-size: 22px;
+                line-height: 1;
+                color: #202124;
+                font-weight: 700;
+            }
+
+            .smtp-usage-reset {
+                display: inline-flex;
+                align-items: center;
+                min-height: 34px;
+                padding: 0 12px;
+                border-radius: 8px;
+                background: #f7f8fa;
+                color: #4b5563;
+                font-size: 12px;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .smtp-usage-records {
+                margin-top: 8px;
+            }
+
+            .smtp-usage-records table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .smtp-usage-records th,
+            .smtp-usage-records td {
+                padding: 10px 0;
+                border-top: 1px solid #eef0f3;
+                font-size: 13px;
+                color: #3f454d;
+            }
+
+            .smtp-usage-records th {
+                color: #7a818c;
+                font-weight: 600;
+                text-align: left;
+            }
+
+            .smtp-usage-records td:last-child,
+            .smtp-usage-records th:last-child {
+                text-align: right;
+            }
+
+            .smtp-usage-progress {
+                height: 7px;
+                border-radius: 999px;
+                background: #eef0f3;
+                overflow: hidden;
+            }
+
+            .smtp-usage-progress span {
+                display: block;
+                height: 100%;
+                border-radius: inherit;
+                background: #FDB932;
+            }
+
+            @media screen and (max-width: 768px) {
+                .smtp-usage-summary,
+                .smtp-usage-metrics {
+                    grid-template-columns: 1fr;
+                }
+
+                .smtp-usage-reset {
+                    width: fit-content;
+                }
+            }
+        </style>
+    @endpush
+
     <main class="main-dash-uix page-admin-setting dash-sp">
         <p style="margin: 0; font-size: 14px; opacity: .6">General Setting</p>
         <hr style="margin-top: 10px">
+
+        <section class="p-a-gs-card section smtp-usage-card">
+            <div class="smtp-usage-summary">
+                <div class="smtp-usage-copy">
+                    <h5>SMTP Usage</h5>
+                    <p>Daily Brevo email verification usage for account creation and OTP resends.</p>
+                </div>
+
+                <div class="smtp-usage-reset">
+                    Resets daily at 12:00 AM PH time
+                </div>
+            </div>
+
+            <div class="smtp-usage-metrics">
+                <div class="smtp-usage-metric">
+                    <span>Used today</span>
+                    <strong>{{ number_format($smtpUsedToday) }}</strong>
+                </div>
+
+                <div class="smtp-usage-metric">
+                    <span>Remaining today</span>
+                    <strong>{{ number_format($smtpRemainingToday) }}</strong>
+                </div>
+
+                <div class="smtp-usage-metric">
+                    <span>Daily limit</span>
+                    <strong>{{ number_format($smtpDailyLimit) }}</strong>
+                </div>
+            </div>
+
+            <div class="smtp-usage-progress" aria-label="SMTP usage progress">
+                <span style="width: {{ min(($smtpUsedToday / max($smtpDailyLimit, 1)) * 100, 100) }}%"></span>
+            </div>
+
+            <div class="smtp-usage-records">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Used</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($smtpUsageRecords as $smtpUsage)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($smtpUsage->getRawOriginal('date'))->format('M d, Y') }}</td>
+                                <td>{{ number_format($smtpUsage->used) }} / {{ number_format($smtpDailyLimit) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2">No SMTP usage records yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="p-a-gs-card section service-category">
             <div class="p-a-gs-card-header">
                 <h5>Service Category</h5>

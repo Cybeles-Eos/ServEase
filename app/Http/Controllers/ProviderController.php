@@ -12,6 +12,7 @@ use App\Services\AdminNotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
 use File;
@@ -575,6 +576,8 @@ class ProviderController extends Controller
             'availability_days.*' => 'in:' . implode(',', array_keys(Provider::AVAILABILITY_DAYS)),
             'availability_start_time' => 'nullable|required_with:availability_end_time|date_format:H:i',
             'availability_end_time' => 'nullable|required_with:availability_start_time|date_format:H:i|after:availability_start_time',
+            'change_password' => 'nullable|boolean',
+            'password' => 'required_if:change_password,1|nullable|string|min:8|confirmed',
         ], [
             'zipcode.regex' => 'The ZIP Code must be 4 digits.',
         ]);
@@ -637,6 +640,11 @@ class ProviderController extends Controller
         */
         $user->name  = trim($request->first_name . ' ' . $request->last_name);
         // $user->email = $request->email;
+
+        if ($request->boolean('change_password')) {
+            $user->password = Hash::make($request->password);
+        }
+
         $user->save();
 
         return redirect()->route('provider.setting')->with('flash_message', [

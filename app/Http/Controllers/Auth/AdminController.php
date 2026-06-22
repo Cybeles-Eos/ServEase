@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\PlatformSetting;
+use App\Models\DailyOtpUsage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Provider;
 use App\Services\AdminNotificationService;
+use App\Services\OtpService;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -40,7 +42,7 @@ class AdminController extends Controller
         $selectedMonth = $selectedMonth !== null && $selectedMonth !== ''
             ? (int) $selectedMonth
             : null;
-
+        $providerRankingMode = $request->get('provider_ranking') === 'ratings' ? 'ratings' : 'bookings';
         /*
         |--------------------------------------------------------------------------
         | Header Cards
@@ -54,6 +56,9 @@ class AdminController extends Controller
         $totalProviders = User::query()
             ->where('is_active', 1)
             ->where('role', 'provider')
+            ->whereHas('provider', function ($query) {
+                $query->where('application_status', 'accepted');
+            })
             ->count();
 
         $totalCustomers = User::query()
@@ -62,7 +67,7 @@ class AdminController extends Controller
             ->count();
 
         $totalServices = Service::query()
-            ->where('is_active', 1)
+            ->visibleToCustomers()
             ->count();
 
         /*
@@ -70,21 +75,21 @@ class AdminController extends Controller
         | Booking / Earnings Analytics
         |--------------------------------------------------------------------------
         */
-        $totalBookings = DB::table('booking_requests')->count();
+        $activeProviderBookingsQuery = $this->activeProviderBookingsQuery();
 
-        $completedBookings = DB::table('booking_requests')
-            ->where('status', 'COMPLETED')
-            ->count();
+        $totalBookings = (clone $activeProviderBookingsQuery)
+            ->count('booking_requests.id');
 
-        $pendingBookings = DB::table('booking_requests')
-            ->where('status', 'PENDING')
-            ->count();
-
-        $totalEarnings = DB::table('booking_requests')
-            ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
-            ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+        $completedBookings = (clone $activeProviderBookingsQuery)
             ->where('booking_requests.status', 'COMPLETED')
-            ->whereNull('tbl_services.deleted_at')
+            ->count('booking_requests.id');
+
+        $pendingBookings = (clone $activeProviderBookingsQuery)
+            ->where('booking_requests.status', 'PENDING')
+            ->count('booking_requests.id');
+
+        $totalEarnings = (clone $activeProviderBookingsQuery)
+            ->where('booking_requests.status', 'COMPLETED')
             ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
 
         /*
@@ -102,11 +107,8 @@ class AdminController extends Controller
             $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
             $endDate = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth();
 
-            $dailyStats = DB::table('booking_requests')
-                ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
-                ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            $dailyStats = $this->activeProviderBookingsQuery()
                 ->whereBetween('booking_infos.date', [$startDate->toDateString(), $endDate->toDateString()])
-                ->whereNull('tbl_services.deleted_at')
                 ->selectRaw('
                     DAY(booking_infos.date) as day,
                     COUNT(booking_requests.id) as bookings_count,
@@ -130,11 +132,8 @@ class AdminController extends Controller
                 $analyticsEarnings[] = (float) ($dailyStats[$day]->earnings_total ?? 0);
             }
         } else {
-            $monthlyStats = DB::table('booking_requests')
-                ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
-                ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            $monthlyStats = $this->activeProviderBookingsQuery()
                 ->whereYear('booking_infos.date', $selectedYear)
-                ->whereNull('tbl_services.deleted_at')
                 ->selectRaw('
                     MONTH(booking_infos.date) as month,
                     COUNT(booking_requests.id) as bookings_count,
@@ -172,7 +171,11 @@ class AdminController extends Controller
         $serviceStats = DB::table('booking_infos')
             ->join('booking_requests', 'booking_requests.booking_info_id', '=', 'booking_infos.id')
             ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            ->join('tbl_providers', 'tbl_providers.id', '=', 'tbl_services.provider_id')
+            ->join('users', 'users.id', '=', 'tbl_providers.user_id')
             ->whereIn('booking_infos.service_id', $serviceIds)
+            ->where('users.is_active', 1)
+            ->where('tbl_providers.application_status', 'accepted')
             ->selectRaw('
                 booking_infos.service_id,
                 COUNT(booking_requests.id) as bookings_count,
@@ -208,6 +211,53 @@ class AdminController extends Controller
             ->paginate(4, ['*'], 'users_page')
             ->withQueryString();
 
+
+        $providerBookingStats = DB::table('booking_requests')
+            ->select('provider_id', DB::raw('COUNT(*) as total_bookings'))
+            ->groupBy('provider_id');
+
+        $providerRatingStats = DB::table('service_ratings')
+            ->select(
+                'provider_id',
+                DB::raw('AVG(rating) as average_rating'),
+                DB::raw('COUNT(*) as ratings_count')
+            )
+            ->groupBy('provider_id');
+
+        $topProvidersQuery = Provider::query()
+            ->with('user')
+            ->where('application_status', 'accepted')
+            ->whereHas('user', function ($query) {
+                $query->where('role', 'provider')
+                    ->where('is_active', 1);
+            })
+            ->leftJoinSub($providerBookingStats, 'provider_booking_stats', function ($join) {
+                $join->on('provider_booking_stats.provider_id', '=', 'tbl_providers.id');
+            })
+            ->leftJoinSub($providerRatingStats, 'provider_rating_stats', function ($join) {
+                $join->on('provider_rating_stats.provider_id', '=', 'tbl_providers.id');
+            })
+            ->select('tbl_providers.*')
+            ->selectRaw('COALESCE(provider_booking_stats.total_bookings, 0) as total_bookings')
+            ->selectRaw('COALESCE(provider_rating_stats.average_rating, 0) as average_rating')
+            ->selectRaw('COALESCE(provider_rating_stats.ratings_count, 0) as ratings_count');
+
+        if ($providerRankingMode === 'ratings') {
+            $topProvidersQuery
+                ->orderByDesc('average_rating')
+                ->orderByDesc('ratings_count')
+                ->orderByDesc('total_bookings');
+        } else {
+            $topProvidersQuery
+                ->orderByDesc('total_bookings')
+                ->orderByDesc('average_rating');
+        }
+
+        $topProviders = $topProvidersQuery
+            ->latest('tbl_providers.created_at')
+            ->limit(10)
+            ->get();
+
         return view('admin.page.admin.index', compact(
             'totalUsers',
             'totalProviders',
@@ -223,8 +273,22 @@ class AdminController extends Controller
             'analyticsBookings',
             'analyticsEarnings',
             'recentServices',
-            'recentUsers'
+            'recentUsers',
+            'providerRankingMode',
+            'topProviders',
         ));
+    }
+
+    private function activeProviderBookingsQuery()
+    {
+        return DB::table('booking_requests')
+            ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
+            ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
+            ->join('tbl_providers', 'tbl_providers.id', '=', 'tbl_services.provider_id')
+            ->join('users', 'users.id', '=', 'tbl_providers.user_id')
+            ->where('users.is_active', 1)
+            ->where('tbl_providers.application_status', 'accepted')
+            ->whereNull('tbl_services.deleted_at');
     }
 
     // public function users()
@@ -241,6 +305,15 @@ class AdminController extends Controller
     {
         $query = User::with(['customer', 'provider'])
             ->whereIn('role', ['customer', 'provider'])
+            ->where(function ($query) {
+                $query->where('role', 'customer')
+                    ->orWhere(function ($providerQuery) {
+                        $providerQuery->where('role', 'provider')
+                            ->whereHas('provider', function ($profileQuery) {
+                                $profileQuery->where('application_status', '!=', 'declined');
+                            });
+                    });
+            })
             ->latest();
 
         if ($request->filled('search')) {
@@ -317,6 +390,15 @@ class AdminController extends Controller
         $validated = $request->validate($rules, [
             'zipcode.regex' => 'The ZIP Code must be 4 digits.',
         ]);
+
+        $otpService = app(OtpService::class);
+
+        if ($otpService->hasReachedDailyLimit()) {
+            return redirect()
+                ->route('admin.users.create')
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->with('flash_message', $otpService->limitFlashMessage());
+        }
 
         $createdUser = null;
 
@@ -499,6 +581,14 @@ class AdminController extends Controller
         if (! in_array($user->role, ['provider', 'customer'], true)) {
             abort(404);
         }
+
+        if ($user->role === 'provider') {
+            $user->loadMissing('provider');
+
+            if (!$user->provider || $user->provider->application_status === 'declined') {
+                abort(404);
+            }
+        }
     }
 
     public function applicants(Request $request)
@@ -636,6 +726,16 @@ class AdminController extends Controller
     {
         $categorySearch = $request->input('category_search');
         $platformSettings = PlatformSetting::current();
+        $smtpDailyLimit = 300;
+        $smtpUsageRecords = DailyOtpUsage::query()
+            ->latest('date')
+            ->limit(7)
+            ->get();
+        $smtpTodayUsage = DailyOtpUsage::query()
+            ->where('date', now('Asia/Manila')->toDateString())
+            ->first();
+        $smtpUsedToday = (int) ($smtpTodayUsage->used ?? 0);
+        $smtpRemainingToday = max($smtpDailyLimit - $smtpUsedToday, 0);
 
         $serviceCategories = ServiceCategory::query()
             ->when($categorySearch, function ($query) use ($categorySearch) {
@@ -648,7 +748,11 @@ class AdminController extends Controller
         return view('admin.page.admin.general_setting.index', compact(
             'serviceCategories',
             'categorySearch',
-            'platformSettings'
+            'platformSettings',
+            'smtpDailyLimit',
+            'smtpUsageRecords',
+            'smtpUsedToday',
+            'smtpRemainingToday'
         ));
     }
 
