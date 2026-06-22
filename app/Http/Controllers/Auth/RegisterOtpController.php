@@ -292,6 +292,10 @@ class RegisterOtpController extends Controller
         $name = session('otp_name');
         $otpService = app(OtpService::class);
 
+        if (! $otpService->isEnabled()) {
+            return back()->withErrors(['otp' => 'OTP verification is currently turned off. Please submit the signup form again.']);
+        }
+
         if (!$email) {
             return redirect()->route('signup')
                 ->withErrors(['otp' => 'Session expired. Please register again.']);

@@ -17,6 +17,11 @@ class PlatformSetting extends Model
         'service_area',
         'privacy_policy_url',
         'terms_url',
+        'otp_enabled',
+    ];
+
+    protected $casts = [
+        'otp_enabled' => 'boolean',
     ];
 
     public static function current(): self
@@ -26,6 +31,7 @@ class PlatformSetting extends Model
             'platform_tagline' => 'Service help with ease and convenience.',
             'service_area' => 'Burgos Barangay Hall Rodriguez, Rizal',
             'support_hours' => 'Mon-Sat, 8:00 AM - 5:00 PM',
+            'otp_enabled' => true,
         ]);
     }
 }

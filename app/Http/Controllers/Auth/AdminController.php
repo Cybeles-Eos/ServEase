@@ -794,6 +794,25 @@ class AdminController extends Controller
         ]);
     }
 
+    public function updateOtpFeature(Request $request)
+    {
+        $validated = $request->validate([
+            'otp_enabled' => ['nullable', 'in:1'],
+        ]);
+
+        PlatformSetting::current()->update([
+            'otp_enabled' => isset($validated['otp_enabled']),
+        ]);
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => isset($validated['otp_enabled'])
+                ? 'OTP verification has been enabled.'
+                : 'OTP verification has been turned off. Account creation will continue without email OTP.',
+            'type' => 'success',
+        ]);
+    }
+
     public function markAdminNotificationsRead(Request $request)
     {
         $user = auth()->user();

@@ -115,6 +115,8 @@ Route::middleware('auth')->group(function () {
             ->name('admin.setting.platform-contact.update');
         Route::put('/admin/setting/platform-branding', [AdminController::class, 'updatePlatformBranding'])
             ->name('admin.setting.platform-branding.update');
+        Route::put('/admin/setting/otp-feature', [AdminController::class, 'updateOtpFeature'])
+            ->name('admin.setting.otp-feature.update');
 
         Route::post('/admin/notifications/mark-read', [AdminController::class, 'markAdminNotificationsRead'])
             ->name('admin.notifications.mark-read');

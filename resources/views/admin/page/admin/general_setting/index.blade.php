@@ -61,6 +61,7 @@
             .smtp-usage-reset {
                 display: inline-flex;
                 align-items: center;
+                gap: 8px;
                 min-height: 34px;
                 padding: 0 12px;
                 border-radius: 8px;
@@ -69,6 +70,73 @@
                 font-size: 12px;
                 font-weight: 600;
                 white-space: nowrap;
+            }
+
+            .smtp-usage-off-badge {
+                display: inline-flex;
+                align-items: center;
+                min-height: 22px;
+                padding: 0 8px;
+                border-radius: 999px;
+                background: #fff1f2;
+                color: #be123c;
+                font-size: 11px;
+                font-weight: 700;
+            }
+
+            .smtp-usage-actions {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+            }
+
+            .smtp-otp-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 600;
+                color: #4b5563;
+                user-select: none;
+            }
+
+            .smtp-otp-toggle input {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .smtp-otp-toggle__track {
+                position: relative;
+                width: 42px;
+                height: 24px;
+                border-radius: 999px;
+                background: #d1d5db;
+                transition: background-color .2s ease;
+            }
+
+            .smtp-otp-toggle__track::after {
+                content: '';
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: #fff;
+                box-shadow: 0 1px 3px rgba(15, 23, 42, .2);
+                transition: transform .2s ease;
+            }
+
+            .smtp-otp-toggle input:checked + .smtp-otp-toggle__track {
+                background: #FDB932;
+            }
+
+            .smtp-otp-toggle input:checked + .smtp-otp-toggle__track::after {
+                transform: translateX(18px);
             }
 
             .smtp-usage-records {
@@ -122,6 +190,10 @@
                 .smtp-usage-reset {
                     width: fit-content;
                 }
+
+                .smtp-usage-actions {
+                    justify-content: flex-start;
+                }
             }
         </style>
     @endpush
@@ -137,8 +209,31 @@
                     <p>Daily Brevo email verification usage for account creation and OTP resends.</p>
                 </div>
 
-                <div class="smtp-usage-reset">
-                    Resets daily at 12:00 AM PH time
+                <div class="smtp-usage-actions">
+                    <div class="smtp-usage-reset">
+                        Resets daily at 12:00 AM PH time
+
+                        @unless ($platformSettings->otp_enabled)
+                            <span class="smtp-usage-off-badge">OTP Feature Off</span>
+                        @endunless
+                    </div>
+
+                    <form action="{{ route('admin.setting.otp-feature.update') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <label class="smtp-otp-toggle">
+                            <input
+                                type="checkbox"
+                                name="otp_enabled"
+                                value="1"
+                                onchange="this.form.submit()"
+                                {{ $platformSettings->otp_enabled ? 'checked' : '' }}
+                            >
+                            <span class="smtp-otp-toggle__track" aria-hidden="true"></span>
+                            <span>Use OTP</span>
+                        </label>
+                    </form>
                 </div>
             </div>
 

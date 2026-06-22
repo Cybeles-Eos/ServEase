@@ -213,14 +213,54 @@ class AuthManagerController extends Controller
             ]);
         }
 
+        $name = $validated['fname'] . ' ' . $validated['lname'];
+
+        if (! $otpService->isEnabled()) {
+            DB::transaction(function () use ($validated, $name) {
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'role' => 'customer',
+                    'is_active' => true,
+                    'email_verified_at' => now(),
+                ]);
+
+                $user->customer()->create([
+                    'first_name' => $validated['fname'],
+                    'last_name' => $validated['lname'],
+                    'phone_number' => $validated['phone_number'],
+                    'gender' => $validated['gender'],
+                    'street_address' => $validated['street_address'],
+                    'city' => $validated['city'],
+                    'barangay' => $validated['barangay'],
+                    'zipcode' => $validated['zipcode'],
+                ]);
+
+                AdminNotificationService::newCustomer($user);
+            });
+
+            session()->forget([
+                'pending_customer_registration',
+                'pending_provider_registration',
+                'otp_email',
+                'otp_name',
+                'otp_user_id',
+            ]);
+
+            return redirect()->route('login')->with('flash_message', [
+                'title' => 'Account Created',
+                'message' => 'Your customer account has been created successfully. You can now login.',
+                'type' => 'success',
+            ]);
+        }
+
         if ($otpService->hasReachedDailyLimit()) {
             return redirect()
                 ->route('signup')
                 ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
                 ->with('flash_message', $otpService->limitFlashMessage());
         }
-
-        $name = $validated['fname'] . ' ' . $validated['lname'];
 
         session([
             'pending_customer_registration' => [
@@ -415,14 +455,73 @@ class AuthManagerController extends Controller
             ]);
         }
 
+        $name = $validated['fname'] . ' ' . $validated['lname'];
+
+        if (! $otpService->isEnabled()) {
+            $resumePath = null;
+            $barangayClearancePath = null;
+
+            if ($request->hasFile('resume')) {
+                $resumePath = $request->file('resume')->store('provider-resumes', 'public');
+            }
+
+            if ($request->hasFile('barangay_clearance')) {
+                $barangayClearancePath = $request->file('barangay_clearance')->store('provider-barangay-clearances', 'public');
+            }
+
+            DB::transaction(function () use ($validated, $name, $resumePath, $barangayClearancePath) {
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'role' => 'provider',
+                    'is_active' => 0,
+                    'email_verified_at' => now(),
+                ]);
+
+                $user->provider()->create([
+                    'first_name' => $validated['fname'],
+                    'last_name' => $validated['lname'],
+                    'phone_number' => $validated['number'],
+                    'gender' => $validated['gender'],
+                    'home_address' => $validated['address'],
+                    'city' => $validated['city'],
+                    'barangay' => $validated['barangay'],
+                    'zipcode' => $validated['zipcode'],
+                    'profession' => $validated['profession'],
+                    'year_exp' => $validated['experience'],
+                    'resume_path' => $resumePath,
+                    'barangay_clearance_path' => $barangayClearancePath,
+                    'application_status' => 'pending',
+                    'application_reviewed_at' => null,
+                    'application_reviewed_by' => null,
+                    'application_remarks' => null,
+                ]);
+
+                AdminNotificationService::newProviderApplication($user);
+            });
+
+            session()->forget([
+                'pending_customer_registration',
+                'pending_provider_registration',
+                'otp_email',
+                'otp_name',
+                'otp_user_id',
+            ]);
+
+            return redirect()->route('login')->with('flash_message', [
+                'title' => 'Application Submitted',
+                'message' => 'Your provider application has been submitted successfully. Please wait while admin reviews your application.',
+                'type' => 'success',
+            ]);
+        }
+
         if ($otpService->hasReachedDailyLimit()) {
             return redirect()
                 ->route('provider-signup')
                 ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
                 ->with('flash_message', $otpService->limitFlashMessage());
         }
-
-        $name = $validated['fname'] . ' ' . $validated['lname'];
 
         $resumePath = null;
         $barangayClearancePath = null;

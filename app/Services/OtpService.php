@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\DailyOtpLimitReachedException;
 use App\Models\DailyOtpUsage;
 use App\Models\EmailOtp;
+use App\Models\PlatformSetting;
 use Throwable;
 use Illuminate\Support\Facades\DB;
 
@@ -66,7 +67,16 @@ class OtpService
 
     public function hasReachedDailyLimit(): bool
     {
+        if (! $this->isEnabled()) {
+            return false;
+        }
+
         return $this->sentToday() >= self::DAILY_LIMIT;
+    }
+
+    public function isEnabled(): bool
+    {
+        return (bool) PlatformSetting::current()->otp_enabled;
     }
 
     public function sentToday(): int
