@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\AdminNotificationService;
 use App\Services\OtpService;
 use App\Exceptions\DailyOtpLimitReachedException;
+use App\Exceptions\OtpDeliveryException;
 
 class AuthManagerController extends Controller
 {
@@ -296,6 +297,17 @@ class AuthManagerController extends Controller
                 ->route('signup')
                 ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
                 ->with('flash_message', $otpService->limitFlashMessage());
+        } catch (OtpDeliveryException $exception) {
+            session()->forget([
+                'pending_customer_registration',
+                'otp_email',
+                'otp_name',
+            ]);
+
+            return redirect()
+                ->route('signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->withErrors(['email' => $exception->getMessage()]);
         }
 
         return redirect()->route('otp.verify.page')->with('flash_message', [
@@ -578,6 +590,23 @@ class AuthManagerController extends Controller
                 ->route('provider-signup')
                 ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
                 ->with('flash_message', $otpService->limitFlashMessage());
+        } catch (OtpDeliveryException $exception) {
+            foreach ([$resumePath, $barangayClearancePath] as $pendingPath) {
+                if (!empty($pendingPath) && Storage::disk('public')->exists($pendingPath)) {
+                    Storage::disk('public')->delete($pendingPath);
+                }
+            }
+
+            session()->forget([
+                'pending_provider_registration',
+                'otp_email',
+                'otp_name',
+            ]);
+
+            return redirect()
+                ->route('provider-signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->withErrors(['email' => $exception->getMessage()]);
         }
 
         return redirect()->route('otp.verify.page')->with('flash_message', [

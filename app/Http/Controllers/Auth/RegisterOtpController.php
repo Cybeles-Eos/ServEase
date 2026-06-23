@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\OtpService;
 use App\Services\AdminNotificationService;
 use App\Exceptions\DailyOtpLimitReachedException;
+use App\Exceptions\OtpDeliveryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -315,6 +316,8 @@ class RegisterOtpController extends Controller
                 );
             } catch (DailyOtpLimitReachedException $exception) {
                 return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+            } catch (OtpDeliveryException $exception) {
+                return back()->withErrors(['otp' => $exception->getMessage()]);
             }
 
             return back()->with('success', 'A new OTP has been sent to your email.');
@@ -330,6 +333,8 @@ class RegisterOtpController extends Controller
                 );
             } catch (DailyOtpLimitReachedException $exception) {
                 return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+            } catch (OtpDeliveryException $exception) {
+                return back()->withErrors(['otp' => $exception->getMessage()]);
             }
 
             return back()->with('success', 'A new OTP has been sent to your email.');
@@ -346,6 +351,8 @@ class RegisterOtpController extends Controller
             $otpService->sendRegistrationOtp($user);
         } catch (DailyOtpLimitReachedException $exception) {
             return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+        } catch (OtpDeliveryException $exception) {
+            return back()->withErrors(['otp' => $exception->getMessage()]);
         }
 
         return back()->with('success', 'A new OTP has been sent to your email.');

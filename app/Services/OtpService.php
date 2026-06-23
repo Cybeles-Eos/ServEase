@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Exceptions\DailyOtpLimitReachedException;
+use App\Exceptions\OtpDeliveryException;
 use App\Models\DailyOtpUsage;
 use App\Models\EmailOtp;
 use App\Models\PlatformSetting;
-use Throwable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Throwable;
 
 class OtpService
 {
@@ -58,6 +61,19 @@ class OtpService
                     'name'  => 'Servease',
                 ],
             ]);
+        } catch (TransportExceptionInterface $exception) {
+            $this->releaseDailySend();
+
+            Log::error('OTP email delivery failed.', [
+                'email' => $email,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+
+            throw new OtpDeliveryException(
+                'We could not send the OTP email right now. Please try again later or contact support.',
+                previous: $exception
+            );
         } catch (Throwable $exception) {
             $this->releaseDailySend();
 
