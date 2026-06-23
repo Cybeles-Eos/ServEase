@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\DailyOtpLimitReachedException;
+use App\Exceptions\EmailDeliveryException;
 use App\Exceptions\OtpDeliveryException;
 use App\Models\DailyOtpUsage;
 use App\Models\EmailOtp;
@@ -61,7 +62,7 @@ class OtpService
                     'name'  => 'Servease',
                 ],
             ]);
-        } catch (TransportExceptionInterface $exception) {
+        } catch (TransportExceptionInterface|EmailDeliveryException $exception) {
             $this->releaseDailySend();
 
             Log::error('OTP email delivery failed.', [

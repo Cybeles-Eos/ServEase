@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\EmailDeliveryException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class EmailService
 {
@@ -26,6 +30,12 @@ class EmailService
             'name'  => 'Servease',
         ];
 
+        if (config('services.brevo.api_key')) {
+            $this->sendViaBrevoApi($params, $data, $seo_meta);
+
+            return;
+        }
+
         Mail::send($params['view'], [
             'data'     => $data,
             'seo_meta' => $seo_meta,
@@ -42,5 +52,59 @@ class EmailService
 
             $message->subject($data['subject']);
         });
+    }
+
+    private function sendViaBrevoApi(array $params, array $data, array $seo_meta): void
+    {
+        $html = view($params['view'], [
+            'data'     => $data,
+            'seo_meta' => $seo_meta,
+        ])->render();
+
+        $payload = [
+            'sender' => [
+                'email' => config('mail.from.address'),
+                'name'  => config('mail.from.name'),
+            ],
+            'to' => [[
+                'email' => $data['user']['email'],
+                'name'  => $data['user']['name'],
+            ]],
+            'subject' => $data['subject'],
+            'htmlContent' => $html,
+        ];
+
+        try {
+            $response = Http::timeout(config('services.brevo.timeout', 15))
+                ->withHeaders([
+                    'accept' => 'application/json',
+                    'api-key' => config('services.brevo.api_key'),
+                    'content-type' => 'application/json',
+                ])
+                ->post(config('services.brevo.endpoint'), $payload);
+        } catch (Throwable $exception) {
+            Log::error('Brevo API email request failed.', [
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+                'email' => $data['user']['email'],
+            ]);
+
+            throw new EmailDeliveryException(
+                'Brevo API email request failed.',
+                previous: $exception
+            );
+        }
+
+        if ($response->successful()) {
+            return;
+        }
+
+        Log::error('Brevo API email delivery failed.', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+            'email' => $data['user']['email'],
+        ]);
+
+        throw new EmailDeliveryException('Brevo API email delivery failed.');
     }
 }
