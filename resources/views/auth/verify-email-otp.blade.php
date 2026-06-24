@@ -69,7 +69,7 @@
             background: var(--white);
             border-radius: 26px;
             overflow: hidden;
-            box-shadow: 0 24px 70px rgba(31, 41, 51, 0.12);
+            /* box-shadow: 0 24px 70px rgba(31, 41, 51, 0.12); */
         }
 
         .otp-visual {
@@ -368,9 +368,11 @@
 
         <div class="otp-content">
             <div class="otp-card">
+                
                 <div class="otp-logo">
-                    <img src="{{ asset('images/new-logo-d.png') }}" alt="">
+                    <a href="{{url('signup')}}"><img src="{{ asset('images/new-logo-d.png') }}" alt=""></a>
                 </div>
+                
 
                 <h1>Enter OTP Code</h1>
 
@@ -414,7 +416,9 @@
                         Verify OTP
                     </button>
                 </form>
-
+                <a href="{{url('signup')}}" style="display:block; margin-top:6px; margin-bottom: 0; text-align:center; font-size:12px; font-weight:600; color: #888d94; text-decoration:none;">
+                    Cancel registration
+                </a>
                 <div class="otp-resend">
                     Didn't receive it?
                     <form method="POST" action="{{ route('otp.resend') }}">

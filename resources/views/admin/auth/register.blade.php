@@ -460,6 +460,10 @@
                                     value="{{ old('city') }}"
                                     required
                                     data-ph-city
+                                    autocomplete="new-password"
+                                    autocorrect="off"
+                                    autocapitalize="off"
+                                    spellcheck="false"
                                     autocomplete="off"
                                 >
                                 <span class="location-combobox__arrow" aria-hidden="true"></span>
@@ -479,6 +483,10 @@
                                     value="{{ old('barangay') }}"
                                     required
                                     data-ph-barangay
+                                    autocomplete="new-password"
+                                    autocorrect="off"
+                                    autocapitalize="off"
+                                    spellcheck="false"
                                     autocomplete="off"
                                 >
                                 <span class="location-combobox__arrow" aria-hidden="true"></span>
