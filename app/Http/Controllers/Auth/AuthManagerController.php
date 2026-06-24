@@ -263,6 +263,13 @@ class AuthManagerController extends Controller
                 ->with('flash_message', $otpService->limitFlashMessage());
         }
 
+        if ($otpService->hasReachedResendLimit($request, $validated['email'])) {
+            return redirect()
+                ->route('signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->withErrors(['email' => $otpService->resendLimitMessage($request, $validated['email'])]);
+        }
+
         session([
             'pending_customer_registration' => [
                 'fname'          => $validated['fname'],
@@ -533,6 +540,13 @@ class AuthManagerController extends Controller
                 ->route('provider-signup')
                 ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
                 ->with('flash_message', $otpService->limitFlashMessage());
+        }
+
+        if ($otpService->hasReachedResendLimit($request, $validated['email'])) {
+            return redirect()
+                ->route('provider-signup')
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->withErrors(['email' => $otpService->resendLimitMessage($request, $validated['email'])]);
         }
 
         $resumePath = null;

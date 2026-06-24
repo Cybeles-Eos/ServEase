@@ -250,6 +250,27 @@
             text-underline-offset: 4px;
         }
 
+        .otp-link-btn:disabled {
+            color: #9CA3AF;
+            cursor: not-allowed;
+            text-decoration-color: #D1D5DB;
+        }
+
+        .otp-resend-count {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6B7280;
+            line-height: 1.45;
+        }
+
+        .otp-resend-count strong {
+            color: #111827;
+        }
+
+        .otp-resend-count.is-locked {
+            color: #B45309;
+        }
+
         .alert-error {
             background: #fff1f1;
             color: #b00020;
@@ -398,10 +419,21 @@
                     Didn't receive it?
                     <form method="POST" action="{{ route('otp.resend') }}">
                         @csrf
-                        <button type="submit" class="otp-link-btn">
+                        <button type="submit" class="otp-link-btn" {{ ($resendLimit['locked'] ?? false) ? 'disabled' : '' }}>
                             Resend OTP
                         </button>
                     </form>
+                    <div class="otp-resend-count {{ ($resendLimit['locked'] ?? false) ? 'is-locked' : '' }}">
+                        Resends left:
+                        <strong>{{ $resendLimit['remaining'] ?? 5 }}</strong>
+                        of {{ $resendLimit['limit'] ?? 5 }}
+                        @if($resendLimit['locked'] ?? false)
+                            <br>
+                            Try again after {{ $resendLimit['locked_until_label'] }}.
+                        @else
+                            within {{ $resendLimit['window_hours'] ?? 6 }} hours.
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,9 +7,12 @@ use App\Exceptions\EmailDeliveryException;
 use App\Exceptions\OtpDeliveryException;
 use App\Models\DailyOtpUsage;
 use App\Models\EmailOtp;
+use App\Models\OtpResendAttempt;
 use App\Models\PlatformSetting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Throwable;
 
@@ -17,6 +20,8 @@ class OtpService
 {
     private const DAILY_LIMIT = 300;
     private const TEST_SENT_TODAY = null; // Set to 300 to test the limit popup, then set back to null for live.
+    private const RESEND_LIMIT = 5;
+    private const RESEND_WINDOW_HOURS = 6;
 
     public function sendRegistrationOtp($user): void
     {
@@ -116,6 +121,121 @@ class OtpService
         ];
     }
 
+    public function resendLimitStatus(Request $request, ?string $email = null): array
+    {
+        $email = strtolower(trim((string) ($email ?: session('otp_email'))));
+
+        if ($email === '') {
+            return $this->emptyResendStatus();
+        }
+
+        $attempt = OtpResendAttempt::query()
+            ->where('email', $email)
+            ->where('device_key', $this->deviceKey($request))
+            ->first();
+
+        if (! $attempt || $this->resendWindowExpired($attempt)) {
+            return $this->emptyResendStatus();
+        }
+
+        $lockedUntil = $attempt->locked_until && now()->lessThan($attempt->locked_until)
+            ? $attempt->locked_until
+            : null;
+
+        return [
+            'limit' => self::RESEND_LIMIT,
+            'remaining' => max(0, self::RESEND_LIMIT - (int) $attempt->attempts),
+            'used' => min(self::RESEND_LIMIT, (int) $attempt->attempts),
+            'locked' => (bool) $lockedUntil,
+            'locked_until' => $lockedUntil,
+            'locked_until_label' => $lockedUntil ? $lockedUntil->format('M d, Y g:i A') : null,
+            'window_hours' => self::RESEND_WINDOW_HOURS,
+        ];
+    }
+
+    public function hasReachedResendLimit(Request $request, ?string $email = null): bool
+    {
+        return $this->resendLimitStatus($request, $email)['locked'];
+    }
+
+    public function resendLimitMessage(Request $request, ?string $email = null): string
+    {
+        $status = $this->resendLimitStatus($request, $email);
+
+        if (! $status['locked']) {
+            return '';
+        }
+
+        return 'You have reached the OTP resend limit for this device. Please try again after '
+            . $status['locked_until_label'] . '.';
+    }
+
+    public function reserveResendAttempt(Request $request, string $email): array
+    {
+        $email = strtolower(trim($email));
+        $deviceKey = $this->deviceKey($request);
+
+        return DB::transaction(function () use ($email, $deviceKey) {
+            $attempt = OtpResendAttempt::query()
+                ->where('email', $email)
+                ->where('device_key', $deviceKey)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $attempt || $this->resendWindowExpired($attempt)) {
+                $attempt = OtpResendAttempt::updateOrCreate(
+                    [
+                        'email' => $email,
+                        'device_key' => $deviceKey,
+                    ],
+                    [
+                        'attempts' => 0,
+                        'window_started_at' => now(),
+                        'locked_until' => null,
+                    ]
+                );
+            }
+
+            if ($attempt->locked_until && now()->lessThan($attempt->locked_until)) {
+                return $this->resendLimitStatusFromAttempt($attempt);
+            }
+
+            $attempt->attempts = (int) $attempt->attempts + 1;
+
+            if ($attempt->attempts >= self::RESEND_LIMIT) {
+                $attempt->locked_until = ($attempt->window_started_at ?: now())
+                    ->copy()
+                    ->addHours(self::RESEND_WINDOW_HOURS);
+            }
+
+            $attempt->save();
+
+            return $this->resendLimitStatusFromAttempt($attempt);
+        });
+    }
+
+    public function releaseResendAttempt(Request $request, string $email): void
+    {
+        $email = strtolower(trim($email));
+        $deviceKey = $this->deviceKey($request);
+
+        DB::transaction(function () use ($email, $deviceKey) {
+            $attempt = OtpResendAttempt::query()
+                ->where('email', $email)
+                ->where('device_key', $deviceKey)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $attempt || $attempt->attempts <= 0) {
+                return;
+            }
+
+            $attempt->attempts = (int) $attempt->attempts - 1;
+            $attempt->locked_until = null;
+            $attempt->save();
+        });
+    }
+
     private function reserveDailySend(): void
     {
         if ($this->hasReachedDailyLimit()) {
@@ -164,5 +284,58 @@ class OtpService
     private function today(): string
     {
         return now('Asia/Manila')->toDateString();
+    }
+
+    private function emptyResendStatus(): array
+    {
+        return [
+            'limit' => self::RESEND_LIMIT,
+            'remaining' => self::RESEND_LIMIT,
+            'used' => 0,
+            'locked' => false,
+            'locked_until' => null,
+            'locked_until_label' => null,
+            'window_hours' => self::RESEND_WINDOW_HOURS,
+        ];
+    }
+
+    private function resendLimitStatusFromAttempt(OtpResendAttempt $attempt): array
+    {
+        $lockedUntil = $attempt->locked_until && now()->lessThan($attempt->locked_until)
+            ? $attempt->locked_until
+            : null;
+
+        return [
+            'limit' => self::RESEND_LIMIT,
+            'remaining' => max(0, self::RESEND_LIMIT - (int) $attempt->attempts),
+            'used' => min(self::RESEND_LIMIT, (int) $attempt->attempts),
+            'locked' => (bool) $lockedUntil,
+            'locked_until' => $lockedUntil,
+            'locked_until_label' => $lockedUntil ? $lockedUntil->format('M d, Y g:i A') : null,
+            'window_hours' => self::RESEND_WINDOW_HOURS,
+        ];
+    }
+
+    private function resendWindowExpired(OtpResendAttempt $attempt): bool
+    {
+        if (! $attempt->window_started_at) {
+            return true;
+        }
+
+        return now()->greaterThanOrEqualTo(
+            $attempt->window_started_at->copy()->addHours(self::RESEND_WINDOW_HOURS)
+        );
+    }
+
+    private function deviceKey(Request $request): string
+    {
+        if (! $request->session()->has('otp_resend_device_id')) {
+            $request->session()->put('otp_resend_device_id', (string) Str::uuid());
+        }
+
+        return hash('sha256', implode('|', [
+            $request->session()->get('otp_resend_device_id'),
+            (string) $request->userAgent(),
+        ]));
     }
 }

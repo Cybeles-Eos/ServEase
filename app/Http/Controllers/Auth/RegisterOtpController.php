@@ -12,17 +12,20 @@ use App\Exceptions\OtpDeliveryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class RegisterOtpController extends Controller
 {
-    public function showVerifyForm()
+    public function showVerifyForm(Request $request)
     {
         if (!session('otp_email')) {
             return redirect()->route('login')
                 ->withErrors(['otp' => 'Session expired. Please register again.']);
         }
 
-        return view('auth.verify-email-otp');
+        $resendLimit = app(OtpService::class)->resendLimitStatus($request);
+
+        return view('auth.verify-email-otp', compact('resendLimit'));
     }
 
     // public function verifyOtp(Request $request)
@@ -287,7 +290,7 @@ class RegisterOtpController extends Controller
 
     //     return back()->with('success', 'A new OTP has been sent to your email.');
     // }
-    public function resendOtp()
+    public function resendOtp(Request $request)
     {
         $email = session('otp_email');
         $name = session('otp_name');
@@ -306,18 +309,29 @@ class RegisterOtpController extends Controller
             return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
         }
 
+        if ($otpService->hasReachedResendLimit($request, $email)) {
+            return back()->withErrors(['otp' => $otpService->resendLimitMessage($request, $email)]);
+        }
+
         $pendingCustomer = session('pending_customer_registration');
 
         if ($pendingCustomer) {
+            $otpService->reserveResendAttempt($request, $pendingCustomer['email']);
+
             try {
                 $otpService->sendOtpToEmail(
                     email: $pendingCustomer['email'],
                     name: $pendingCustomer['name']
                 );
             } catch (DailyOtpLimitReachedException $exception) {
+                $otpService->releaseResendAttempt($request, $pendingCustomer['email']);
                 return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
             } catch (OtpDeliveryException $exception) {
+                $otpService->releaseResendAttempt($request, $pendingCustomer['email']);
                 return back()->withErrors(['otp' => $exception->getMessage()]);
+            } catch (Throwable $exception) {
+                $otpService->releaseResendAttempt($request, $pendingCustomer['email']);
+                throw $exception;
             }
 
             return back()->with('success', 'A new OTP has been sent to your email.');
@@ -326,15 +340,22 @@ class RegisterOtpController extends Controller
         $pendingProvider = session('pending_provider_registration');
 
         if ($pendingProvider) {
+            $otpService->reserveResendAttempt($request, $pendingProvider['email']);
+
             try {
                 $otpService->sendOtpToEmail(
                     email: $pendingProvider['email'],
                     name: $pendingProvider['name']
                 );
             } catch (DailyOtpLimitReachedException $exception) {
+                $otpService->releaseResendAttempt($request, $pendingProvider['email']);
                 return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
             } catch (OtpDeliveryException $exception) {
+                $otpService->releaseResendAttempt($request, $pendingProvider['email']);
                 return back()->withErrors(['otp' => $exception->getMessage()]);
+            } catch (Throwable $exception) {
+                $otpService->releaseResendAttempt($request, $pendingProvider['email']);
+                throw $exception;
             }
 
             return back()->with('success', 'A new OTP has been sent to your email.');
@@ -348,11 +369,17 @@ class RegisterOtpController extends Controller
         }
 
         try {
+            $otpService->reserveResendAttempt($request, $user->email);
             $otpService->sendRegistrationOtp($user);
         } catch (DailyOtpLimitReachedException $exception) {
+            $otpService->releaseResendAttempt($request, $user->email);
             return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
         } catch (OtpDeliveryException $exception) {
+            $otpService->releaseResendAttempt($request, $user->email);
             return back()->withErrors(['otp' => $exception->getMessage()]);
+        } catch (Throwable $exception) {
+            $otpService->releaseResendAttempt($request, $user->email);
+            throw $exception;
         }
 
         return back()->with('success', 'A new OTP has been sent to your email.');
