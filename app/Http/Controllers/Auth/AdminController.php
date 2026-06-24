@@ -371,6 +371,7 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['nullable', 'string', 'max:255'];
+            $rules['gender'] = ['required', Rule::in(['male', 'female', 'prefer_not_to_say'])];
             $rules['street_address'] = ['nullable', 'string', 'max:255'];
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -379,6 +380,7 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
+            $rules['gender'] = ['required', Rule::in(['male', 'female', 'prefer_not_to_say'])];
             $rules['home_address'] = ['required', 'string', 'max:255'];
             $rules['city'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -416,6 +418,7 @@ class AdminController extends Controller
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
                     'phone_number' => $validated['phone_number'] ?? null,
+                    'gender' => $validated['gender'],
                     'street_address' => $validated['street_address'] ?? null,
                     'city' => $validated['city'] ?? null,
                     'barangay' => $validated['barangay'] ?? null,
@@ -426,6 +429,7 @@ class AdminController extends Controller
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
                     'phone_number' => $validated['phone_number'],
+                    'gender' => $validated['gender'],
                     'home_address' => $validated['home_address'],
                     'city' => $validated['city'],
                     'barangay' => $validated['barangay'] ?? null,
@@ -484,6 +488,7 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['nullable', 'string', 'max:255'];
+            $rules['gender'] = ['required', Rule::in(['male', 'female', 'prefer_not_to_say'])];
             $rules['street_address'] = ['nullable', 'string', 'max:255'];
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -492,6 +497,7 @@ class AdminController extends Controller
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
+            $rules['gender'] = ['required', Rule::in(['male', 'female', 'prefer_not_to_say'])];
             $rules['home_address'] = ['required', 'string', 'max:255'];
             $rules['city'] = ['required', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
@@ -524,6 +530,7 @@ class AdminController extends Controller
                         'first_name' => $validated['first_name'],
                         'last_name' => $validated['last_name'],
                         'phone_number' => $validated['phone_number'] ?? null,
+                        'gender' => $validated['gender'],
                         'street_address' => $validated['street_address'] ?? null,
                         'city' => $validated['city'] ?? null,
                         'barangay' => $validated['barangay'] ?? null,
@@ -537,6 +544,7 @@ class AdminController extends Controller
                         'first_name' => $validated['first_name'],
                         'last_name' => $validated['last_name'],
                         'phone_number' => $validated['phone_number'],
+                        'gender' => $validated['gender'],
                         'home_address' => $validated['home_address'],
                         'city' => $validated['city'],
                         'barangay' => $validated['barangay'] ?? null,

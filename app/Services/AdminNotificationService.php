@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AdminNotification;
 use App\Models\BookingInfo;
+use App\Models\Contact;
 use App\Models\Provider;
 use App\Models\ProviderDeletedRecord;
 use App\Models\Service;
@@ -30,6 +31,16 @@ class AdminNotificationService
             'New Customer Account',
             "{$user->name} registered as a customer.",
             route('admin.users.show', $user)
+        );
+    }
+
+    public static function newContact(Contact $contact): void
+    {
+        self::notify(
+            'new_contact',
+            'New Contact Message',
+            ($contact->fullname ?: 'A visitor') . ' sent a contact message about "' . ($contact->subject ?: 'No subject') . '".',
+            route('admin.contacts.show', $contact)
         );
     }
 

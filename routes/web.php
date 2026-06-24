@@ -29,6 +29,8 @@ Route::get('/about-us', function () {
  * Contact Routes
  */
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 Route::get('/privacy-policy', function () {
     return view('front.pages.custom-pages.privacy-policy');
 })->name('privacy.policy');
@@ -99,6 +101,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/applicants/{provider}/decline', [AdminController::class, 'declineApplicant'])->name('admin.applicants.decline');
         Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports');
         Route::post('/admin/reports/providers/{provider}/deactivate', [AdminReportController::class, 'deactivateProvider'])->name('admin.reports.provider.deactivate');
+
+        // Contact Messages
+        Route::get('/admin/contacts', [ContactController::class, 'adminIndex'])->name('admin.contacts.index');
+        Route::get('/admin/contacts/{contact}', [ContactController::class, 'adminShow'])->name('admin.contacts.show');
 
         //Admin General Setting
         Route::get('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');

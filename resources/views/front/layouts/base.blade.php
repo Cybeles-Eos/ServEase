@@ -30,7 +30,7 @@
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 
     {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> --}}
     {{-- Css Styles --}}
@@ -67,8 +67,8 @@
     <div class="modal-mobile-nav g-padding">
         <ul>
             <li><a href="{{ url('/') }}">Home</a></li>
-            {{-- <li><a href="{{ url('/about-us') }}">About Us</a></li>
-            <li><a href="{{ url('/contact') }}">Contact</a></li> --}}
+            {{-- <li><a href="{{ url('/about-us') }}">About Us</a></li> --}}
+            <li><a href="{{ url('/contact') }}">Contact</a></li>
             <li>
                 <a href="{{ url('/services') }}">
                     <svg width="14" class="me-1" height="17" viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg">

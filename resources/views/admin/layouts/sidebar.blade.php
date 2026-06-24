@@ -188,6 +188,16 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ url('admin/contacts') }}" class="{{ Request::is('admin/contacts', 'admin/contacts/*') ? 'active' : '' }}">
+                            <div>
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6.66732 2.5C7.08398 2.5 8.75065 6.25 8.75065 6.66667C8.75065 7.5 7.50065 8.33333 7.08398 9.16667C6.66732 10 7.50065 10.8333 8.33398 11.6667C8.65898 11.9917 10.0007 13.3333 10.834 12.9167C11.6673 12.5 12.5007 11.25 13.334 11.25C13.7507 11.25 17.5007 12.9167 17.5007 13.3333C17.5007 15 16.2507 16.25 15.0007 16.6667C13.7507 17.0833 12.9173 17.0833 11.2507 16.6667C9.58398 16.25 8.33398 15.8333 6.25065 13.75C4.16732 11.6667 3.75065 10.4167 3.33398 8.75C2.91732 7.08333 2.91732 6.25 3.33398 5C3.75065 3.75 5.00065 2.5 6.66732 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            Contacts
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ url('admin/applicants') }}" class="{{ Request::is('admin/applicants', 'admin/applicants/*') ? 'active' : '' }}">
                             <div>
                                 <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">

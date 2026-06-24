@@ -421,6 +421,7 @@
         <div class="provider-notification-modal__tabs">
             <button type="button" class="is-active" data-notif-filter="all">Platform Activity</button>
             <button type="button" data-notif-filter="booking">Booking Requests</button>
+            <button type="button" data-notif-filter="contact-records">Contacts Records</button>
             <button type="button" data-notif-filter="deleted-records">Deleted Records</button>
         </div>
 
@@ -430,7 +431,7 @@
                     $isUnread = is_null($notification->read_at);
 
                     $statusClass = match ($notification->type) {
-                        'new_provider_application', 'new_booking', 'new_report', 'provider_records_deleted' => 'provider-notification-modal__status--pending',
+                        'new_provider_application', 'new_booking', 'new_report', 'new_contact', 'provider_records_deleted' => 'provider-notification-modal__status--pending',
                         'new_rating' => 'provider-notification-modal__status--ongoing',
                         'new_service', 'new_customer', 'admin_user_created' => 'provider-notification-modal__status--accepted',
                         default => 'provider-notification-modal__status--pending',
@@ -442,6 +443,7 @@
                     data-notification-id="{{ $notification->id }}"
                     data-notification-type="{{ match ($notification->type) {
                         'new_booking' => 'booking',
+                        'new_contact' => 'contact-records',
                         'provider_records_deleted' => 'deleted-records',
                         default => 'platform',
                     } }}"

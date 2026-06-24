@@ -5,19 +5,19 @@
 .provider-login{
     width: 100%;
     // height: calc(100vh - 107.46px);
-    
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
     padding-top: 80px !important;
+
     .provider-login-main{
         height: 560px;
         width: 1000px;
         display: flex;
         gap: 1rem;
         
-        //background-color: rgb(255, 239, 217);
+       
         &__form{
             width: 50%;
             padding: 1rem;

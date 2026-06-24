@@ -85,6 +85,21 @@
                                 @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
+                                <label>Gender <span>*</span></label>
+                                <div class="provserv-c-body--fields--dropdowns">
+                                    <select name="gender" class="provserv-c-body--fields--dropdowns--sort">
+                                        <option value="">Choose gender</option>
+                                        <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                                        <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                        <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>Prefer not to say</option>
+                                    </select>
+                                    <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                @error('gender') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                            </div>
+                            <div class="prg-mm-group">
                                 <label>Street address</label>
                                 <input type="text" name="street_address" value="{{ old('street_address') }}">
                                 @error('street_address') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
@@ -122,6 +137,21 @@
                                 <label>Phone <span>*</span></label>
                                 <input type="text" name="phone_number" value="{{ old('phone_number') }}">
                                 @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                            </div>
+                            <div class="prg-mm-group">
+                                <label>Gender <span>*</span></label>
+                                <div class="provserv-c-body--fields--dropdowns">
+                                    <select name="gender" class="provserv-c-body--fields--dropdowns--sort">
+                                        <option value="">Choose gender</option>
+                                        <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                                        <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                        <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>Prefer not to say</option>
+                                    </select>
+                                    <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                @error('gender') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
                                 <label>Home address <span>*</span></label>

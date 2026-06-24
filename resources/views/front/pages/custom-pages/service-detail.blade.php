@@ -1,5 +1,94 @@
 @extends('front.layouts.base')
 
+@push('extrastylesheets')
+<style>
+    .provider-schedule-summary {
+        margin-top: 20px;
+        border-top: 1px solid #E5E7EB;
+        padding-top: 20px;
+    }
+
+    .provider-schedule-summary__head {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+
+    .provider-schedule-summary__head h4 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: #171515;
+    }
+
+    .provider-schedule-summary__estimate {
+        margin: 0;
+        color: #6B7280;
+        font-size: 12px;
+        line-height: 1.4;
+        text-align: left;
+        /* max-width: 150px; */
+    }
+
+    .provider-schedule-summary__estimate span {
+        color: #F59E0B;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .provider-schedule-summary__item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: #171515;
+    }
+
+    .provider-schedule-summary__item svg {
+        flex: 0 0 16px;
+        margin-top: 2px;
+    }
+
+    .provider-schedule-summary__item p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .provider-schedule-summary__item strong {
+        font-weight: 700;
+    }
+
+    .provider-schedule-summary__item span {
+        display: inline-flex;
+        margin-left: 0px;
+        color: #F59E0B;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .provider-schedule-summary__note {
+        margin: 6px 0 0 26px;
+        color: #6B7280;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    @media (max-width: 592px) {
+        .provider-schedule-summary__head {
+            flex-direction: column;
+        }
+
+        .provider-schedule-summary__estimate {
+            max-width: none;
+            text-align: left;
+        }
+    }
+</style>
+@endpush
+
 @section('content')
     <main class="main-page page--services-detail">
         <section class="section--list m-padding m-width">
@@ -217,10 +306,18 @@
                                             <p style="color: white; margin: 0 !important; font-size: 17px; letter-spacing: 0; line-height: 1; font-weight: 600; display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">{{ strtoupper(substr($fname, 0, 1) . substr($lname, 0, 1)) }}</p>
                                         </div>
                                     @endif
+                                    @php
+                                        $providerStatusColor = $service->provider_has_ongoing_today
+                                            ? '#F59E0B'
+                                            : ($service->provider_is_available_now ? '#22C55E' : '#EF4444');
+                                        $providerStatusTitle = $service->provider_has_ongoing_today
+                                            ? 'Provider has an ongoing schedule today'
+                                            : ($service->provider_is_available_now ? 'Available now' : 'Currently unavailable');
+                                    @endphp
                                     <span
-                                        title="{{ $service->provider_is_available_now ? 'Available now' : 'Currently unavailable' }}"
-                                        aria-label="{{ $service->provider_is_available_now ? 'Provider is available now' : 'Provider is currently unavailable' }}"
-                                        style="position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 999px; border: 2px solid #fff; background: {{ $service->provider_is_available_now ? '#22C55E' : '#EF4444' }}; box-shadow: 0 1px 4px rgba(0,0,0,.18);"
+                                        title="{{ $providerStatusTitle }}"
+                                        aria-label="{{ $providerStatusTitle }}"
+                                        style="position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 999px; border: 2px solid #fff; background: {{ $providerStatusColor }}; box-shadow: 0 1px 4px rgba(0,0,0,.18);"
                                     ></span>
                                 </div>
                                 {{-- <img src="{{ asset('images/user.png') }}" alt=""> --}}
@@ -275,6 +372,13 @@
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 8C9.84095 8 11.3333 6.50762 11.3333 4.66667C11.3333 2.82572 9.84095 1.33334 8 1.33334C6.15905 1.33334 4.66667 2.82572 4.66667 4.66667C4.66667 6.50762 6.15905 8 8 8Z" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13.7267 14.6667C13.7267 12.0867 11.16 10 8 10C4.84 10 2.27333 12.0867 2.27333 14.6667" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <p>Gender: {{ $service->provider_gender }}</p>
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M14.6204 4.50635L12.3738 13.5264C12.2138 14.1997 11.6138 14.6663 10.9204 14.6663H2.16041C1.15375 14.6663 0.433756 13.6796 0.733756 12.713L3.54042 3.69971C3.73375 3.07304 4.31376 2.63965 4.96709 2.63965H13.1671C13.8004 2.63965 14.3271 3.02632 14.5471 3.55965C14.6738 3.84632 14.7004 4.17301 14.6204 4.50635Z" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10"/>
                                         <path d="M10.667 14.6667H13.8537C14.7137 14.6667 15.387 13.94 15.327 13.08L14.667 4" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M6.45312 4.25301L7.14646 1.37305" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -296,6 +400,37 @@
                                     <p>All Job Completed: {{ $service->jobs }}</p>
                                 </li>
                             </ul>
+                            @if($service->provider_has_schedule_today && $service->provider_schedule_preview)
+                                <div class="provider-schedule-summary">
+                                    <div class="provider-schedule-summary__head">
+                                        <h4>Provider Schedule</h4>
+                                        <p class="provider-schedule-summary__estimate">
+                                            Possible completion between <span>{{ $service->provider_completion_estimate }}</span>
+                                        </p>
+                                    </div>
+
+                                    <div class="provider-schedule-summary__item">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M5.33289 14.6667H10.6662C13.3462 14.6667 13.8262 13.5933 13.9662 12.2867L14.4662 6.95333C14.6462 5.32667 14.1796 4 11.3329 4H4.66623C1.81956 4 1.35289 5.32667 1.53289 6.95333L2.03289 12.2867C2.17289 13.5933 2.65289 14.6667 5.33289 14.6667Z" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M5.33301 3.99967V3.46634C5.33301 2.28634 5.33301 1.33301 7.46634 1.33301H8.53301C10.6663 1.33301 10.6663 2.28634 10.6663 3.46634V3.99967" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M5.13379 8H10.4671" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M4.4668 10.667H9.80013" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <p>
+                                            <strong>Date:</strong>
+                                            {{ $service->provider_schedule_preview->date }}
+                                            @if($service->provider_schedule_preview->time)
+                                                - {{ $service->provider_schedule_preview->time }}
+                                            @endif
+                                            <span>{{ $service->provider_schedule_preview->status }}</span>
+                                        </p>
+                                    </div>
+
+                                    <p class="provider-schedule-summary__note">
+                                        This provider already has a schedule today. You can wait for the current schedule to finish or choose another available date.
+                                    </p>
+                                </div>
+                            @endif
                             <hr>
                             <a href="{{ url('provider-signup') }}" class="psd-sl-sdetaili-d-service-info__cta">
                                 <img src="{{ asset('images/cta-join.png') }}" alt="cta-image">

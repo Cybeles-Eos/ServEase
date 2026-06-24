@@ -257,6 +257,20 @@ class ServiceController extends Controller
             ])
             ->filter(fn ($schedule) => !empty($schedule['date']))
             ->values();
+        $todayDate = now(config('app.timezone'))->toDateString();
+        $currentTime = now(config('app.timezone'))->format('H:i');
+        $providerTodaySchedules = $providerSchedules
+            ->where('date_value', $todayDate)
+            ->values();
+        $providerCurrentSchedule = $providerTodaySchedules
+            ->first(fn ($schedule) => $schedule->status === 'Ongoing')
+            ?: $providerTodaySchedules->first(function ($schedule) use ($currentTime) {
+                return $schedule->status === 'Accepted'
+                    && !empty($schedule->time_value)
+                    && $schedule->time_value <= $currentTime;
+            });
+        $providerSchedulePreview = $providerTodaySchedules->first()
+            ?: $providerSchedules->first();
         $hasExistingBooking = false;
 
         if (auth()->check() && auth()->user()->isCustomer() && auth()->user()->customer) {
@@ -345,10 +359,20 @@ class ServiceController extends Controller
             'provider_profile' => $service->provider?->profile_image,
 
             'provider_exp' => $service->provider->year_exp ?? 0,
-            'provider_area' => ($service->provider->city ?? $service->provider->province ?? 'Unknown Area') . ' & nearby',
+            'provider_gender' => $service->provider?->gender
+                ? ucfirst($service->provider->gender)
+                : 'Not specified',
+            'provider_area' => implode(', ', array_filter(array_map('trim', [
+                (string) ($service->provider?->barangay ?? ''),
+                (string) ($service->provider?->city ?? ''),
+            ]))) ?: 'Unknown Area',
             'provider_availability' => $providerAvailabilityData['label'],
             'provider_availability_data' => $providerAvailabilityData,
             'provider_is_available_now' => $service->provider?->isAvailableNow() ?? false,
+            'provider_has_schedule_today' => $providerTodaySchedules->isNotEmpty(),
+            'provider_has_ongoing_today' => !empty($providerCurrentSchedule),
+            'provider_schedule_preview' => $providerSchedulePreview,
+            'provider_completion_estimate' => '7-8 hrs',
             'provider_booked_dates' => $providerBookedDates,
             'provider_booked_slots' => $providerBookedSlots,
             'has_existing_booking' => $hasExistingBooking,
