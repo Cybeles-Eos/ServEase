@@ -18,14 +18,14 @@
         </a>
     </section>
 </div>
-<header class="header-desktop">
+<header class="header-desktop" style="border-bottom: 1px solid #E6E8EC">
     <div class="header-main m-padding m-width">
         <div class="h-con-links">
             <a href="{{ url('/') }}"><img src="{{ asset('images/new-logo-d.png') }}" alt=""></a>
             <div class="h-con-links__divider"></div>
             <ul>
                 <li><a href="{{ url('/') }}">Home</a></li>
-                {{-- <li><a href="{{ url('/about-us') }}">About us</a></li> --}}
+                <li><a href="{{ url('/about-us') }}">About us</a></li>
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
                 <li>
                     <a href="{{ url('services') }}">
@@ -97,7 +97,7 @@
         </div>
     </div>
 </header>
-<header class="header-mobile">
+<header class="header-mobile" >
     <div class="text-left">
         <a href="{{ url('/') }}">
             <img src="{{ asset('images/new-logo-d.png') }}" style="width: 80px" alt="Logo">
