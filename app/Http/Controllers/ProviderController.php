@@ -219,6 +219,7 @@ class ProviderController extends Controller
         $providerBookingQuery = BookingRequest::query()
             ->where('booking_requests.provider_id', $provider->id)
             ->whereHas('bookingInfo.service');
+        $earningsSql = $this->bookingEarningsSql();
 
         /*
         |--------------------------------------------------------------------------
@@ -250,7 +251,7 @@ class ProviderController extends Controller
             ->where('booking_requests.provider_id', $provider->id)
             ->where('booking_requests.status', 'COMPLETED')
             ->whereNull('tbl_services.deleted_at')
-            ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
+            ->sum(DB::raw($earningsSql));
 
         $todayEarnings = BookingRequest::query()
             ->join('booking_infos', 'booking_infos.id', '=', 'booking_requests.booking_info_id')
@@ -259,7 +260,7 @@ class ProviderController extends Controller
             ->where('booking_requests.status', 'COMPLETED')
             ->whereDate('booking_infos.date', $today)
             ->whereNull('tbl_services.deleted_at')
-            ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
+            ->sum(DB::raw($earningsSql));
 
             /*
             |--------------------------------------------------------------------------
@@ -332,7 +333,7 @@ class ProviderController extends Controller
                     SUM(
                         CASE 
                             WHEN booking_requests.status = "COMPLETED" 
-                            THEN COALESCE(tbl_services.price, 0) 
+                            THEN ' . $earningsSql . '
                             ELSE 0 
                         END
                     ) as earnings_total
@@ -361,7 +362,7 @@ class ProviderController extends Controller
                     SUM(
                         CASE 
                             WHEN booking_requests.status = "COMPLETED" 
-                            THEN COALESCE(tbl_services.price, 0) 
+                            THEN ' . $earningsSql . '
                             ELSE 0 
                         END
                     ) as earnings_total
@@ -411,7 +412,7 @@ class ProviderController extends Controller
                 SUM(
                     CASE 
                         WHEN booking_requests.status = "COMPLETED" 
-                        THEN COALESCE(tbl_services.price, 0) 
+                        THEN ' . $earningsSql . '
                         ELSE 0 
                     END
                 ) as earnings_total
@@ -434,10 +435,10 @@ class ProviderController extends Controller
             ->where('booking_requests.status', 'COMPLETED')
             ->selectRaw('
                 COALESCE(service_categories.name, "Uncategorized") as name,
-                SUM(COALESCE(tbl_services.price, 0)) as earnings_total
+                SUM(' . $earningsSql . ') as earnings_total
             ')
             ->groupBy('service_categories.name')
-            ->havingRaw('SUM(COALESCE(tbl_services.price, 0)) > 0')
+            ->havingRaw('SUM(' . $earningsSql . ') > 0')
             ->orderByDesc('earnings_total')
             ->get();
 
@@ -465,6 +466,29 @@ class ProviderController extends Controller
             'categoryEarnings',
             'accountHealth'
         ));
+    }
+
+    private function bookingEarningsSql(): string
+    {
+        return '
+            CASE
+                WHEN tbl_services.pricing_type = "per_hour"
+                    AND booking_requests.completed_total IS NOT NULL
+                THEN booking_requests.completed_total
+                WHEN tbl_services.pricing_type = "per_hour"
+                    AND (
+                        booking_requests.completed_hours IS NOT NULL
+                        OR booking_requests.completed_minutes IS NOT NULL
+                    )
+                THEN (
+                    (
+                        (COALESCE(booking_requests.completed_hours, 0) * 60)
+                        + COALESCE(booking_requests.completed_minutes, 0)
+                    ) / 60
+                ) * COALESCE(tbl_services.price, 0)
+                ELSE COALESCE(tbl_services.price, 0)
+            END
+        ';
     }
 
     public function bookingCalendar(Request $request)

@@ -51,6 +51,40 @@
             width: 100%;
         }
     }
+
+.dashboard-booking-client {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.dashboard-booking-client__avatar {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-booking-client__avatar--initials {
+    background: #EFF6FF;
+    color: #075985;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.dashboard-booking-client span {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 </style>
 @endpush
 
@@ -341,10 +375,44 @@
                                     #{{ $bookingInfo?->id ?? $bookingRequest->id }}
                                 </div>
 
-                                <div>
-                                    <img src="{{ asset('images/user.png') }}" alt="">
-                                    {{ $customerName ?: 'No client name' }}
-                                </div>
+@php
+    $profileImage = $bookingInfo?->user?->profile_image
+        ?? $bookingInfo?->customer?->profile_image
+        ?? $bookingInfo?->profile_image
+        ?? null;
+
+    $hasProfileImage = !empty($profileImage);
+
+    $nameForInitials = $customerName ?: 'Customer User';
+
+    $initials = collect(explode(' ', trim($nameForInitials)))
+        ->filter()
+        ->take(2)
+        ->map(fn ($name) => strtoupper(substr($name, 0, 1)))
+        ->join('');
+
+    $initials = $initials ?: 'CU';
+@endphp
+
+<div class="dashboard-booking-client">
+    @if($hasProfileImage)
+        <img
+            src="{{ asset($profileImage) }}"
+            alt="{{ $nameForInitials }}"
+            class="dashboard-booking-client__avatar"
+        >
+    @else
+        <div
+            class="dashboard-booking-client__avatar dashboard-booking-client__avatar--initials"
+            role="img"
+            aria-label="{{ $nameForInitials }}"
+        >
+            {{ $initials }}
+        </div>
+    @endif
+
+    <span>{{ $customerName ?: 'No client name' }}</span>
+</div>
 
                                 <div class="txt-div-d">
                                     {{ $service?->title ?? 'No service' }}

@@ -117,6 +117,46 @@
         .switch input:checked + .slider:before {
             transform: translateX(24px);
         }
+
+        .pricing-type-options {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            width: 100%;
+            /* padding: 8px 10px;
+            border: 1px solid #D9D9D9; */
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .pricing-type-options label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            padding: 5px 9px;
+            border: 1px solid #E5E7EB;
+            border-radius: 4px;
+            background: #F9FAFB;
+            color: #282828;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .pricing-type-options input {
+            appearance: auto !important;
+            -webkit-appearance: checkbox !important;
+            opacity: 1 !important;
+            position: static !important;
+            display: inline-block !important;
+            width: 16px !important;
+            height: 16px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            accent-color: #FFBE42;
+        }
     </style>
 @endpush
 
@@ -208,6 +248,21 @@
                             @error('price') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
+                        <div class="prg-mm-group">
+                            <label>Pricing Type</label>
+                            <div class="pricing-type-options" data-pricing-type-group>
+                                <label>
+                                    <input type="checkbox" name="pricing_type" value="fixed" {{ old('pricing_type', $service->pricing_type ?? 'fixed') === 'fixed' ? 'checked' : '' }}>
+                                    Fixed Rate
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="pricing_type" value="per_hour" {{ old('pricing_type', $service->pricing_type ?? 'fixed') === 'per_hour' ? 'checked' : '' }}>
+                                    Per Hour
+                                </label>
+                            </div>
+                            @error('pricing_type') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
+                        </div>
+
                         <div class="prg-mm-group banner-img-crtedt--glb">
                             <label>Banner Image<small>(5MB max)</small></label>
                             <input type="file" name="image" id="serviceImage" accept="image/*" />
@@ -282,6 +337,27 @@
                 options: { type: 'remote' }
             }
         ] : []
+    });
+</script>
+<script>
+    document.querySelectorAll('[data-pricing-type-group]').forEach(function (group) {
+        const inputs = group.querySelectorAll('input[type="checkbox"][name="pricing_type"]');
+
+        inputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                if (input.checked) {
+                    inputs.forEach(function (other) {
+                        if (other !== input) {
+                            other.checked = false;
+                        }
+                    });
+                }
+
+                if (![...inputs].some(function (option) { return option.checked; })) {
+                    input.checked = true;
+                }
+            });
+        });
     });
 </script>
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BookingRequest;
 use App\Services\BookingStatusService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookingRequestController extends Controller
 {
@@ -146,7 +147,7 @@ class BookingRequestController extends Controller
         ]);
     }
 
-    public function markComplete($id)
+    public function markComplete(Request $request, $id)
     {
         $provider = auth()->user()->provider ?? null;
 
@@ -158,7 +159,7 @@ class BookingRequestController extends Controller
             ]);
         }
 
-        $bookingRequest = BookingRequest::with('bookingInfo')
+        $bookingRequest = BookingRequest::with('bookingInfo.service')
             ->where('id', $id)
             ->where('provider_id', $provider->id)
             ->firstOrFail();
@@ -171,18 +172,55 @@ class BookingRequestController extends Controller
             ]);
         }
 
-        $bookingRequest->update([
-            'status' => 'COMPLETED',
-            'responded_at' => now(),
-            'customer_seen_at' => null,
-            'cancelled_by' => null,
-        ]);
+        $service = $bookingRequest->bookingInfo?->service;
+        $isPerHour = ($service?->pricing_type ?? 'fixed') === 'per_hour';
+        $completionBilling = [
+            'completed_hours' => null,
+            'completed_minutes' => null,
+            'completed_total' => null,
+        ];
 
-        if ($bookingRequest->bookingInfo) {
-            $bookingRequest->bookingInfo->update([
-                'status' => 'COMPLETED',
+        if ($isPerHour) {
+            $validated = $request->validate([
+                'completed_hours' => ['required', 'integer', 'min:0', 'max:9999'],
+                'completed_minutes' => ['required', 'integer', 'min:0', 'max:59'],
             ]);
+
+            $hours = (int) $validated['completed_hours'];
+            $minutes = (int) $validated['completed_minutes'];
+            $totalMinutes = ($hours * 60) + $minutes;
+
+            if ($totalMinutes < 1) {
+                return redirect()->back()->with('flash_message', [
+                    'title' => 'Invalid Hours',
+                    'message' => 'Completed time must be at least 1 minute.',
+                    'type' => 'warning'
+                ]);
+            }
+
+            $hourlyRate = (float) ($service->price ?? 0);
+            $completionBilling = [
+                'completed_hours' => $hours,
+                'completed_minutes' => $minutes,
+                'completed_total' => round(($totalMinutes / 60) * $hourlyRate, 2),
+            ];
         }
+
+        DB::transaction(function () use ($bookingRequest, $completionBilling) {
+            $bookingRequest->update([
+                'status' => 'COMPLETED',
+                'responded_at' => now(),
+                'customer_seen_at' => null,
+                'cancelled_by' => null,
+                ...$completionBilling,
+            ]);
+
+            if ($bookingRequest->bookingInfo) {
+                $bookingRequest->bookingInfo->update([
+                    'status' => 'COMPLETED',
+                ]);
+            }
+        });
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Completed',

@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
         
         Route::redirect('/admin', '/admin/dashboard');
         Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/admin/ongoing-bookings', [AdminController::class, 'ongoingBookings'])->name('admin.ongoing-bookings');
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
         Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
         Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');

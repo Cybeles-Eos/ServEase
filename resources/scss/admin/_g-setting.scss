@@ -193,43 +193,63 @@
             .mct-pagination {
                 display: flex;
                 align-items: center;
-                justify-content: flex-end;
-                gap: 8px;
+                justify-content: space-between;
+                gap: 12px;
                 margin-top: 12px;
+                border-top: 1px solid #EEF0F3;
+                padding-top: 12px;
+
+                p {
+                    margin: 0;
+                    color: #374151;
+                    font-size: 12px;
+                    line-height: 1.4;
+                }
+
+                .mct-pagination-actions {
+                    display: flex;
+                    align-items: center;
+                    gap: 7px;
+                }
 
                 a,
                 span {
-                    min-height: 30px;
+                    min-width: 30px;
+                    height: 30px;
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
                     border-radius: 4px;
                     font-size: 12px;
+                    text-decoration: none;
                 }
 
                 a {
-                    border: 1px solid #FFBE42;
-                    background: #FFBE42;
-                    color: #111827;
-                    padding: 0 10px;
-                    text-decoration: none;
+                    border: 1px solid #111827;
+                    background: #111827;
+                    color: #fff;
+                    padding: 0;
 
                     &:hover {
-                        background: #FFBE42;
+                        background: #111827;
+                        color: #fff;
                     }
                 }
 
                 .mct-page-disabled {
-                    border: 1px solid #e5e7eb;
-                    background: #f9fafb;
-                    color: #9ca3af;
-                    padding: 0 12px;
+                    border: 1px solid #E5E7EB;
+                    background: #F9FAFB;
+                    color: #9CA3AF;
+                    padding: 0;
                     cursor: not-allowed;
                 }
 
                 .mct-page-info {
-                    color: #6b7280;
-                    padding: 0 6px;
+                    border: 1px solid #E5E7EB;
+                    background: #FFFFFF;
+                    color: #6B7280;
+                    padding: 0 9px;
+                    white-space: nowrap;
                 }
             }
             @media (max-width: 768px) {
@@ -251,8 +271,8 @@
                 }
 
                 .mct-pagination {
-                    justify-content: flex-start;
-                    flex-wrap: wrap;
+                    align-items: flex-start;
+                    flex-direction: column;
                 }
             }
             .p-a-gs-card-header {

@@ -103,10 +103,19 @@
                                 @php
                                     $price = number_format((float) ($ongoingBookings->service->price ?? 0), 2, '.', '');
                                     [$whole, $decimal] = explode('.', $price);
+                                    $isHourly = ($ongoingBookings->service?->pricing_type ?? 'fixed') === 'per_hour';
                                 @endphp
 
-                                <p>Service Price:</p>
+                                <p>
+                                    {{ $ongoingBookings->service?->pricing_type_label ?? 'Service Price' }}:
+                                    @if($isHourly)
+                                        <span class="customer-price-rate">₱{{ number_format((float) ($ongoingBookings->service->price ?? 0), 2) }}</span>
+                                    @endif
+                                </p>
                                 <h4>₱{{ $whole }}<span>.{{ $decimal ?: '00' }}</span></h4>
+                                @if($isHourly)
+                                    <small style="display:block; margin-top: 3px; font-size: 11px; color: #6B7280;">per hour</small>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -309,16 +318,28 @@
 
                         <div class="cdrcc-ordbox-d-r">
                             @php
-                                $price = number_format((float) ($booking->service->price ?? 0), 2, '.', '');
+                                $isHourly = ($booking->service?->pricing_type ?? 'fixed') === 'per_hour';
+                                $displayAmount = $booking->status === 'COMPLETED' && $booking->bookingRequest
+                                    ? $booking->bookingRequest->billing_total
+                                    : (float) ($booking->service->price ?? 0);
+                                $price = number_format((float) $displayAmount, 2, '.', '');
                                 [$whole, $decimal] = explode('.', $price);
                             @endphp
 
-                            <p>Service Price:</p>
+                            <p>
+                                {{ $booking->service?->pricing_type_label ?? 'Service Price' }}:
+                                @if($isHourly)
+                                    <span class="customer-price-rate">₱{{ number_format((float) ($booking->service->price ?? 0), 2) }}</span>
+                                @endif
+                            </p>
 
                             @if($booking->status == 'COMPLETED')
-                                <h4 class="paid">Paid</h4>
+                                <h4>₱{{ $whole }}<span>.{{ $decimal ?: '00' }}</span></h4>
                             @else
                                 <h4>₱{{ $whole }}<span>.{{ $decimal ?: '00' }}</span></h4>
+                                @if($isHourly)
+                                    <small style="display:block; margin-top: 3px; font-size: 11px; color: #6B7280;">per hour</small>
+                                @endif
                             @endif
                         </div>
                     </div>

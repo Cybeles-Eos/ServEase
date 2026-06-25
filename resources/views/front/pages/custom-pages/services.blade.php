@@ -514,6 +514,13 @@
                                     Job Completed: ${service.jobs}
                                 </div>
 
+                                <div>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 1.5V14.5M11.25 4.25H6.375C5.47854 4.25 4.75 4.97854 4.75 5.875C4.75 6.77146 5.47854 7.5 6.375 7.5H9.625C10.5215 7.5 11.25 8.22854 11.25 9.125C11.25 10.0215 10.5215 10.75 9.625 10.75H4.75" stroke="#FFBE42" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    ${service.pricing_type_label}: ${service.price_label}
+                                </div>
+
                             </div>
 
                             <div class="ps-sl-c-box__body--cta">

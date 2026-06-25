@@ -44,6 +44,9 @@ class ServiceController extends Controller
                     'category_is_active' => $categoryIsActive,
 
                     'price' => $service->price,
+                    'pricing_type' => $service->pricing_type ?? 'fixed',
+                    'pricing_type_label' => $service->pricing_type_label,
+                    'price_label' => $service->price_label,
                     'image' => $service->image,
 
                     'jobs' => \App\Models\BookingInfo::where('service_id', $service->id)
@@ -107,6 +110,7 @@ class ServiceController extends Controller
             // 'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
             'price'          => 'required|numeric|min:100|max:1000000',
+            'pricing_type'   => ['required', Rule::in(['fixed', 'per_hour'])],
             'image'          => 'image|mimes:jpg,jpeg,png,webp|max:5048',
             'is_active' => 'required|in:0,1',
         ]);
@@ -144,6 +148,7 @@ class ServiceController extends Controller
             'content'        => $request->content,
             'specialization' => $request->specialization,
             'price'          => $request->price,
+            'pricing_type'   => $request->pricing_type,
             'image'          => null,
             'is_active'      => $request->is_active,
         ]);
@@ -336,6 +341,9 @@ class ServiceController extends Controller
                 ->count(),
 
             'price' => $service->price,
+            'pricing_type' => $service->pricing_type ?? 'fixed',
+            'pricing_type_label' => $service->pricing_type_label,
+            'price_label' => $service->price_label,
 
             // 'rating' => round($ratings->avg('rating') ?? 0, 1),
             // 'reviews' => $ratings->count(),
@@ -413,6 +421,7 @@ class ServiceController extends Controller
             // 'category'       => 'required|string',
             'specialization' => 'nullable|string|max:255',
             'price'          => 'nullable|numeric',
+            'pricing_type'   => ['required', Rule::in(['fixed', 'per_hour'])],
             'image'          => $service->image
                 ? 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
                 : 'image|mimes:jpg,jpeg,png,webp|max:5048',
@@ -431,6 +440,7 @@ class ServiceController extends Controller
             'content'        => $request->content,
             'specialization' => $request->specialization,
             'price'          => $request->price,
+            'pricing_type'   => $request->pricing_type,
             'is_active'      => $request->is_active
         ]);
 

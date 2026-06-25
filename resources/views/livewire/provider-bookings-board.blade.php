@@ -83,8 +83,8 @@
 
                             <div class="boxss-sd-bking-foo">
                                 <p>
-                                    Fixed Rate:
-                                    <span>₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}</span>
+                                    {{ $request->bookingInfo->service?->pricing_type_label ?? 'Fixed Rate' }}:
+                                    <span>{{ $request->bookingInfo->service?->price_label ?? '₱0.00' }}</span>
                                 </p>
 
                                 <form action="{{ route('provider.booking-request.cancel', $request->id) }}" method="POST">
@@ -135,7 +135,7 @@
                                 <div class="pb-md-left-tblc-main-serv">
                                     <small>{{ $request->bookingInfo->service['category'] ?? '' }}</small>
                                     <p>{{ \Illuminate\Support\Str::limit($request->bookingInfo->service['title'] ?? '', 40) }}</p>
-                                    <small>₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}</small>
+                                    <small>{{ $request->bookingInfo->service?->price_label ?? '₱0.00' }}</small>
                                 </div>
 
                                 <div class="pb-md-left-tblc-main-date">
@@ -187,6 +187,10 @@
                     @php
                         $customerAvatar = $this->customerAvatarData($request);
                         $ongoingStartedAt = $request->updated_at;
+                        $ongoingService = $request->bookingInfo?->service;
+                        $ongoingStartedAtIso = $ongoingStartedAt
+                            ? \Carbon\Carbon::parse($ongoingStartedAt)->toIso8601String()
+                            : '';
                     @endphp
                     <div class="pb-md-right-active__body provider-ongoing-card" wire:key="ongoing-{{ $request->id }}">
                         <div class="pb-md-right-active__body__head">
@@ -217,8 +221,8 @@
                             </div>
 
                             <p class="pb-md-right-active__body__head__rate">
-                                Fixed Rate:
-                                <span>₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}</span>
+                                {{ $request->bookingInfo->service?->pricing_type_label ?? 'Fixed Rate' }}:
+                                <span>{{ $request->bookingInfo->service?->price_label ?? '₱0.00' }}</span>
                             </p>
                         </div>
 
@@ -266,7 +270,15 @@
                         </div>
 
                         <div class="provider-ongoing-card__actions">
-                            <form action="{{ route('provider.booking-request.complete', $request->id) }}" method="POST" class="provider-booking-action-form" data-action="complete">
+                            <form
+                                action="{{ route('provider.booking-request.complete', $request->id) }}"
+                                method="POST"
+                                class="provider-booking-action-form"
+                                data-action="complete"
+                                data-pricing-type="{{ $ongoingService?->pricing_type ?? 'fixed' }}"
+                                data-hourly-rate="{{ (float) ($ongoingService?->price ?? 0) }}"
+                                data-started-at="{{ $ongoingStartedAtIso }}"
+                            >
                                 @csrf
                                 <button type="submit" class="provider-ongoing-card__btn provider-ongoing-card__btn--complete">
                                     Mark Complete
@@ -296,10 +308,6 @@
                         <option value="CANCELLED">Cancelled</option>
                     </select>
                 </div>
-
-                @php
-                    $historyRequests = $bookRequests->where('status', $historyStatus);
-                @endphp
 
                 @forelse($historyRequests as $request)
                     @php
@@ -355,8 +363,16 @@
                                         {{ $request->bookingInfo['address'] ?? '' }}
                                     </p>
                                     <p style="margin: 5px 0 0; font-size: 12px; font-weight: 600;">
-                                        Fixed Rate: ₱{{ number_format($request->bookingInfo->service['price'] ?? 0, 2) }}
+                                        {{ $request->bookingInfo->service?->pricing_type_label ?? 'Fixed Rate' }}: {{ $request->bookingInfo->service?->price_label ?? '₱0.00' }}
                                     </p>
+                                    @if(($request->bookingInfo->service?->pricing_type ?? 'fixed') === 'per_hour' && $request->completed_duration_label)
+                                        <p style="margin: 2px 0 0; font-size: 12px; color: #656565;">
+                                            Completed Time: {{ $request->completed_duration_label }}
+                                        </p>
+                                        <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700;">
+                                            Total: {{ $request->billing_total_label }}
+                                        </p>
+                                    @endif
                                     <p class="provider-history-ended">
                                         {{ $historyStatusLabel }}:
                                         <span>{{ $historyEndedAt ? \Carbon\Carbon::parse($historyEndedAt)->format('M d, Y g:i A') : 'Not recorded' }}</span>
@@ -405,6 +421,62 @@
                         <p style="font-size: 14px; color: hsla(43, 64%, 2%, 0.6)">No {{ strtolower($historyStatus) }} booking</p>
                     </div>
                 @endforelse
+                
+                @if($historyRequests && $historyRequests->total() > 0)
+                    <div class="provider-history-pagination">
+                        <p>
+                            Showing {{ $historyRequests->total() ? $historyRequests->firstItem() : 0 }} to {{ $historyRequests->total() ? $historyRequests->lastItem() : 0 }} of {{ $historyRequests->total() }} results
+                        </p>
+
+                        @if($historyRequests->hasPages())
+                            <div class="provider-history-pagination-actions">
+                                @if($historyRequests->onFirstPage())
+                                    <span class="provider-history-page-btn is-disabled" aria-disabled="true">
+                                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                @else
+                                    <button
+                                        type="button"
+                                        class="provider-history-page-btn"
+                                        wire:click="previousPage('history_page')"
+                                        wire:loading.attr="disabled"
+                                        aria-label="Previous page"
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                @endif
+
+                                <span class="provider-history-page-info">
+                                    {{ $historyRequests->currentPage() }} / {{ $historyRequests->lastPage() }}
+                                </span>
+
+                                @if($historyRequests->hasMorePages())
+                                    <button
+                                        type="button"
+                                        class="provider-history-page-btn provider-history-page-btn--active"
+                                        wire:click="nextPage('history_page')"
+                                        wire:loading.attr="disabled"
+                                        aria-label="Next page"
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                            <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                @else
+                                    <span class="provider-history-page-btn is-disabled" aria-disabled="true">
+                                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                            <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -413,6 +485,61 @@
 <script>
     if (!window.providerBookingActionConfirmBound) {
         window.providerBookingActionConfirmBound = true;
+
+        const pesoFormatter = new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        function formatPeso(amount) {
+            return pesoFormatter.format(Number.isFinite(amount) ? amount : 0);
+        }
+
+        function getDefaultDuration(startedAt) {
+            const startedDate = startedAt ? new Date(startedAt) : null;
+            const startedTime = startedDate && !Number.isNaN(startedDate.getTime())
+                ? startedDate.getTime()
+                : Date.now();
+            const elapsedMinutes = Math.max(1, Math.floor((Date.now() - startedTime) / 60000));
+
+            return {
+                hours: Math.floor(elapsedMinutes / 60),
+                minutes: elapsedMinutes % 60
+            };
+        }
+
+        function syncHourlyTotal(rate) {
+            const hoursInput = document.getElementById('hourly-completion-hours');
+            const minutesInput = document.getElementById('hourly-completion-minutes');
+            const title = document.querySelector('.swal2-title');
+
+            if (!hoursInput || !minutesInput || !title) {
+                return;
+            }
+
+            const hours = Math.max(0, parseInt(hoursInput.value || '0', 10));
+            const minutes = Math.min(59, Math.max(0, parseInt(minutesInput.value || '0', 10)));
+            const total = (((hours * 60) + minutes) / 60) * rate;
+
+            hoursInput.value = hours;
+            minutesInput.value = minutes;
+            title.textContent = `Total ${formatPeso(total)}`;
+        }
+
+        function appendCompletionField(form, name, value) {
+            let input = form.querySelector(`input[name="${name}"]`);
+
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                form.appendChild(input);
+            }
+
+            input.value = value;
+        }
 
         document.addEventListener('submit', function (event) {
             const form = event.target.closest('.provider-booking-action-form');
@@ -424,6 +551,85 @@
             event.preventDefault();
 
             const isCancel = form.dataset.action === 'cancel';
+            const isHourlyCompletion = form.dataset.action === 'complete'
+                && form.dataset.pricingType === 'per_hour';
+
+            if (isHourlyCompletion) {
+                const rate = parseFloat(form.dataset.hourlyRate || '0');
+                const defaultDuration = getDefaultDuration(form.dataset.startedAt);
+
+                Swal.fire({
+                    title: 'Total ' + formatPeso((((defaultDuration.hours * 60) + defaultDuration.minutes) / 60) * rate),
+                    html: `
+                        <div class="hourly-completion-modal">
+                            <div class="hourly-completion-modal__rate">
+                                <span>Hourly rate</span>
+                                <strong>${formatPeso(rate)}</strong>
+                            </div>
+                            <div class="hourly-completion-modal__fields">
+                                <label>
+                                    <span>Hours</span>
+                                    <input id="hourly-completion-hours" type="number" min="0" max="9999" step="1" value="${defaultDuration.hours}">
+                                </label>
+                                <label>
+                                    <span>Minutes</span>
+                                    <input id="hourly-completion-minutes" type="number" min="0" max="59" step="1" value="${defaultDuration.minutes}">
+                                </label>
+                                <span class="hourly-completion-modal__help" aria-label="Hourly total computation guide">
+                                    ?
+                                    <span class="hourly-completion-modal__tooltip">
+                                        Hourly total is computed using the completed hours and minutes. Formula: ((Hours x 60 + Minutes) / 60) x Rate.
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#16A34A',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Save',
+                    cancelButtonText: 'Cancel',
+                    didOpen: () => {
+                        const htmlContainer = document.querySelector('.swal2-html-container');
+                        const hoursInput = document.getElementById('hourly-completion-hours');
+                        const minutesInput = document.getElementById('hourly-completion-minutes');
+
+                        if (htmlContainer) {
+                            htmlContainer.style.overflow = 'visible';
+                        }
+
+                        [hoursInput, minutesInput].forEach((input) => {
+                            input.addEventListener('input', () => syncHourlyTotal(rate));
+                        });
+                    },
+                    preConfirm: () => {
+                        const hoursInput = document.getElementById('hourly-completion-hours');
+                        const minutesInput = document.getElementById('hourly-completion-minutes');
+                        const hours = Math.max(0, parseInt(hoursInput.value || '0', 10));
+                        const minutes = Math.min(59, Math.max(0, parseInt(minutesInput.value || '0', 10)));
+
+                        if (((hours * 60) + minutes) < 1) {
+                            Swal.showValidationMessage('Completed time must be at least 1 minute.');
+                            return false;
+                        }
+
+                        hoursInput.value = hours;
+                        minutesInput.value = minutes;
+
+                        return { hours, minutes };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        appendCompletionField(form, 'completed_hours', result.value.hours);
+                        appendCompletionField(form, 'completed_minutes', result.value.minutes);
+                        form.dataset.confirmed = 'true';
+                        form.submit();
+                    }
+                });
+
+                return;
+            }
 
             Swal.fire({
                 title: isCancel ? 'Cancel this ongoing service?' : 'Mark this service complete?',

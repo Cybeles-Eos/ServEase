@@ -26,7 +26,7 @@ class BookingStatusService
         $updatedToOngoing = 0;
         $updatedToCompleted = 0;
 
-        $bookingRequests = BookingRequest::with('bookingInfo')
+        $bookingRequests = BookingRequest::with('bookingInfo.service')
             ->whereIn('status', ['ACCEPTED', 'ONGOING'])
             ->whereHas('bookingInfo', function ($query) {
                 $query->whereNotNull('date')
@@ -151,11 +151,31 @@ class BookingStatusService
                 return false;
             }
 
-            DB::transaction(function () use ($bookingRequest) {
+            $completionBilling = [
+                'completed_hours' => null,
+                'completed_minutes' => null,
+                'completed_total' => null,
+            ];
+            $service = $bookingRequest->bookingInfo?->service;
+
+            if (($service?->pricing_type ?? 'fixed') === 'per_hour') {
+                $hours = $this->useMinuteTesting ? 0 : $this->bookingDurationHours;
+                $minutes = $this->useMinuteTesting ? $this->bookingDurationMinutes : 0;
+                $totalMinutes = ($hours * 60) + $minutes;
+
+                $completionBilling = [
+                    'completed_hours' => $hours,
+                    'completed_minutes' => $minutes,
+                    'completed_total' => round(($totalMinutes / 60) * (float) ($service->price ?? 0), 2),
+                ];
+            }
+
+            DB::transaction(function () use ($bookingRequest, $completionBilling) {
                 $bookingRequest->update([
                     'status' => 'COMPLETED',
                     'responded_at' => now(),
                     'cancelled_by' => null,
+                    ...$completionBilling,
                 ]);
 
                 $bookingRequest->bookingInfo->update([

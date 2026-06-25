@@ -79,6 +79,7 @@
         'provider/resubmit', 
         'customer/setting',
         'admin/applicants',
+        'admin/ongoing-bookings',
         'admin/users',
         'admin/users/*/edit',
         'admin/users/create',

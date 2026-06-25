@@ -5,10 +5,18 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\BookingRequest;
 use App\Services\BookingStatusService;
+use Livewire\WithPagination;
 
 class ProviderBookingsBoard extends Component
 {
+    use WithPagination;
+
     public string $historyStatus = 'COMPLETED';
+
+    public function updatedHistoryStatus(): void
+    {
+        $this->resetPage('history_page');
+    }
 
     public function customerAvatarData($request): array
     {
@@ -60,6 +68,7 @@ class ProviderBookingsBoard extends Component
         $providerId = auth()->user()->provider->id ?? null;
 
         $bookRequests = collect();
+        $historyRequests = null;
 
         if ($providerId) {
             $bookRequests = BookingRequest::with([
@@ -71,10 +80,22 @@ class ProviderBookingsBoard extends Component
                 ->where('provider_id', $providerId)
                 ->latest()
                 ->get();
+
+            $historyRequests = BookingRequest::with([
+                    'bookingInfo',
+                    'bookingInfo.customer',
+                    'bookingInfo.service',
+                    'rating',
+                ])
+                ->where('provider_id', $providerId)
+                ->where('status', $this->historyStatus)
+                ->latest()
+                ->paginate(3, ['*'], 'history_page');
         }
 
         return view('livewire.provider-bookings-board', [
             'bookRequests' => $bookRequests,
+            'historyRequests' => $historyRequests,
             'providerId' => $providerId,
         ]);
     }

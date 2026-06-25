@@ -106,6 +106,10 @@
             $customer = $bookingInfo->customer ?? null;
 
             $servicePrice = (float) ($service->price ?? 0);
+            $servicePriceLabel = $service?->price_label ?? ('₱' . number_format($servicePrice, 2));
+            $servicePricingTypeLabel = $service?->pricing_type_label ?? 'Fixed Rate';
+            $bookingTotalLabel = $bookingRequest->billing_total_label ?? $servicePriceLabel;
+            $completedDurationLabel = $bookingRequest->completed_duration_label;
             $bookingDate = !empty($bookingInfo->date)
                 ? \Carbon\Carbon::parse($bookingInfo->date)->format('m/d/Y')
                 : 'N/A';
@@ -195,15 +199,22 @@
         <div class="dash"></div>
 
         <div class="row">
-            <span>Service Price:</span>
-            <span>₱{{ number_format($servicePrice, 2) }}</span>
+            <span>{{ $servicePricingTypeLabel }}:</span>
+            <span>{{ $servicePriceLabel }}</span>
         </div>
+
+        @if(($service->pricing_type ?? 'fixed') === 'per_hour' && $completedDurationLabel)
+            <div class="row">
+                <span>Completed Time:</span>
+                <span>{{ $completedDurationLabel }}</span>
+            </div>
+        @endif
 
         <div class="dash"></div>
 
         <div class="row" style="font-weight: bold;">
             <span>GRAND TOTAL:</span>
-            <span>₱{{ number_format($servicePrice, 2) }}</span>
+            <span>{{ $bookingTotalLabel }}</span>
         </div>
 
         <div class="dash"></div>

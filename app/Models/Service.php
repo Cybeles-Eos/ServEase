@@ -36,6 +36,7 @@ class Service extends Model
         'description',
         'content',
         'price',
+        'pricing_type',
         'image',
         'specialization',
         'is_active',
@@ -82,5 +83,18 @@ class Service extends Model
     public function ratingsCount()
     {
         return $this->ratings()->count();
+    }
+
+    public function getPricingTypeLabelAttribute(): string
+    {
+        return $this->pricing_type === 'per_hour' ? 'Per Hour' : 'Fixed Rate';
+    }
+
+    public function getPriceLabelAttribute(): string
+    {
+        $price = number_format((float) ($this->price ?? 0), 2);
+        $suffix = $this->pricing_type === 'per_hour' ? ' / hour' : '';
+
+        return '₱' . $price . $suffix;
     }
 }

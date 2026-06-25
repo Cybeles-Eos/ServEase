@@ -485,7 +485,7 @@
 
                 <p>
                     <strong>Price</strong>
-                    ₱{{ number_format($service->price ?? 0, 2) }}
+                    {{ $service->price_label }}
                 </p>
 
                 <p>

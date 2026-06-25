@@ -181,6 +181,72 @@
                 background: #FDB932;
             }
 
+            .smtp-usage-pagination {
+                margin-top: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                border-top: 1px solid #EEF0F3;
+                padding-top: 12px;
+            }
+
+            .smtp-usage-pagination p {
+                margin: 0;
+                color: #374151;
+                font-size: 12px;
+                line-height: 1.4;
+            }
+
+            .smtp-usage-pagination-actions {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+            }
+
+            .smtp-usage-page-btn,
+            .smtp-usage-page-info {
+                min-width: 30px;
+                height: 30px;
+                border-radius: 4px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                text-decoration: none;
+            }
+
+            .smtp-usage-page-btn {
+                border: 1px solid #E5E7EB;
+                background: #FFFFFF;
+                color: #374151;
+            }
+
+            .smtp-usage-page-btn--active,
+            .smtp-usage-page-btn:hover {
+                border-color: #111827;
+                background: #111827;
+                color: #FFFFFF;
+            }
+
+            .smtp-usage-page-btn.is-disabled {
+                background: #F9FAFB;
+                color: #9CA3AF;
+                cursor: not-allowed;
+            }
+
+            .smtp-usage-page-btn svg {
+                display: block;
+            }
+
+            .smtp-usage-page-info {
+                border: 1px solid #E5E7EB;
+                background: #FFFFFF;
+                color: #6B7280;
+                padding: 0 9px;
+                white-space: nowrap;
+            }
+
             @media screen and (max-width: 768px) {
                 .smtp-usage-summary,
                 .smtp-usage-metrics {
@@ -193,6 +259,11 @@
 
                 .smtp-usage-actions {
                     justify-content: flex-start;
+                }
+
+                .smtp-usage-pagination {
+                    align-items: flex-start;
+                    flex-direction: column;
                 }
             }
         </style>
@@ -279,6 +350,48 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="smtp-usage-pagination">
+                <p>
+                    Showing {{ $smtpUsageRecords->total() ? $smtpUsageRecords->firstItem() : 0 }} to {{ $smtpUsageRecords->total() ? $smtpUsageRecords->lastItem() : 0 }} of {{ $smtpUsageRecords->total() }} results
+                </p>
+
+                @if ($smtpUsageRecords->hasPages())
+                    <div class="smtp-usage-pagination-actions">
+                        @if ($smtpUsageRecords->onFirstPage())
+                            <span class="smtp-usage-page-btn is-disabled" aria-disabled="true">
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        @else
+                            <a href="{{ $smtpUsageRecords->previousPageUrl() }}" class="smtp-usage-page-btn" aria-label="Previous page">
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        @endif
+
+                        <span class="smtp-usage-page-info">
+                            {{ $smtpUsageRecords->currentPage() }} / {{ $smtpUsageRecords->lastPage() }}
+                        </span>
+
+                        @if ($smtpUsageRecords->hasMorePages())
+                            <a href="{{ $smtpUsageRecords->nextPageUrl() }}" class="smtp-usage-page-btn smtp-usage-page-btn--active" aria-label="Next page">
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                    <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        @else
+                            <span class="smtp-usage-page-btn is-disabled" aria-disabled="true">
+                                <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                                    <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                        @endif
+                    </div>
+                @endif
             </div>
         </section>
 
@@ -427,21 +540,27 @@
 
             @if ($serviceCategories->hasPages())
                 <div class="mct-pagination">
-                    @if ($serviceCategories->onFirstPage())
-                        <span class="mct-page-disabled"><i class="fa fa-chevron-left"></i></span>
-                    @else
-                        <a href="{{ $serviceCategories->previousPageUrl() }}"><i class="fa fa-chevron-left"></i></a>
-                    @endif
+                    <p>
+                        Showing {{ $serviceCategories->total() ? $serviceCategories->firstItem() : 0 }} to {{ $serviceCategories->total() ? $serviceCategories->lastItem() : 0 }} of {{ $serviceCategories->total() }} results
+                    </p>
 
-                    <span class="mct-page-info">
-                        Page {{ $serviceCategories->currentPage() }} of {{ $serviceCategories->lastPage() }}
-                    </span>
+                    <div class="mct-pagination-actions">
+                        @if ($serviceCategories->onFirstPage())
+                            <span class="mct-page-disabled"><i class="fa fa-chevron-left"></i></span>
+                        @else
+                            <a href="{{ $serviceCategories->previousPageUrl() }}"><i class="fa fa-chevron-left"></i></a>
+                        @endif
 
-                    @if ($serviceCategories->hasMorePages())
-                        <a href="{{ $serviceCategories->nextPageUrl() }}"><i class="fa fa-chevron-right"></i></a>
-                    @else
-                        <span class="mct-page-disabled"><i class="fa fa-chevron-right"></i></span>
-                    @endif
+                        <span class="mct-page-info">
+                            {{ $serviceCategories->currentPage() }} / {{ $serviceCategories->lastPage() }}
+                        </span>
+
+                        @if ($serviceCategories->hasMorePages())
+                            <a href="{{ $serviceCategories->nextPageUrl() }}"><i class="fa fa-chevron-right"></i></a>
+                        @else
+                            <span class="mct-page-disabled"><i class="fa fa-chevron-right"></i></span>
+                        @endif
+                    </div>
                 </div>
 
             @endif

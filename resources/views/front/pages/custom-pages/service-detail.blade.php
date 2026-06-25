@@ -340,7 +340,7 @@
                         </div>
                         <div class="psd-sl-sdetaili-d-service-info">
                             <p class="psd-sl-sdetaili-d-service-info__prc">
-                                Service Price: <span>₱ {{ number_format($service->price, 2) }}</span>
+                                {{ $service->pricing_type_label }}: <span>{{ $service->price_label }}</span>
                             </p>
                             <br>
                             <h4>More Details {{ $service->provider_name }}</h4>

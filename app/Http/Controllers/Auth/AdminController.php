@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminNotification;
+use App\Models\BookingRequest;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\PlatformSetting;
 use App\Models\DailyOtpUsage;
+use App\Services\BookingStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -76,6 +78,7 @@ class AdminController extends Controller
         |--------------------------------------------------------------------------
         */
         $activeProviderBookingsQuery = $this->activeProviderBookingsQuery();
+        $earningsSql = $this->bookingEarningsSql();
 
         $totalBookings = (clone $activeProviderBookingsQuery)
             ->count('booking_requests.id');
@@ -90,7 +93,7 @@ class AdminController extends Controller
 
         $totalEarnings = (clone $activeProviderBookingsQuery)
             ->where('booking_requests.status', 'COMPLETED')
-            ->sum(DB::raw('COALESCE(tbl_services.price, 0)'));
+            ->sum(DB::raw($earningsSql));
 
         /*
         |--------------------------------------------------------------------------
@@ -115,7 +118,7 @@ class AdminController extends Controller
                     SUM(
                         CASE
                             WHEN booking_requests.status = "COMPLETED"
-                            THEN COALESCE(tbl_services.price, 0)
+                            THEN ' . $earningsSql . '
                             ELSE 0
                         END
                     ) as earnings_total
@@ -140,7 +143,7 @@ class AdminController extends Controller
                     SUM(
                         CASE
                             WHEN booking_requests.status = "COMPLETED"
-                            THEN COALESCE(tbl_services.price, 0)
+                            THEN ' . $earningsSql . '
                             ELSE 0
                         END
                     ) as earnings_total
@@ -182,7 +185,7 @@ class AdminController extends Controller
                 SUM(
                     CASE
                         WHEN booking_requests.status = "COMPLETED"
-                        THEN COALESCE(tbl_services.price, 0)
+                        THEN ' . $earningsSql . '
                         ELSE 0
                     END
                 ) as earnings_total
@@ -289,6 +292,102 @@ class AdminController extends Controller
             ->where('users.is_active', 1)
             ->where('tbl_providers.application_status', 'accepted')
             ->whereNull('tbl_services.deleted_at');
+    }
+
+    private function bookingEarningsSql(): string
+    {
+        return '
+            CASE
+                WHEN tbl_services.pricing_type = "per_hour"
+                    AND booking_requests.completed_total IS NOT NULL
+                THEN booking_requests.completed_total
+                WHEN tbl_services.pricing_type = "per_hour"
+                    AND (
+                        booking_requests.completed_hours IS NOT NULL
+                        OR booking_requests.completed_minutes IS NOT NULL
+                    )
+                THEN (
+                    (
+                        (COALESCE(booking_requests.completed_hours, 0) * 60)
+                        + COALESCE(booking_requests.completed_minutes, 0)
+                    ) / 60
+                ) * COALESCE(tbl_services.price, 0)
+                ELSE COALESCE(tbl_services.price, 0)
+            END
+        ';
+    }
+
+    public function ongoingBookings(Request $request)
+    {
+        if (! auth()->user()->isAdmin()) {
+            return redirect('/')->with('flash_message', [
+                'title' => 'Account Not Found!',
+                'message' => 'Please Login Your Account To Continue.',
+                'type' => 'error'
+            ]);
+        }
+
+        app(BookingStatusService::class)->updateAllDueBookings();
+
+        $allowedStatuses = ['PENDING', 'ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'];
+        $status = strtoupper((string) $request->get('status', ''));
+        $search = trim((string) $request->get('search', ''));
+
+        $baseQuery = BookingRequest::query()
+            ->with([
+                'provider.user',
+                'bookingInfo.customer',
+                'bookingInfo.service.provider.user',
+                'bookingInfo.service.serviceCategory',
+            ]);
+
+        $totalBookings = (clone $baseQuery)->count();
+        $ongoingBookings = (clone $baseQuery)->where('status', 'ONGOING')->count();
+        $completedBookings = (clone $baseQuery)->where('status', 'COMPLETED')->count();
+        $cancelledBookings = (clone $baseQuery)->where('status', 'CANCELLED')->count();
+
+        $bookings = $baseQuery
+            ->when(in_array($status, $allowedStatuses, true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('id', $search)
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhereHas('bookingInfo', function ($bookingQuery) use ($search) {
+                            $bookingQuery->where('fname', 'like', "%{$search}%")
+                                ->orWhere('lname', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%")
+                                ->orWhere('number', 'like', "%{$search}%")
+                                ->orWhere('address', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('provider', function ($providerQuery) use ($search) {
+                            $providerQuery->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhere('phone_number', 'like', "%{$search}%")
+                                ->orWhereHas('user', function ($userQuery) use ($search) {
+                                    $userQuery->where('email', 'like', "%{$search}%");
+                                });
+                        })
+                        ->orWhereHas('bookingInfo.service', function ($serviceQuery) use ($search) {
+                            $serviceQuery->where('title', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('admin.page.admin.bookings.index', compact(
+            'allowedStatuses',
+            'bookings',
+            'cancelledBookings',
+            'completedBookings',
+            'ongoingBookings',
+            'search',
+            'status',
+            'totalBookings',
+        ));
     }
 
     // public function users()
@@ -737,8 +836,8 @@ class AdminController extends Controller
         $smtpDailyLimit = 300;
         $smtpUsageRecords = DailyOtpUsage::query()
             ->latest('date')
-            ->limit(7)
-            ->get();
+            ->paginate(2, ['*'], 'smtp_usage_page')
+            ->withQueryString();
         $smtpTodayUsage = DailyOtpUsage::query()
             ->where('date', now('Asia/Manila')->toDateString())
             ->first();
