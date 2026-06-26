@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
+use App\Services\BookingEmailService;
 use App\Services\BookingStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,7 @@ class BookingRequestController extends Controller
     public function accept($id)
     {
         $provider = auth()->user()->provider ?? null;
+        $bookingStatusService = app(BookingStatusService::class);
 
         if (!$provider) {
             return redirect()->back()->with('flash_message', [
@@ -46,6 +48,17 @@ class BookingRequestController extends Controller
             ->where('id', $id)
             ->where('provider_id', $provider->id)
             ->firstOrFail();
+
+        $bookingStatusService->expirePendingIfDue($bookingRequest);
+        $bookingRequest->refresh();
+
+        if ($bookingRequest->status !== 'PENDING') {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Invalid Action',
+                'message' => 'Only pending bookings can be accepted.',
+                'type' => 'warning'
+            ]);
+        }
 
         $bookingRequest->update([
             'status' => 'ACCEPTED',
@@ -59,6 +72,8 @@ class BookingRequestController extends Controller
             ]);
         }
 
+        app(BookingEmailService::class)->sendAcceptedToCustomer($bookingRequest);
+
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Accepted',
             'message' => null,
@@ -69,6 +84,7 @@ class BookingRequestController extends Controller
     public function decline($id)
     {
         $provider = auth()->user()->provider ?? null;
+        $bookingStatusService = app(BookingStatusService::class);
 
         if (!$provider) {
             return redirect()->back()->with('flash_message', [
@@ -82,6 +98,17 @@ class BookingRequestController extends Controller
             ->where('id', $id)
             ->where('provider_id', $provider->id)
             ->firstOrFail();
+
+        $bookingStatusService->expirePendingIfDue($bookingRequest);
+        $bookingRequest->refresh();
+
+        if ($bookingRequest->status !== 'PENDING') {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Invalid Action',
+                'message' => 'Only pending bookings can be declined.',
+                'type' => 'warning'
+            ]);
+        }
 
         $bookingRequest->update([
             'status' => 'DECLINED',
@@ -95,6 +122,8 @@ class BookingRequestController extends Controller
             ]);
         }
 
+        app(BookingEmailService::class)->sendDeclinedToCustomer($bookingRequest);
+
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Declined',
             'message' => 'Booking request declined successfully.',
@@ -105,6 +134,7 @@ class BookingRequestController extends Controller
     public function cancel($id)
     {
         $provider = auth()->user()->provider ?? null;
+        $bookingStatusService = app(BookingStatusService::class);
 
         if (!$provider) {
             return redirect()->back()->with('flash_message', [
@@ -118,6 +148,9 @@ class BookingRequestController extends Controller
             ->where('id', $id)
             ->where('provider_id', $provider->id)
             ->firstOrFail();
+
+        $bookingStatusService->expirePendingIfDue($bookingRequest);
+        $bookingRequest->refresh();
 
         if (! in_array($bookingRequest->status, ['ACCEPTED', 'ONGOING'])) {
             return redirect()->back()->with('flash_message', [
@@ -139,6 +172,8 @@ class BookingRequestController extends Controller
                 'status' => 'CANCELLED',
             ]);
         }
+
+        app(BookingEmailService::class)->sendProviderCancelledToCustomer($bookingRequest);
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Cancel',
@@ -283,6 +318,7 @@ class BookingRequestController extends Controller
     public function customerCancel($id)
     {
         $customer = auth()->user()->customer ?? null;
+        $bookingStatusService = app(BookingStatusService::class);
 
         if (! $customer) {
             return redirect()->back()->with('flash_message', [
@@ -298,6 +334,9 @@ class BookingRequestController extends Controller
                 $query->where('customer_id', $customer->id);
             })
             ->firstOrFail();
+
+        $bookingStatusService->expirePendingIfDue($bookingRequest);
+        $bookingRequest->refresh();
 
         if (! in_array($bookingRequest->status, ['PENDING', 'ACCEPTED', 'ONGOING'])) {
             return redirect()->back()->with('flash_message', [
@@ -320,6 +359,8 @@ class BookingRequestController extends Controller
             ]);
         }
 
+        app(BookingEmailService::class)->sendCustomerCancelledToProvider($bookingRequest);
+
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Cancelled',
             'message' => 'Your booking has been cancelled.',
@@ -340,7 +381,7 @@ class BookingRequestController extends Controller
                 ->whereHas('bookingInfo', function ($query) use ($customer) {
                     $query->where('customer_id', $customer->id);
                 })
-                ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+                ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED', 'expired'])
                 ->whereNull('customer_seen_at')
                 ->update([
                     'customer_seen_at' => now(),
@@ -355,7 +396,7 @@ class BookingRequestController extends Controller
             ->whereHas('bookingInfo', function ($query) use ($customer) {
                 $query->where('customer_id', $customer->id);
             })
-            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED', 'expired'])
             ->whereNull('customer_seen_at')
             ->update([
                 'customer_seen_at' => now(),

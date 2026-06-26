@@ -136,6 +136,7 @@
                 <option value="COMPLETED">Completed</option>
                 <option value="DECLINED">Declined</option>
                 <option value="CANCELLED">Cancelled</option>
+                <option value="expired">Expired</option>
             </select>
 
             <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -206,6 +207,7 @@
                                     'COMPLETED' => 'cus-tbns-sty__completed',
                                     'DECLINED' => 'cus-tbns-sty__cancelled',
                                     'CANCELLED' => 'cus-tbns-sty__cancelled',
+                                    'expired' => 'cus-tbns-sty__cancelled',
                                     default => 'cus-tbns-sty__pending',
                                 };
                             @endphp
@@ -304,7 +306,7 @@
                                         {{ !empty($booking->time) ? \Carbon\Carbon::parse($booking->time)->format('g:i A') : '' }}
                                     </span>
                                     </p>
-                                    @if(in_array($booking->status, ['COMPLETED', 'CANCELLED']))
+                                    @if(in_array($booking->status, ['COMPLETED', 'CANCELLED', 'expired']))
                                         <p class="cdrcc-ordbox-d-l--sched__txt">
                                             Ended:
                                             <span>

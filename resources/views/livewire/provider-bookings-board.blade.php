@@ -306,6 +306,7 @@
                     <select wire:model.live="historyStatus" class="provider-history-filter">
                         <option value="COMPLETED">Completed</option>
                         <option value="CANCELLED">Cancelled</option>
+                        <option value="expired">Expired</option>
                     </select>
                 </div>
 
@@ -316,7 +317,7 @@
                         $historyStatusLabel = ucfirst(strtolower($request->status));
                     @endphp
                     <div class="pb-md-right-completed__body" wire:key="history-{{ $request->id }}-{{ $request->status }}">
-                        <div class="pbmdr-cb-box {{ $request->status === 'CANCELLED' ? 'pbmdr-cb-box--cancelled' : '' }}">
+                        <div class="pbmdr-cb-box {{ in_array($request->status, ['CANCELLED', 'expired']) ? 'pbmdr-cb-box--cancelled' : '' }}">
                             <img src="{{ asset('images/complete-book.svg') }}" class="icon-cb-book" alt="icon">
 
                             <div class="pbmdr-cb-box__det">
@@ -405,9 +406,16 @@
                                 class="download-receipt-btn">
                                     Download Receipt
                                 </a>
-                                @else
+                                @elseif($request->status === 'CANCELLED')
                                     <p class="provider-history-cancelled">
                                         Cancelled by {{ $request->cancelled_by ? ucfirst($request->cancelled_by) : 'User' }}
+                                    </p>
+                                    <span style="font-size: 12px; color: #9CA3AF;">
+                                        No receipt
+                                    </span>
+                                @else
+                                    <p class="provider-history-cancelled">
+                                        Expired
                                     </p>
                                     <span style="font-size: 12px; color: #9CA3AF;">
                                         No receipt

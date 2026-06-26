@@ -11,6 +11,7 @@ class BookingStatusService
 {
     private int $bookingDurationHours = 16;
     private int $bookingDurationMinutes = 1;
+    private int $pendingResponseHours = 4;
 
     /*
     |--------------------------------------------------------------------------
@@ -23,11 +24,12 @@ class BookingStatusService
 
     public function updateAllDueBookings(): array
     {
+        $expired = 0;
         $updatedToOngoing = 0;
         $updatedToCompleted = 0;
 
         $bookingRequests = BookingRequest::with('bookingInfo.service')
-            ->whereIn('status', ['ACCEPTED', 'ONGOING'])
+            ->whereIn('status', ['PENDING', 'ACCEPTED', 'ONGOING'])
             ->whereHas('bookingInfo', function ($query) {
                 $query->whereNotNull('date')
                     ->whereNotNull('time');
@@ -35,6 +37,12 @@ class BookingStatusService
             ->get();
 
         foreach ($bookingRequests as $bookingRequest) {
+            if ($this->expirePendingIfDue($bookingRequest)) {
+                $expired++;
+
+                continue;
+            }
+
             if ($this->updateToOngoingIfDue($bookingRequest)) {
                 $updatedToOngoing++;
 
@@ -54,14 +62,69 @@ class BookingStatusService
 
         Log::info('Global booking status check finished', [
             'total_checked' => $bookingRequests->count(),
+            'expired' => $expired,
             'updated_to_ongoing' => $updatedToOngoing,
             'updated_to_completed' => $updatedToCompleted,
         ]);
 
         return [
+            'expired' => $expired,
             'ongoing' => $updatedToOngoing,
             'completed' => $updatedToCompleted,
         ];
+    }
+
+    public function expirePendingIfDue(BookingRequest $bookingRequest): bool
+    {
+        if ($bookingRequest->status !== 'PENDING') {
+            return false;
+        }
+
+        if (!$bookingRequest->bookingInfo) {
+            return false;
+        }
+
+        if (!$bookingRequest->bookingInfo->date || !$bookingRequest->bookingInfo->time) {
+            return false;
+        }
+
+        try {
+            $expiresAt = $this->getPendingExpiresAt($bookingRequest);
+            $now = Carbon::now(config('app.timezone'));
+
+            if ($now->lessThan($expiresAt)) {
+                return false;
+            }
+
+            DB::transaction(function () use ($bookingRequest) {
+                $bookingRequest->update([
+                    'status' => 'expired',
+                    'responded_at' => now(),
+                    'customer_seen_at' => null,
+                    'provider_seen_at' => null,
+                    'cancelled_by' => null,
+                ]);
+
+                $bookingRequest->bookingInfo->update([
+                    'status' => 'expired',
+                ]);
+            });
+
+            Log::info('Booking request expired', [
+                'booking_request_id' => $bookingRequest->id,
+                'booking_info_id' => $bookingRequest->bookingInfo->id,
+                'expires_at' => $expiresAt->toDateTimeString(),
+            ]);
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('expirePendingIfDue failed', [
+                'booking_request_id' => $bookingRequest->id ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 
     private function updateToOngoingIfDue(BookingRequest $bookingRequest): bool
@@ -210,5 +273,11 @@ class BookingStatusService
             $bookingDate . ' ' . $bookingTime,
             config('app.timezone')
         );
+    }
+
+    private function getPendingExpiresAt(BookingRequest $bookingRequest): Carbon
+    {
+        return $this->getScheduleDateTime($bookingRequest)
+            ->addHours($this->pendingResponseHours);
     }
 }

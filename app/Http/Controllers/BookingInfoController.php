@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Services\AdminNotificationService;
+use App\Services\BookingEmailService;
+use App\Services\BookingStatusService;
 
 class BookingInfoController extends Controller
 {
@@ -35,6 +37,8 @@ class BookingInfoController extends Controller
         }
 
         $customer = auth()->user()->customer ?? null;
+        app(BookingStatusService::class)->updateAllDueBookings();
+
         $serviceOwner = Service::with('provider')
             ->visibleToCustomers()
             ->where('id', $request->service_id)
@@ -110,7 +114,7 @@ class BookingInfoController extends Controller
             'status' => 'PENDING',
         ]);
 
-        BookingRequest::create([
+        $bookingRequest = BookingRequest::create([
             'booking_info_id' => $bookingInfo->id,
             'provider_id' => $serviceOwner->provider_id,
             'status' => 'PENDING',
@@ -118,6 +122,7 @@ class BookingInfoController extends Controller
         ]);
 
         AdminNotificationService::newBooking($bookingInfo->load('service'));
+        app(BookingEmailService::class)->sendNewBookingToProvider($bookingRequest);
 
         return redirect()->route('services.index')->with('flash_message', [
             'title' => 'Book Requested',

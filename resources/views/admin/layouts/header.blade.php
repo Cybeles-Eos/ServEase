@@ -72,7 +72,7 @@
             ->whereHas('bookingInfo', function ($query) use ($authUser) {
                 $query->where('customer_id', $authUser->customer->id);
             })
-            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED', 'expired'])
             ->orderByRaw('customer_seen_at IS NULL DESC')
             ->latest()
             ->limit(10)
@@ -82,7 +82,7 @@
             ->whereHas('bookingInfo', function ($query) use ($authUser) {
                 $query->where('customer_id', $authUser->customer->id);
             })
-            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED'])
+            ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED', 'expired'])
             ->whereNull('customer_seen_at')
             ->count();
     }
@@ -230,7 +230,7 @@
                             'PENDING' => 'provider-notification-modal__status--pending',
                             'ACCEPTED' => 'provider-notification-modal__status--accepted',
                             'COMPLETED' => 'provider-notification-modal__status--completed',
-                            'DECLINED', 'CANCELLED' => 'provider-notification-modal__status--cancelled',
+                            'DECLINED', 'CANCELLED', 'expired' => 'provider-notification-modal__status--cancelled',
                             default => 'provider-notification-modal__status--pending',
                         };
                     }
@@ -343,7 +343,7 @@
                         'ACCEPTED' => 'provider-notification-modal__status--accepted',
                         'ONGOING' => 'provider-notification-modal__status--ongoing',
                         'COMPLETED' => 'provider-notification-modal__status--completed',
-                        'DECLINED', 'CANCELLED' => 'provider-notification-modal__status--cancelled',
+                        'DECLINED', 'CANCELLED', 'expired' => 'provider-notification-modal__status--cancelled',
                         default => 'provider-notification-modal__status--pending',
                     };
 
@@ -353,6 +353,7 @@
                         'COMPLETED' => 'Booking Completed',
                         'DECLINED' => 'Booking Declined',
                         'CANCELLED' => 'Booking Cancelled',
+                        'expired' => 'Booking Expired',
                         default => 'Booking Update',
                     };
                 @endphp
