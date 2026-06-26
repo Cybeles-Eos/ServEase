@@ -22,8 +22,8 @@ class BookingInfoController extends Controller
             'address' => ['nullable'],
             'email' => ['required', 'email', 'max:255'],
             'number' => ['required', 'max:50'],
-            'date' => ['nullable', 'date'],
-            'time' => ['nullable'],
+            'date' => ['required', 'date'],
+            'time' => ['required', 'date_format:H:i'],
             'notes' => ['nullable', 'string', 'max:200'],
             'service_id' => ['required', 'exists:tbl_services,id'],
         ]);
@@ -57,6 +57,16 @@ class BookingInfoController extends Controller
                 'title' => 'Service Unavailable',
                 'message' => 'This service is not available for booking.',
                 'type' => 'warning'
+            ]);
+        }
+
+        $scheduledAt = Carbon::parse($request->date . ' ' . $request->time, config('app.timezone'));
+
+        if ($scheduledAt->lessThan(Carbon::now(config('app.timezone')))) {
+            return redirect()->back()->withInput()->with('flash_message', [
+                'title' => 'Invalid Schedule',
+                'message' => 'Please choose a future date and time for your booking.',
+                'type' => 'error',
             ]);
         }
 

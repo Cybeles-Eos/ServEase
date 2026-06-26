@@ -66,6 +66,18 @@ class CustomerBookingsBoard extends Component
 
         $query = BookingInfo::with($relations)
             ->where('customer_id', $customerId)
+            ->orderByRaw("
+                CASE status
+                    WHEN 'ACCEPTED' THEN 1
+                    WHEN 'PENDING' THEN 2
+                    WHEN 'COMPLETED' THEN 3
+                    WHEN 'ONGOING' THEN 4
+                    WHEN 'DECLINED' THEN 5
+                    WHEN 'CANCELLED' THEN 6
+                    WHEN 'expired' THEN 7
+                    ELSE 8
+                END
+            ")
             ->latest();
 
         if (!empty($this->selectedStatus)) {

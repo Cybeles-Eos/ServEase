@@ -603,6 +603,34 @@
             return `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`;
         }
 
+        function currentTimeValue() {
+            const now = new Date();
+
+            return `${padDatePart(now.getHours())}:${padDatePart(now.getMinutes())}`;
+        }
+
+        function toMinutes(timeValue) {
+            if (!timeValue) {
+                return null;
+            }
+
+            const [hour, minute] = timeValue.split(':').map(Number);
+
+            return (hour * 60) + minute;
+        }
+
+        function maxTimeValue(firstTime, secondTime) {
+            if (!firstTime) {
+                return secondTime || '';
+            }
+
+            if (!secondTime) {
+                return firstTime;
+            }
+
+            return toMinutes(firstTime) >= toMinutes(secondTime) ? firstTime : secondTime;
+        }
+
         function toReadableDate(dateValue) {
             if (!dateValue) {
                 return 'Select a date';
@@ -630,6 +658,32 @@
         function isPastDate(date) {
             const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
             return date < todayOnly;
+        }
+
+        function isTodayDateValue(dateValue) {
+            return dateValue === toDateValue(new Date());
+        }
+
+        function hasValidTimeRemaining(dateValue) {
+            if (!isTodayDateValue(dateValue)) {
+                return true;
+            }
+
+            const nowTime = currentTimeValue();
+
+            if (providerAvailability.end_time && nowTime >= providerAvailability.end_time) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function isPastSchedule(dateValue, timeValue) {
+            if (!dateValue || !timeValue) {
+                return false;
+            }
+
+            return new Date(`${dateValue}T${timeValue}`) < new Date();
         }
 
         function isProviderAvailableDate(date) {
@@ -669,13 +723,16 @@
         }
 
         function selectScheduleDate(dateValue) {
-            const defaultTime = providerAvailability.start_time || '';
+            const minTime = isTodayDateValue(dateValue)
+                ? maxTimeValue(providerAvailability.start_time || '', currentTimeValue())
+                : (providerAvailability.start_time || '');
+            const defaultTime = minTime;
 
             $('#date').val(dateValue);
             $('#time').val(defaultTime);
             $('#bookingTimePicker')
                 .val(defaultTime)
-                .attr('min', providerAvailability.start_time || null)
+                .attr('min', minTime || null)
                 .attr('max', providerAvailability.end_time || null);
             $('#bookingTimePanel').removeAttr('hidden');
             updateScheduleLabel();
@@ -704,7 +761,7 @@
                 const isToday = dateValue === toDateValue(today);
                 const isSelected = dateValue === selectedDate;
                 const isBooked = bookedDateSet.has(dateValue);
-                const isUnavailable = isPastDate(day) || !isProviderAvailableDate(day);
+                const isUnavailable = isPastDate(day) || !isProviderAvailableDate(day) || !hasValidTimeRemaining(dateValue);
                 const isDisabled = isBooked || isUnavailable;
                 const classes = [
                     'booking-schedule-picker__day',
@@ -796,6 +853,16 @@
             }
 
             const selectedDateObject = new Date(selectedDate + 'T00:00:00');
+
+            if (isPastSchedule(selectedDate, selectedTime)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Schedule',
+                    text: 'Please choose a future time for today before sending your booking request.',
+                    confirmButtonColor: '#FDB932'
+                });
+                return;
+            }
 
             if (!isProviderAvailableDate(selectedDateObject) || !isProviderAvailableTime(selectedTime)) {
                 Swal.fire({
