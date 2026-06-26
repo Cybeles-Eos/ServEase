@@ -184,112 +184,6 @@
                 }
             }
         }
-        // &--about{
-        //     width: 100%;
-        //     padding-block: 122px;
-        //     // background-color: #e7f4f03a;
-        //      overflow-x: hidden;
-        //     .section-about-main{
-        //         margin: 0 auto;
-        //         // height: 40rem;
-        //         // background-color: antiquewhite;
-        //         display: flex;
-        //         align-items: flex-start;
-        //         justify-content: space-between;
-        //         gap: 75px;
-        //         position: relative;
-               
-        //         &__badge{
-        //             font-size: 14px;
-        //             font-weight: 600;
-        //             line-height: 100%;
-        //             display: flex;
-        //             align-items: center;
-        //             justify-content: center;
-        //             padding: 5px 16px;
-        //             background-color: #fdf7e9;
-        //             border-radius: 44px;
-        //             gap: 10px;
-        //             span{
-        //                 display: inline-block;
-        //                 width: 5px;
-        //                 height: 5px;
-        //                 border-radius: 10px;
-        //                 background-color: $color-primary;
-
-        //             }
-        //         }
-        //         .sec-abtm-main{
-        //             width: 1000px;
-        //             // height: 30rem;
-        //             display: flex;
-        //             flex-direction: column;
-        //             row-gap: 45px;
-        //             // background-color: rebeccapurple;
-
-        //             h2{
-        //                 font-weight: 600;
-        //                 line-height: 120%;
-        //                 font-family: $font-inter;
-        //             }
-        //             &__con{
-        //                 display: flex;
-        //                 gap: 45px;
-
-        //                 @media (max-width: 692px) {
-        //                     flex-direction: column;
-        //                     row-gap: 15px;
-        //                 }
-        //             }
-        //             &__bsc{
-        //                 display: grid;
-        //                 grid-template-columns: 1fr 1fr 1fr 1fr;
-        //                 gap: 45px;
-        //                 @media (max-width: 692px) {
-        //                     row-gap: 45px;
-        //                     grid-template-columns: 1fr 1fr;
-        //                 }
-        //                 @media (max-width: 492px) {
-        //                     grid-template-columns:1fr;
-        //                     row-gap: 25px;
-        //                     // justify-items: center;
-        //                 }
-        //             }
-        //             .abt-h-box{
-        //                 display: flex;
-        //                 flex-direction: column;
-        //                 max-width: 200px;
-        //                 h2{
-        //                     font-size: 50px;
-        //                     font-weight: 400;
-        //                 }
-        //                 p{
-        //                     text-transform: uppercase;
-        //                 }
-        //                 @media (max-width: 492px) {
-        //                     max-width: 400px;
-        //                 }
-        //             }
-
-        //         }
-        //         img{
-        //             position: absolute;
-        //             top: -23.5rem;
-        //             left: -12rem;
-        //             z-index: -1;
-        //         }
-
-        //         @media (max-width: 992px) {
-        //             flex-direction: column;
-        //             align-items: flex-end;
-        //             .sec-abtm-main{
-        //                 width: 100%;
-        //             }
-        //         }
-
-                
-        //     }
-        // }
         &--req{
             width: 100%;
             padding-block: 122px;
@@ -323,15 +217,16 @@
                     width: 50%;
                     position: relative;
                     img{
-                        position: absolute;
-                        transform: translateY(-50%);
-                        top: 50%;
-                        right: -15rem;
-                        height: 480px;
+                        max-width: 100%;
+                        // position: absolute;
+                        // transform: translateY(-50%);
+                        // top: 50%;
+                        // right: -15rem;
+                        // height: 480px;
 
-                        @media (max-width: 1160px) {
-                            height: 39vw;
-                        }
+                        // @media (max-width: 1160px) {
+                        //     height: 39vw;
+                        // }
 
                     }
                 }

@@ -120,6 +120,7 @@ h5{
 .btn-space{
     display: flex;
     gap: 13px;
+    margin-top: 5px;
 }
 .glb-btn{
     background-color: $color-primary;
@@ -136,6 +137,12 @@ h5{
     font-size: 15px;
     margin-right: 1.3rem;
     line-height: 100%;
+}
+
+.glb-pret{
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    opacity: .7;
 }
 
 .hamburger-m{
@@ -1046,7 +1053,7 @@ h5{
                 font-weight: 400;
                 opacity: .8;
                 @media (max-width: 992px) {
-                    max-width: 900px;
+                    max-width: 700px;
                 }
             }
         }
@@ -1226,16 +1233,6 @@ h5{
 
 
 
-
-
-
-
-
-
-
-
-
-
 /* Back Button */
 .service-review-admin__back {
     display: inline-flex;
@@ -1261,7 +1258,6 @@ h5{
     width: 14px;
     height: 14px;
 }
-
 
 
 

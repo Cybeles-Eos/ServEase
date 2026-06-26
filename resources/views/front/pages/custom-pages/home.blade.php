@@ -6,6 +6,7 @@
 
 @section('content')
     <main class="main-page page--home">
+        
         <section class="section--hero m-padding">
             <h1>Find reliable local experts fast with our smart service hub</h1>
             <p>A smart platform that connects people who need help with locals who can get the job done anytime.</p>
@@ -20,7 +21,6 @@
                     </ul>
                 </div>
             </div>
-
         </section>
         <section class="section--about m-width m-padding">  
             <div class="section--about__img">
@@ -52,10 +52,10 @@
                             <path d="M4.22812 23H8.70527C11.0404 23 12.9334 21.0686 12.9334 18.6864V14.1189C12.9334 11.7367 11.0403 9.80532 8.70527 9.80532H8.2633C7.89193 9.80532 7.54312 9.61833 7.33342 9.30546C7.12271 8.99259 7.07766 8.59423 7.2109 8.24077L9.73705 1.56449C9.87129 1.21061 9.82523 0.812253 9.61459 0.499857C9.40488 0.186983 9.05701 -1.49012e-07 8.68465 -1.49012e-07H5.71266C5.2933 -1.49012e-07 4.90816 0.237976 4.71316 0.616784L1.12488 7.61251C0.386073 9.0526 -9.23872e-07 10.654 -9.23872e-07 12.2795V18.6864C-9.23872e-07 21.0686 1.8931 23 4.22812 23Z" fill="#FFBE42"/>
                         </svg>
                         <div class="glb-testimonial__d">
-                            <img src="{{asset('public/images/user-1.png')}}" alt="testimonial_profile">
+                            <img src="{{asset('public/images/testimonials/testimonial-2.png')}}" alt="Daniella B. Barcelon">
                             <div>
-                                <h4>Dr. Bella Barcelon</h4>
-                                <p>“Since joining Servease, I’ve gained consistent bookings and expanded my client base. The platform makes managing jobs simple and efficient.”</p>
+                                <h4>Daniella B. Barcelon</h4>
+                                <p>“Malaking tulong ang Servease sa community namin. Mas mabilis makahanap ng service provider, mas malinaw ang proseso, at mas madali mag-manage ng request.”</p>
                             </div>
                         </div>
                     </div>
@@ -168,7 +168,7 @@
         <section class="section__faqs">
             <div class="section__faqs--main global-size m-padding">
                 <div class="section__faqs--main--details">
-                    <span class="section--label">FAQ</span>
+                    <span class="glb-pret">FAQ</span>
                     <h2>Frequently Asked Questions About Servease</h2>
                     <p class="section__faqs--main--details--paragraph">Find quick answers about bookings, provider applications, service requests, account support, reviews, and how Servease helps you connect with trusted local service providers.</p>
                     <div class="global-btns-con">
@@ -180,10 +180,10 @@
                             <path d="M4.22812 23H8.70527C11.0404 23 12.9334 21.0686 12.9334 18.6864V14.1189C12.9334 11.7367 11.0403 9.80532 8.70527 9.80532H8.2633C7.89193 9.80532 7.54312 9.61833 7.33342 9.30546C7.12271 8.99259 7.07766 8.59423 7.2109 8.24077L9.73705 1.56449C9.87129 1.21061 9.82523 0.812253 9.61459 0.499857C9.40488 0.186983 9.05701 -1.49012e-07 8.68465 -1.49012e-07H5.71266C5.2933 -1.49012e-07 4.90816 0.237976 4.71316 0.616784L1.12488 7.61251C0.386073 9.0526 -9.23872e-07 10.654 -9.23872e-07 12.2795V18.6864C-9.23872e-07 21.0686 1.8931 23 4.22812 23Z" fill="#FFBE42"/>
                         </svg>
                         <div class="glb-testimonial__d">
-                            <img src="{{asset('public/images/user-1.png')}}" alt="testimonial_profile">
+                            <img src="{{asset('public/images/testimonials/testimonial-3.png')}}" alt="testimonial_profile">
                             <div>
-                                <h4>Dr. Bella Barcelon</h4>
-                                <p>“Since joining Servease, I’ve gained consistent bookings and expanded my client base. The platform makes managing jobs simple and efficient.”</p>
+                                <h4>Frances Lian O. Cedillo</h4>
+                                <p>“Sa Servease, mas maayos ang pag-book ng local services. Pili lang ng kailangan, submit ng request, at makikita agad ang status sa isang platform.”</p>
                             </div>
                         </div>
                     </div>
