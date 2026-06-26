@@ -585,6 +585,7 @@
 @push('extrascripts')
 {{-- For Booking Modal --}}
 <script>
+
     $(document).ready(function () {
         const providerAvailability = @json($service->provider_availability_data);
         const providerBookedDates = @json($service->provider_booked_dates);
@@ -855,6 +856,7 @@
         });
 
     });
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

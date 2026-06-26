@@ -678,12 +678,31 @@
         });
 
         // Mobile Category
-        $('#shw-catmob').on('click', function (e) {
-            e.preventDefault();
-            $('#mobile-catside').toggleClass('active-mobile-cat');
+        $(function () {
+            const $catBtn = $('#shw-catmob');
+            const $catBox = $('#mobile-catside');
+
+            $catBtn.off('click').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                $catBox.toggleClass('active-mobile-cat');
+            });
+
+            $catBox.off('click').on('click', function (e) {
+                e.stopPropagation();
+            });
+
+            $(document).off('click.mobileCategory touchstart.mobileCategory')
+                .on('click.mobileCategory touchstart.mobileCategory', function (e) {
+                    if (
+                        !$(e.target).closest('#mobile-catside').length &&
+                        !$(e.target).closest('#shw-catmob').length
+                    ) {
+                        $catBox.removeClass('active-mobile-cat');
+                    }
+                });
         });
-
-
 
 
     </script>
