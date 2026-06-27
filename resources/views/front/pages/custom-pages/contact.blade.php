@@ -44,12 +44,12 @@
                         <div class="plm-ff-con">
                             <div class="plm-ff-group">
                                 <label for="">Full Name</label>
-                                <input type="text" name="fullname" placeholder="e. g. Juan Dela Cruz" value="{{ old('fullname') }}" required maxlength="255" autocomplete="name">
+                                <input type="text" name="fullname" placeholder="e. g. Juan Dela Cruz" data-one-space value="{{ old('fullname') }}" required maxlength="255" autocomplete="name">
                                 @error('fullname') <small>{{ $message }}</small> @enderror
                             </div>
                             <div class="plm-ff-group">
                                 <label for="">Email Address</label>
-                                <input type="email" name="email" placeholder="e. g. name@gmail.com" value="{{ old('email') }}" required maxlength="255" autocomplete="email" inputmode="email">
+                                <input type="email" name="email" placeholder="e. g. name@gmail.com" data-no-space value="{{ old('email') }}" required maxlength="255" autocomplete="email" inputmode="email">
                                 @error('email') <small>{{ $message }}</small> @enderror
                             </div>
                         </div>
@@ -72,14 +72,14 @@
                             </div>
                             <div class="plm-ff-group">
                                 <label for="">Subject</label>
-                                <input type="text" name="subject" placeholder="" value="{{ old('subject') }}" required maxlength="255" autocomplete="off">
+                                <input type="text" name="subject" placeholder="" value="{{ old('subject') }}" data-one-space required maxlength="255" autocomplete="off">
                                 @error('subject') <small>{{ $message }}</small> @enderror
                             </div>
                         </div>
 
                         <div class="plm-ff-group">
                             <label for="">Message</label>
-                            <textarea name="message" cols="3" rows="3" maxlength="3000" placeholder="Tell us how we can help you.">{{ old('message') }}</textarea>
+                            <textarea name="message" cols="3" rows="3" maxlength="3000" data-one-space placeholder="Tell us how we can help you.">{{ old('message') }}</textarea>
                             @error('message') <small>{{ $message }}</small> @enderror
                         </div>
                         <div class="plm-ff-group">
