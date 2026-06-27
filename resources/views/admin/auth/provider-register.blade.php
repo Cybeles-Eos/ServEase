@@ -173,12 +173,12 @@
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
                                     <label for="name">First Name <span>*</span></label>
-                                    <input type="text" placeholder="e. g. Juan" name="fname" value="{{ old('fname') }}" required autocomplete="off">
+                                    <input type="text" placeholder="e. g. Juan" name="fname" value="{{ old('fname') }}" data-one-space required autocomplete="off">
                                     @error('fname') <small>{{ $message }}</small> @enderror
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="lname">Last Name <span>*</span></label>
-                                    <input type="text" placeholder="e. g. Cruz" name="lname" value="{{ old('lname') }}" required autocomplete="off">
+                                    <input type="text" placeholder="e. g. Cruz" name="lname" value="{{ old('lname') }}" data-one-space required autocomplete="off">
                                     @error('lname') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>
@@ -192,6 +192,7 @@
                                         value="{{ old('email') }}"
                                         required
                                         maxlength="255"
+                                        data-no-space
                                         autocomplete="email"
                                         inputmode="email"
                                     >
@@ -208,6 +209,7 @@
                                         name="number"
                                         value="{{ old('number') }}"
                                         required
+                                        data-no-space
                                         maxlength="11"
                                         inputmode="numeric"
                                         autocomplete="tel"
@@ -236,7 +238,7 @@
                             </div>
                             <div class="prg-mm-group">
                                 <label for="address">Personal Home Address <span>*</span></label>
-                                <input type="text" placeholder="" name="address" value="{{ old('address') }}" required autocomplete="off">
+                                <input type="text" placeholder="" name="address" value="{{ old('address') }}" data-one-space required autocomplete="off">
                                 @error('address') <small>{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-con">
@@ -244,7 +246,7 @@
                                     <label for="city">City <span>*</span></label>
                                     <input type="hidden" name="city" value="{{ old('city') }}" data-ph-city-value>
                                     <div class="location-combobox" data-ph-combobox="city">
-                                        <input type="text" placeholder="Search city or municipality" value="{{ old('city') }}" required autocomplete="off" data-ph-city>
+                                        <input type="text" placeholder="Search city or municipality" value="{{ old('city') }}" data-one-space required autocomplete="off" data-ph-city>
                                         <span class="location-combobox__arrow" aria-hidden="true"></span>
                                         <div class="location-combobox__menu" data-ph-city-menu></div>
                                     </div>
@@ -254,7 +256,7 @@
                                     <label for="barangay">Barangay <span>*</span></label>
                                     <input type="hidden" name="barangay" value="{{ old('barangay') }}" data-ph-barangay-value>
                                     <div class="location-combobox" data-ph-combobox="barangay">
-                                        <input type="text" placeholder="Select city first" value="{{ old('barangay') }}" required autocomplete="off" data-ph-barangay>
+                                        <input type="text" placeholder="Select city first" value="{{ old('barangay') }}" data-one-space required autocomplete="off" data-ph-barangay>
                                         <span class="location-combobox__arrow" aria-hidden="true"></span>
                                         <div class="location-combobox__menu" data-ph-barangay-menu></div>
                                     </div>
@@ -270,6 +272,7 @@
                                     value="{{ old('zipcode') }}"
                                     required
                                     maxlength="4"
+                                    data-no-space
                                     inputmode="numeric"
                                     pattern="[0-9]{4}"
                                     autocomplete="off"
@@ -320,19 +323,19 @@
                             <div class="prg-mm-con">
                                 <div class="prg-mm-group">
                                     <label for="name">Expertise <span>*</span></label>
-                                    <input type="text" placeholder="" name="profession" value="{{ old('profession') }}" required autocomplete="off">
+                                    <input type="text" placeholder="" name="profession" value="{{ old('profession') }}" data-one-space required autocomplete="off">
                                     @error('profession') <small>{{ $message }}</small> @enderror
                                 </div>
                                 <div class="prg-mm-group">
                                     <label for="lname">Years of experience <span>*</span></label>
-                                    <input type="number" placeholder="" name="experience" value="{{ old('experience') }}" min="1" max="100"  maxlength="3" inputmode="numeric" title="Years of experience must be 1 to 3 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)" required autocomplete="off">
+                                    <input type="number" placeholder="" name="experience" value="{{ old('experience') }}" data-no-space min="1" max="100"  maxlength="3" inputmode="numeric" title="Years of experience must be 1 to 3 digits" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)" required autocomplete="off">
                                     @error('experience') <small style="align-self: flex-end">{{ $message }}</small> @enderror
                                 </div>
                             </div>
                             <div class="prg-mm-group">
                                 <label for="password">Password</label>
                                 <div class="prg-mm-group-pass">
-                                    <input type="password" name="password" id="password" placeholder="" required autocomplete="current-password">
+                                    <input type="password" name="password" id="password" placeholder="" required data-no-space autocomplete="current-password">
                                     <div class="show" id="show-pass">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -346,7 +349,7 @@
                             <div class="prg-mm-group">
                                 <label for="password">Confirm Password</label>
                                 <div class="prg-mm-group-pass">
-                                    <input type="password" name="password_confirmation" id="password_conf" placeholder="" required autocomplete="current-password">
+                                    <input type="password" name="password_confirmation" id="password_conf" placeholder="" data-no-space required autocomplete="current-password">
                                     <div class="show" id="show-pass-conf">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

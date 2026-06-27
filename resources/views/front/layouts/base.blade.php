@@ -154,6 +154,51 @@
     {{-- <script src="{{ asset('js/popper.min.js') }}"></script> --}}
     <script src="{{ asset('js/main.js') }}"></script>
     @stack('extrascripts')
+    <script>
+        // No spaces allowed
+        document.querySelectorAll('[data-no-space]').forEach(function (input) {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
+
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/\s/g, '');
+            });
+        });
+
+        // Only one space allowed between words
+        document.querySelectorAll('[data-one-space]').forEach(function (input) {
+            input.addEventListener('keydown', function (e) {
+                const value = this.value;
+                const cursorPosition = this.selectionStart;
+
+                if (e.key === ' ') {
+                    const previousChar = value[cursorPosition - 1];
+                    const nextChar = value[cursorPosition];
+
+                    if (
+                        cursorPosition === 0 ||
+                        previousChar === ' ' ||
+                        nextChar === ' '
+                    ) {
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            input.addEventListener('input', function () {
+                this.value = this.value
+                    .replace(/\s+/g, ' ')
+                    .replace(/^\s/g, '');
+            });
+
+            input.addEventListener('blur', function () {
+                this.value = this.value.trim();
+            });
+        });
+    </script>
     @if(session('flash_message'))
         <script>
             Swal.fire({
