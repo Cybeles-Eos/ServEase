@@ -73,6 +73,16 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('provider.customer-requests.work') }}" class="{{ Request::is('provider/customer-requests*') ? 'active' : '' }}">
+                            <div>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 8H17M7 12H13M5.5 20.5L7.6 18.75H17.5C19.1569 18.75 20.5 17.4069 20.5 15.75V6.5C20.5 4.84315 19.1569 3.5 17.5 3.5H6.5C4.84315 3.5 3.5 4.84315 3.5 6.5V15.75C3.5 17.0075 4.27376 18.0842 5.37109 18.5291L5.5 20.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            Customer Requests
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('provider.booking-calendar') }}" class="{{ Request::is('provider/booking-calendar') ? 'active' : '' }}">
                             <div>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -134,6 +144,16 @@
                             </svg>
                             </div>
                             Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('customer.requests.index') }}" class="{{ Request::is('customer/requests*') ? 'active' : '' }}">
+                            <div>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 8H17M7 12H13M5.5 20.5L7.6 18.75H17.5C19.1569 18.75 20.5 17.4069 20.5 15.75V6.5C20.5 4.84315 19.1569 3.5 17.5 3.5H6.5C4.84315 3.5 3.5 4.84315 3.5 6.5V15.75C3.5 17.0075 4.27376 18.0842 5.37109 18.5291L5.5 20.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            Requests
                         </a>
                     </li>
                     {{-- <li>
