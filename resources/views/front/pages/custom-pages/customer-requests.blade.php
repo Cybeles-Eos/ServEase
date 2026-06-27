@@ -10,7 +10,7 @@
                     <h1>Customer Requests</h1>
                     <p>
                         Browse customer-posted service needs that are not listed as standard services.
-                        Providers can apply to open requests; admins can review requests in read-only mode.
+                        Providers can apply to open requests.
                     </p>
                 </div>
 
