@@ -14,15 +14,15 @@
                     </p>
                 </div>
 
-                <div class="customer-request-market__filters">
+                <div class="customer-request-market__filters" style="padding-bottom: 0px !important">
                     <div class="ps-sl-category__search">
-                        <input type="text" placeholder="What are you looking for?">
+                        <input type="text" value="{{ $search }}" placeholder="What are you looking for?" data-customer-request-search>
                         <svg width="16" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M13.3739 11.5129L16.9467 14.8861L15.7669 16L12.1941 12.6268C10.9094 13.5971 9.28022 14.1776 7.50827 14.1776C3.3637 14.1776 0 11.0018 0 7.08881C0 3.17579 3.3637 0 7.50827 0C11.6528 0 15.0165 3.17579 15.0165 7.08881C15.0165 8.76177 14.4017 10.3 13.3739 11.5129ZM11.7001 10.9284C12.7203 9.93584 13.348 8.58187 13.348 7.08881C13.348 4.04259 10.7347 1.57529 7.50827 1.57529C4.2818 1.57529 1.6685 4.04259 1.6685 7.08881C1.6685 10.135 4.2818 12.6023 7.50827 12.6023C9.08968 12.6023 10.5238 12.0096 11.5751 11.0465L11.7001 10.9284Z" fill="#979797" fill-opacity="0.6"/>
                         </svg>
                     </div>
 
-                    <button type="button" class="ps-serv-btn-sort-m customer-request-market__sort">
+                    <button type="button" class="ps-serv-btn-sort-m customer-request-market__sort" style="padding-right: 10px; min-width: 100px" data-customer-request-sort>
                         <svg width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0.833008 0.833008H11.4997M2.83301 4.83301H9.49967M5.49967 8.83301H6.83301" stroke="#FDB932" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
@@ -42,10 +42,14 @@
                         $formId = 'customer-request-apply-' . $request->id;
 
                         $serviceType = $request->service_type ?: 'Service Type';
-                        $customerName = data_get($request, 'customer.name') ?: data_get($request, 'customer_name') ?: 'David Chen';
-                        $customerEmail = data_get($request, 'customer.email') ?: data_get($request, 'email') ?: 'spen@gmail.com';
-                        $customerPhone = data_get($request, 'phone') ?: data_get($request, 'contact_number') ?: '09125240151';
-                        $customerAddress = data_get($request, 'address') ?: 'Mambugan Virginia Summerville Antipolo City';
+                        $profileName = trim(($request->customer->first_name ?? '') . ' ' . ($request->customer->last_name ?? ''));
+                        $customerName = $request->contact_name ?: ($profileName ?: 'Customer');
+                        $customerEmail = $request->contact_email ?: ($request->customer->user->email ?? 'Email not provided');
+                        $customerPhone = $request->contact_phone ?: ($request->customer->phone_number ?? 'Phone not provided');
+                        $customerAddress = $request->contact_address ?: 'Address not provided';
+                        $preferredDate = $request->preferred_date ? $request->preferred_date->format('M d, Y') : null;
+                        $preferredTime = $request->preferred_time ? $request->preferred_time->format('g:i A') : null;
+                        $preferredSchedule = trim(implode(' ', array_filter([$preferredDate, $preferredTime]))) ?: 'Not specified';
                     @endphp
 
                     <article class="customer-request-card">
@@ -116,6 +120,14 @@
                                     </svg>
                                     Address: {{ $customerAddress }}
                                 </p>
+
+                                <p>
+                                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6.5 11.375C6.5 11.375 10.0208 8.125 10.0208 5.41667C10.0208 3.47266 8.44401 1.89583 6.5 1.89583C4.55599 1.89583 2.97917 3.47266 2.97917 5.41667C2.97917 8.125 6.5 11.375 6.5 11.375Z" stroke="#FDB932" stroke-width="1.1"/>
+                                        <path d="M6.5 6.5C7.09831 6.5 7.58333 6.01498 7.58333 5.41667C7.58333 4.81836 7.09831 4.33333 6.5 4.33333C5.90169 4.33333 5.41667 4.81836 5.41667 5.41667C5.41667 6.01498 5.90169 6.5 6.5 6.5Z" stroke="#FDB932" stroke-width="1.1"/>
+                                    </svg>
+                                    Preferred: {{ $preferredSchedule }}
+                                </p>
                             </div>
 
                             <div class="customer-request-card__action">
@@ -159,7 +171,7 @@
             </div>
 
             <div class="customer-request-pagination">
-                {{ $requests->links() }}
+                {{ $requests->appends(request()->query())->links() }}
             </div>
         </section>
     </main>
@@ -167,54 +179,178 @@
 
 @push('extrascripts')
 <script>
-    document.querySelectorAll('.js-customer-request-apply').forEach((button) => {
-        button.addEventListener('click', () => {
-            const form = document.getElementById(button.dataset.formId);
-            const title = button.dataset.title || 'this request';
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.querySelector('[data-customer-request-search]');
+        const sortButton = document.querySelector('[data-customer-request-sort]');
+        const sortLabel = sortButton ? sortButton.querySelector('.sort-label') : null;
+        const listUrl = @json(route('customer-requests.index'));
+        const hasSortQuery = new URLSearchParams(window.location.search).has('sort');
+        let activeSort = @json($sort);
+        let nextSort = hasSortQuery && activeSort === 'newest' ? 'oldest' : 'newest';
+        let requestController = null;
+        let searchTimer = null;
 
-            if (!form) {
-                return;
-            }
-
-            Swal.fire({
-                title: 'Apply to request',
-                text: title,
-                input: 'textarea',
-                inputPlaceholder: 'Add optional notes for the customer...',
-                inputAttributes: {
-                    maxlength: 500,
-                },
-                customClass: {
-                    input: 'customer-request-swal-notes',
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Apply',
-                cancelButtonText: 'Cancel',
-                confirmButtonColor: '#FDB932',
-                cancelButtonColor: '#6B7280',
-                reverseButtons: true,
-                preConfirm: (notes) => {
-                    if (notes && notes.length > 500) {
-                        Swal.showValidationMessage('Notes must not be longer than 500 characters.');
-                        return false;
-                    }
-
-                    return notes || '';
-                },
-            }).then((result) => {
-                if (!result.isConfirmed) {
+        function bindApplyButtons() {
+            document.querySelectorAll('.js-customer-request-apply').forEach((button) => {
+                if (button.dataset.boundCustomerRequestApply === 'true') {
                     return;
                 }
 
-                const notesInput = form.querySelector('input[name="notes"]');
+                button.dataset.boundCustomerRequestApply = 'true';
+                button.addEventListener('click', () => {
+                    const form = document.getElementById(button.dataset.formId);
+                    const title = button.dataset.title || 'this request';
 
-                if (notesInput) {
-                    notesInput.value = result.value || '';
-                }
+                    if (!form) {
+                        return;
+                    }
 
-                form.submit();
+                    Swal.fire({
+                        title: 'Apply to request',
+                        text: title,
+                        input: 'textarea',
+                        inputPlaceholder: 'Add optional notes for the customer...',
+                        inputAttributes: {
+                            maxlength: 500,
+                        },
+                        customClass: {
+                            input: 'customer-request-swal-notes',
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Apply',
+                        cancelButtonText: 'Cancel',
+                        confirmButtonColor: '#FDB932',
+                        cancelButtonColor: '#6B7280',
+                        reverseButtons: true,
+                        preConfirm: (notes) => {
+                            if (notes && notes.length > 500) {
+                                Swal.showValidationMessage('Notes must not be longer than 500 characters.');
+                                return false;
+                            }
+
+                            return notes || '';
+                        },
+                    }).then((result) => {
+                        if (!result.isConfirmed) {
+                            return;
+                        }
+
+                        const notesInput = form.querySelector('input[name="notes"]');
+
+                        if (notesInput) {
+                            notesInput.value = result.value || '';
+                        }
+
+                        form.submit();
+                    });
+                });
             });
+        }
+
+        function updateSortLabel() {
+            if (!sortLabel) {
+                return;
+            }
+
+            sortLabel.textContent = nextSort === 'newest' ? 'Sort to Newest' : 'Sort to Oldest';
+        }
+
+        function buildUrl(pageUrl = null) {
+            const url = new URL(pageUrl || listUrl, window.location.origin);
+            const query = searchInput ? searchInput.value.trim() : '';
+
+            if (query) {
+                url.searchParams.set('q', query);
+            } else {
+                url.searchParams.delete('q');
+            }
+
+            url.searchParams.set('sort', activeSort);
+            return url;
+        }
+
+        function replaceRequestList(html) {
+            const nextDocument = new DOMParser().parseFromString(html, 'text/html');
+            const nextGrid = nextDocument.querySelector('.customer-request-grid');
+            const nextPagination = nextDocument.querySelector('.customer-request-pagination');
+            const currentGrid = document.querySelector('.customer-request-grid');
+            const currentPagination = document.querySelector('.customer-request-pagination');
+
+            if (nextGrid && currentGrid) {
+                currentGrid.innerHTML = nextGrid.innerHTML;
+            }
+
+            if (nextPagination && currentPagination) {
+                currentPagination.innerHTML = nextPagination.innerHTML;
+            }
+
+            bindApplyButtons();
+        }
+
+        function loadRequests(pageUrl = null) {
+            const url = buildUrl(pageUrl);
+
+            if (requestController) {
+                requestController.abort();
+            }
+
+            requestController = new AbortController();
+
+            fetch(url.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                signal: requestController.signal,
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Request failed.');
+                    }
+
+                    return response.text();
+                })
+                .then((html) => {
+                    replaceRequestList(html);
+                    window.history.replaceState({}, '', url.toString());
+                })
+                .catch((error) => {
+                    if (error.name === 'AbortError') {
+                        return;
+                    }
+
+                    window.location.href = url.toString();
+                });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                window.clearTimeout(searchTimer);
+                searchTimer = window.setTimeout(() => loadRequests(), 250);
+            });
+        }
+
+        if (sortButton) {
+            sortButton.addEventListener('click', function () {
+                activeSort = nextSort;
+                nextSort = activeSort === 'newest' ? 'oldest' : 'newest';
+                updateSortLabel();
+                loadRequests();
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            const paginationLink = event.target.closest('.customer-request-pagination a');
+
+            if (!paginationLink) {
+                return;
+            }
+
+            event.preventDefault();
+            loadRequests(paginationLink.href);
         });
+
+        updateSortLabel();
+        bindApplyButtons();
     });
 </script>
 @endpush

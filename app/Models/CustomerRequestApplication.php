@@ -13,11 +13,15 @@ class CustomerRequestApplication extends Model
         'status',
         'applied_at',
         'accepted_at',
+        'customer_seen_at',
+        'provider_seen_at',
     ];
 
     protected $casts = [
         'applied_at' => 'datetime',
         'accepted_at' => 'datetime',
+        'customer_seen_at' => 'datetime',
+        'provider_seen_at' => 'datetime',
     ];
 
     public function customerRequest()

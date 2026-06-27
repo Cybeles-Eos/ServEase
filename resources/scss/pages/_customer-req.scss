@@ -59,14 +59,14 @@
             align-items: center;
             justify-content: flex-end;
             gap: 10px;
-            flex: 0 0 365px;
+            flex: 0 0 475px;
             padding: 17px 0;
             position: relative;
 
             .ps-sl-category {
                 &__search {
                     width: 100%;
-                    max-width: 225px;
+                    max-width: 255px;
                     position: relative;
 
                     input {
@@ -99,8 +99,9 @@
         &__sort,
         .ps-serv-btn-sort-m {
             min-height: 37px;
+            min-width: 170px;
             outline: none !important;
-            padding: 7px 10px;
+            padding: 7px 34px 7px 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,6 +114,8 @@
             border-radius: 6px;
             cursor: pointer;
             white-space: nowrap;
+            appearance: auto;
+            -webkit-appearance: auto;
 
             svg {
                 flex-shrink: 0;
@@ -168,7 +171,7 @@
 
             &__sort,
             .ps-serv-btn-sort-m {
-                min-width: 135px;
+                min-width: 145px;
             }
         }
     }
@@ -225,6 +228,7 @@
             position: absolute;
             left: 20px;
             bottom: 10px;
+            max-width: calc(100% - 40px);
             min-height: 22px;
             padding: 5px 10px;
             border-radius: 4px;
@@ -233,6 +237,9 @@
             font-size: 11px;
             font-weight: 600;
             line-height: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             box-shadow: 0 2px 7px rgba(23, 21, 21, 0.08);
         }
 

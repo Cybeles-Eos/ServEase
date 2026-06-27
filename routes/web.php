@@ -190,8 +190,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/customer/bookings', function () {return view('admin.cusbookings');})->name('customer.bookings');
         Route::get('/customer/requests', [CustomerRequestController::class, 'customerIndex'])->name('customer.requests.index');
         Route::post('/customer/requests', [CustomerRequestController::class, 'store'])->name('customer.requests.store');
+        Route::put('/customer/requests/{customerRequest}', [CustomerRequestController::class, 'update'])->name('customer.requests.update');
         Route::post('/customer/requests/{customerRequest}/applications/{application}/accept', [CustomerRequestController::class, 'acceptApplication'])->name('customer.requests.applications.accept');
+        Route::delete('/customer/requests/{customerRequest}', [CustomerRequestController::class, 'destroy'])->name('customer.requests.destroy');
         Route::post('/customer/requests/{customerRequest}/complete', [CustomerRequestController::class, 'complete'])->name('customer.requests.complete');
+        Route::post('/customer/requests/{customerRequest}/cancel', [CustomerRequestController::class, 'cancel'])->name('customer.requests.cancel');
+        Route::post('/customer/requests/{customerRequest}/toggle-publish', [CustomerRequestController::class, 'togglePublish'])->name('customer.requests.toggle-publish');
 
         // Customer Setting
         Route::post('/customer/setting/update', [CustomerController::class, 'updateSetting'])->name('customer.setting.update');

@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\CustomerRequest;
 use App\Models\CustomerRequestApplication;
 use App\Services\CustomerRequestEmailService;
-use App\Services\CustomerRequestStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use File;
 
 class CustomerRequestController extends Controller
 {
-    public function marketplace(CustomerRequestStatusService $statusService)
+    public function marketplace(Request $request)
     {
         $user = auth()->user();
 
@@ -24,14 +23,40 @@ class CustomerRequestController extends Controller
             abort(403);
         }
 
-        $statusService->autoCompleteAcceptedRequests();
+        $search = trim((string) $request->query('q', ''));
+        $selectedServiceType = trim((string) $request->query('service_type', ''));
+        $sort = $request->query('sort', 'newest');
+
+        if (!in_array($sort, ['newest', 'oldest', 'budget_high', 'budget_low'], true)) {
+            $sort = 'newest';
+        }
+
+        $serviceTypes = CustomerRequest::where('status', 'open')
+            ->where('is_published', true)
+            ->whereNotNull('service_type')
+            ->where('service_type', '!=', '')
+            ->select('service_type')
+            ->distinct()
+            ->orderBy('service_type')
+            ->pluck('service_type');
 
         $requests = CustomerRequest::with([
                 'customer.user',
                 'applications.provider.user',
                 'acceptedProvider.user',
             ])
-            ->where('status', '!=', 'completed')
+            ->where('status', 'open')
+            ->where('is_published', true)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('title', 'like', '%' . $search . '%')
+                        ->orWhere('description', 'like', '%' . $search . '%')
+                        ->orWhere('service_type', 'like', '%' . $search . '%')
+                        ->orWhere('contact_name', 'like', '%' . $search . '%')
+                        ->orWhere('contact_address', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($selectedServiceType !== '', fn ($query) => $query->where('service_type', $selectedServiceType))
             ->orderByRaw("
                 CASE status
                     WHEN 'open' THEN 1
@@ -39,15 +64,25 @@ class CustomerRequestController extends Controller
                     ELSE 4
                 END
             ")
-            ->latest()
+            ->when($sort === 'newest', fn ($query) => $query->latest())
+            ->when($sort === 'oldest', fn ($query) => $query->oldest())
+            ->when($sort === 'budget_high', fn ($query) => $query->orderByDesc('fixed_price')->latest())
+            ->when($sort === 'budget_low', fn ($query) => $query->orderBy('fixed_price')->latest())
             ->paginate(9);
 
         $provider = $user->isProvider() ? $user->provider : null;
 
-        return view('front.pages.custom-pages.customer-requests', compact('requests', 'provider'));
+        return view('front.pages.custom-pages.customer-requests', [
+            'requests' => $requests,
+            'provider' => $provider,
+            'serviceTypes' => $serviceTypes,
+            'search' => $search,
+            'selectedServiceType' => $selectedServiceType,
+            'sort' => $sort,
+        ]);
     }
 
-    public function customerIndex(Request $request, CustomerRequestStatusService $statusService)
+    public function customerIndex(Request $request)
     {
         $customer = auth()->user()->customer ?? null;
 
@@ -55,10 +90,8 @@ class CustomerRequestController extends Controller
             abort(403, 'Customer account not found.');
         }
 
-        $statusService->autoCompleteAcceptedRequests();
-
         $selectedStatus = $request->query('status', '');
-        $allowedStatuses = ['open', 'accepted', 'completed'];
+        $allowedStatuses = ['open', 'accepted', 'completed', 'cancelled'];
 
         if ($selectedStatus !== '' && !in_array($selectedStatus, $allowedStatuses, true)) {
             $selectedStatus = '';
@@ -71,11 +104,18 @@ class CustomerRequestController extends Controller
             'open' => (clone $baseRequestQuery)->where('status', 'open')->count(),
             'accepted' => (clone $baseRequestQuery)->where('status', 'accepted')->count(),
             'completed' => (clone $baseRequestQuery)->where('status', 'completed')->count(),
+            'cancelled' => (clone $baseRequestQuery)->where('status', 'cancelled')->count(),
         ];
 
         $requests = CustomerRequest::with([
-                'applications.provider.user',
-                'acceptedProvider.user',
+                'applications.provider' => fn ($query) => $query->with('user')
+                    ->withCount([
+                        'acceptedCustomerRequests as completed_customer_requests_count' => fn ($query) => $query->where('status', 'completed'),
+                    ]),
+                'acceptedProvider' => fn ($query) => $query->with('user')
+                    ->withCount([
+                        'acceptedCustomerRequests as completed_customer_requests_count' => fn ($query) => $query->where('status', 'completed'),
+                    ]),
             ])
             ->where('customer_id', $customer->id)
             ->when($selectedStatus !== '', fn ($query) => $query->where('status', $selectedStatus))
@@ -84,6 +124,7 @@ class CustomerRequestController extends Controller
                     WHEN 'accepted' THEN 1
                     WHEN 'open' THEN 2
                     WHEN 'completed' THEN 3
+                    WHEN 'cancelled' THEN 4
                     ELSE 4
                 END
             ")
@@ -120,8 +161,10 @@ class CustomerRequestController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'service_type' => ['required', 'string', 'max:100'],
             'description' => ['required', 'string', 'max:2000'],
-            'fixed_price' => ['required', 'numeric', 'min:100', 'max:10000'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5048'],
+            'fixed_price' => ['required', 'numeric', 'min:100', 'max:100000'],
+            'preferred_date' => ['nullable', 'date', 'after_or_equal:today'],
+            'preferred_time' => ['nullable', 'date_format:H:i'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'contact_name' => ['required', 'string', 'max:255'],
             'contact_email' => ['required', 'email', 'max:255'],
             'contact_phone' => ['required', 'string', 'max:50'],
@@ -134,11 +177,14 @@ class CustomerRequestController extends Controller
             'service_type' => $validated['service_type'],
             'description' => $validated['description'],
             'fixed_price' => $validated['fixed_price'],
+            'preferred_date' => $validated['preferred_date'] ?? null,
+            'preferred_time' => $validated['preferred_time'] ?? null,
             'contact_name' => $validated['contact_name'],
             'contact_email' => $validated['contact_email'],
             'contact_phone' => $validated['contact_phone'],
             'contact_address' => $validated['contact_address'],
             'status' => 'open',
+            'is_published' => true,
         ]);
 
         if ($request->hasFile('image')) {
@@ -154,6 +200,74 @@ class CustomerRequestController extends Controller
         ]);
     }
 
+    public function update(Request $request, CustomerRequest $customerRequest)
+    {
+        $customer = auth()->user()->customer ?? null;
+
+        if (!$customer || $customerRequest->customer_id !== $customer->id) {
+            abort(403);
+        }
+
+        if ($customerRequest->status !== 'open') {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Invalid Action',
+                'message' => 'Only open customer requests can be edited.',
+                'type' => 'warning',
+            ]);
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'service_type' => ['required', 'string', 'max:100'],
+            'description' => ['required', 'string', 'max:2000'],
+            'fixed_price' => ['required', 'numeric', 'min:100', 'max:100000'],
+            'preferred_date' => ['nullable', 'date', 'after_or_equal:today'],
+            'preferred_time' => ['nullable', 'date_format:H:i'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'remove_image' => ['nullable', 'boolean'],
+            'contact_name' => ['required', 'string', 'max:255'],
+            'contact_email' => ['required', 'email', 'max:255'],
+            'contact_phone' => ['required', 'string', 'max:50'],
+            'contact_address' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $customerRequest->update([
+            'title' => $validated['title'],
+            'service_type' => $validated['service_type'],
+            'description' => $validated['description'],
+            'fixed_price' => $validated['fixed_price'],
+            'preferred_date' => $validated['preferred_date'] ?? null,
+            'preferred_time' => $validated['preferred_time'] ?? null,
+            'contact_name' => $validated['contact_name'],
+            'contact_email' => $validated['contact_email'],
+            'contact_phone' => $validated['contact_phone'],
+            'contact_address' => $validated['contact_address'],
+        ]);
+
+        if ($request->boolean('remove_image') && $customerRequest->image_path && File::exists(public_path($customerRequest->image_path))) {
+            File::delete(public_path($customerRequest->image_path));
+            $customerRequest->update([
+                'image_path' => null,
+            ]);
+        }
+
+        if ($request->hasFile('image')) {
+            if ($customerRequest->image_path && File::exists(public_path($customerRequest->image_path))) {
+                File::delete(public_path($customerRequest->image_path));
+            }
+
+            $customerRequest->update([
+                'image_path' => $this->uploadFile($request->file('image'), 'customer_requests'),
+            ]);
+        }
+
+        return redirect()->route('customer.requests.index')->with('flash_message', [
+            'title' => 'Customer Request Updated',
+            'message' => 'Your request details have been updated.',
+            'type' => 'success',
+        ]);
+    }
+
     public function apply(Request $request, CustomerRequest $customerRequest)
     {
         $provider = auth()->user()->provider ?? null;
@@ -162,7 +276,7 @@ class CustomerRequestController extends Controller
             abort(403, 'Provider account not found.');
         }
 
-        if ($customerRequest->status !== 'open') {
+        if ($customerRequest->status !== 'open' || !$customerRequest->is_published) {
             return redirect()->back()->with('flash_message', [
                 'title' => 'Request Closed',
                 'message' => 'This customer request is no longer open for applications.',
@@ -192,6 +306,8 @@ class CustomerRequestController extends Controller
             'notes' => $validated['notes'] ?? null,
             'status' => 'pending',
             'applied_at' => now(),
+            'customer_seen_at' => null,
+            'provider_seen_at' => now(),
         ]);
 
         return redirect()->back()->with('flash_message', [
@@ -225,6 +341,8 @@ class CustomerRequestController extends Controller
             $application->update([
                 'status' => 'accepted',
                 'accepted_at' => now(),
+                'provider_seen_at' => null,
+                'customer_seen_at' => now(),
             ]);
 
             CustomerRequestApplication::where('customer_request_id', $customerRequest->id)
@@ -232,6 +350,8 @@ class CustomerRequestController extends Controller
                 ->where('status', 'pending')
                 ->update([
                     'status' => 'rejected',
+                    'provider_seen_at' => null,
+                    'customer_seen_at' => now(),
                     'updated_at' => now(),
                 ]);
 
@@ -282,15 +402,109 @@ class CustomerRequestController extends Controller
         ]);
     }
 
-    public function providerWork(CustomerRequestStatusService $statusService)
+    public function cancel(CustomerRequest $customerRequest, CustomerRequestEmailService $emailService)
+    {
+        $customer = auth()->user()->customer ?? null;
+
+        if (!$customer || $customerRequest->customer_id !== $customer->id) {
+            abort(403);
+        }
+
+        if (!in_array($customerRequest->status, ['open', 'accepted'], true)) {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Invalid Action',
+                'message' => 'Only open or accepted customer requests can be cancelled.',
+                'type' => 'warning',
+            ]);
+        }
+
+        $shouldEmailAcceptedProvider = $customerRequest->status === 'accepted' && $customerRequest->accepted_provider_id;
+
+        DB::transaction(function () use ($customerRequest) {
+            CustomerRequestApplication::where('customer_request_id', $customerRequest->id)
+                ->whereIn('status', ['pending', 'accepted'])
+                ->update([
+                    'status' => 'cancelled',
+                    'provider_seen_at' => null,
+                    'customer_seen_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+            $customerRequest->update([
+                'status' => 'cancelled',
+                'is_published' => false,
+            ]);
+        });
+
+        if ($shouldEmailAcceptedProvider) {
+            $customerRequest->refresh();
+            $emailService->sendCancelledProvider($customerRequest);
+        }
+
+        return redirect()->back()->with('flash_message', [
+            'title' => 'Request Cancelled',
+            'message' => 'The customer request has been cancelled.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function destroy(CustomerRequest $customerRequest)
+    {
+        $customer = auth()->user()->customer ?? null;
+
+        if (!$customer || $customerRequest->customer_id !== $customer->id) {
+            abort(403);
+        }
+
+        if ($customerRequest->status !== 'open') {
+            return redirect()->back()->with('flash_message', [
+                'title' => 'Invalid Action',
+                'message' => 'Only open customer requests can be deleted. Accepted requests should be cancelled from the provider details modal.',
+                'type' => 'warning',
+            ]);
+        }
+
+        if ($customerRequest->image_path && File::exists(public_path($customerRequest->image_path))) {
+            File::delete(public_path($customerRequest->image_path));
+        }
+
+        $customerRequest->delete();
+
+        return redirect()->back()->with('flash_message', [
+            'title' => 'Request Deleted',
+            'message' => 'The customer request has been removed from your dashboard.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function togglePublish(CustomerRequest $customerRequest)
+    {
+        $customer = auth()->user()->customer ?? null;
+
+        if (!$customer || $customerRequest->customer_id !== $customer->id) {
+            abort(403);
+        }
+
+        $customerRequest->update([
+            'is_published' => !$customerRequest->is_published,
+        ]);
+
+        return redirect()->back()->with('flash_message', [
+            'title' => $customerRequest->is_published ? 'Request Published' : 'Request Hidden',
+            'message' => $customerRequest->is_published
+                ? 'Providers can now see this customer request.'
+                : 'This customer request is hidden from the provider marketplace.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function providerWork()
     {
         $provider = auth()->user()->provider ?? null;
 
         if (!$provider || $provider->application_status !== 'accepted') {
             abort(403, 'Provider account not found.');
         }
-
-        $statusService->autoCompleteAcceptedRequests();
 
         $applications = CustomerRequestApplication::with([
                 'customerRequest.customer.user',

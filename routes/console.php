@@ -9,4 +9,3 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('bookings:auto-close')->everyMinute();
-Schedule::command('customer-requests:auto-complete')->everyMinute();

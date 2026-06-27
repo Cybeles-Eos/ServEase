@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
+use App\Models\CustomerRequestApplication;
 use App\Services\BookingEmailService;
 use App\Services\BookingStatusService;
 use Illuminate\Http\Request;
@@ -273,6 +274,20 @@ class BookingRequestController extends Controller
         }
 
         if ($request->filled('notification_id')) {
+            if ($request->input('notification_type') === 'customer_request') {
+                CustomerRequestApplication::query()
+                    ->where('id', $request->input('notification_id'))
+                    ->where('provider_id', $user->provider->id)
+                    ->whereNull('provider_seen_at')
+                    ->update([
+                        'provider_seen_at' => now(),
+                    ]);
+
+                return response()->json([
+                    'success' => true,
+                ]);
+            }
+
             if ($request->input('notification_type') === 'rating') {
                 \App\Models\ServiceRating::query()
                     ->where('id', $request->input('notification_id'))
@@ -305,6 +320,14 @@ class BookingRequestController extends Controller
 
         \App\Models\ServiceRating::query()
             ->where('provider_id', $user->provider->id)
+            ->whereNull('provider_seen_at')
+            ->update([
+                'provider_seen_at' => now(),
+            ]);
+
+        CustomerRequestApplication::query()
+            ->where('provider_id', $user->provider->id)
+            ->whereIn('status', ['accepted', 'rejected', 'cancelled'])
             ->whereNull('provider_seen_at')
             ->update([
                 'provider_seen_at' => now(),
@@ -376,6 +399,22 @@ class BookingRequestController extends Controller
         }
 
         if ($request->filled('notification_id')) {
+            if ($request->input('notification_type') === 'customer_request') {
+                CustomerRequestApplication::query()
+                    ->where('id', $request->input('notification_id'))
+                    ->whereHas('customerRequest', function ($query) use ($customer) {
+                        $query->where('customer_id', $customer->id);
+                    })
+                    ->whereNull('customer_seen_at')
+                    ->update([
+                        'customer_seen_at' => now(),
+                    ]);
+
+                return response()->json([
+                    'success' => true,
+                ]);
+            }
+
             BookingRequest::query()
                 ->where('id', $request->input('notification_id'))
                 ->whereHas('bookingInfo', function ($query) use ($customer) {
@@ -397,6 +436,15 @@ class BookingRequestController extends Controller
                 $query->where('customer_id', $customer->id);
             })
             ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED', 'expired'])
+            ->whereNull('customer_seen_at')
+            ->update([
+                'customer_seen_at' => now(),
+            ]);
+
+        CustomerRequestApplication::query()
+            ->whereHas('customerRequest', function ($query) use ($customer) {
+                $query->where('customer_id', $customer->id);
+            })
             ->whereNull('customer_seen_at')
             ->update([
                 'customer_seen_at' => now(),

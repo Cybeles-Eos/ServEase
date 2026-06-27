@@ -1,13 +1,16 @@
 @php
     use App\Models\AdminNotification;
     use App\Models\BookingRequest;
+    use App\Models\CustomerRequestApplication;
     use App\Models\ServiceRating;
 
     $providerNotifications = collect();
     $providerUnreadNotificationCount = 0;
+    $providerCustomerRequestNotifications = collect();
 
     $customerNotifications = collect();
     $customerUnreadNotificationCount = 0;
+    $customerCustomerRequestNotifications = collect();
 
     $adminNotifications = collect();
     $adminUnreadNotificationCount = 0;
@@ -35,6 +38,16 @@
             ->limit(10)
             ->get();
 
+        $providerCustomerRequestNotifications = CustomerRequestApplication::with([
+                'customerRequest.customer.user',
+            ])
+            ->where('provider_id', $authUser->provider->id)
+            ->whereIn('status', ['accepted', 'rejected', 'cancelled'])
+            ->orderByRaw('provider_seen_at IS NULL DESC')
+            ->latest()
+            ->limit(10)
+            ->get();
+
         $providerNotifications = $providerBookingNotifications
             ->map(fn ($notification) => [
                 'type' => 'booking',
@@ -46,6 +59,12 @@
                 'type' => 'rating',
                 'is_unread' => is_null($notification->provider_seen_at),
                 'created_at' => $notification->created_at,
+                'item' => $notification,
+            ]))
+            ->concat($providerCustomerRequestNotifications->map(fn ($notification) => [
+                'type' => 'customer_request',
+                'is_unread' => is_null($notification->provider_seen_at),
+                'created_at' => $notification->updated_at ?? $notification->created_at,
                 'item' => $notification,
             ]))
             ->sortBy([
@@ -62,11 +81,16 @@
             + ServiceRating::query()
                 ->where('provider_id', $authUser->provider->id)
                 ->whereNull('provider_seen_at')
+                ->count()
+            + CustomerRequestApplication::query()
+                ->where('provider_id', $authUser->provider->id)
+                ->whereIn('status', ['accepted', 'rejected', 'cancelled'])
+                ->whereNull('provider_seen_at')
                 ->count();
     }
 
     if ($authUser && $authUser->role === 'customer' && $authUser->customer) {
-        $customerNotifications = BookingRequest::with([
+        $customerBookingNotifications = BookingRequest::with([
                 'bookingInfo.service.provider',
             ])
             ->whereHas('bookingInfo', function ($query) use ($authUser) {
@@ -78,13 +102,51 @@
             ->limit(10)
             ->get();
 
+        $customerCustomerRequestNotifications = CustomerRequestApplication::with([
+                'provider.user',
+                'customerRequest',
+            ])
+            ->whereHas('customerRequest', function ($query) use ($authUser) {
+                $query->where('customer_id', $authUser->customer->id);
+            })
+            ->orderByRaw('customer_seen_at IS NULL DESC')
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $customerNotifications = $customerBookingNotifications
+            ->map(fn ($notification) => [
+                'type' => 'booking',
+                'is_unread' => is_null($notification->customer_seen_at),
+                'created_at' => $notification->updated_at ?? $notification->created_at,
+                'item' => $notification,
+            ])
+            ->concat($customerCustomerRequestNotifications->map(fn ($notification) => [
+                'type' => 'customer_request',
+                'is_unread' => is_null($notification->customer_seen_at),
+                'created_at' => $notification->updated_at ?? $notification->created_at,
+                'item' => $notification,
+            ]))
+            ->sortBy([
+                ['is_unread', 'desc'],
+                ['created_at', 'desc'],
+            ])
+            ->take(10)
+            ->values();
+
         $customerUnreadNotificationCount = BookingRequest::query()
             ->whereHas('bookingInfo', function ($query) use ($authUser) {
                 $query->where('customer_id', $authUser->customer->id);
             })
             ->whereIn('status', ['ACCEPTED', 'ONGOING', 'COMPLETED', 'DECLINED', 'CANCELLED', 'expired'])
             ->whereNull('customer_seen_at')
-            ->count();
+            ->count()
+            + CustomerRequestApplication::query()
+                ->whereHas('customerRequest', function ($query) use ($authUser) {
+                    $query->where('customer_id', $authUser->customer->id);
+                })
+                ->whereNull('customer_seen_at')
+                ->count();
     }
 
     if ($authUser && $authUser->role === 'admin') {
@@ -200,6 +262,7 @@
         <div class="provider-notification-modal__tabs">
             <button type="button" class="is-active" data-notif-filter="all">Latest Updates</button>
             <button type="button" data-notif-filter="booking">Booking Requests</button>
+            <button type="button" data-notif-filter="customer_request">Customer Request</button>
         </div>
 
         <div class="provider-notification-modal__body">
@@ -215,6 +278,24 @@
                             ? trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? ''))
                             : '';
                         $isUnread = is_null($notification->provider_seen_at);
+                    } elseif ($notificationType === 'customer_request') {
+                        $customerRequest = $notification->customerRequest;
+                        $customer = $customerRequest?->customer;
+                        $customerName = $customer
+                            ? trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? ''))
+                            : ($customerRequest?->contact_name ?: 'The customer');
+                        $isUnread = is_null($notification->provider_seen_at);
+                        $statusClass = match ($notification->status) {
+                            'accepted' => 'provider-notification-modal__status--accepted',
+                            'rejected', 'cancelled' => 'provider-notification-modal__status--cancelled',
+                            default => 'provider-notification-modal__status--pending',
+                        };
+                        $notificationTitle = match ($notification->status) {
+                            'accepted' => 'Application Accepted',
+                            'rejected' => 'Application Rejected',
+                            'cancelled' => 'Request Cancelled',
+                            default => 'Customer Request Update',
+                        };
                     } else {
                         $bookingInfo = $notification->bookingInfo;
                         $service = $bookingInfo?->service;
@@ -256,6 +337,28 @@
                             </p>
 
                             <small>{{ $notification->created_at?->diffForHumans() }}</small>
+                        </div>
+                    </a>
+                @elseif ($notificationType === 'customer_request')
+                    <a href="{{ route('provider.customer-requests.work') }}" data-notification-id="{{ $notification->id }}" data-notification-type="customer_request" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
+                        <div class="provider-notification-modal__dot"></div>
+
+                        <div class="provider-notification-modal__content">
+                            <div class="provider-notification-modal__topline">
+                                <strong>{{ $notificationTitle }}</strong>
+
+                                <span class="provider-notification-modal__status {{ $statusClass }}">
+                                    {{ ucfirst($notification->status) }}
+                                </span>
+                            </div>
+
+                            <p>
+                                {{ $customerName ?: 'The customer' }}
+                                updated your application for
+                                <b>{{ $customerRequest?->title ?? 'a customer request' }}</b>.
+                            </p>
+
+                            <small>{{ ($notification->updated_at ?? $notification->created_at)?->diffForHumans() }}</small>
                         </div>
                     </a>
                 @else
@@ -324,40 +427,87 @@
         </div>
 
         <div class="provider-notification-modal__tabs">
-            <span>Service Updates</span>
+            <button type="button" class="is-active" data-notif-filter="booking">Service Updates</button>
+            <button type="button" data-notif-filter="customer_request">Customer Request</button>
         </div>
 
         <div class="provider-notification-modal__body">
-            @forelse ($customerNotifications as $notification)
+            @forelse ($customerNotifications as $notificationEntry)
                 @php
-                    $bookingInfo = $notification->bookingInfo;
-                    $service = $bookingInfo?->service;
-                    $provider = $service?->provider;
-                    $providerName = $provider
-                        ? trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''))
-                        : 'The provider';
+                    $notificationType = $notificationEntry['type'];
+                    $notification = $notificationEntry['item'];
 
-                    $isUnread = is_null($notification->customer_seen_at);
+                    if ($notificationType === 'customer_request') {
+                        $customerRequest = $notification->customerRequest;
+                        $provider = $notification->provider;
+                        $providerName = $provider
+                            ? trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''))
+                            : 'A provider';
+                        $isUnread = is_null($notification->customer_seen_at);
+                        $statusClass = match ($notification->status) {
+                            'accepted' => 'provider-notification-modal__status--accepted',
+                            'rejected', 'cancelled' => 'provider-notification-modal__status--cancelled',
+                            default => 'provider-notification-modal__status--pending',
+                        };
+                        $notificationTitle = match ($notification->status) {
+                            'accepted' => 'Provider Accepted',
+                            'rejected' => 'Application Rejected',
+                            'cancelled' => 'Request Cancelled',
+                            default => 'New Provider Application',
+                        };
+                    } else {
+                        $bookingInfo = $notification->bookingInfo;
+                        $service = $bookingInfo?->service;
+                        $provider = $service?->provider;
+                        $providerName = $provider
+                            ? trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''))
+                            : 'The provider';
 
-                    $statusClass = match ($notification->status) {
-                        'ACCEPTED' => 'provider-notification-modal__status--accepted',
-                        'ONGOING' => 'provider-notification-modal__status--ongoing',
-                        'COMPLETED' => 'provider-notification-modal__status--completed',
-                        'DECLINED', 'CANCELLED', 'expired' => 'provider-notification-modal__status--cancelled',
-                        default => 'provider-notification-modal__status--pending',
-                    };
+                        $isUnread = is_null($notification->customer_seen_at);
 
-                    $notificationTitle = match ($notification->status) {
-                        'ACCEPTED' => 'Booking Accepted',
-                        'ONGOING' => 'Service Ongoing',
-                        'COMPLETED' => 'Booking Completed',
-                        'DECLINED' => 'Booking Declined',
-                        'CANCELLED' => 'Booking Cancelled',
-                        'expired' => 'Booking Expired',
-                        default => 'Booking Update',
-                    };
+                        $statusClass = match ($notification->status) {
+                            'ACCEPTED' => 'provider-notification-modal__status--accepted',
+                            'ONGOING' => 'provider-notification-modal__status--ongoing',
+                            'COMPLETED' => 'provider-notification-modal__status--completed',
+                            'DECLINED', 'CANCELLED', 'expired' => 'provider-notification-modal__status--cancelled',
+                            default => 'provider-notification-modal__status--pending',
+                        };
+
+                        $notificationTitle = match ($notification->status) {
+                            'ACCEPTED' => 'Booking Accepted',
+                            'ONGOING' => 'Service Ongoing',
+                            'COMPLETED' => 'Booking Completed',
+                            'DECLINED' => 'Booking Declined',
+                            'CANCELLED' => 'Booking Cancelled',
+                            'expired' => 'Booking Expired',
+                            default => 'Booking Update',
+                        };
+                    }
                 @endphp
 
+                @if ($notificationType === 'customer_request')
+                    <a href="{{ route('customer.requests.index') }}" data-notification-id="{{ $notification->id }}" data-notification-type="customer_request" class="provider-notification-modal__item is-hidden {{ $isUnread ? 'is-unread' : '' }}">
+                        <div class="provider-notification-modal__dot"></div>
+
+                        <div class="provider-notification-modal__content">
+                            <div class="provider-notification-modal__topline">
+                                <strong>{{ $notificationTitle }}</strong>
+
+                                <span class="provider-notification-modal__status {{ $statusClass }}">
+                                    {{ ucfirst($notification->status) }}
+                                </span>
+                            </div>
+
+                            <p>
+                                {{ $providerName ?: 'A provider' }}
+                                applied to
+                                <b>{{ $customerRequest?->title ?? 'your customer request' }}</b>.
+                            </p>
+
+                            <small>{{ ($notification->updated_at ?? $notification->created_at)?->diffForHumans() }}</small>
+                        </div>
+                    </a>
+                @else
                 <a href="{{ route('customer.dashboard') }}" data-notification-id="{{ $notification->id }}" data-notification-type="booking" class="provider-notification-modal__item {{ $isUnread ? 'is-unread' : '' }}">
                     <div class="provider-notification-modal__dot"></div>
 
@@ -391,10 +541,11 @@
                         </small>
                     </div>
                 </a>
+                @endif
             @empty
                 <div class="provider-notification-modal__empty">
                     <strong>No booking updates yet</strong>
-                    <p>Provider responses will appear here.</p>
+                    <p>Provider responses and customer request activity will appear here.</p>
                 </div>
             @endforelse
         </div>

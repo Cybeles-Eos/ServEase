@@ -12,7 +12,7 @@ class CustomerRequestStatusService
         $completed = CustomerRequest::query()
             ->where('status', 'accepted')
             ->whereNotNull('accepted_at')
-            ->where('accepted_at', '<=', now()->subHours(24))
+            ->where('accepted_at', '<=', now()->subHours(16))
             ->update([
                 'status' => 'completed',
                 'completed_at' => now(),

@@ -2,20 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Services\CustomerRequestStatusService;
 use Illuminate\Console\Command;
 
 class AutoCompleteCustomerRequests extends Command
 {
     protected $signature = 'customer-requests:auto-complete';
 
-    protected $description = 'Automatically complete accepted customer requests after 24 hours';
+    protected $description = 'Customer request auto-complete is currently disabled';
 
-    public function handle(CustomerRequestStatusService $customerRequestStatusService): int
+    public function handle(): int
     {
-        $completed = $customerRequestStatusService->autoCompleteAcceptedRequests();
-
-        $this->info($completed . ' customer request(s) auto-completed.');
+        $this->info('Customer request auto-complete is currently disabled.');
 
         return Command::SUCCESS;
     }
