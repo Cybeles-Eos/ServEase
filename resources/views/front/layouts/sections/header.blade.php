@@ -37,6 +37,11 @@
                         Local Services
                     </a>
                 </li>
+                @auth
+                    @if(auth()->user()->isAdmin() || (auth()->user()->isProvider() && auth()->user()->provider?->application_status === 'accepted'))
+                        <li><a href="{{ route('customer-requests.index') }}">Customer Request</a></li>
+                    @endif
+                @endauth
             </ul>
         </div>
         <div class="h-cta-btns">

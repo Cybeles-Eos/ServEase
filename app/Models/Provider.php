@@ -209,6 +209,16 @@ class Provider extends Model
         return $this->hasMany(\App\Models\ServiceReport::class, 'provider_id');
     }
 
+    public function customerRequestApplications()
+    {
+        return $this->hasMany(CustomerRequestApplication::class, 'provider_id');
+    }
+
+    public function acceptedCustomerRequests()
+    {
+        return $this->hasMany(CustomerRequest::class, 'accepted_provider_id');
+    }
+
     public function averageRating()
     {
         return round($this->ratings()->avg('rating') ?? 0, 1);

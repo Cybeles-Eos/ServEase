@@ -32,4 +32,9 @@ class Customer extends Model
     {
         return $this->hasMany(\App\Models\ServiceReport::class, 'customer_id');
     }
+
+    public function customerRequests()
+    {
+        return $this->hasMany(CustomerRequest::class, 'customer_id');
+    }
 }

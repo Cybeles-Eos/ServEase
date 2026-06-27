@@ -96,8 +96,8 @@
     <div class="modal-mobile-nav g-padding">
         <ul>
             <li><a href="{{ url('/') }}">Home</a></li>
-            {{-- <li><a href="{{ url('/about-us') }}">About Us</a></li>
-            <li><a href="{{ url('/contact') }}">Contact</a></li> --}}
+            <li><a href="{{ url('/about-us') }}">About Us</a></li>
+            <li><a href="{{ url('/contact') }}">Contact</a></li>
             <li>
                 <a href="{{ url('/services') }}">
                     <svg width="14" class="me-1" height="17" viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg">

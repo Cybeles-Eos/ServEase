@@ -15,6 +15,7 @@ use App\Http\Controllers\ServiceRatingController;
 use App\Http\Controllers\ProviderServiceReviewController;
 use App\Http\Controllers\ServiceReportController;
 use App\Http\Controllers\AdminReportController;
+use App\Http\Controllers\CustomerRequestController;
 
 Route::get('/', function () {
     return view('front.pages.custom-pages.home');
@@ -80,6 +81,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking-receipt/{id}', [BookingReceiptController::class, 'show'])
         ->name('booking.receipt');
 
+    Route::get('/customer-requests', [CustomerRequestController::class, 'marketplace'])
+        ->name('customer-requests.index');
+    Route::post('/customer-requests/{customerRequest}/apply', [CustomerRequestController::class, 'apply'])
+        ->name('customer-requests.apply');
 
     Route::middleware('role:admin')->group(function () {
         
@@ -145,6 +150,7 @@ Route::middleware('auth')->group(function () {
             // Route::get('/provider/bookings', function () {return view('admin.provbookings');})->name('provider.bookings');
             Route::get('/provider/bookings', [BookingRequestController::class, 'providerRequests'])->name('provider.bookings');
             Route::get('/provider/booking-calendar', [ProviderController::class, 'bookingCalendar'])->name('provider.booking-calendar');
+            Route::get('/provider/customer-requests', [CustomerRequestController::class, 'providerWork'])->name('provider.customer-requests.work');
             
             
             Route::get('/provider/service', [ServiceController::class, 'indexProvider'])->name('provider.service');
@@ -182,6 +188,10 @@ Route::middleware('auth')->group(function () {
         Route::redirect('/customer', '/customer/dashboard');
         Route::get('/customer/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
         Route::get('/customer/bookings', function () {return view('admin.cusbookings');})->name('customer.bookings');
+        Route::get('/customer/requests', [CustomerRequestController::class, 'customerIndex'])->name('customer.requests.index');
+        Route::post('/customer/requests', [CustomerRequestController::class, 'store'])->name('customer.requests.store');
+        Route::post('/customer/requests/{customerRequest}/applications/{application}/accept', [CustomerRequestController::class, 'acceptApplication'])->name('customer.requests.applications.accept');
+        Route::post('/customer/requests/{customerRequest}/complete', [CustomerRequestController::class, 'complete'])->name('customer.requests.complete');
 
         // Customer Setting
         Route::post('/customer/setting/update', [CustomerController::class, 'updateSetting'])->name('customer.setting.update');
