@@ -348,6 +348,7 @@
                                 placeholder="Enter your first name"
                                 value="{{ old('fname') }}"
                                 required
+                                data-one-space
                                 autocomplete="off"
                             >
                             @error('fname') <small>{{ $message }}</small> @enderror
@@ -362,6 +363,7 @@
                                 placeholder="Enter your last name"
                                 value="{{ old('lname') }}"
                                 required
+                                data-one-space
                                 autocomplete="off"
                             >
                             @error('lname') <small>{{ $message }}</small> @enderror
@@ -376,6 +378,7 @@
                                 placeholder="e. g. name@gmail.com"
                                 value="{{ old('email') }}"
                                 required
+                                data-no-space
                                 maxlength="255"
                                 autocomplete="email"
                                 inputmode="email"
@@ -393,6 +396,7 @@
                                 value="{{ old('phone_number') }}"
                                 required
                                 maxlength="11"
+                                data-no-space
                                 inputmode="numeric"
                                 autocomplete="tel"
                                 pattern="09[0-9]{9}"
@@ -426,6 +430,7 @@
                                 value="{{ old('zipcode') }}"
                                 required
                                 maxlength="4"
+                                data-no-space
                                 inputmode="numeric"
                                 pattern="[0-9]{4}"
                                 autocomplete="off"
@@ -444,6 +449,7 @@
                                 placeholder="Enter your street address"
                                 value="{{ old('street_address') }}"
                                 required
+                                data-one-space
                                 autocomplete="off"
                             >
                             @error('street_address') <small>{{ $message }}</small> @enderror
@@ -464,6 +470,7 @@
                                     autocorrect="off"
                                     autocapitalize="off"
                                     spellcheck="false"
+                                    data-one-space
                                     autocomplete="off"
                                 >
                                 <span class="location-combobox__arrow" aria-hidden="true"></span>
@@ -483,6 +490,7 @@
                                     value="{{ old('barangay') }}"
                                     required
                                     data-ph-barangay
+                                    data-one-space
                                     autocomplete="new-password"
                                     autocorrect="off"
                                     autocapitalize="off"
@@ -506,6 +514,7 @@
                                     id="password"
                                     placeholder="Enter your password"
                                     required
+                                    data-no-space
                                     autocomplete="new-password"
                                 >
                                 <div class="show" id="show-pass">
@@ -527,6 +536,7 @@
                                     id="password_conf"
                                     placeholder="Confirm your password"
                                     required
+                                    data-no-space
                                     autocomplete="new-password"
                                 >
                                 <div class="show" id="show-pass-conf">

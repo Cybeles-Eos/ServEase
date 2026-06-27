@@ -27,13 +27,13 @@
                     @csrf
                     <div class="plm-ff-group">
                         <label for="">Email Address</label>
-                        <input type="text" name="email" placeholder="e. g. name@gmail.com" value="{{ old('email') }}" required>
+                        <input type="text" name="email" placeholder="e. g. name@gmail.com" value="{{ old('email') }}" data-no-space required>
                         @error('email') <small>{{ $message }}</small> @enderror
                     </div>
                     <div class="plm-ff-group">
                         <label for="">Password</label>
                         <div class="plm-ff-group-pass">
-                            <input type="password" name="password" id="password" placeholder="e. g. name@gmail.com" required>
+                            <input type="password" name="password" id="password" placeholder="e. g. name@gmail.com" data-no-space required>
                             <div class="show" id="show-pass">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

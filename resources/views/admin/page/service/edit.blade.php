@@ -177,13 +177,13 @@
 
                         <div class="prg-mm-group">
                             <label>Service Name</label>
-                            <input type="text" name="title" value="{{ old('title', $service->title) }}">
+                            <input type="text" name="title" value="{{ old('title', $service->title) }}" data-one-space>
                             @error('title') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Slug</label>
-                            <input type="text" name="slug" value="{{ old('slug', $service->slug) }}" required>
+                            <input type="text" name="slug" value="{{ old('slug', $service->slug) }}" required data-one-space>
                             @error('slug') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
@@ -226,19 +226,19 @@
 
                         <div class="prg-mm-group">
                             <label>Short Description</label>
-                            <textarea name="description" rows="3">{{ old('description', $service->description) }}</textarea>
+                            <textarea name="description" rows="3" data-one-space>{{ old('description', $service->description) }}</textarea>
                             @error('description') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Full Content</label>
-                            <textarea name="content" id="content" rows="20">{{ old('content', $service->content) }}</textarea>
+                            <textarea name="content" id="content" rows="20" data-one-space>{{ old('content', $service->content) }}</textarea>
                             @error('content') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Specialization</label>
-                            <input type="text" name="specialization" value="{{ old('specialization', $service->specialization) }}">
+                            <input type="text" name="specialization" value="{{ old('specialization', $service->specialization) }}" data-one-space>
                             @error('specialization') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 

@@ -157,7 +157,7 @@
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
                         <label>Professions</label>
-                        <input type="text" name="profession" value="{{ old('profession', $user->provider->profession ?? '') }}" required>
+                        <input type="text" name="profession" value="{{ old('profession', $user->provider->profession ?? '') }}" data-one-space required>
                         @error('profession') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
 
@@ -259,13 +259,13 @@
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
                         <label>First Name <span>*</span></label>
-                        <input type="text" name="first_name" value="{{ old('first_name', $user->provider->first_name ?? '') }}" required>
+                        <input type="text" name="first_name" value="{{ old('first_name', $user->provider->first_name ?? '') }}" data-one-space required>
                         @error('first_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
 
                     <div class="cms-mm-group">
                         <label>Last Name <span>*</span></label>
-                        <input type="text" name="last_name" value="{{ old('last_name', $user->provider->last_name ?? '') }}" required>
+                        <input type="text" name="last_name" value="{{ old('last_name', $user->provider->last_name ?? '') }}" data-one-space required>
                         @error('last_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
                 </div>
@@ -293,7 +293,7 @@
                 <div class="cms-mm-group-con">
                     <div class="cms-mm-group">
                         <label>Home Address <span>*</span></label>
-                        <input type="text" name="home_address" value="{{ old('home_address', $user->provider->home_address ?? '') }}">
+                        <input type="text" name="home_address" value="{{ old('home_address', $user->provider->home_address ?? '') }}" data-one-space>
                         @error('home_address') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                     </div>
 
@@ -301,7 +301,7 @@
                         <label>City <span>*</span></label>
                         <input type="hidden" name="city" value="{{ old('city', $user->provider->city ?? $user->provider->province ?? '') }}" data-ph-city-value>
                         <div class="location-combobox" data-ph-combobox="city">
-                            <input type="text" value="{{ old('city', $user->provider->city ?? $user->provider->province ?? '') }}" required autocomplete="off" data-ph-city>
+                            <input type="text" value="{{ old('city', $user->provider->city ?? $user->provider->province ?? '') }}" data-one-space required autocomplete="off" data-ph-city>
                             <span class="location-combobox__arrow" aria-hidden="true"></span>
                             <div class="location-combobox__menu" data-ph-city-menu></div>
                         </div>
@@ -313,7 +313,7 @@
                         <label>Barangay <span>*</span></label>
                         <input type="hidden" name="barangay" value="{{ old('barangay', $user->provider->barangay ?? '') }}" data-ph-barangay-value>
                         <div class="location-combobox" data-ph-combobox="barangay">
-                            <input type="text" value="{{ old('barangay', $user->provider->barangay ?? '') }}" required autocomplete="off" data-ph-barangay>
+                            <input type="text" value="{{ old('barangay', $user->provider->barangay ?? '') }}" data-one-space required autocomplete="off" data-ph-barangay>
                             <span class="location-combobox__arrow" aria-hidden="true"></span>
                             <div class="location-combobox__menu" data-ph-barangay-menu></div>
                         </div>

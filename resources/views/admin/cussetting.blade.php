@@ -180,13 +180,13 @@
                     <div class="cms-mm-group-con">
                         <div class="cms-mm-group">
                             <label>First Name <span>*</span></label>
-                            <input type="text" name="first_name" value="{{ old('first_name', $user->customer->first_name ?? '') }}" required>
+                            <input type="text" name="first_name" value="{{ old('first_name', $user->customer->first_name ?? '') }}" data-one-space required>
                             @error('first_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="cms-mm-group">
                             <label>Last Name <span>*</span></label>
-                            <input type="text" name="last_name" value="{{ old('last_name', $user->customer->last_name ?? '') }}" required>
+                            <input type="text" name="last_name" value="{{ old('last_name', $user->customer->last_name ?? '') }}" data-one-space required>
                             @error('last_name') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
                     </div>
@@ -273,13 +273,13 @@
                     <div id="customer-password-fields" class="settings-password-fields {{ $showPasswordFields ? 'is-visible' : '' }}">
                         <div class="cms-mm-group">
                             <label>New password <span>*</span></label>
-                            <input type="password" name="password" autocomplete="new-password" placeholder="Minimum 8 characters">
+                            <input type="password" name="password" autocomplete="new-password" data-no-space placeholder="Minimum 8 characters">
                             @error('password') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="cms-mm-group">
                             <label>Confirm new password <span>*</span></label>
-                            <input type="password" name="password_confirmation" autocomplete="new-password">
+                            <input type="password" name="password_confirmation" data-no-space autocomplete="new-password">
                             @error('password_confirmation') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
                     </div>

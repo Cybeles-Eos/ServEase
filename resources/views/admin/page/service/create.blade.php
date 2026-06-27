@@ -177,13 +177,13 @@
 
                         <div class="prg-mm-group">
                             <label>Service Name <span>*</span></label>
-                            <input type="text" name="title" id="title" value="{{ old('title') }}">
+                            <input type="text" name="title" id="title" value="{{ old('title') }}" data-one-space>
                             @error('title') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Slug <span>*</span></label>
-                            <input type="text" name="slug" id="slug" value="{{ old('slug') }}" required>
+                            <input type="text" name="slug" id="slug" value="{{ old('slug') }}" data-no-space required>
                             @error('slug') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                         </div>
 
@@ -215,17 +215,17 @@
 
                         <div class="prg-mm-group">
                             <label>Short Description <span>*</span></label>
-                            <textarea name="description" rows="3">{{ old('description') }}</textarea>
+                            <textarea name="description" rows="3" data-one-space>{{ old('description') }}</textarea>
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Full Content <span>*</span></label>
-                            <textarea name="content" id="content" rows="20"></textarea>
+                            <textarea name="content" id="content" rows="20" data-one-space></textarea>
                         </div>
 
                         <div class="prg-mm-group">
                             <label>Specialization</label>
-                            <input type="text" name="specialization" value="{{ old('specialization') }}">
+                            <input type="text" name="specialization" value="{{ old('specialization') }}" data-one-space>
                         </div>
 
                         <div class="prg-mm-group">
