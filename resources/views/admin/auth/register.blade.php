@@ -407,7 +407,7 @@
                         </div>
 
                         <div class="plm-ff-group">
-                            <label for="gender">Gender <span class="required">*</span></label>
+                            <label for="gender">Sex <span class="required">*</span></label>
                             <div class="register-select">
                                 <select id="gender" name="gender" required>
                                     <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Select gender</option>

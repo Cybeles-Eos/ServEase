@@ -8311,6 +8311,9 @@ h4 span {
   padding-bottom: 14px;
   border-bottom: 1px solid #EEF0F3;
 }
+.page-admin-bookings .th--audith {
+  flex-direction: column !important;
+}
 .page-admin-bookings__table-title h4 {
   margin: 0;
   font-size: 24px;
@@ -8589,7 +8592,42 @@ h4 span {
 }
 
 .page-admin-audit-logs__table-head {
-  align-items: center;
+  align-items: flex-start;
+}
+.page-admin-audit-logs__filters {
+  flex: 1;
+  margin-left: auto;
+}
+.page-admin-audit-logs__filter-group {
+  flex-wrap: wrap;
+}
+@media screen and (max-width: 1100px) {
+  .page-admin-audit-logs__filter-group {
+    width: 100% !important;
+  }
+  .page-admin-audit-logs__filter-group div {
+    width: 100% !important;
+  }
+}
+.page-admin-audit-logs__search {
+  width: 260px;
+}
+.page-admin-audit-logs__date {
+  width: 145px;
+  height: 40px;
+  border: 1px solid #E0E2E7;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #202020;
+  outline: none;
+  transition: 0.2s ease;
+}
+.page-admin-audit-logs__date:focus {
+  border-color: #FFBE42;
+  box-shadow: 0 0 0 3px rgba(255, 190, 66, 0.18);
 }
 .page-admin-audit-logs .section__table .admin-ustbl-main-c--audit-logs {
   min-width: 1160px;
@@ -8597,6 +8635,32 @@ h4 span {
 .page-admin-audit-logs .section__table .admin-ustbl-main-c--audit-logs .admin-ustbl-main-c__head,
 .page-admin-audit-logs .section__table .admin-ustbl-main-c--audit-logs .admin-ustbl-main-c__tbody {
   grid-template-columns: 120px 150px 95px 130px 105px 150px minmax(320px, 1fr);
+}
+@media (max-width: 1100px) {
+  .page-admin-audit-logs__filters, .page-admin-audit-logs__search, .page-admin-audit-logs__date {
+    width: 100%;
+  }
+}
+@media print {
+  .main-headerdash-uix,
+  .main-sidebar-uix,
+  .page-admin-bookings__filters,
+  .page-admin-bookings__pagination,
+  .page-loading-bar {
+    display: none !important;
+  }
+  .page-admin-audit-logs.main-dash-uix {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  .page-admin-audit-logs .section__table {
+    border: none;
+    padding: 0;
+  }
+  .page-admin-audit-logs .admin-ustbl-main {
+    overflow: visible !important;
+  }
 }
 .page-admin-audit-logs .audit-table-cell strong,
 .page-admin-audit-logs .audit-table-cell span {

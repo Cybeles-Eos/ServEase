@@ -116,7 +116,7 @@
                                 @error('phone_number') <small style="align-self: flex-end; color: red">{{ $message }}</small> @enderror
                             </div>
                             <div class="prg-mm-group">
-                                <label>Gender <span>*</span></label>
+                                <label>Sex <span>*</span></label>
                                 <div class="provserv-c-body--fields--dropdowns">
                                     <select name="gender" class="provserv-c-body--fields--dropdowns--sort">
                                         <option value="">Choose gender</option>

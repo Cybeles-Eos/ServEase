@@ -10,13 +10,71 @@
         <hr style="margin-top: 10px">
 
         <section class="section__table">
-            <div class="page-admin-bookings__table-head page-admin-audit-logs__table-head">
+            <div class="page-admin-bookings__table-head page-admin-audit-logs__table-head th--audith">
                 <div class="page-admin-bookings__table-title">
                     <h4>Audit Logs</h4>
                     <p class="section__table--label">
                         System activity recorded from actual account, booking, service, and admin actions.
                     </p>
                 </div>
+
+                <form method="GET" action="{{ route('admin.audit-logs') }}" class="page-admin-bookings__filters page-admin-audit-logs__filters" style="justify-content: flex-end !important">
+                    <div class="page-admin-bookings__search page-admin-audit-logs__search">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                            <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Search audit logs...">
+                    </div>
+
+                    <div class="page-admin-bookings__filter-group page-admin-audit-logs__filter-group">
+                        {{-- <div class="page-admin-bookings__select-wrap">
+                            <select name="module" class="page-admin-bookings__select">
+                                <option value="">All Modules</option>
+                                @foreach ($moduleOptions as $moduleOption)
+                                    <option value="{{ $moduleOption }}" {{ $module === $moduleOption ? 'selected' : '' }}>
+                                        {{ $moduleOption }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div> --}}
+
+                        <div class="page-admin-bookings__select-wrap">
+                            <select name="event" class="page-admin-bookings__select">
+                                <option value="">All Activities</option>
+                                @foreach ($eventOptions as $eventOption)
+                                    <option value="{{ $eventOption }}" {{ $event === $eventOption ? 'selected' : '' }}>
+                                        {{ ucfirst(str_replace('_', ' ', $eventOption)) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <input type="date" name="date_from" value="{{ $dateFrom }}" class="page-admin-audit-logs__date" aria-label="Date from">
+                        <input type="date" name="date_to" value="{{ $dateTo }}" class="page-admin-audit-logs__date" aria-label="Date to">
+                    </div>
+
+                    <div class="page-admin-bookings__filter-actions page-admin-audit-logs__actions">
+                        <button type="submit" class="page-admin-bookings__filter-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 3H2L10 12.46V19L14 21V12.46L22 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Filter
+                        </button>
+
+                        @if(request()->hasAny(['search', 'module', 'event', 'date_from', 'date_to']))
+                            <a href="{{ route('admin.audit-logs') }}" class="page-admin-bookings__clear-btn">
+                                Clear
+                            </a>
+                        @endif
+
+                        <button type="button" class="page-admin-bookings__filter-btn" onclick="window.print()">
+                            <i class="fas fa-print"></i>
+                            Print Audit Log
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <div class="admin-ustbl-main">

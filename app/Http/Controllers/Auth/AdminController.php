@@ -402,12 +402,53 @@ class AdminController extends Controller
             ]);
         }
 
+        $module = (string) $request->get('module', '');
+        $event = (string) $request->get('event', '');
+        $dateFrom = (string) $request->get('date_from', '');
+        $dateTo = (string) $request->get('date_to', '');
+        $search = trim((string) $request->get('search', ''));
+
+        $moduleOptions = AuditLog::query()
+            ->select('module')
+            ->distinct()
+            ->orderBy('module')
+            ->pluck('module');
+
+        $eventOptions = AuditLog::query()
+            ->select('event')
+            ->distinct()
+            ->orderBy('event')
+            ->pluck('event');
+
         $auditLogs = AuditLog::query()
+            ->when($module !== '', fn ($query) => $query->where('module', $module))
+            ->when($event !== '', fn ($query) => $query->where('event', $event))
+            ->when($dateFrom !== '', fn ($query) => $query->whereDate('created_at', '>=', $dateFrom))
+            ->when($dateTo !== '', fn ($query) => $query->whereDate('created_at', '<=', $dateTo))
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('actor_name', 'like', "%{$search}%")
+                        ->orWhere('actor_role', 'like', "%{$search}%")
+                        ->orWhere('module', 'like', "%{$search}%")
+                        ->orWhere('event', 'like', "%{$search}%")
+                        ->orWhere('subject_label', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.page.admin.audit-logs.index', compact('auditLogs'));
+        return view('admin.page.admin.audit-logs.index', compact(
+            'auditLogs',
+            'dateFrom',
+            'dateTo',
+            'event',
+            'eventOptions',
+            'module',
+            'moduleOptions',
+            'search',
+        ));
     }
 
     // public function users()

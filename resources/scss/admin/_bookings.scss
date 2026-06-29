@@ -159,6 +159,9 @@
         padding-bottom: 14px;
         border-bottom: 1px solid #EEF0F3;
     }
+    .th--audith {
+        flex-direction: column !important;
+    }
 
     &__table-title {
         h4 {
@@ -497,7 +500,47 @@
 
 .page-admin-audit-logs {
     &__table-head {
-        align-items: center;
+        align-items: flex-start;
+    }
+
+    &__filters {
+        flex: 1;
+        margin-left: auto;
+    }
+
+    &__filter-group {
+        flex-wrap: wrap;
+    }
+    @media screen and (max-width: 1100px) {
+        &__filter-group {
+            width: 100% !important;
+
+            div{
+                width: 100% !important;
+            }
+        }
+    }
+    &__search {
+        width: 260px;
+    }
+
+    &__date {
+        width: 145px;
+        height: 40px;
+        border: 1px solid #E0E2E7;
+        background: #fff;
+        border-radius: 10px;
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #202020;
+        outline: none;
+        transition: 0.2s ease;
+
+        &:focus {
+            border-color: #FFBE42;
+            box-shadow: 0 0 0 3px rgba(255, 190, 66, 0.18);
+        }
     }
 
     .section__table {
@@ -507,6 +550,41 @@
             .admin-ustbl-main-c__head,
             .admin-ustbl-main-c__tbody {
                 grid-template-columns: 120px 150px 95px 130px 105px 150px minmax(320px, 1fr);
+            }
+        }
+    }
+
+    @media (max-width: 1100px) {
+        &__filters,
+        &__search,
+        &__date {
+            width: 100%;
+        }
+    }
+
+    @at-root {
+        @media print {
+            .main-headerdash-uix,
+            .main-sidebar-uix,
+            .page-admin-bookings__filters,
+            .page-admin-bookings__pagination,
+            .page-loading-bar {
+                display: none !important;
+            }
+
+            .page-admin-audit-logs.main-dash-uix {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .page-admin-audit-logs .section__table {
+                border: none;
+                padding: 0;
+            }
+
+            .page-admin-audit-logs .admin-ustbl-main {
+                overflow: visible !important;
             }
         }
     }

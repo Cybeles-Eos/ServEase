@@ -222,7 +222,7 @@
                                 </div>
                             </div>
                             <div class="prg-mm-group">
-                                <label for="gender">Gender <span>*</span></label>
+                                <label for="gender">Sex <span>*</span></label>
                                 <div class="provider-select">
                                     <select id="gender" name="gender" required>
                                         <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Select gender</option>
