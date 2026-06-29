@@ -203,7 +203,14 @@ class AuthManagerController extends Controller
             'city' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^[0-9]{4}$/'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            // 'password' => ['required', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+            ],
             'privacy_accepted' => ['accepted'],
             'g-recaptcha-response' => ['required'],
         ], [
@@ -218,6 +225,9 @@ class AuthManagerController extends Controller
             'zipcode.regex' => 'ZIP code must be exactly 4 digits.',
             'privacy_accepted.accepted' => 'Please agree to the Privacy Policy before creating your account.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'password.regex' => 'Password must include uppercase, lowercase, number, and special character.',
         ]);
 
         $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [

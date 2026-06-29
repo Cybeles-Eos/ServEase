@@ -321,6 +321,67 @@
                 }
             }
         </style>
+        <style>
+.customer-register-page .password-strength-minimal {
+    width: 100% !important;
+    margin-top: 8px !important;
+}
+
+.customer-register-page .password-strength-minimal__bar {
+    width: 100% !important;
+    height: 4px !important;
+    background: #eef0f3 !important;
+    border-radius: 999px !important;
+    overflow: hidden !important;
+}
+
+.customer-register-page .password-strength-minimal__bar span {
+    display: block !important;
+    width: 0%;
+    height: 100% !important;
+    border-radius: 999px !important;
+    background: #d93025;
+    transition: all 0.2s ease !important;
+}
+
+.customer-register-page .password-strength-minimal__text {
+    margin: 6px 0 0 !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    color: #98a2b3 !important;
+}
+
+.customer-register-page .password-strength-minimal__text strong {
+    font-weight: 600 !important;
+}
+
+.customer-register-page .password-strength-minimal.is-low .password-strength-minimal__bar span {
+    width: 33%;
+    background: #d93025;
+}
+
+.customer-register-page .password-strength-minimal.is-low .password-strength-minimal__text strong {
+    color: #d93025 !important;
+}
+
+.customer-register-page .password-strength-minimal.is-medium .password-strength-minimal__bar span {
+    width: 66%;
+    background: #f59e0b;
+}
+
+.customer-register-page .password-strength-minimal.is-medium .password-strength-minimal__text strong {
+    color: #f59e0b !important;
+}
+
+.customer-register-page .password-strength-minimal.is-strong .password-strength-minimal__bar span {
+    width: 100%;
+    background: #16a34a;
+}
+
+.customer-register-page .password-strength-minimal.is-strong .password-strength-minimal__text strong {
+    color: #16a34a !important;
+}
+        </style>
     @endpush
 
     @include('front.layouts.sections.header')
@@ -420,7 +481,7 @@
                             @error('gender') <small>{{ $message }}</small> @enderror
                         </div>
 
-                        <div class="plm-ff-group">
+                        <div class="plm-ff-group" style="position: relative">
                             <label for="birthdate">Birthdate <span class="required">*</span></label>
                             <input
                                 type="date"
@@ -433,8 +494,9 @@
                                 data-min-age="18"
                                 data-max-age="150"
                                 title="Age must be between 18 and 150 years old"
+                                
                             >
-                            <small class="birthdate-error" style="display:none; color:#111 !important; align-self: flex-end"></small>
+                            {{-- <small class="birthdate-error" style="display:none; color:#111 !important; align-self: flex-end"></small> --}}
                             @error('birthdate') <small>{{ $message }}</small> @enderror
                         </div>
 
@@ -523,7 +585,7 @@
                     </div>
 
                     <div class="register-grid register-grid--two">
-                        <div class="plm-ff-group">
+                        {{-- <div class="plm-ff-group">
                             <label for="password">Password <span class="required">*</span></label>
                             <div class="plm-ff-group-pass">
                                 <input
@@ -543,7 +605,40 @@
                                 </div>
                             </div>
                             @error('password') <small>{{ $message }}</small> @enderror
-                        </div>
+                        </div> --}}
+<div class="plm-ff-group">
+    <label for="password">Password <span class="required">*</span></label>
+
+    <div class="plm-ff-group-pass">
+        <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Enter your password"
+            required
+            data-no-space
+            autocomplete="new-password"
+        >
+
+        <div class="show" id="show-pass">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.58 11.9999C15.58 13.9799 13.98 15.5799 12 15.5799C10.02 15.5799 8.42004 13.9799 8.42004 11.9999C8.42004 10.0199 10.02 8.41992 12 8.41992C13.98 8.41992 15.58 10.0199 15.58 11.9999Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 20.2702C15.53 20.2702 18.82 18.1902 21.11 14.5902C22.01 13.1802 22.01 10.8102 21.11 9.40021C18.82 5.80021 15.53 3.72021 12 3.72021C8.46997 3.72021 5.17997 5.80021 2.88997 9.40021C1.98997 10.8102 1.98997 13.1802 2.88997 14.5902C5.17997 18.1902 8.46997 20.2702 12 20.2702Z" stroke="#1E1E1E" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="password-strength-minimal" data-password-strength>
+        <div class="password-strength-minimal__bar">
+            <span></span>
+        </div>
+        <p class="password-strength-minimal__text">
+            Strength: <strong>Required</strong>
+        </p>
+    </div>
+
+    @error('password') <small>{{ $message }}</small> @enderror
+</div>
 
                         <div class="plm-ff-group">
                             <label for="password_conf">Confirm Password <span class="required">*</span></label>
@@ -922,5 +1017,63 @@
                 });
             }
         });
+    </script>
+
+    <script>
+function setupPasswordStrength() {
+    const passwordInput = document.getElementById('password');
+    const strengthBox = document.querySelector('[data-password-strength]');
+
+    if (!passwordInput || !strengthBox) return;
+
+    const text = strengthBox.querySelector('.password-strength-minimal__text strong');
+
+    function updatePasswordStrength() {
+        const value = passwordInput.value;
+
+        const checks = {
+            length: value.length >= 8,
+            uppercase: /[A-Z]/.test(value),
+            lowercase: /[a-z]/.test(value),
+            number: /[0-9]/.test(value),
+            symbol: /[^A-Za-z0-9]/.test(value),
+        };
+
+        const score = Object.values(checks).filter(Boolean).length;
+
+        strengthBox.classList.remove('is-low', 'is-medium', 'is-strong');
+
+        if (!value) {
+            text.textContent = 'Required';
+            passwordInput.setCustomValidity('');
+            return;
+        }
+
+        if (score <= 2) {
+            text.textContent = 'Low';
+            strengthBox.classList.add('is-low');
+            passwordInput.setCustomValidity('Password must be strong.');
+            return;
+        }
+
+        if (score <= 4) {
+            text.textContent = 'Medium';
+            strengthBox.classList.add('is-medium');
+            passwordInput.setCustomValidity('Password must be strong.');
+            return;
+        }
+
+        text.textContent = 'Strong';
+        strengthBox.classList.add('is-strong');
+        passwordInput.setCustomValidity('');
+    }
+
+    passwordInput.addEventListener('input', updatePasswordStrength);
+    passwordInput.addEventListener('change', updatePasswordStrength);
+
+    updatePasswordStrength();
+}
+
+setupPasswordStrength();
     </script>
 @endpush

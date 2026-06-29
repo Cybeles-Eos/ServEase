@@ -36,6 +36,7 @@
                                     <option value="">— Choose —</option>
                                     <option value="customer" {{ old('role') === 'customer' ? 'selected' : '' }}>Customer</option>
                                     <option value="provider" {{ old('role') === 'provider' ? 'selected' : '' }}>Provider</option>
+                                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                                 </select>
                                 <svg width="7" height="4" viewBox="0 0 7 4" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M0.5 0.5L3.5 3.5L6.5 0.5" stroke="#282828" stroke-linecap="round" stroke-linejoin="round"/>

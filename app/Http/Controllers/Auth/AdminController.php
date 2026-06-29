@@ -465,9 +465,9 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $query = User::with(['customer', 'provider'])
-            ->whereIn('role', ['customer', 'provider'])
             ->where(function ($query) {
                 $query->where('role', 'customer')
+                    ->orWhere('role', 'admin')
                     ->orWhere(function ($providerQuery) {
                         $providerQuery->where('role', 'provider')
                             ->whereHas('provider', function ($profileQuery) {
@@ -499,7 +499,7 @@ class AdminController extends Controller
             });
         }
 
-        if ($request->filled('role') && in_array($request->role, ['customer', 'provider'], true)) {
+        if ($request->filled('role') && in_array($request->role, ['customer', 'provider', 'admin'], true)) {
             $query->where('role', $request->role);
         }
 
@@ -522,7 +522,7 @@ class AdminController extends Controller
         $role = $request->input('role');
 
         $rules = [
-            'role' => ['required', Rule::in(['customer', 'provider'])],
+            'role' => ['required', Rule::in(['customer', 'provider', 'admin'])],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -537,7 +537,7 @@ class AdminController extends Controller
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
             $rules['zipcode'] = ['nullable', 'string', 'regex:/^\d{4}$/'];
-        } else {
+        } elseif ($role === 'provider') {
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
@@ -585,7 +585,7 @@ class AdminController extends Controller
                     'barangay' => $validated['barangay'] ?? null,
                     'zipcode' => $validated['zipcode'] ?? null,
                 ]);
-            } else {
+            } elseif ($role === 'provider') {
                 $user->provider()->create([
                     'first_name' => $validated['first_name'],
                     'last_name' => $validated['last_name'],
@@ -662,7 +662,7 @@ class AdminController extends Controller
             $rules['city'] = ['nullable', 'string', 'max:255'];
             $rules['barangay'] = ['nullable', 'string', 'max:255'];
             $rules['zipcode'] = ['nullable', 'string', 'regex:/^\d{4}$/'];
-        } else {
+        } elseif ($user->role === 'provider') {
             $rules['first_name'] = ['required', 'string', 'max:255'];
             $rules['last_name'] = ['required', 'string', 'max:255'];
             $rules['phone_number'] = ['required', 'string', 'max:255'];
@@ -706,7 +706,7 @@ class AdminController extends Controller
                         'zipcode' => $validated['zipcode'] ?? null,
                     ]
                 );
-            } else {
+            } elseif ($user->role === 'provider') {
                 $user->provider()->updateOrCreate(
                     ['user_id' => $user->id],
                     [
@@ -778,7 +778,7 @@ class AdminController extends Controller
 
     private function assertManagedUser(User $user): void
     {
-        if (! in_array($user->role, ['provider', 'customer'], true)) {
+        if (! in_array($user->role, ['provider', 'customer', 'admin'], true)) {
             abort(404);
         }
 
