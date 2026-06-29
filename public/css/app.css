@@ -8705,6 +8705,9 @@ h4 span {
 .page-admin-audit-logs .audit-log-badge--module {
   background: #1683C7;
 }
+.page-admin-audit-logs .audit-log-badge--event {
+  background: #64748B;
+}
 .page-admin-audit-logs .audit-log-badge--booking-board {
   background: #0E8ECA;
 }
