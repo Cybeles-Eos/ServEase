@@ -354,114 +354,6 @@ class AuthManagerController extends Controller
         ]);
     }
 
-    // public function signupProvider(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'fname' => ['required', 'string', 'max:255'],
-    //         'lname' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-    //         'number' => ['required', 'regex:/^09[0-9]{9}$/'],
-    //         'address' => ['required', 'string', 'max:255'],
-    //         'city' => ['required', 'string', 'max:255'],
-    //         'barangay' => ['required', 'string', 'max:255'],
-    //         'zipcode' => ['required', 'regex:/^\d{4}$/'],
-    //         'profession' => ['required', 'string', 'max:255'],
-    //         'experience' => ['required', 'integer', 'min:1', 'max:100'],
-    //         'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
-    //         'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
-    //         'password' => ['required', 'min:8', 'confirmed'],
-    //         'g-recaptcha-response' => ['required'],
-    //     ], [
-    //         'number.regex' => 'The phone number must start with 09 and must be exactly 11 digits.',
-    //         'zipcode.regex' => 'The ZIP Code must be 4 digits.',
-    //         'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
-    //     ]);
-
-    //     $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-    //         'secret' => config('services.recaptcha.secret_key'),
-    //         'response' => $request->input('g-recaptcha-response'),
-    //         'remoteip' => $request->ip(),
-    //     ]);
-
-    //     if (! $recaptcha->json('success')) {
-    //         throw ValidationException::withMessages([
-    //             'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
-    //         ]);
-    //     }
-
-    //     $createdUser = null;
-
-    //     DB::transaction(function () use ($request, $validated, &$createdUser) {
-    //         $resumePath = null;
-    //         $barangayClearancePath = null;
-
-    //         if ($request->hasFile('resume')) {
-    //             $resumePath = $request->file('resume')->store('provider-resumes', 'public');
-    //         }
-
-    //         if ($request->hasFile('barangay_clearance')) {
-    //             $barangayClearancePath = $request->file('barangay_clearance')->store('provider-barangay-clearances', 'public');
-    //         }
-
-    //         $user = User::create([
-    //             'name' => $validated['fname'] . ' ' . $validated['lname'],
-    //             'email' => $validated['email'],
-    //             'password' => Hash::make($validated['password']),
-    //             'role' => 'provider',
-
-    //             /*
-    //             |--------------------------------------------------------------------------
-    //             | Important
-    //             |--------------------------------------------------------------------------
-    //             | Provider cannot login until admin accepts the application.
-    //             */
-    //             'is_active' => 0, // Set to active to allow login, but provider application status will be checked on login to block access until accepted by admin
-    //         ]);
-
-    //         $user->provider()->create([
-    //             'first_name' => $validated['fname'],
-    //             'last_name' => $validated['lname'],
-    //             'phone_number' => $validated['number'],
-    //             'home_address' => $validated['address'],
-    //             'city' => $validated['city'],
-    //             'barangay' => $validated['barangay'],
-    //             'zipcode' => $validated['zipcode'],
-    //             'profession' => $validated['profession'],
-    //             'year_exp' => $validated['experience'],
-
-    //             'resume_path' => $resumePath,
-    //             'barangay_clearance_path' => $barangayClearancePath,
-
-    //             'application_status' => 'pending',
-    //             'application_reviewed_at' => null,
-    //             'application_reviewed_by' => null,
-    //             'application_remarks' => null,
-    //         ]);
-
-    //         $createdUser = $user;
-    //     });
-
-    //     if ($createdUser) {
-    //         AdminNotificationService::newProviderApplication($createdUser);
-
-    //         app(OtpService::class)->sendRegistrationOtp($createdUser);
-
-    //         session([
-    //             'otp_email' => $createdUser->email,
-    //             'otp_user_id' => $createdUser->id,
-    //         ]);
-
-    //         return redirect()->route('otp.verify.page')->with('flash_message', [
-    //             'title' => 'Verify Your Email',
-    //             'message' => 'Your provider application was submitted. We sent a 6-digit OTP to your email. Please verify your email while your application waits for admin review.',
-    //             'type' => 'success',
-    //         ]);
-    //     }
-
-    //     return redirect()
-    //         ->route('provider-signup')
-    //         ->with('provider_application_submitted', true);
-    // }
     public function signupProvider(Request $request)
     {
         $otpService = app(OtpService::class);
@@ -496,7 +388,14 @@ class AuthManagerController extends Controller
             'experience' => ['required', 'integer', 'min:1', 'max:100'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
-            'password' => ['required', 'min:8', 'confirmed'],
+            // 'password' => ['required', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+            ],
             'privacy_accepted' => ['accepted'],
             'g-recaptcha-response' => ['required'],
         ], [
@@ -508,6 +407,9 @@ class AuthManagerController extends Controller
             'birthdate.date' => 'Please select a valid birthdate.',
             'privacy_accepted.accepted' => 'Please agree to the Privacy Policy before submitting your application.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'password.regex' => 'Password must include uppercase, lowercase, number, and special character.',
         ]);
 
         $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
