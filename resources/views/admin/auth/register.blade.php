@@ -421,6 +421,24 @@
                         </div>
 
                         <div class="plm-ff-group">
+                            <label for="birthdate">Birthdate <span class="required">*</span></label>
+                            <input
+                                type="date"
+                                id="birthdate"
+                                name="birthdate"
+                                value="{{ old('birthdate') }}"
+                                required
+                                autocomplete="off"
+                                data-age-picker
+                                data-min-age="18"
+                                data-max-age="150"
+                                title="Age must be between 18 and 150 years old"
+                            >
+                            <small class="birthdate-error" style="display:none; color:#111 !important; align-self: flex-end"></small>
+                            @error('birthdate') <small>{{ $message }}</small> @enderror
+                        </div>
+
+                        <div class="plm-ff-group">
                             <label for="zipcode">Zipcode <span class="required">*</span></label>
                             <input
                                 type="text"
@@ -611,6 +629,101 @@
                     <path d="M12 20.2702C15.53 20.2702 18.82 18.1902 21.11 14.5902C22.01 13.1802 22.01 10.8102 21.11 9.40021C18.82 5.80021 15.53 3.72021 12 3.72021C8.46997 3.72021 5.17997 5.80021 2.88997 9.40021C1.98997 10.8102 1.98997 13.1802 2.88997 14.5902C5.17997 18.1902 8.46997 20.2702 12 20.2702Z" stroke="#1E1E1E" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             `;
+
+            function formatDateInput(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
+            }
+
+            function calculateAge(value) {
+                const parts = value.split('-').map(Number);
+
+                if (parts.length !== 3 || parts.some(Number.isNaN)) {
+                    return null;
+                }
+
+                const [year, month, day] = parts;
+                const birthDate = new Date(year, month - 1, day);
+
+                if (
+                    birthDate.getFullYear() !== year ||
+                    birthDate.getMonth() !== month - 1 ||
+                    birthDate.getDate() !== day
+                ) {
+                    return null;
+                }
+
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                return age;
+            }
+
+            function setupAgePickers() {
+                document.querySelectorAll('[data-age-picker]').forEach(function (input) {
+                    const minAge = Number(input.dataset.minAge || 18);
+                    const maxAge = Number(input.dataset.maxAge || 150);
+                    const today = new Date();
+                    const oldestAllowed = new Date(today.getFullYear() - maxAge - 1, today.getMonth(), today.getDate() + 1);
+                    const youngestAllowed = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+                    const ageFeedback = input.parentElement.querySelector('.birthdate-error');
+
+                    input.min = formatDateInput(oldestAllowed);
+                    input.max = formatDateInput(youngestAllowed);
+
+                    function updateAge() {
+                        input.setCustomValidity('');
+
+                        if (!input.value) {
+                            if (ageFeedback) {
+                                ageFeedback.style.display = 'none';
+                            }
+
+                            return;
+                        }
+
+                        const age = calculateAge(input.value);
+
+                        if (age === null) {
+                            input.setCustomValidity('Please select a valid birthdate.');
+
+                            if (ageFeedback) {
+                                ageFeedback.textContent = 'Please select a valid birthdate.';
+                                ageFeedback.style.color = '#d93025';
+                                ageFeedback.style.display = 'block';
+                            }
+
+                            return;
+                        }
+
+                        if (age < minAge) {
+                            input.setCustomValidity(`You must be at least ${minAge} years old.`);
+                        } else if (age > maxAge) {
+                            input.setCustomValidity(`Age cannot be greater than ${maxAge} years old.`);
+                        }
+
+                        if (ageFeedback) {
+                            ageFeedback.textContent = input.validationMessage || `Age: ${age}`;
+                            ageFeedback.style.color = input.validationMessage ? '#d93025' : '#667085';
+                            ageFeedback.style.display = 'block';
+                        }
+                    }
+
+                    input.addEventListener('input', updateAge);
+                    input.addEventListener('change', updateAge);
+                    updateAge();
+                });
+            }
+
+            setupAgePickers();
 
             $('#show-pass').on('click', function () {
                 const input = $('#password');

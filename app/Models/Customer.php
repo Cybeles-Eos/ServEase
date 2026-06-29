@@ -14,10 +14,15 @@ class Customer extends Model
         'profile_image',
         'phone_number',
         'gender',
+        'birth_date',
         'street_address',
         'city',
         'barangay',
         'zipcode',
+    ];
+
+    protected $casts = [
+        'birth_date' => 'date',
     ];
 
     public function user() 

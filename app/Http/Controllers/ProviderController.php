@@ -34,7 +34,7 @@ class ProviderController extends Controller
             return redirect()->route('provider.dashboard');
         }
 
-        if ($provider->application_status !== 'declined') {
+        if ($provider->application_status !== 'resubmission_requested') {
             Auth::logout();
 
             return redirect()->route('login')->with('flash_message', [
@@ -74,10 +74,6 @@ class ProviderController extends Controller
             ]);
         }
 
-        if (!empty($provider->resubmission_required_documents)) {
-            return redirect()->route('provider.resubmit');
-        }
-
         return view('admin.provider-declined', compact('user', 'provider'));
     }
 
@@ -86,7 +82,7 @@ class ProviderController extends Controller
         $user = auth()->user();
         $provider = $user?->provider;
 
-        if (! $user || ! $provider || $provider->application_status !== 'declined' || !empty($provider->resubmission_required_documents)) {
+        if (! $user || ! $provider || $provider->application_status !== 'declined') {
             abort(403);
         }
 
@@ -131,7 +127,7 @@ class ProviderController extends Controller
         $user = auth()->user();
         $provider = $user?->provider;
 
-        if (! $provider || $provider->application_status !== 'declined') {
+        if (! $provider || $provider->application_status !== 'resubmission_requested') {
             abort(403);
         }
 

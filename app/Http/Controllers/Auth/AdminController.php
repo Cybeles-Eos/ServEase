@@ -22,6 +22,7 @@ use App\Models\Provider;
 use App\Services\AdminNotificationService;
 use App\Services\AuditLogService;
 use App\Services\OtpService;
+use App\Services\ProviderApplicationEmailService;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -784,7 +785,10 @@ class AdminController extends Controller
         if ($user->role === 'provider') {
             $user->loadMissing('provider');
 
-            if (!$user->provider || $user->provider->application_status === 'declined') {
+            if (
+                !$user->provider ||
+                in_array($user->provider->application_status, ['declined', 'resubmission_requested'], true)
+            ) {
                 abort(404);
             }
         }
@@ -793,7 +797,7 @@ class AdminController extends Controller
     public function applicants(Request $request)
     {
         $query = Provider::with('user')
-            ->whereIn('application_status', ['pending', 'declined'])
+            ->whereIn('application_status', ['pending', 'declined', 'resubmission_requested'])
             ->latest();
 
         if ($request->filled('search')) {
@@ -864,6 +868,7 @@ class AdminController extends Controller
             'application_reviewed_at' => now(),
             'application_reviewed_by' => auth()->id(),
             'application_remarks' => null,
+            'resubmission_required_documents' => null,
         ]);
 
         if ($provider->user) {
@@ -871,6 +876,8 @@ class AdminController extends Controller
                 'is_active' => 1,
             ]);
         }
+
+        app(ProviderApplicationEmailService::class)->sendAccepted($provider);
 
         AuditLogService::record(
             'Applicants',
@@ -898,9 +905,10 @@ class AdminController extends Controller
             'resubmission_required_documents' => ['nullable', 'array'],
             'resubmission_required_documents.*' => ['in:resume,barangay_clearance'],
         ]);
+        $isResubmissionRequest = !empty($validated['resubmission_required_documents']);
 
         $provider->update([
-            'application_status' => 'declined',
+            'application_status' => $isResubmissionRequest ? 'resubmission_requested' : 'declined',
             'application_reviewed_at' => now(),
             'application_reviewed_by' => auth()->id(),
             'application_remarks' => $validated['remarks'] ?? null,
@@ -913,10 +921,16 @@ class AdminController extends Controller
             ]);
         }
 
+        if ($isResubmissionRequest) {
+            app(ProviderApplicationEmailService::class)->sendResubmissionRequested($provider);
+        } else {
+            app(ProviderApplicationEmailService::class)->sendDeclined($provider);
+        }
+
         AuditLogService::record(
             'Applicants',
-            'declined',
-            'Declined provider application for ' . (trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? '')) ?: 'Provider #' . $provider->id) . '.',
+            $isResubmissionRequest ? 'resubmission_requested' : 'declined',
+            ($isResubmissionRequest ? 'Requested resubmission from ' : 'Declined provider application for ') . (trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? '')) ?: 'Provider #' . $provider->id) . '.',
             $provider,
             'Provider #' . $provider->id,
             [
@@ -927,9 +941,11 @@ class AdminController extends Controller
         );
 
         return redirect()->route('admin.applicants')->with('flash_message', [
-            'title' => 'Applicant Declined',
-            'message' => 'Provider application has been declined.',
-            'type' => 'warning',
+            'title' => $isResubmissionRequest ? 'Resubmission Requested' : 'Applicant Declined',
+            'message' => $isResubmissionRequest
+                ? 'Provider has been notified to resubmit the selected document.'
+                : 'Provider application has been declined.',
+            'type' => $isResubmissionRequest ? 'info' : 'warning',
         ]);
     }
 

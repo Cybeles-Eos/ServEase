@@ -16,6 +16,7 @@ class Provider extends Model
         'profile_image',
         'phone_number',
         'gender',
+        'birth_date',
         'home_address',
         'city',
         'barangay',
@@ -37,6 +38,7 @@ class Provider extends Model
     ];
 
     protected $casts = [
+        'birth_date' => 'date',
         'availability_days' => 'array',
         'resubmission_required_documents' => 'array',
     ];

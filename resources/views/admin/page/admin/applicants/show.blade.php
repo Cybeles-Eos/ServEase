@@ -204,6 +204,11 @@
         color: #166534;
     }
 
+    .application-badge--resubmission_requested {
+        background: #FFEDD5;
+        color: #C2410C;
+    }
+
     .application-badge--declined {
         background: #FEE2E2;
         color: #991B1B;
@@ -365,7 +370,7 @@
                     </form>
                 @endif
 
-                @if($provider->application_status !== 'declined')
+                @if(!in_array($provider->application_status, ['declined', 'resubmission_requested'], true))
                     <form method="POST"
                         action="{{ route('admin.applicants.decline', $provider->id) }}"
                         class="applicant-decline-form">
@@ -398,7 +403,7 @@
                     <span>Status</span>
                     <strong>
                         <span class="application-badge application-badge--{{ $provider->application_status }}">
-                            {{ ucfirst($provider->application_status) }}
+                            {{ $provider->application_status === 'resubmission_requested' ? 'Resubmission Requested' : ucfirst($provider->application_status) }}
                         </span>
                     </strong>
                 </div>
@@ -509,7 +514,7 @@
                     Open in new tab
                 </a>
             @endif
-            @if($provider->application_status !== 'declined')
+            @if(!in_array($provider->application_status, ['declined', 'resubmission_requested'], true))
                 <form method="POST" action="{{ route('admin.applicants.decline', $provider->id) }}" class="applicant-decline-form applicant-resubmit-form">
                     @csrf
                     <input type="hidden" name="remarks" value="Please resubmit your barangay clearance.">
@@ -539,7 +544,7 @@
                     Open in new tab
                 </a>
             @endif
-            @if($provider->application_status !== 'declined')
+            @if(!in_array($provider->application_status, ['declined', 'resubmission_requested'], true))
                 <form method="POST" action="{{ route('admin.applicants.decline', $provider->id) }}" class="applicant-decline-form applicant-resubmit-form">
                     @csrf
                     <input type="hidden" name="remarks" value="Please resubmit your resume.">
@@ -598,13 +603,13 @@
         Swal.fire({
             title: isResubmitRequest ? 'Request resubmission?' : 'Decline applicant?',
             text: isResubmitRequest
-                ? 'This will decline the current application and ask the provider to upload the selected document again.'
+                ? 'This will notify the provider to upload the selected document again.'
                 : 'This will decline the provider application.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: isResubmitRequest ? 'Request resubmit' : 'Yes, decline',
             cancelButtonText: 'Cancel',
-            confirmButtonColor: '#DF4545',
+            confirmButtonColor: isResubmitRequest ? '#F97316' : '#DF4545',
             cancelButtonColor: '#6B7280',
             reverseButtons: true,
         }).then(function (result) {

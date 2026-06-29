@@ -91,12 +91,12 @@ class AuthManagerController extends Controller
                     ]);
                 }
 
+                if ($provider->application_status === 'resubmission_requested') {
+                    return redirect()->route('provider.resubmit');
+                }
+
                 if ($provider->application_status === 'declined') {
-                    return redirect()->route(
-                        !empty($provider->resubmission_required_documents)
-                            ? 'provider.resubmit'
-                            : 'provider.declined'
-                    );
+                    return redirect()->route('provider.declined');
                 }
 
                 /*
@@ -176,6 +176,21 @@ class AuthManagerController extends Controller
     {
         // Customer Creation Account
         $otpService = app(OtpService::class);
+        $birthdateAgeRule = function ($attribute, $value, $fail) {
+            try {
+                $age = \Carbon\Carbon::parse($value)->age;
+            } catch (\Throwable $exception) {
+                return;
+            }
+
+            if ($age < 18) {
+                $fail('You must be at least 18 years old.');
+            }
+
+            if ($age > 150) {
+                $fail('Age cannot be greater than 150 years old.');
+            }
+        };
 
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
@@ -183,6 +198,7 @@ class AuthManagerController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone_number' => ['required', 'regex:/^09[0-9]{9}$/', 'unique:tbl_customers,phone_number'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'birthdate' => ['required', 'date', $birthdateAgeRule],
             'street_address' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
@@ -197,6 +213,8 @@ class AuthManagerController extends Controller
             'phone_number.unique' => 'This phone number is already registered.',
             'gender.required' => 'Please select your gender.',
             'gender.in' => 'Please select a valid gender.',
+            'birthdate.required' => 'Please select your birthdate.',
+            'birthdate.date' => 'Please select a valid birthdate.',
             'zipcode.regex' => 'ZIP code must be exactly 4 digits.',
             'privacy_accepted.accepted' => 'Please agree to the Privacy Policy before creating your account.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
@@ -232,6 +250,7 @@ class AuthManagerController extends Controller
                     'last_name' => $validated['lname'],
                     'phone_number' => $validated['phone_number'],
                     'gender' => $validated['gender'],
+                    'birth_date' => $validated['birthdate'],
                     'street_address' => $validated['street_address'],
                     'city' => $validated['city'],
                     'barangay' => $validated['barangay'],
@@ -278,6 +297,7 @@ class AuthManagerController extends Controller
                 'email'          => $validated['email'],
                 'phone_number'   => $validated['phone_number'],
                 'gender'         => $validated['gender'],
+                'birthdate'      => $validated['birthdate'],
                 'street_address' => $validated['street_address'],
                 'city'           => $validated['city'],
                 'barangay'       => $validated['barangay'],
@@ -435,6 +455,21 @@ class AuthManagerController extends Controller
     public function signupProvider(Request $request)
     {
         $otpService = app(OtpService::class);
+        $birthdateAgeRule = function ($attribute, $value, $fail) {
+            try {
+                $age = \Carbon\Carbon::parse($value)->age;
+            } catch (\Throwable $exception) {
+                return;
+            }
+
+            if ($age < 18) {
+                $fail('You must be at least 18 years old.');
+            }
+
+            if ($age > 150) {
+                $fail('Age cannot be greater than 150 years old.');
+            }
+        };
 
         $validated = $request->validate([
             'fname' => ['required', 'string', 'max:255'],
@@ -446,6 +481,7 @@ class AuthManagerController extends Controller
             'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^\d{4}$/'],
             'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'birthdate' => ['required', 'date', $birthdateAgeRule],
             'profession' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:1', 'max:100'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
@@ -458,6 +494,8 @@ class AuthManagerController extends Controller
             'zipcode.regex' => 'The ZIP Code must be 4 digits.',
             'gender.required' => 'Please select your gender.',
             'gender.in' => 'Please select a valid gender.',
+            'birthdate.required' => 'Please select your birthdate.',
+            'birthdate.date' => 'Please select a valid birthdate.',
             'privacy_accepted.accepted' => 'Please agree to the Privacy Policy before submitting your application.',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
         ]);
@@ -503,6 +541,7 @@ class AuthManagerController extends Controller
                     'last_name' => $validated['lname'],
                     'phone_number' => $validated['number'],
                     'gender' => $validated['gender'],
+                    'birth_date' => $validated['birthdate'],
                     'home_address' => $validated['address'],
                     'city' => $validated['city'],
                     'barangay' => $validated['barangay'],
@@ -572,6 +611,7 @@ class AuthManagerController extends Controller
                 'barangay' => $validated['barangay'],
                 'zipcode' => $validated['zipcode'],
                 'gender' => $validated['gender'],
+                'birthdate' => $validated['birthdate'],
                 'profession' => $validated['profession'],
                 'experience' => $validated['experience'],
                 'resume_path' => $resumePath,

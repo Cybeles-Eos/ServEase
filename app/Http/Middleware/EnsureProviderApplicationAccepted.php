@@ -15,12 +15,12 @@ class EnsureProviderApplicationAccepted
             abort(403, 'Provider account not found.');
         }
 
+        if ($provider->application_status === 'resubmission_requested') {
+            return redirect()->route('provider.resubmit');
+        }
+
         if ($provider->application_status === 'declined') {
-            return redirect()->route(
-                !empty($provider->resubmission_required_documents)
-                    ? 'provider.resubmit'
-                    : 'provider.declined'
-            );
+            return redirect()->route('provider.declined');
         }
 
         if ($provider->application_status !== 'accepted') {

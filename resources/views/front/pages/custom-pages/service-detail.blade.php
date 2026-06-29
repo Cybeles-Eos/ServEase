@@ -355,6 +355,28 @@
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 8C9.84095 8 11.3333 6.50762 11.3333 4.66667C11.3333 2.82572 9.84095 1.33334 8 1.33334C6.15905 1.33334 4.66667 2.82572 4.66667 4.66667C4.66667 6.50762 6.15905 8 8 8Z" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13.7267 14.6667C13.7267 12.0867 11.16 10 8 10C4.84 10 2.27333 12.0867 2.27333 14.6667" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <p>Sex: {{ $service->provider_gender }}</p>
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M5.33301 1.33301V3.33301" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M10.667 1.33301V3.33301" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M2.33301 6.06055H13.6663" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M14 5.66634V11.333C14 13.333 13 14.6663 10.6667 14.6663H5.33333C3 14.6663 2 13.333 2 11.333V5.66634C2 3.66634 3 2.33301 5.33333 2.33301H10.6667C13 2.33301 14 3.66634 14 5.66634Z" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M10.4621 9.13314H10.4681" stroke="#8F9296" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M10.4621 11.1331H10.4681" stroke="#8F9296" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M7.99625 9.13314H8.00224" stroke="#8F9296" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M7.99625 11.1331H8.00224" stroke="#8F9296" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.52848 9.13314H5.53447" stroke="#8F9296" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M5.52848 11.1331H5.53447" stroke="#8F9296" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <p>Age: {{ $service->provider_age }} years old</p>
+                                </li>
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M1.33301 5.99967V4.66634C1.33301 2.66634 2.66634 1.33301 4.66634 1.33301H11.333C13.333 1.33301 14.6663 2.66634 14.6663 4.66634V5.99967" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M1.33301 10V11.3333C1.33301 13.3333 2.66634 14.6667 4.66634 14.6667H11.333C13.333 14.6667 14.6663 13.3333 14.6663 11.3333V10" stroke="#8F9296" stroke-width="1.1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                                         <path d="M4.4668 6.17383L8.00013 8.2205L11.5068 6.18717" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
@@ -369,13 +391,6 @@
                                         <path d="M2.41379 5.65968C3.72712 -0.113657 12.2805 -0.106991 13.5871 5.66634C14.3538 9.05301 12.2471 11.9197 10.4005 13.693C9.06046 14.9863 6.94046 14.9863 5.59379 13.693C3.75379 11.9197 1.64712 9.04634 2.41379 5.65968Z" stroke="#8F9296" stroke-width="1.1"/>
                                     </svg>
                                     <p>Area: {{ $service->provider_area }}</p>
-                                </li>
-                                <li>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M8 8C9.84095 8 11.3333 6.50762 11.3333 4.66667C11.3333 2.82572 9.84095 1.33334 8 1.33334C6.15905 1.33334 4.66667 2.82572 4.66667 4.66667C4.66667 6.50762 6.15905 8 8 8Z" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M13.7267 14.6667C13.7267 12.0867 11.16 10 8 10C4.84 10 2.27333 12.0867 2.27333 14.6667" stroke="#8F9296" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <p>Gender: {{ $service->provider_gender }}</p>
                                 </li>
                                 <li>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

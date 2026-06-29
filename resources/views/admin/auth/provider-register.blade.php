@@ -35,6 +35,25 @@
             pointer-events: none;
         }
 
+        .provider-register .prg-mm-group input[type="date"] {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d9dee7;
+            border-radius: 7px;
+            background: #ffffff;
+            padding: 0 14px;
+            font-size: 13px;
+            color: #202124;
+        }
+
+        .provider-register .prg-mm-group input[type="date"]:focus {
+            border-color: #ffb73e;
+        }
+
+        .provider-register .birthdate-error {
+            color: #8b95a1;
+        }
+
         .provider-register .auth-form__privacy label {
             display: flex;
             align-items: flex-start;
@@ -237,6 +256,25 @@
                                 @enderror
                             </div>
                             <div class="prg-mm-group">
+                                <label for="birthdate">Birthdate <span>*</span></label>
+                                <input
+                                    type="date"
+                                    id="birthdate"
+                                    name="birthdate"
+                                    value="{{ old('birthdate') }}"
+                                    required
+                                    autocomplete="off"
+                                    data-age-picker
+                                    data-min-age="18"
+                                    data-max-age="150"
+                                    title="Age must be between 18 and 150 years old"
+                                >
+                                <small class="birthdate-error" style="display:none;"></small>
+                                @error('birthdate')
+                                    <small style="align-self: flex-end">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="prg-mm-group">
                                 <label for="address">Personal Home Address <span>*</span></label>
                                 <input type="text" placeholder="" name="address" value="{{ old('address') }}" data-one-space required autocomplete="off">
                                 @error('address') <small>{{ $message }}</small> @enderror
@@ -435,6 +473,101 @@
                     window.ServeasePageLoader.reset();
                 }
             }
+
+            function formatDateInput(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
+            }
+
+            function calculateAge(value) {
+                const parts = value.split('-').map(Number);
+
+                if (parts.length !== 3 || parts.some(Number.isNaN)) {
+                    return null;
+                }
+
+                const [year, month, day] = parts;
+                const birthDate = new Date(year, month - 1, day);
+
+                if (
+                    birthDate.getFullYear() !== year ||
+                    birthDate.getMonth() !== month - 1 ||
+                    birthDate.getDate() !== day
+                ) {
+                    return null;
+                }
+
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                return age;
+            }
+
+            function setupAgePickers() {
+                document.querySelectorAll('[data-age-picker]').forEach(function (input) {
+                    const minAge = Number(input.dataset.minAge || 18);
+                    const maxAge = Number(input.dataset.maxAge || 150);
+                    const today = new Date();
+                    const oldestAllowed = new Date(today.getFullYear() - maxAge - 1, today.getMonth(), today.getDate() + 1);
+                    const youngestAllowed = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+                    const ageFeedback = input.parentElement.querySelector('.birthdate-error');
+
+                    input.min = formatDateInput(oldestAllowed);
+                    input.max = formatDateInput(youngestAllowed);
+
+                    function updateAge() {
+                        input.setCustomValidity('');
+
+                        if (!input.value) {
+                            if (ageFeedback) {
+                                ageFeedback.style.display = 'none';
+                            }
+
+                            return;
+                        }
+
+                        const age = calculateAge(input.value);
+
+                        if (age === null) {
+                            input.setCustomValidity('Please select a valid birthdate.');
+
+                            if (ageFeedback) {
+                                ageFeedback.textContent = 'Please select a valid birthdate.';
+                                ageFeedback.style.color = '#d93025';
+                                ageFeedback.style.display = 'block';
+                            }
+
+                            return;
+                        }
+
+                        if (age < minAge) {
+                            input.setCustomValidity(`You must be at least ${minAge} years old.`);
+                        } else if (age > maxAge) {
+                            input.setCustomValidity(`Age cannot be greater than ${maxAge} years old.`);
+                        }
+
+                        if (ageFeedback) {
+                            ageFeedback.textContent = input.validationMessage || `Age: ${age}`;
+                            ageFeedback.style.color = input.validationMessage ? '#d93025' : '#667085';
+                            ageFeedback.style.display = 'block';
+                        }
+                    }
+
+                    input.addEventListener('input', updateAge);
+                    input.addEventListener('change', updateAge);
+                    updateAge();
+                });
+            }
+
+            setupAgePickers();
 
             $('.provreg-mm-con--fields').on('submit', function (e) {
                 const firstPageInvalid = getInvalidField('.provreg-mmcf-firstpage');

@@ -50,6 +50,7 @@
                     <select name="status" class="page-admin-applicants__select">
                         <option value="">All Status</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="resubmission_requested" {{ request('status') === 'resubmission_requested' ? 'selected' : '' }}>Resubmission Requested</option>
                         <option value="declined" {{ request('status') === 'declined' ? 'selected' : '' }}>Declined</option>
                     </select>
                 </div>
@@ -100,7 +101,12 @@
                         $statusClass = match($provider->application_status) {
                             'accepted' => 'bg-success text-white',
                             'declined' => 'bg-danger text-white',
+                            'resubmission_requested' => 'bg-info text-white',
                             default => 'bg-warning text-dark',
+                        };
+                        $statusLabel = match($provider->application_status) {
+                            'resubmission_requested' => 'Resubmission Requested',
+                            default => ucfirst($provider->application_status ?? 'pending'),
                         };
                     @endphp
 
@@ -113,7 +119,7 @@
 
                         <div class="prvstble-mctb-date">
                             <span class="badge {{ $statusClass }}" style="font-size: 11px">
-                                {{ ucfirst($provider->application_status ?? 'pending') }}
+                                {{ $statusLabel }}
                             </span>
                         </div>
 
@@ -144,7 +150,7 @@
                                 </form>
                             @endif
 
-                            @if($provider->application_status !== 'declined')
+                            @if(!in_array($provider->application_status, ['declined', 'resubmission_requested'], true))
                                 <form method="POST" action="{{ route('admin.applicants.decline', $provider->id) }}" class="applicant-decline-form">
                                     @csrf
                                     <input type="hidden" name="remarks" value="Declined by admin.">

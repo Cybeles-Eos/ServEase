@@ -265,6 +265,16 @@ class ServiceController extends Controller
             'end_time' => $providerAvailabilityEndTime,
             'label' => $service->provider?->availabilityLabel() ?? 'Mon-Fri, 8:00 AM - 10:00 PM',
         ];
+        $providerAge = 18;
+
+        if ($service->provider?->birth_date) {
+            try {
+                $providerAge = \Carbon\Carbon::parse($service->provider->birth_date)->age;
+            } catch (\Throwable $exception) {
+                $providerAge = 18;
+            }
+        }
+
         $providerBookedDates = $providerSchedules
             ->pluck('date_value')
             ->filter()
@@ -382,6 +392,7 @@ class ServiceController extends Controller
             'provider_profile' => $service->provider?->profile_image,
 
             'provider_exp' => $service->provider->year_exp ?? 0,
+            'provider_age' => $providerAge,
             'provider_gender' => $service->provider?->gender
                 ? ucfirst($service->provider->gender)
                 : 'Not specified',

@@ -8,8 +8,7 @@
             {{-- Provider Links --}}
             @auth
                 @if(auth()->user()->isProvider())
-                    @if(auth()->user()->provider?->application_status === 'declined')
-                    @if(!empty(auth()->user()->provider?->resubmission_required_documents))
+                    @if(auth()->user()->provider?->application_status === 'resubmission_requested')
                     <li>
                         <a href="{{ route('provider.resubmit') }}" class="{{ Request::is('provider/resubmit') ? 'active' : '' }}">
                             <div>
@@ -22,7 +21,7 @@
                             Resubmit
                         </a>
                     </li>
-                    @else
+                    @elseif(auth()->user()->provider?->application_status === 'declined')
                     <li>
                         <a href="{{ route('provider.declined') }}" class="{{ Request::is('provider/declined') ? 'active' : '' }}">
                             <div>
@@ -35,7 +34,6 @@
                             Declined
                         </a>
                     </li>
-                    @endif
                     @else
                     <li>
                         <a href="{{url('/provider/dashboard')}}" class="{{ Request::is('provider/dashboard') ? 'active' : '' }}">
