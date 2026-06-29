@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\BookingInfo;
+use App\Services\AuditLogService;
 use App\Services\BookingStatusService;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -181,6 +182,18 @@ class CustomerController extends Controller
         }
 
         $user->save();
+
+        AuditLogService::record(
+            'Profiles',
+            'updated',
+            'Customer updated profile settings.',
+            $customer,
+            'Customer #' . $customer->id,
+            [
+                'user_id' => $user->id,
+                'password_changed' => $request->boolean('change_password'),
+            ]
+        );
 
         return redirect()->route('customer.setting')->with('flash_message', [
             'title' => '',

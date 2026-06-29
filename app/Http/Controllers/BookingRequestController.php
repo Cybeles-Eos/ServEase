@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
+use App\Services\AuditLogService;
 use App\Services\BookingEmailService;
 use App\Services\BookingStatusService;
 use Illuminate\Http\Request;
@@ -74,6 +75,16 @@ class BookingRequestController extends Controller
 
         app(BookingEmailService::class)->sendAcceptedToCustomer($bookingRequest);
 
+        $bookingRequest->loadMissing('bookingInfo.service');
+        AuditLogService::record(
+            'Bookings',
+            'accepted',
+            'Provider accepted booking #' . $bookingRequest->id . ' for "' . ($bookingRequest->bookingInfo?->service?->title ?? 'Service') . '".',
+            $bookingRequest,
+            'Booking #' . $bookingRequest->id,
+            ['status' => 'ACCEPTED']
+        );
+
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Accepted',
             'message' => null,
@@ -123,6 +134,16 @@ class BookingRequestController extends Controller
         }
 
         app(BookingEmailService::class)->sendDeclinedToCustomer($bookingRequest);
+
+        $bookingRequest->loadMissing('bookingInfo.service');
+        AuditLogService::record(
+            'Bookings',
+            'declined',
+            'Provider declined booking #' . $bookingRequest->id . ' for "' . ($bookingRequest->bookingInfo?->service?->title ?? 'Service') . '".',
+            $bookingRequest,
+            'Booking #' . $bookingRequest->id,
+            ['status' => 'DECLINED']
+        );
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Declined',
@@ -174,6 +195,16 @@ class BookingRequestController extends Controller
         }
 
         app(BookingEmailService::class)->sendProviderCancelledToCustomer($bookingRequest);
+
+        $bookingRequest->loadMissing('bookingInfo.service');
+        AuditLogService::record(
+            'Bookings',
+            'cancelled',
+            'Provider cancelled booking #' . $bookingRequest->id . ' for "' . ($bookingRequest->bookingInfo?->service?->title ?? 'Service') . '".',
+            $bookingRequest,
+            'Booking #' . $bookingRequest->id,
+            ['status' => 'CANCELLED', 'cancelled_by' => 'provider']
+        );
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Cancel',
@@ -256,6 +287,16 @@ class BookingRequestController extends Controller
                 ]);
             }
         });
+
+        $bookingRequest->refresh()->loadMissing('bookingInfo.service');
+        AuditLogService::record(
+            'Bookings',
+            'completed',
+            'Provider marked booking #' . $bookingRequest->id . ' as completed for "' . ($bookingRequest->bookingInfo?->service?->title ?? 'Service') . '".',
+            $bookingRequest,
+            'Booking #' . $bookingRequest->id,
+            ['status' => 'COMPLETED'] + $completionBilling
+        );
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Completed',
@@ -360,6 +401,16 @@ class BookingRequestController extends Controller
         }
 
         app(BookingEmailService::class)->sendCustomerCancelledToProvider($bookingRequest);
+
+        $bookingRequest->loadMissing('bookingInfo.service');
+        AuditLogService::record(
+            'Bookings',
+            'cancelled',
+            'Customer cancelled booking #' . $bookingRequest->id . ' for "' . ($bookingRequest->bookingInfo?->service?->title ?? 'Service') . '".',
+            $bookingRequest,
+            'Booking #' . $bookingRequest->id,
+            ['status' => 'CANCELLED', 'cancelled_by' => 'customer']
+        );
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Booking Cancelled',

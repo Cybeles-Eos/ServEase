@@ -8588,6 +8588,96 @@ h4 span {
   }
 }
 
+.page-admin-audit-logs__table-head {
+  align-items: center;
+}
+.page-admin-audit-logs .section__table .admin-ustbl-main-c--audit-logs {
+  min-width: 1160px;
+}
+.page-admin-audit-logs .section__table .admin-ustbl-main-c--audit-logs .admin-ustbl-main-c__head,
+.page-admin-audit-logs .section__table .admin-ustbl-main-c--audit-logs .admin-ustbl-main-c__tbody {
+  grid-template-columns: 120px 150px 95px 130px 105px 150px minmax(320px, 1fr);
+}
+.page-admin-audit-logs .audit-table-cell strong,
+.page-admin-audit-logs .audit-table-cell span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.page-admin-audit-logs .audit-table-cell strong {
+  color: #171515;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.page-admin-audit-logs .audit-table-cell span {
+  margin-top: 3px;
+  color: #344054;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.page-admin-audit-logs .audit-table-cell--description p {
+  margin: 0;
+  color: #344054;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.page-admin-audit-logs .audit-log-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0 !important;
+  padding: 3px 6px;
+  border-radius: 4px;
+  color: #fff !important;
+  font-size: 10px !important;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+.page-admin-audit-logs .audit-log-badge--module {
+  background: #1683C7;
+}
+.page-admin-audit-logs .audit-log-badge--booking-board {
+  background: #0E8ECA;
+}
+.page-admin-audit-logs .audit-log-badge--expense {
+  background: #4F46E5;
+}
+.page-admin-audit-logs .audit-log-badge--user {
+  background: #64748B;
+}
+.page-admin-audit-logs .audit-log-badge--profiles {
+  background: #7C3AED;
+}
+.page-admin-audit-logs .audit-log-badge--applicants {
+  background: #0E7490;
+}
+.page-admin-audit-logs .audit-log-badge--reports {
+  background: #BE123C;
+}
+.page-admin-audit-logs .audit-log-badge--general-settings, .page-admin-audit-logs .audit-log-badge--service-categories {
+  background: #475569;
+}
+.page-admin-audit-logs .audit-log-badge--created, .page-admin-audit-logs .audit-log-badge--accepted, .page-admin-audit-logs .audit-log-badge--resubmitted {
+  background: #0EAD69;
+}
+.page-admin-audit-logs .audit-log-badge--updated, .page-admin-audit-logs .audit-log-badge--started {
+  background: #F97316;
+}
+.page-admin-audit-logs .audit-log-badge--deleted, .page-admin-audit-logs .audit-log-badge--deactivated, .page-admin-audit-logs .audit-log-badge--declined {
+  background: #EF4444;
+}
+.page-admin-audit-logs .audit-log-badge--cancelled, .page-admin-audit-logs .audit-log-badge--expired {
+  background: #04756F;
+}
+.page-admin-audit-logs .audit-log-badge--completed {
+  background: #2563EB;
+}
+
 .provider--dashboard {
   width: 100%;
   padding: 10px 15px;

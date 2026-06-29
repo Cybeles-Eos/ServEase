@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Services\AdminNotificationService;
+use App\Services\AuditLogService;
 use App\Services\BookingEmailService;
 use App\Services\BookingStatusService;
 
@@ -133,6 +134,22 @@ class BookingInfoController extends Controller
 
         AdminNotificationService::newBooking($bookingInfo->load('service'));
         app(BookingEmailService::class)->sendNewBookingToProvider($bookingRequest);
+
+        AuditLogService::record(
+            'Bookings',
+            'created',
+            'Customer requested booking #' . $bookingRequest->id . ' for "' . ($bookingInfo->service?->title ?? 'Service') . '".',
+            $bookingRequest,
+            'Booking #' . $bookingRequest->id,
+            [
+                'booking_info_id' => $bookingInfo->id,
+                'service_id' => $bookingInfo->service_id,
+                'provider_id' => $bookingRequest->provider_id,
+                'customer_id' => $bookingInfo->customer_id,
+                'scheduled_date' => $bookingInfo->date?->toDateString(),
+                'scheduled_time' => $bookingInfo->time?->format('H:i'),
+            ]
+        );
 
         return redirect()->route('services.index')->with('flash_message', [
             'title' => 'Book Requested',

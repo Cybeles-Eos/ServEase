@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Services\AdminNotificationService;
+use App\Services\AuditLogService;
 use Illuminate\Support\Facades\Storage;
 use App\Models\ServiceCategory;
 use Illuminate\Support\Str;
@@ -159,6 +160,20 @@ class ServiceController extends Controller
         }
 
         AdminNotificationService::newService($service->load('provider'));
+
+        AuditLogService::record(
+            'Services',
+            'created',
+            'Provider created service "' . $service->title . '".',
+            $service,
+            $service->service_id ?: 'Service #' . $service->id,
+            [
+                'provider_id' => $service->provider_id,
+                'service_category_id' => $service->service_category_id,
+                'pricing_type' => $service->pricing_type,
+                'is_active' => $service->is_active,
+            ]
+        );
 
         return redirect()->route('provider.service')->with('flash_message', [
             'title' => '',
@@ -408,6 +423,15 @@ class ServiceController extends Controller
     public function update(Request $request, string $id)
     {
         $service = Service::findOrFail($id);
+        $original = $service->only([
+            'title',
+            'service_category_id',
+            'description',
+            'specialization',
+            'price',
+            'pricing_type',
+            'is_active',
+        ]);
 
         $request->validate([
             'title'          => 'required|string|max:255',
@@ -449,6 +473,30 @@ class ServiceController extends Controller
             $service->update(['image' => $file_upload_path]);
         }
 
+        $service->refresh();
+        $updated = $service->only(array_keys($original));
+        $changedFields = collect($updated)
+            ->filter(fn ($value, $key) => ($original[$key] ?? null) != $value)
+            ->keys()
+            ->values()
+            ->all();
+
+        if ($request->hasFile('image')) {
+            $changedFields[] = 'image';
+        }
+
+        AuditLogService::record(
+            'Services',
+            'updated',
+            'Provider updated service "' . $service->title . '".',
+            $service,
+            $service->service_id ?: 'Service #' . $service->id,
+            [
+                'provider_id' => $service->provider_id,
+                'changed_fields' => array_values(array_unique($changedFields)),
+            ]
+        );
+
         return redirect()->route('provider.service')->with('flash_message', [
             'title' => '',
             'message' => 'Service updated successfully.',
@@ -462,8 +510,20 @@ class ServiceController extends Controller
     public function destroy(string $id)
     {
         $service = Service::findOrFail($id);
+        $serviceLabel = $service->service_id ?: 'Service #' . $service->id;
+        $serviceTitle = $service->title;
+        $providerId = $service->provider_id;
 
         $service->delete(); // soft delete
+
+        AuditLogService::record(
+            'Services',
+            'deleted',
+            'Provider deleted service "' . $serviceTitle . '".',
+            $service,
+            $serviceLabel,
+            ['provider_id' => $providerId]
+        );
 
         return redirect()->route('provider.service')->with('flash_message', [
             'title' => '',

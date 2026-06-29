@@ -116,6 +116,15 @@ class BookingStatusService
                 'expires_at' => $expiresAt->toDateTimeString(),
             ]);
 
+            AuditLogService::record(
+                'Bookings',
+                'expired',
+                'Booking #' . $bookingRequest->id . ' expired because the provider did not respond before the scheduled cutoff.',
+                $bookingRequest,
+                'Booking #' . $bookingRequest->id,
+                ['status' => 'expired', 'expires_at' => $expiresAt->toDateTimeString()]
+            );
+
             return true;
         } catch (\Exception $e) {
             Log::error('expirePendingIfDue failed', [
@@ -159,6 +168,15 @@ class BookingStatusService
                 'booking_request_id' => $bookingRequest->id,
                 'booking_info_id' => $bookingRequest->bookingInfo->id,
             ]);
+
+            AuditLogService::record(
+                'Bookings',
+                'started',
+                'Booking #' . $bookingRequest->id . ' automatically moved to ongoing.',
+                $bookingRequest,
+                'Booking #' . $bookingRequest->id,
+                ['status' => 'ONGOING']
+            );
 
             return true;
         } catch (\Exception $e) {
@@ -250,6 +268,15 @@ class BookingStatusService
                 'booking_request_id' => $bookingRequest->id,
                 'booking_info_id' => $bookingRequest->bookingInfo->id,
             ]);
+
+            AuditLogService::record(
+                'Bookings',
+                'completed',
+                'Booking #' . $bookingRequest->id . ' automatically moved to completed.',
+                $bookingRequest,
+                'Booking #' . $bookingRequest->id,
+                ['status' => 'COMPLETED'] + $completionBilling
+            );
 
             return true;
         } catch (\Exception $e) {

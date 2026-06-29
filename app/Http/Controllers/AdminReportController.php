@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BookingRequest;
 use App\Models\Provider;
 use App\Models\ServiceReport;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -103,6 +104,15 @@ class AdminReportController extends Controller
 
         $provider->user->is_active = false;
         $provider->user->save();
+
+        AuditLogService::record(
+            'Reports',
+            'deactivated',
+            'Deactivated provider account after reaching the account health threshold.',
+            $provider,
+            'Provider #' . $provider->id,
+            ['user_id' => $provider->user->id, 'account_health' => $health]
+        );
 
         return redirect()->back()->with('flash_message', [
             'title' => 'Provider Account Deactivated',

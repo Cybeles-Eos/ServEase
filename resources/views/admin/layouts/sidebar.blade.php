@@ -222,6 +222,18 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('admin.audit-logs') }}" class="{{ Request::is('admin/audit-logs') ? 'active' : '' }}">
+                            <div>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 8H9.00084M12.4281 11H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19 21H6.75C5.7835 21 5 20.1941 5 19.2M5 19.2C5 18.2059 5.7835 17.4 6.75 17.4H19V6.6C19 4.90294 19 4.05441 18.4874 3.52721C17.9748 3 17.1499 3 15.5 3H10.25C7.77512 3 6.53769 3 5.76885 3.79081C5 4.58162 5 5.85441 5 8.4V19.2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19 17C19 17 18 17.7628 18 19C18 20.2372 19 21 19 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            Audit Logs
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('admin.reports') }}" class="{{ Request::is('admin/reports') ? 'active' : '' }}">
                             <div>
                                 <svg width="16" height="15" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">

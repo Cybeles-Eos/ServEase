@@ -494,3 +494,129 @@
         }
     }
 }
+
+.page-admin-audit-logs {
+    &__table-head {
+        align-items: center;
+    }
+
+    .section__table {
+        .admin-ustbl-main-c--audit-logs {
+            min-width: 1160px;
+
+            .admin-ustbl-main-c__head,
+            .admin-ustbl-main-c__tbody {
+                grid-template-columns: 120px 150px 95px 130px 105px 150px minmax(320px, 1fr);
+            }
+        }
+    }
+
+    .audit-table-cell {
+        strong,
+        span {
+            display: block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        strong {
+            color: $color-dark;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        span {
+            margin-top: 3px;
+            color: #344054;
+            font-size: 11px;
+            line-height: 1.35;
+        }
+
+        &--description {
+            p {
+                margin: 0;
+                color: #344054;
+                font-size: 12px;
+                line-height: 1.45;
+            }
+        }
+    }
+
+    .audit-log-badge {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        max-width: 100%;
+        margin-top: 0 !important;
+        padding: 3px 6px;
+        border-radius: 4px;
+        color: #fff !important;
+        font-size: 10px !important;
+        font-weight: 800;
+        line-height: 1;
+        white-space: nowrap;
+
+        &--module {
+            background: #1683C7;
+        }
+
+        &--booking-board {
+            background: #0E8ECA;
+        }
+
+        &--expense {
+            background: #4F46E5;
+        }
+
+        &--user {
+            background: #64748B;
+        }
+
+        &--profiles {
+            background: #7C3AED;
+        }
+
+        &--applicants {
+            background: #0E7490;
+        }
+
+        &--reports {
+            background: #BE123C;
+        }
+
+        &--general-settings,
+        &--service-categories {
+            background: #475569;
+        }
+
+        &--created,
+        &--accepted,
+        &--resubmitted {
+            background: #0EAD69;
+        }
+
+        &--updated,
+        &--started {
+            background: #F97316;
+        }
+
+        &--deleted,
+        &--deactivated,
+        &--declined {
+            background: #EF4444;
+        }
+
+        &--cancelled,
+        &--expired {
+            background: #04756F;
+        }
+
+        &--completed {
+            background: #2563EB;
+        }
+    }
+
+}

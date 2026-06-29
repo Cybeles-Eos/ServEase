@@ -9,6 +9,7 @@ use App\Models\ProviderDeletedRecord;
 use App\Models\BookingRequest;
 use App\Models\ServiceRating;
 use App\Services\AdminNotificationService;
+use App\Services\AuditLogService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +102,15 @@ class ProviderController extends Controller
             'deleted_at' => now(),
         ]);
 
+        AuditLogService::record(
+            'Applicants',
+            'deleted',
+            'Provider deleted declined application records for ' . $deletedRecord->provider_name . '.',
+            $deletedRecord,
+            'Deleted provider record #' . $deletedRecord->id,
+            ['provider_email' => $deletedRecord->provider_email]
+        );
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -178,6 +188,15 @@ class ProviderController extends Controller
         ]);
 
         AdminNotificationService::newProviderApplication($user);
+
+        AuditLogService::record(
+            'Applicants',
+            'resubmitted',
+            'Provider resubmitted application for admin review.',
+            $provider,
+            'Provider #' . $provider->id,
+            ['user_id' => $user->id]
+        );
 
         Auth::logout();
         $request->session()->invalidate();
@@ -670,6 +689,21 @@ class ProviderController extends Controller
         }
 
         $user->save();
+
+        AuditLogService::record(
+            'Profiles',
+            'updated',
+            'Provider updated profile and availability settings.',
+            $provider,
+            'Provider #' . $provider->id,
+            [
+                'user_id' => $user->id,
+                'availability_days' => $provider->availability_days,
+                'availability_start_time' => $provider->availability_start_time,
+                'availability_end_time' => $provider->availability_end_time,
+                'password_changed' => $request->boolean('change_password'),
+            ]
+        );
 
         return redirect()->route('provider.setting')->with('flash_message', [
             'title' => '',

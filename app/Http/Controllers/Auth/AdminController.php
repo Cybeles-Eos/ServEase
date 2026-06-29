@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\AdminNotification;
 use App\Models\BookingRequest;
 use App\Models\User;
@@ -19,6 +20,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Provider;
 use App\Services\AdminNotificationService;
+use App\Services\AuditLogService;
 use App\Services\OtpService;
 use Illuminate\Support\Facades\Storage;
 
@@ -390,6 +392,24 @@ class AdminController extends Controller
         ));
     }
 
+    public function auditLogs(Request $request)
+    {
+        if (! auth()->user()->isAdmin()) {
+            return redirect('/')->with('flash_message', [
+                'title' => 'Account Not Found!',
+                'message' => 'Please Login Your Account To Continue.',
+                'type' => 'error'
+            ]);
+        }
+
+        $auditLogs = AuditLog::query()
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.page.admin.audit-logs.index', compact('auditLogs'));
+    }
+
     // public function users()
     // {
     //     $users = User::query()
@@ -543,6 +563,14 @@ class AdminController extends Controller
 
         if ($createdUser) {
             AdminNotificationService::adminCreatedUser($createdUser, $role);
+            AuditLogService::record(
+                'Users',
+                'created',
+                'Created ' . $role . ' account for ' . ($createdUser->name ?: $createdUser->email) . '.',
+                $createdUser,
+                ucfirst($role) . ' #' . $createdUser->id,
+                ['email' => $createdUser->email, 'role' => $role]
+            );
         }
 
         return redirect()->route('admin.users')->with('flash_message', [
@@ -655,6 +683,15 @@ class AdminController extends Controller
             }
         });
 
+        AuditLogService::record(
+            'Users',
+            'updated',
+            'Updated ' . $user->role . ' account for ' . ($user->name ?: $user->email) . '.',
+            $user,
+            ucfirst($user->role) . ' #' . $user->id,
+            ['email' => $user->email, 'role' => $user->role, 'is_active' => $user->is_active]
+        );
+
         return redirect()->route('admin.users')->with('flash_message', [
             'title' => '',
             'message' => 'User updated successfully.',
@@ -670,7 +707,21 @@ class AdminController extends Controller
             abort(403);
         }
 
+        $subjectLabel = ucfirst($user->role) . ' #' . $user->id;
+        $deletedName = $user->name ?: $user->email;
+        $deletedEmail = $user->email;
+        $deletedRole = $user->role;
+
         $user->delete();
+
+        AuditLogService::record(
+            'Users',
+            'deleted',
+            'Deleted ' . $deletedRole . ' account for ' . $deletedName . '.',
+            $user,
+            $subjectLabel,
+            ['email' => $deletedEmail, 'role' => $deletedRole]
+        );
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json(['message' => 'User deleted successfully.']);
@@ -780,6 +831,15 @@ class AdminController extends Controller
             ]);
         }
 
+        AuditLogService::record(
+            'Applicants',
+            'accepted',
+            'Accepted provider application for ' . (trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? '')) ?: 'Provider #' . $provider->id) . '.',
+            $provider,
+            'Provider #' . $provider->id,
+            ['user_id' => $provider->user_id]
+        );
+
         return redirect()->route('admin.applicants')->with('flash_message', [
             'title' => 'Applicant Accepted',
             'message' => 'Provider account is now active.',
@@ -811,6 +871,19 @@ class AdminController extends Controller
                 'is_active' => 1,
             ]);
         }
+
+        AuditLogService::record(
+            'Applicants',
+            'declined',
+            'Declined provider application for ' . (trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? '')) ?: 'Provider #' . $provider->id) . '.',
+            $provider,
+            'Provider #' . $provider->id,
+            [
+                'user_id' => $provider->user_id,
+                'remarks' => $validated['remarks'] ?? null,
+                'resubmission_required_documents' => $validated['resubmission_required_documents'] ?? null,
+            ]
+        );
 
         return redirect()->route('admin.applicants')->with('flash_message', [
             'title' => 'Applicant Declined',
@@ -875,6 +948,15 @@ class AdminController extends Controller
 
         PlatformSetting::current()->update($validated);
 
+        AuditLogService::record(
+            'General Settings',
+            'updated',
+            'Updated platform contact settings.',
+            PlatformSetting::current(),
+            'Platform contact settings',
+            ['fields' => array_keys($validated)]
+        );
+
         return redirect()->route('admin.setting')->with('flash_message', [
             'title' => '',
             'message' => 'Platform contact settings saved successfully.',
@@ -894,6 +976,15 @@ class AdminController extends Controller
 
         PlatformSetting::current()->update($validated);
 
+        AuditLogService::record(
+            'General Settings',
+            'updated',
+            'Updated platform branding and legal settings.',
+            PlatformSetting::current(),
+            'Platform branding settings',
+            ['fields' => array_keys($validated)]
+        );
+
         return redirect()->route('admin.setting')->with('flash_message', [
             'title' => '',
             'message' => 'Platform branding and legal settings saved successfully.',
@@ -910,6 +1001,17 @@ class AdminController extends Controller
         PlatformSetting::current()->update([
             'otp_enabled' => isset($validated['otp_enabled']),
         ]);
+
+        AuditLogService::record(
+            'General Settings',
+            'updated',
+            isset($validated['otp_enabled'])
+                ? 'Enabled OTP verification.'
+                : 'Disabled OTP verification.',
+            PlatformSetting::current(),
+            'OTP feature settings',
+            ['otp_enabled' => isset($validated['otp_enabled'])]
+        );
 
         return redirect()->route('admin.setting')->with('flash_message', [
             'title' => '',
@@ -957,10 +1059,19 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255', 'unique:service_categories,name'],
         ]);
 
-        ServiceCategory::create([
+        $serviceCategory = ServiceCategory::create([
             'name' => $validated['name'],
             'is_active' => true,
         ]);
+
+        AuditLogService::record(
+            'Service Categories',
+            'created',
+            'Created service category "' . $serviceCategory->name . '".',
+            $serviceCategory,
+            'Category #' . $serviceCategory->id,
+            ['name' => $serviceCategory->name]
+        );
 
         return redirect()->route('admin.setting')->with('flash_message', [
             'title' => '',
@@ -985,6 +1096,15 @@ class AdminController extends Controller
             'is_active' => $request->has('is_active'),
         ]);
 
+        AuditLogService::record(
+            'Service Categories',
+            'updated',
+            'Updated service category "' . $serviceCategory->name . '".',
+            $serviceCategory,
+            'Category #' . $serviceCategory->id,
+            ['name' => $serviceCategory->name, 'is_active' => $serviceCategory->is_active]
+        );
+
         return redirect()->route('admin.setting')->with('flash_message', [
             'title' => '',
             'message' => 'Service category updated successfully.',
@@ -993,7 +1113,19 @@ class AdminController extends Controller
     }
     public function destroyServiceCategory(Request $request, ServiceCategory $serviceCategory)
     {
+        $categoryName = $serviceCategory->name;
+        $categoryId = $serviceCategory->id;
+
         $serviceCategory->delete();
+
+        AuditLogService::record(
+            'Service Categories',
+            'deleted',
+            'Deleted service category "' . $categoryName . '".',
+            $serviceCategory,
+            'Category #' . $categoryId,
+            ['name' => $categoryName]
+        );
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
