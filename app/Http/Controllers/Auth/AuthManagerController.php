@@ -16,6 +16,7 @@ use App\Services\AdminNotificationService;
 use App\Services\OtpService;
 use App\Exceptions\DailyOtpLimitReachedException;
 use App\Exceptions\OtpDeliveryException;
+use App\Models\EmailOtp;    
 
 class AuthManagerController extends Controller
 {
@@ -582,4 +583,240 @@ class AuthManagerController extends Controller
         ]);
     }
 
+    public function showForgotPassword()
+    {
+        return view('admin.auth.forgot-password');
+    }
+
+    public function sendForgotPasswordOtp(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'email.exists' => 'No account found with this email address.',
+            'g-recaptcha-response.required' => 'Please verify that you are not a robot.',
+        ]);
+
+        $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret_key'),
+            'response' => $request->input('g-recaptcha-response'),
+            'remoteip' => $request->ip(),
+        ]);
+
+        if (! $recaptcha->json('success')) {
+            throw ValidationException::withMessages([
+                'g-recaptcha-response' => ['reCAPTCHA verification failed. Please try again.'],
+            ]);
+        }
+
+        $user = User::where('email', $validated['email'])->firstOrFail();
+        $otpService = app(OtpService::class);
+
+        if ($otpService->hasReachedDailyLimit()) {
+            return back()
+                ->withInput()
+                ->with('flash_message', $otpService->limitFlashMessage());
+        }
+
+        if ($otpService->hasReachedResendLimit($request, $user->email)) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'email' => $otpService->resendLimitMessage($request, $user->email),
+                ]);
+        }
+
+        $otpService->reserveResendAttempt($request, $user->email);
+
+        try {
+            $otpService->sendForgotPasswordOtp($user);
+        } catch (DailyOtpLimitReachedException $exception) {
+            $otpService->releaseResendAttempt($request, $user->email);
+
+            return back()
+                ->withInput()
+                ->with('flash_message', $otpService->limitFlashMessage());
+        } catch (OtpDeliveryException $exception) {
+            $otpService->releaseResendAttempt($request, $user->email);
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'email' => $exception->getMessage(),
+                ]);
+        }
+
+        session([
+            'forgot_password_email' => $user->email,
+            'forgot_password_user_id' => $user->id,
+            'forgot_password_name' => $user->name,
+        ]);
+
+        return redirect()->route('password.otp.page')->with('flash_message', [
+            'title' => 'OTP Sent',
+            'message' => 'We sent a 6-digit password reset OTP to your email.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function showForgotPasswordOtp(Request $request)
+    {
+        if (! session('forgot_password_email')) {
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Session expired. Please enter your email again.']);
+        }
+
+        $resendLimit = app(OtpService::class)->resendLimitStatus($request, session('forgot_password_email'));
+
+        return view('auth.forgot-password-otp', compact('resendLimit'));
+    }
+
+    public function verifyForgotPasswordOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => ['required', 'string', 'min:6', 'max:6'],
+        ]);
+
+        $email = session('forgot_password_email');
+
+        if (! $email) {
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Session expired. Please enter your email again.']);
+        }
+
+        $record = EmailOtp::where('email', $email)
+            ->where('otp', $request->otp)
+            ->whereNull('verified_at')
+            ->latest()
+            ->first();
+
+        if (! $record) {
+            return back()->withErrors([
+                'otp' => 'Invalid OTP code.',
+            ]);
+        }
+
+        if (now()->greaterThan($record->expires_at)) {
+            return back()->withErrors([
+                'otp' => 'OTP code has expired. Please request a new one.',
+            ]);
+        }
+
+        $record->update([
+            'verified_at' => now(),
+        ]);
+
+        session([
+            'forgot_password_verified' => true,
+        ]);
+
+        return redirect()->route('password.reset.page');
+    }
+
+    public function showResetPassword()
+    {
+        if (! session('forgot_password_verified') || ! session('forgot_password_user_id')) {
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Please verify your OTP first.']);
+        }
+
+        return view('auth.reset-password');
+    }
+
+    public function updateForgotPassword(Request $request)
+    {
+        if (! session('forgot_password_verified') || ! session('forgot_password_user_id')) {
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Please verify your OTP first.']);
+        }
+
+        $validated = $request->validate([
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',
+            ],
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'password.regex' => 'Password must include uppercase, lowercase, number, and special character.',
+        ]);
+
+        $user = User::find(session('forgot_password_user_id'));
+
+        if (! $user) {
+            session()->forget([
+                'forgot_password_email',
+                'forgot_password_user_id',
+                'forgot_password_name',
+                'forgot_password_verified',
+            ]);
+
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Account not found. Please try again.']);
+        }
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        session()->forget([
+            'forgot_password_email',
+            'forgot_password_user_id',
+            'forgot_password_name',
+            'forgot_password_verified',
+        ]);
+
+        return redirect()->route('login')->with('flash_message', [
+            'title' => 'Password Updated',
+            'message' => 'Your password has been updated successfully. You can now login.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function resendForgotPasswordOtp(Request $request)
+    {
+        $email = session('forgot_password_email');
+        $userId = session('forgot_password_user_id');
+        $otpService = app(OtpService::class);
+
+        if (! $email || ! $userId) {
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Session expired. Please enter your email again.']);
+        }
+
+        $user = User::find($userId);
+
+        if (! $user) {
+            return redirect()->route('password.forgot')
+                ->withErrors(['email' => 'Account not found. Please try again.']);
+        }
+
+        if ($otpService->hasReachedDailyLimit()) {
+            return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+        }
+
+        if ($otpService->hasReachedResendLimit($request, $email)) {
+            return back()->withErrors(['otp' => $otpService->resendLimitMessage($request, $email)]);
+        }
+
+        $otpService->reserveResendAttempt($request, $email);
+
+        try {
+            $otpService->sendForgotPasswordOtp($user);
+        } catch (DailyOtpLimitReachedException $exception) {
+            $otpService->releaseResendAttempt($request, $email);
+
+            return back()->withErrors(['otp' => $otpService->limitFlashMessage()['message']]);
+        } catch (OtpDeliveryException $exception) {
+            $otpService->releaseResendAttempt($request, $email);
+
+            return back()->withErrors(['otp' => $exception->getMessage()]);
+        }
+
+        return back()->with('success', 'A new password reset OTP has been sent to your email.');
+    }
 }

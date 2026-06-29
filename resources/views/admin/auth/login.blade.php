@@ -42,7 +42,9 @@
                             </div>
                         </div>
                         @error('password') <small>{{ $message }}</small> @enderror
-                        {{-- <a href="#">Forget Password?</a> --}}
+                        <a href="{{ route('password.forgot') }}" style="font-size: 12px; color: #6b7280; text-decoration: underline; align-self: flex-end;">
+                            Forgot Password?
+                        </a>
                     </div>
                     <div class="plm-ff-group">
                         <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>

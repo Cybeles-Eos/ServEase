@@ -12,6 +12,7 @@ use App\Models\PlatformSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Throwable;
@@ -337,5 +338,60 @@ class OtpService
             $request->session()->get('otp_resend_device_id'),
             (string) $request->userAgent(),
         ]));
+    }
+
+    public function sendForgotPasswordOtp(User $user): void
+    {
+        $this->reserveDailySend();
+
+        $otp = rand(100000, 999999);
+
+        try {
+            EmailOtp::where('email', $user->email)
+                ->whereNull('verified_at')
+                ->delete();
+
+            EmailOtp::create([
+                'user_id'    => $user->id,
+                'email'      => $user->email,
+                'otp'        => $otp,
+                'expires_at' => now()->addMinutes(10),
+            ]);
+
+            app(EmailService::class)->sendEmail([
+                'view'        => 'email.forgot-password-otp',
+                'type'        => 'forgot_password_otp',
+                'user'        => [
+                    'name'  => $user->name,
+                    'email' => $user->email,
+                ],
+                'user_data'   => null,
+                'otp'         => $otp,
+                'expires_in'  => 10,
+                'subject'     => 'Your Servease password reset code',
+                'attachments' => [],
+                'seo_meta'    => [
+                    'title' => 'Servease Password Reset',
+                    'name'  => 'Servease',
+                ],
+            ]);
+        } catch (TransportExceptionInterface|EmailDeliveryException $exception) {
+            $this->releaseDailySend();
+
+            Log::error('Forgot password OTP email delivery failed.', [
+                'email' => $user->email,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+
+            throw new OtpDeliveryException(
+                'We could not send the password reset OTP right now. Please try again later or contact support.',
+                previous: $exception
+            );
+        } catch (Throwable $exception) {
+            $this->releaseDailySend();
+
+            throw $exception;
+        }
     }
 }

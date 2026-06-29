@@ -74,6 +74,28 @@ Route::post('/verify-email-otp', [RegisterOtpController::class, 'verifyOtp'])
 Route::post('/resend-email-otp', [RegisterOtpController::class, 'resendOtp'])
     ->name('otp.resend');
 
+
+Route::get('/forgot-password', [AuthManagerController::class, 'showForgotPassword'])
+    ->name('password.forgot');
+
+Route::post('/forgot-password', [AuthManagerController::class, 'sendForgotPasswordOtp'])
+    ->name('password.forgot.send');
+
+Route::get('/forgot-password/verify-otp', [AuthManagerController::class, 'showForgotPasswordOtp'])
+    ->name('password.otp.page');
+
+Route::post('/forgot-password/verify-otp', [AuthManagerController::class, 'verifyForgotPasswordOtp'])
+    ->name('password.otp.verify');
+
+Route::post('/forgot-password/resend-otp', [AuthManagerController::class, 'resendForgotPasswordOtp'])
+    ->name('password.otp.resend');
+
+Route::get('/reset-password', [AuthManagerController::class, 'showResetPassword'])
+    ->name('password.reset.page');
+
+Route::post('/reset-password', [AuthManagerController::class, 'updateForgotPassword'])
+    ->name('password.reset.update');
+
 Route::middleware('auth')->group(function () {
 
     // Normal URL
