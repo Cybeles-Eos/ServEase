@@ -527,12 +527,16 @@
                         </div>
 
                         <div class="plm-ff-group">
-                            <label for="gender">Sex <span class="required">*</span></label>
+                            <label for="gender">Gender <span class="required">*</span></label>
                             <div class="register-select">
                                 <select id="gender" name="gender" required>
                                     <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Select gender</option>
                                     <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
                                     <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                    <option value="non_binary" {{ old('gender') === 'non_binary' ? 'selected' : '' }}>Non-binary</option>
+                                    <option value="transgender" {{ old('gender') === 'transgender' ? 'selected' : '' }}>Transgender</option>
+                                    <option value="genderqueer" {{ old('gender') === 'genderqueer' ? 'selected' : '' }}>Genderqueer</option>
+                                    <option value="prefer_to_self_describe" {{ old('gender') === 'prefer_to_self_describe' ? 'selected' : '' }}>Prefer to self-describe</option>
                                     <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>Prefer not to say</option>
                                 </select>
                                 <span class="register-select__arrow" aria-hidden="true"></span>

@@ -54,6 +54,17 @@
             color: #8b95a1;
         }
 
+        .provider-register .register-zipcode-note {
+            margin: 6px 0 0;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #8b95a1;
+        }
+
+        .provider-register #zipcode[data-auto-filled="true"] {
+            border-color: #ffb73e;
+        }
+
         .provider-register .auth-form__privacy label {
             display: flex;
             align-items: flex-start;
@@ -302,12 +313,16 @@
                                 </div>
                             </div>
                             <div class="prg-mm-group">
-                                <label for="gender">Sex <span>*</span></label>
+                                <label for="gender">Gender <span>*</span></label>
                                 <div class="provider-select">
                                     <select id="gender" name="gender" required>
                                         <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Select gender</option>
                                         <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
                                         <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                        <option value="non_binary" {{ old('gender') === 'non_binary' ? 'selected' : '' }}>Non-binary</option>
+                                        <option value="transgender" {{ old('gender') === 'transgender' ? 'selected' : '' }}>Transgender</option>
+                                        <option value="genderqueer" {{ old('gender') === 'genderqueer' ? 'selected' : '' }}>Genderqueer</option>
+                                        <option value="prefer_to_self_describe" {{ old('gender') === 'prefer_to_self_describe' ? 'selected' : '' }}>Prefer to self-describe</option>
                                         <option value="prefer_not_to_say" {{ old('gender') === 'prefer_not_to_say' ? 'selected' : '' }}>Prefer not to say</option>
                                     </select>
                                     <span class="provider-select__arrow" aria-hidden="true"></span>
@@ -366,7 +381,8 @@
                                 <label for="zipcode">ZIP Code <span>*</span></label>
                                 <input
                                     type="text"
-                                    placeholder=""
+                                    id="zipcode"
+                                    placeholder="Auto-filled from city"
                                     name="zipcode"
                                     value="{{ old('zipcode') }}"
                                     required
@@ -376,8 +392,9 @@
                                     pattern="[0-9]{4}"
                                     autocomplete="off"
                                     title="ZIP Code must be 4 digits"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4); this.dataset.autoFilled = 'false';"
                                 >
+                                <p class="register-zipcode-note">Zipcode auto-fills when you select city or barangay. You can edit it if needed.</p>
                                 @error('zipcode')
                                     <small style="align-self: flex-end">{{ $message }}</small>
                                 @enderror
@@ -417,6 +434,57 @@
 
                                 @error('barangay_clearance')
                                     <small style="align-self: flex-end; color: red">{{ $message }}</small> 
+                                @enderror
+                            </div>
+                            <div class="file-field">
+                                <label>NBI Clearance Upload (PDF only) <span>*</span></label>
+
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="nbi_clearance" name="nbi_clearance" accept="application/pdf" hidden required>
+
+                                    <button type="button" class="file-btn" data-target="nbi_clearance">
+                                        Choose File
+                                    </button>
+
+                                    <span class="file-name ml-2">No file chosen</span>
+                                </div>
+
+                                @error('nbi_clearance')
+                                    <small style="align-self: flex-end; color: red">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="file-field">
+                                <label>TESDA Certificate Upload (PDF only) <span style="font-weight:400;color:#8b95a1;">(Optional)</span></label>
+
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="tesda_certificate" name="tesda_certificate" accept="application/pdf" hidden>
+
+                                    <button type="button" class="file-btn" data-target="tesda_certificate">
+                                        Choose File
+                                    </button>
+
+                                    <span class="file-name ml-2">No file chosen</span>
+                                </div>
+
+                                @error('tesda_certificate')
+                                    <small style="align-self: flex-end; color: red">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="file-field">
+                                <label>Recommendation Letter from the Barangay Captain (PDF only) <span style="font-weight:400;color:#8b95a1;">(Optional)</span></label>
+
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="recommendation_letter" name="recommendation_letter" accept="application/pdf" hidden>
+
+                                    <button type="button" class="file-btn" data-target="recommendation_letter">
+                                        Choose File
+                                    </button>
+
+                                    <span class="file-name ml-2">No file chosen</span>
+                                </div>
+
+                                @error('recommendation_letter')
+                                    <small style="align-self: flex-end; color: red">{{ $message }}</small>
                                 @enderror
                             </div>
                             <div class="prg-mm-con">
@@ -716,6 +784,9 @@
             const hasStepTwoErrors = @json(
                 $errors->has('resume') ||
                 $errors->has('barangay_clearance') ||
+                $errors->has('nbi_clearance') ||
+                $errors->has('tesda_certificate') ||
+                $errors->has('recommendation_letter') ||
                 $errors->has('profession') ||
                 $errors->has('experience') ||
                 $errors->has('password') ||
@@ -762,10 +833,37 @@
             const barangayInput = document.querySelector('[data-ph-barangay]');
             const barangayValue = document.querySelector('[data-ph-barangay-value]');
             const barangayMenu = document.querySelector('[data-ph-barangay-menu]');
+            const zipcodeInput = document.getElementById('zipcode');
             const psgcBaseUrl = 'https://psgc.gitlab.io/api';
             let cityRecords = [];
             let barangayRecords = [];
             let selectedCityCode = null;
+            let selectedCityName = '';
+
+            function applyZipcodeLookup() {
+                if (!zipcodeInput) {
+                    return;
+                }
+
+                const city = selectedCityName || cityValue?.value || '';
+                const barangay = barangayValue?.value || '';
+
+                if (!city) {
+                    return;
+                }
+
+                const params = new URLSearchParams({ city, barangay });
+
+                fetch(`/psgc/zipcode?${params.toString()}`)
+                    .then((response) => response.ok ? response.json() : null)
+                    .then((data) => {
+                        if (data?.zipcode) {
+                            zipcodeInput.value = data.zipcode;
+                            zipcodeInput.dataset.autoFilled = 'true';
+                        }
+                    })
+                    .catch(() => {});
+            }
 
             function recordLabel(record) {
                 return [record.name, record.provinceName || record.districtName || record.regionName]
@@ -840,18 +938,21 @@
 
             function selectCity(record) {
                 selectedCityCode = record.code;
+                selectedCityName = record.name || '';
                 cityInput.value = recordLabel(record);
                 cityValue.value = record.name;
                 barangayInput.value = '';
                 barangayValue.value = '';
                 closeLocationCombos();
                 loadBarangays();
+                applyZipcodeLookup();
             }
 
             function selectBarangay(record) {
                 barangayInput.value = record.name;
                 barangayValue.value = record.name;
                 closeLocationCombos();
+                applyZipcodeLookup();
             }
 
             function loadBarangays() {
@@ -882,6 +983,7 @@
 
                         const city = resolveCityFromInput();
                         selectedCityCode = city?.code || null;
+                        selectedCityName = city?.name || cityValue.value || '';
                         loadBarangays();
                     })
                     .catch(() => {
@@ -897,6 +999,7 @@
                 cityInput.addEventListener('input', function () {
                     const exactCity = resolveCityFromInput();
                     selectedCityCode = exactCity?.code || null;
+                    selectedCityName = exactCity?.name || cityInput.value;
                     cityValue.value = exactCity ? exactCity.name : cityInput.value;
                     renderLocationMenu(cityMenu, filterLocationRecords(cityRecords, cityInput.value), selectCity);
                     openLocationCombo(cityInput);
@@ -905,6 +1008,7 @@
 
                     if (selectedCityCode) {
                         loadBarangays();
+                        applyZipcodeLookup();
                     } else {
                         barangayRecords = [];
                         renderLocationMenu(barangayMenu, [], selectBarangay);

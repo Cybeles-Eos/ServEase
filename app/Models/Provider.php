@@ -29,6 +29,9 @@ class Provider extends Model
 
         'resume_path',
         'barangay_clearance_path',
+        'nbi_clearance_path',
+        'tesda_certificate_path',
+        'recommendation_letter_path',
 
         'application_status',
         'application_reviewed_at',

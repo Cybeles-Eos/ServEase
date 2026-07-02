@@ -198,7 +198,7 @@ class AuthManagerController extends Controller
             'lname' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone_number' => ['required', 'regex:/^09[0-9]{9}$/', 'unique:tbl_customers,phone_number'],
-            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'gender' => 'required|in:male,female,non_binary,transgender,genderqueer,prefer_to_self_describe,prefer_not_to_say',
             'birthdate' => ['required', 'date', $birthdateAgeRule],
             'house_number' => ['required', 'string', 'max:50'],
             'street_address' => ['required', 'string', 'max:255'],
@@ -405,12 +405,15 @@ class AuthManagerController extends Controller
             'city' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:255'],
             'zipcode' => ['required', 'regex:/^\d{4}$/'],
-            'gender' => ['required', 'in:male,female,prefer_not_to_say'],
+            'gender' => 'required|in:male,female,non_binary,transgender,genderqueer,prefer_to_self_describe,prefer_not_to_say',
             'birthdate' => ['required', 'date', $birthdateAgeRule],
             'profession' => ['required', 'string', 'max:255'],
             'experience' => ['required', 'integer', 'min:1', 'max:100'],
             'resume' => ['required', 'file', 'mimes:pdf', 'max:5120'],
             'barangay_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
+            'nbi_clearance' => ['required', 'file', 'mimes:pdf', 'max:5120'],
+            'tesda_certificate' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
+            'recommendation_letter' => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
             // 'password' => ['required', 'min:8', 'confirmed'],
             'password' => [
                 'required',
@@ -433,7 +436,26 @@ class AuthManagerController extends Controller
             'password.min' => 'Password must be at least 8 characters.',
             'password.confirmed' => 'Password confirmation does not match.',
             'password.regex' => 'Password must include uppercase, lowercase, number, and special character.',
+            'nbi_clearance.required' => 'Please upload your NBI clearance.',
+            'nbi_clearance.mimes' => 'NBI clearance must be a PDF file.',
+            'nbi_clearance.max' => 'NBI clearance must not exceed 5MB.',
+            'tesda_certificate.mimes' => 'TESDA certificate must be a PDF file.',
+            'tesda_certificate.max' => 'TESDA certificate must not exceed 5MB.',
+            'recommendation_letter.mimes' => 'Recommendation letter must be a PDF file.',
+            'recommendation_letter.max' => 'Recommendation letter must not exceed 5MB.',
         ]);
+
+        $providerUploadFields = [
+            'resume',
+            'barangay_clearance',
+            'nbi_clearance',
+            'tesda_certificate',
+            'recommendation_letter',
+        ];
+        $providerInputExcept = array_merge(
+            ['password', 'password_confirmation', 'g-recaptcha-response'],
+            $providerUploadFields
+        );
 
         $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => config('services.recaptcha.secret_key'),
@@ -450,18 +472,31 @@ class AuthManagerController extends Controller
         $name = $validated['fname'] . ' ' . $validated['lname'];
 
         if (! $otpService->isEnabled()) {
-            $resumePath = null;
-            $barangayClearancePath = null;
+            $resumePath = $request->hasFile('resume')
+                ? $request->file('resume')->store('provider-resumes', 'public')
+                : null;
+            $barangayClearancePath = $request->hasFile('barangay_clearance')
+                ? $request->file('barangay_clearance')->store('provider-barangay-clearances', 'public')
+                : null;
+            $nbiClearancePath = $request->hasFile('nbi_clearance')
+                ? $request->file('nbi_clearance')->store('provider-nbi-clearances', 'public')
+                : null;
+            $tesdaCertificatePath = $request->hasFile('tesda_certificate')
+                ? $request->file('tesda_certificate')->store('provider-tesda-certificates', 'public')
+                : null;
+            $recommendationLetterPath = $request->hasFile('recommendation_letter')
+                ? $request->file('recommendation_letter')->store('provider-recommendation-letters', 'public')
+                : null;
 
-            if ($request->hasFile('resume')) {
-                $resumePath = $request->file('resume')->store('provider-resumes', 'public');
-            }
-
-            if ($request->hasFile('barangay_clearance')) {
-                $barangayClearancePath = $request->file('barangay_clearance')->store('provider-barangay-clearances', 'public');
-            }
-
-            DB::transaction(function () use ($validated, $name, $resumePath, $barangayClearancePath) {
+            DB::transaction(function () use (
+                $validated,
+                $name,
+                $resumePath,
+                $barangayClearancePath,
+                $nbiClearancePath,
+                $tesdaCertificatePath,
+                $recommendationLetterPath
+            ) {
                 $user = User::create([
                     'name' => $name,
                     'email' => $validated['email'],
@@ -485,6 +520,9 @@ class AuthManagerController extends Controller
                     'year_exp' => $validated['experience'],
                     'resume_path' => $resumePath,
                     'barangay_clearance_path' => $barangayClearancePath,
+                    'nbi_clearance_path' => $nbiClearancePath,
+                    'tesda_certificate_path' => $tesdaCertificatePath,
+                    'recommendation_letter_path' => $recommendationLetterPath,
                     'application_status' => 'pending',
                     'application_reviewed_at' => null,
                     'application_reviewed_by' => null,
@@ -512,27 +550,32 @@ class AuthManagerController extends Controller
         if ($otpService->hasReachedDailyLimit()) {
             return redirect()
                 ->route('provider-signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->withInput($request->except($providerInputExcept))
                 ->with('flash_message', $otpService->limitFlashMessage());
         }
 
         if ($otpService->hasReachedResendLimit($request, $validated['email'])) {
             return redirect()
                 ->route('provider-signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->withInput($request->except($providerInputExcept))
                 ->withErrors(['email' => $otpService->resendLimitMessage($request, $validated['email'])]);
         }
 
-        $resumePath = null;
-        $barangayClearancePath = null;
-
-        if ($request->hasFile('resume')) {
-            $resumePath = $request->file('resume')->store('pending-provider-resumes', 'public');
-        }
-
-        if ($request->hasFile('barangay_clearance')) {
-            $barangayClearancePath = $request->file('barangay_clearance')->store('pending-provider-barangay-clearances', 'public');
-        }
+        $resumePath = $request->hasFile('resume')
+            ? $request->file('resume')->store('pending-provider-resumes', 'public')
+            : null;
+        $barangayClearancePath = $request->hasFile('barangay_clearance')
+            ? $request->file('barangay_clearance')->store('pending-provider-barangay-clearances', 'public')
+            : null;
+        $nbiClearancePath = $request->hasFile('nbi_clearance')
+            ? $request->file('nbi_clearance')->store('pending-provider-nbi-clearances', 'public')
+            : null;
+        $tesdaCertificatePath = $request->hasFile('tesda_certificate')
+            ? $request->file('tesda_certificate')->store('pending-provider-tesda-certificates', 'public')
+            : null;
+        $recommendationLetterPath = $request->hasFile('recommendation_letter')
+            ? $request->file('recommendation_letter')->store('pending-provider-recommendation-letters', 'public')
+            : null;
 
         session([
             'pending_provider_registration' => [
@@ -551,6 +594,9 @@ class AuthManagerController extends Controller
                 'experience' => $validated['experience'],
                 'resume_path' => $resumePath,
                 'barangay_clearance_path' => $barangayClearancePath,
+                'nbi_clearance_path' => $nbiClearancePath,
+                'tesda_certificate_path' => $tesdaCertificatePath,
+                'recommendation_letter_path' => $recommendationLetterPath,
                 'password' => Hash::make($validated['password']),
             ],
             'otp_email' => $validated['email'],
@@ -563,7 +609,13 @@ class AuthManagerController extends Controller
                 name: $name
             );
         } catch (DailyOtpLimitReachedException $exception) {
-            foreach ([$resumePath, $barangayClearancePath] as $pendingPath) {
+            foreach ([
+                $resumePath,
+                $barangayClearancePath,
+                $nbiClearancePath,
+                $tesdaCertificatePath,
+                $recommendationLetterPath,
+            ] as $pendingPath) {
                 if (!empty($pendingPath) && Storage::disk('public')->exists($pendingPath)) {
                     Storage::disk('public')->delete($pendingPath);
                 }
@@ -577,10 +629,16 @@ class AuthManagerController extends Controller
 
             return redirect()
                 ->route('provider-signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->withInput($request->except($providerInputExcept))
                 ->with('flash_message', $otpService->limitFlashMessage());
         } catch (OtpDeliveryException $exception) {
-            foreach ([$resumePath, $barangayClearancePath] as $pendingPath) {
+            foreach ([
+                $resumePath,
+                $barangayClearancePath,
+                $nbiClearancePath,
+                $tesdaCertificatePath,
+                $recommendationLetterPath,
+            ] as $pendingPath) {
                 if (!empty($pendingPath) && Storage::disk('public')->exists($pendingPath)) {
                     Storage::disk('public')->delete($pendingPath);
                 }
@@ -594,7 +652,7 @@ class AuthManagerController extends Controller
 
             return redirect()
                 ->route('provider-signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'resume', 'barangay_clearance'))
+                ->withInput($request->except($providerInputExcept))
                 ->withErrors(['email' => $exception->getMessage()]);
         }
 

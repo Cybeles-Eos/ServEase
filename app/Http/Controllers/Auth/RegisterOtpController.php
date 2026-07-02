@@ -191,6 +191,9 @@ class RegisterOtpController extends Controller
 
             $finalResumePath = $pendingProvider['resume_path'];
             $finalBarangayClearancePath = $pendingProvider['barangay_clearance_path'];
+            $finalNbiClearancePath = $pendingProvider['nbi_clearance_path'] ?? null;
+            $finalTesdaCertificatePath = $pendingProvider['tesda_certificate_path'] ?? null;
+            $finalRecommendationLetterPath = $pendingProvider['recommendation_letter_path'] ?? null;
 
             if (!empty($pendingProvider['resume_path']) && Storage::disk('public')->exists($pendingProvider['resume_path'])) {
                 $finalResumePath = str_replace('pending-provider-resumes/', 'provider-resumes/', $pendingProvider['resume_path']);
@@ -202,7 +205,30 @@ class RegisterOtpController extends Controller
                 Storage::disk('public')->move($pendingProvider['barangay_clearance_path'], $finalBarangayClearancePath);
             }
 
-            DB::transaction(function () use ($pendingProvider, $record, $finalResumePath, $finalBarangayClearancePath) {
+            if (!empty($pendingProvider['nbi_clearance_path']) && Storage::disk('public')->exists($pendingProvider['nbi_clearance_path'])) {
+                $finalNbiClearancePath = str_replace('pending-provider-nbi-clearances/', 'provider-nbi-clearances/', $pendingProvider['nbi_clearance_path']);
+                Storage::disk('public')->move($pendingProvider['nbi_clearance_path'], $finalNbiClearancePath);
+            }
+
+            if (!empty($pendingProvider['tesda_certificate_path']) && Storage::disk('public')->exists($pendingProvider['tesda_certificate_path'])) {
+                $finalTesdaCertificatePath = str_replace('pending-provider-tesda-certificates/', 'provider-tesda-certificates/', $pendingProvider['tesda_certificate_path']);
+                Storage::disk('public')->move($pendingProvider['tesda_certificate_path'], $finalTesdaCertificatePath);
+            }
+
+            if (!empty($pendingProvider['recommendation_letter_path']) && Storage::disk('public')->exists($pendingProvider['recommendation_letter_path'])) {
+                $finalRecommendationLetterPath = str_replace('pending-provider-recommendation-letters/', 'provider-recommendation-letters/', $pendingProvider['recommendation_letter_path']);
+                Storage::disk('public')->move($pendingProvider['recommendation_letter_path'], $finalRecommendationLetterPath);
+            }
+
+            DB::transaction(function () use (
+                $pendingProvider,
+                $record,
+                $finalResumePath,
+                $finalBarangayClearancePath,
+                $finalNbiClearancePath,
+                $finalTesdaCertificatePath,
+                $finalRecommendationLetterPath
+            ) {
                 $user = User::create([
                     'name'              => $pendingProvider['name'],
                     'email'             => $pendingProvider['email'],
@@ -227,6 +253,9 @@ class RegisterOtpController extends Controller
 
                     'resume_path' => $finalResumePath,
                     'barangay_clearance_path' => $finalBarangayClearancePath,
+                    'nbi_clearance_path' => $finalNbiClearancePath,
+                    'tesda_certificate_path' => $finalTesdaCertificatePath,
+                    'recommendation_letter_path' => $finalRecommendationLetterPath,
 
                     'application_status' => 'pending',
                     'application_reviewed_at' => null,

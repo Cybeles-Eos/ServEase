@@ -311,6 +311,18 @@
     $barangayClearanceUrl = $provider->barangay_clearance_path
         ? route('admin.applicants.document', [$provider, 'barangay-clearance'])
         : null;
+
+    $nbiClearanceUrl = $provider->nbi_clearance_path
+        ? route('admin.applicants.document', [$provider, 'nbi-clearance'])
+        : null;
+
+    $tesdaCertificateUrl = $provider->tesda_certificate_path
+        ? route('admin.applicants.document', [$provider, 'tesda-certificate'])
+        : null;
+
+    $recommendationLetterUrl = $provider->recommendation_letter_path
+        ? route('admin.applicants.document', [$provider, 'recommendation-letter'])
+        : null;
 @endphp
 
 <main class="main-dash-uix page-admin-applicants dash-sp">
@@ -561,6 +573,72 @@
         @else
             <div class="resume-empty">
                 No resume uploaded by this provider.
+            </div>
+        @endif
+    </div>
+
+    <div class="applicant-document-block">
+        <div class="resume-actions">
+            <h3 style="margin:0;">NBI Clearance Viewer</h3>
+
+            @if($nbiClearanceUrl)
+                <a href="{{ $nbiClearanceUrl }}" target="_blank">
+                    Open in new tab
+                </a>
+            @endif
+        </div>
+
+        @if($nbiClearanceUrl)
+            <div class="resume-viewer">
+                <iframe src="{{ $nbiClearanceUrl }}"></iframe>
+            </div>
+        @else
+            <div class="resume-empty">
+                No NBI clearance uploaded by this provider.
+            </div>
+        @endif
+    </div>
+
+    <div class="applicant-document-block">
+        <div class="resume-actions">
+            <h3 style="margin:0;">TESDA Certificate Viewer</h3>
+
+            @if($tesdaCertificateUrl)
+                <a href="{{ $tesdaCertificateUrl }}" target="_blank">
+                    Open in new tab
+                </a>
+            @endif
+        </div>
+
+        @if($tesdaCertificateUrl)
+            <div class="resume-viewer">
+                <iframe src="{{ $tesdaCertificateUrl }}"></iframe>
+            </div>
+        @else
+            <div class="resume-empty">
+                No TESDA certificate uploaded by this provider.
+            </div>
+        @endif
+    </div>
+
+    <div class="applicant-document-block">
+        <div class="resume-actions">
+            <h3 style="margin:0;">Recommendation Letter Viewer</h3>
+
+            @if($recommendationLetterUrl)
+                <a href="{{ $recommendationLetterUrl }}" target="_blank">
+                    Open in new tab
+                </a>
+            @endif
+        </div>
+
+        @if($recommendationLetterUrl)
+            <div class="resume-viewer">
+                <iframe src="{{ $recommendationLetterUrl }}"></iframe>
+            </div>
+        @else
+            <div class="resume-empty">
+                No recommendation letter uploaded by this provider.
             </div>
         @endif
     </div>

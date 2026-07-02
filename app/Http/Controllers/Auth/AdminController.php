@@ -814,6 +814,9 @@ class AdminController extends Controller
         $path = match ($document) {
             'resume' => $provider->resume_path,
             'barangay-clearance' => $provider->barangay_clearance_path,
+            'nbi-clearance' => $provider->nbi_clearance_path,
+            'tesda-certificate' => $provider->tesda_certificate_path,
+            'recommendation-letter' => $provider->recommendation_letter_path,
             default => null,
         };
 

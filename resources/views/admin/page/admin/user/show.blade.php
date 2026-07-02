@@ -414,6 +414,9 @@
     @php
         $resumeUrl = null;
         $barangayClearanceUrl = null;
+        $nbiClearanceUrl = null;
+        $tesdaCertificateUrl = null;
+        $recommendationLetterUrl = null;
         $validIdUrl = null;
 
         if ($user->role === 'provider' && $profile) {
@@ -423,6 +426,18 @@
 
             $barangayClearanceUrl = !empty($profile->barangay_clearance_path)
                 ? route('admin.applicants.document', [$profile, 'barangay-clearance'])
+                : null;
+
+            $nbiClearanceUrl = !empty($profile->nbi_clearance_path)
+                ? route('admin.applicants.document', [$profile, 'nbi-clearance'])
+                : null;
+
+            $tesdaCertificateUrl = !empty($profile->tesda_certificate_path)
+                ? route('admin.applicants.document', [$profile, 'tesda-certificate'])
+                : null;
+
+            $recommendationLetterUrl = !empty($profile->recommendation_letter_path)
+                ? route('admin.applicants.document', [$profile, 'recommendation-letter'])
                 : null;
         }
 
@@ -590,7 +605,7 @@
 
             </div>
 
-            @if ($user->role === 'provider' && $profile && ($resumeUrl || $barangayClearanceUrl))
+            @if ($user->role === 'provider' && $profile && ($resumeUrl || $barangayClearanceUrl || $nbiClearanceUrl || $tesdaCertificateUrl || $recommendationLetterUrl))
                 <section class="admin-user-show__documents">
                     <div class="admin-user-show__documents-card">
                         <h5>Provider Documents</h5>
@@ -642,6 +657,81 @@
 
                                     <div class="admin-user-show__document-viewer">
                                         <iframe src="{{ $resumeUrl }}"></iframe>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($nbiClearanceUrl)
+                                <div class="admin-user-show__document-block">
+                                    <div class="admin-user-show__document-head">
+                                        <div class="admin-user-show__document-title">
+                                            <span>
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M14 2H6C5.45 2 4.98 2.2 4.59 2.59C4.2 2.98 4 3.45 4 4V20C4 20.55 4.2 21.02 4.59 21.41C4.98 21.8 5.45 22 6 22H18C18.55 22 19.02 21.8 19.41 21.41C19.8 21.02 20 20.55 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M9 13H15M9 17H15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                                </svg>
+                                            </span>
+                                            <h6>NBI Clearance</h6>
+                                        </div>
+
+                                        <a href="{{ $nbiClearanceUrl }}" target="_blank">
+                                            Open in new tab
+                                        </a>
+                                    </div>
+
+                                    <div class="admin-user-show__document-viewer">
+                                        <iframe src="{{ $nbiClearanceUrl }}"></iframe>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($tesdaCertificateUrl)
+                                <div class="admin-user-show__document-block">
+                                    <div class="admin-user-show__document-head">
+                                        <div class="admin-user-show__document-title">
+                                            <span>
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M14 2H6C5.45 2 4.98 2.2 4.59 2.59C4.2 2.98 4 3.45 4 4V20C4 20.55 4.2 21.02 4.59 21.41C4.98 21.8 5.45 22 6 22H18C18.55 22 19.02 21.8 19.41 21.41C19.8 21.02 20 20.55 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M9 13H15M9 17H15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                                </svg>
+                                            </span>
+                                            <h6>TESDA Certificate</h6>
+                                        </div>
+
+                                        <a href="{{ $tesdaCertificateUrl }}" target="_blank">
+                                            Open in new tab
+                                        </a>
+                                    </div>
+
+                                    <div class="admin-user-show__document-viewer">
+                                        <iframe src="{{ $tesdaCertificateUrl }}"></iframe>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($recommendationLetterUrl)
+                                <div class="admin-user-show__document-block">
+                                    <div class="admin-user-show__document-head">
+                                        <div class="admin-user-show__document-title">
+                                            <span>
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M14 2H6C5.45 2 4.98 2.2 4.59 2.59C4.2 2.98 4 3.45 4 4V20C4 20.55 4.2 21.02 4.59 21.41C4.98 21.8 5.45 22 6 22H18C18.55 22 19.02 21.8 19.41 21.41C19.8 21.02 20 20.55 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M9 13H15M9 17H15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                                </svg>
+                                            </span>
+                                            <h6>Recommendation Letter</h6>
+                                        </div>
+
+                                        <a href="{{ $recommendationLetterUrl }}" target="_blank">
+                                            Open in new tab
+                                        </a>
+                                    </div>
+
+                                    <div class="admin-user-show__document-viewer">
+                                        <iframe src="{{ $recommendationLetterUrl }}"></iframe>
                                     </div>
                                 </div>
                             @endif

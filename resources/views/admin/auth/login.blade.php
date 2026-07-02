@@ -19,7 +19,8 @@
                 {{-- <a href="{{url('/')}}">
                     <img src="{{asset('images/new-logo-d.png')}}" class="provider-login-main__form__logo" alt="logo">
                 </a> --}}
-                <div class="provider-login-main__form--head">
+                <div class="provider-login-main__form--head" style="">
+                    <img src="{{asset('images/new-logo-d.png')}}" style="width: 80px; margin-bottom: 20px;" alt="logo">
                     <h3>Let’s Get You Back In</h3>
                     <p>Enter your credentials to access your account</p>                    
                 </div>
