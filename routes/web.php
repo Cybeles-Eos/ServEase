@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\BookingReceiptController;
 use App\Http\Controllers\ServiceRatingController;
 use App\Http\Controllers\ProviderServiceReviewController;
+use App\Http\Controllers\PsgcController;
 use App\Http\Controllers\ServiceReportController;
 use App\Http\Controllers\AdminReportController;
 
@@ -61,6 +62,14 @@ Route::post('/login', [AuthManagerController::class, 'login'])->name('login.post
 Route::post('/logout', [AuthManagerController::class, 'logout'])->name('logout');
 Route::get('/signup', [AuthManagerController::class, 'showSignup'])->name('signup');
 Route::post('/register', [AuthManagerController::class, 'signup'])->name('signup.post');
+
+Route::prefix('psgc')->group(function () {
+    Route::get('/cities-municipalities', [PsgcController::class, 'cities'])->name('psgc.cities');
+    Route::get('/cities-municipalities/{cityCode}/barangays', [PsgcController::class, 'barangays'])->name('psgc.barangays');
+    Route::get('/provinces', [PsgcController::class, 'provinces'])->name('psgc.provinces');
+    Route::get('/regions', [PsgcController::class, 'regions'])->name('psgc.regions');
+    Route::get('/zipcode', [PsgcController::class, 'zipcode'])->name('psgc.zipcode');
+});
 
 Route::get('/provider-signup', [AuthManagerController::class, 'showProvReg'])->name('provider-signup');
 Route::post('/provider-signup-c', [AuthManagerController::class, 'signupProvider'])->name('provider-signup.post');

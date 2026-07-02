@@ -515,7 +515,8 @@
                             >
                             <span>
                                 By signing up, you agree to our
-                                <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                                <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>
+                                and <a href="{{ url('/terms-and-conditions') }}" target="_blank">Terms and Conditions</a>.
                             </span>
                         </label>
                         @error('privacy_accepted')

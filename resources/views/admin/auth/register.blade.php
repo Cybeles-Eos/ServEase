@@ -429,6 +429,17 @@
             .customer-register-page .register-file-input .file-name.has-file {
                 color: #202124 !important;
             }
+
+            .customer-register-page .register-zipcode-note {
+                font-size: 11px !important;
+                line-height: 1.3 !important;
+                color: #8b95a1 !important;
+                margin: 0 !important;
+            }
+
+            .customer-register-page #zipcode[data-auto-filled="true"] {
+                background: #f8fafc !important;
+            }
         </style>
     @endpush
 
@@ -549,23 +560,18 @@
                         </div>
 
                         <div class="plm-ff-group">
-                            <label for="zipcode">Zipcode <span class="required">*</span></label>
+                            <label for="house_number">House No. <span class="required">*</span></label>
                             <input
                                 type="text"
-                                id="zipcode"
-                                name="zipcode"
-                                placeholder="Enter your zipcode"
-                                value="{{ old('zipcode') }}"
+                                id="house_number"
+                                name="house_number"
+                                placeholder="Enter house / unit no."
+                                value="{{ old('house_number') }}"
                                 required
-                                maxlength="4"
-                                data-no-space
-                                inputmode="numeric"
-                                pattern="[0-9]{4}"
+                                data-one-space
                                 autocomplete="off"
-                                title="ZIP code must be 4 digits"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"
                             >
-                            @error('zipcode') <small>{{ $message }}</small> @enderror
+                            @error('house_number') <small>{{ $message }}</small> @enderror
                         </div>
 
                         <div class="plm-ff-group">
@@ -631,22 +637,31 @@
                             @error('barangay') <small>{{ $message }}</small> @enderror
                         </div>
 
-                        <div class="register-grid register-grid--two">
                         <div class="plm-ff-group">
-                            <label for="valid_id">Valid ID (PDF only) <span class="required">*</span></label>
-                            <div class="register-file-input">
-                                <input type="file" id="valid_id" name="valid_id" accept="application/pdf" hidden required>
-                                <button type="button" class="file-btn" data-target="valid_id">Choose File</button>
-                                <span class="file-name">No file chosen</span>
-                            </div>
-                            @error('valid_id') <small>{{ $message }}</small> @enderror
+                            <label for="zipcode">Zipcode <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="zipcode"
+                                name="zipcode"
+                                placeholder="Auto-filled from city"
+                                value="{{ old('zipcode') }}"
+                                required
+                                maxlength="4"
+                                data-no-space
+                                inputmode="numeric"
+                                pattern="[0-9]{4}"
+                                autocomplete="off"
+                                title="ZIP code must be 4 digits"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4); this.dataset.autoFilled = 'false';"
+                            >
+                            <p class="register-zipcode-note">Zipcode auto-fills when you select city or barangay. You can edit it if needed.</p>
+                            @error('zipcode') <small>{{ $message }}</small> @enderror
                         </div>
-                    </div>
                     </div>
 
-                    <!-- <div class="register-grid register-grid--two">
+                    <div class="register-grid register-grid--two">
                         <div class="plm-ff-group">
-                            <label for="valid_id">Valid ID (PDF only) <span class="required">*</span></label>
+                            <label for="valid_id">Barangay ID (PDF only) <span class="required">*</span></label>
                             <div class="register-file-input">
                                 <input type="file" id="valid_id" name="valid_id" accept="application/pdf" hidden required>
                                 <button type="button" class="file-btn" data-target="valid_id">Choose File</button>
@@ -654,7 +669,7 @@
                             </div>
                             @error('valid_id') <small>{{ $message }}</small> @enderror
                         </div>
-                    </div> -->
+                    </div>
 
                     <div class="register-grid register-grid--two">
                         {{-- <div class="plm-ff-group">
@@ -755,7 +770,8 @@
                             >
                             <span>
                                 By signing up, you agree to our
-                                <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>.
+                                <a href="{{ url('/privacy-policy') }}" target="_blank">Privacy Policy</a>
+                                and <a href="{{ url('/terms-and-conditions') }}" target="_blank">Terms and Conditions</a>.
                             </span>
                         </label>
                         @error('privacy_accepted') <small>{{ $message }}</small> @enderror
@@ -935,10 +951,37 @@
             const barangayInput = document.querySelector('[data-ph-barangay]');
             const barangayValue = document.querySelector('[data-ph-barangay-value]');
             const barangayMenu = document.querySelector('[data-ph-barangay-menu]');
+            const zipcodeInput = document.getElementById('zipcode');
             const psgcBaseUrl = 'https://psgc.gitlab.io/api';
             let cityRecords = [];
             let barangayRecords = [];
             let selectedCityCode = null;
+            let selectedCityName = '';
+
+            function applyZipcodeLookup() {
+                if (!zipcodeInput) {
+                    return;
+                }
+
+                const city = selectedCityName || cityValue?.value || '';
+                const barangay = barangayValue?.value || '';
+
+                if (!city) {
+                    return;
+                }
+
+                const params = new URLSearchParams({ city, barangay });
+
+                fetch(`/psgc/zipcode?${params.toString()}`)
+                    .then((response) => response.ok ? response.json() : null)
+                    .then((data) => {
+                        if (data?.zipcode) {
+                            zipcodeInput.value = data.zipcode;
+                            zipcodeInput.dataset.autoFilled = 'true';
+                        }
+                    })
+                    .catch(() => {});
+            }
 
             function recordLabel(record) {
                 return [record.name, record.provinceName || record.districtName || record.regionName]
@@ -990,7 +1033,12 @@
                     return records;
                 }
 
-                return records.filter((record) => recordLabel(record).toLowerCase().includes(normalizedTerm));
+                return records.filter((record) => {
+                    const label = recordLabel(record).toLowerCase();
+                    const name = String(record.name || '').toLowerCase();
+
+                    return label.includes(normalizedTerm) || name.includes(normalizedTerm);
+                });
             }
 
             function resolveCityFromInput() {
@@ -1013,18 +1061,21 @@
 
             function selectCity(record) {
                 selectedCityCode = record.code;
+                selectedCityName = record.name || '';
                 cityInput.value = recordLabel(record);
                 cityValue.value = record.name;
                 barangayInput.value = '';
                 barangayValue.value = '';
                 closeCombos();
                 loadBarangays();
+                applyZipcodeLookup();
             }
 
             function selectBarangay(record) {
                 barangayInput.value = record.name;
                 barangayValue.value = record.name;
                 closeCombos();
+                applyZipcodeLookup();
             }
 
             function loadBarangays() {
@@ -1055,6 +1106,7 @@
 
                         const city = resolveCityFromInput();
                         selectedCityCode = city?.code || null;
+                        selectedCityName = city?.name || cityValue.value || '';
                         loadBarangays();
                     })
                     .catch(() => {
@@ -1070,6 +1122,7 @@
                 cityInput.addEventListener('input', function () {
                     const exactCity = resolveCityFromInput();
                     selectedCityCode = exactCity?.code || null;
+                    selectedCityName = exactCity?.name || cityInput.value;
                     cityValue.value = exactCity ? exactCity.name : cityInput.value;
                     renderMenu(cityMenu, filterRecords(cityRecords, cityInput.value), selectCity);
                     openCombo(cityInput);
@@ -1078,6 +1131,7 @@
 
                     if (selectedCityCode) {
                         loadBarangays();
+                        applyZipcodeLookup();
                     } else {
                         barangayRecords = [];
                         renderMenu(barangayMenu, [], selectBarangay);

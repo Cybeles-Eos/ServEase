@@ -93,8 +93,38 @@
         margin-bottom: 16px;
     }
 
-    &__panel,
     &__table{
+        background-color: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    &__table-head{
+        padding: 16px 18px 0;
+        border-bottom: 0;
+
+        .page-admin-bookings__table-title{
+            h4{
+                margin: 0 0 4px;
+                color: $color-dark;
+                font-size: 16px;
+                font-weight: 900;
+            }
+
+            p{
+                margin: 0;
+                color: #667085;
+                font-size: 12px;
+            }
+        }
+
+        .page-admin-bookings__filters{
+            padding-bottom: 16px;
+        }
+    }
+
+    &__panel{
         background-color: #fff;
         border: 1px solid #E5E7EB;
         border-radius: 6px;

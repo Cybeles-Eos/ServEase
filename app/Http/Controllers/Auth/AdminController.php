@@ -82,7 +82,6 @@ class AdminController extends Controller
         |--------------------------------------------------------------------------
         */
         $activeProviderBookingsQuery = $this->activeProviderBookingsQuery();
-        $earningsSql = $this->bookingEarningsSql();
 
         $totalBookings = (clone $activeProviderBookingsQuery)
             ->count('booking_requests.id');
@@ -95,10 +94,6 @@ class AdminController extends Controller
             ->where('booking_requests.status', 'PENDING')
             ->count('booking_requests.id');
 
-        $totalEarnings = (clone $activeProviderBookingsQuery)
-            ->where('booking_requests.status', 'COMPLETED')
-            ->sum(DB::raw($earningsSql));
-
         /*
         |--------------------------------------------------------------------------
         | Chart Data
@@ -108,7 +103,6 @@ class AdminController extends Controller
         */
         $chartLabels = [];
         $analyticsBookings = [];
-        $analyticsEarnings = [];
 
         if ($selectedMonth) {
             $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
@@ -118,14 +112,7 @@ class AdminController extends Controller
                 ->whereBetween('booking_infos.date', [$startDate->toDateString(), $endDate->toDateString()])
                 ->selectRaw('
                     DAY(booking_infos.date) as day,
-                    COUNT(booking_requests.id) as bookings_count,
-                    SUM(
-                        CASE
-                            WHEN booking_requests.status = "COMPLETED"
-                            THEN ' . $earningsSql . '
-                            ELSE 0
-                        END
-                    ) as earnings_total
+                    COUNT(booking_requests.id) as bookings_count
                 ')
                 ->groupBy(DB::raw('DAY(booking_infos.date)'))
                 ->get()
@@ -136,21 +123,13 @@ class AdminController extends Controller
 
                 $chartLabels[] = $date->format('M d');
                 $analyticsBookings[] = (int) ($dailyStats[$day]->bookings_count ?? 0);
-                $analyticsEarnings[] = (float) ($dailyStats[$day]->earnings_total ?? 0);
             }
         } else {
             $monthlyStats = $this->activeProviderBookingsQuery()
                 ->whereYear('booking_infos.date', $selectedYear)
                 ->selectRaw('
                     MONTH(booking_infos.date) as month,
-                    COUNT(booking_requests.id) as bookings_count,
-                    SUM(
-                        CASE
-                            WHEN booking_requests.status = "COMPLETED"
-                            THEN ' . $earningsSql . '
-                            ELSE 0
-                        END
-                    ) as earnings_total
+                    COUNT(booking_requests.id) as bookings_count
                 ')
                 ->groupBy(DB::raw('MONTH(booking_infos.date)'))
                 ->get()
@@ -159,7 +138,6 @@ class AdminController extends Controller
             for ($month = 1; $month <= 12; $month++) {
                 $chartLabels[] = Carbon::create()->month($month)->format('M');
                 $analyticsBookings[] = (int) ($monthlyStats[$month]->bookings_count ?? 0);
-                $analyticsEarnings[] = (float) ($monthlyStats[$month]->earnings_total ?? 0);
             }
         }
 
@@ -185,14 +163,7 @@ class AdminController extends Controller
             ->where('tbl_providers.application_status', 'accepted')
             ->selectRaw('
                 booking_infos.service_id,
-                COUNT(booking_requests.id) as bookings_count,
-                SUM(
-                    CASE
-                        WHEN booking_requests.status = "COMPLETED"
-                        THEN ' . $earningsSql . '
-                        ELSE 0
-                    END
-                ) as earnings_total
+                COUNT(booking_requests.id) as bookings_count
             ')
             ->groupBy('booking_infos.service_id')
             ->get()
@@ -202,7 +173,6 @@ class AdminController extends Controller
             $stats = $serviceStats[$service->id] ?? null;
 
             $service->dashboard_bookings_count = (int) ($stats->bookings_count ?? 0);
-            $service->dashboard_earnings_total = (float) ($stats->earnings_total ?? 0);
 
             return $service;
         });
@@ -273,12 +243,10 @@ class AdminController extends Controller
             'totalBookings',
             'completedBookings',
             'pendingBookings',
-            'totalEarnings',
             'selectedYear',
             'selectedMonth',
             'chartLabels',
             'analyticsBookings',
-            'analyticsEarnings',
             'recentServices',
             'recentUsers',
             'providerRankingMode',

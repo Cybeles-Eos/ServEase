@@ -121,14 +121,6 @@
                     <span class="section--header__card-desc">Booking requests waiting for provider action</span>
                 </div>
             </div>
-
-            <div class="section--header__card">
-                <div class="section--analytics__mini-card section--analytics__mini-card--earnings samcsamce" style="width: 100%">
-                    <span>Overall Provider Earnings</span>
-                    <strong>₱{{ number_format($totalEarnings, 2) }}</strong>
-                    <p>Total earnings from completed provider bookings</p>
-                </div>
-            </div>
         </section>
 
         <section class="section section--analytics">
@@ -140,7 +132,7 @@
                         </h3>
 
                         <p>
-                            Platform-wide provider bookings and completed-booking earnings
+                            Platform-wide provider bookings
                             @if ($selectedMonth)
                                 for {{ \Carbon\Carbon::create()->month($selectedMonth)->format('F') }} {{ $selectedYear }}
                             @else
@@ -173,10 +165,6 @@
                 </div>
 
                 <div class="section--analytics__legend">
-                    <span class="section--analytics__legend-item section--analytics__legend-item--earnings">
-                        <i></i> Earnings
-                    </span>
-
                     <span class="section--analytics__legend-item section--analytics__legend-item--bookings">
                         <i></i> Bookings
                     </span>
@@ -204,12 +192,6 @@
                     <span>Pending Provider Requests</span>
                     <strong>{{ number_format($pendingBookings) }}</strong>
                     <p>Booking requests waiting for provider action</p>
-                </div>
-
-                <div class="section--analytics__mini-card section--analytics__mini-card--earnings">
-                    <span>Overall Provider Earnings</span>
-                    <strong>₱{{ number_format($totalEarnings, 2) }}</strong>
-                    <p>Total earnings from completed provider bookings</p>
                 </div>
             </div> --}}
             <div class="section--analytics__side">
@@ -283,7 +265,7 @@
                 <div class="section--recent__card-header">
                     <div>
                         <h5>Recent Services</h5>
-                        <p>Latest provider services with booking and earning activity.</p>
+                        <p>Latest provider services with booking activity.</p>
                     </div>
 
                     <span class="section--recent__badge">
@@ -299,7 +281,6 @@
                                 <th>Provider</th>
                                 <th>Category</th>
                                 <th>Bookings</th>
-                                <th>Earnings</th>
                                 <th>Status</th>
                                 <th>Created</th>
                             </tr>
@@ -351,12 +332,6 @@
                                     </td>
 
                                     <td>
-                                        <strong class="section--recent__metric">
-                                            ₱{{ number_format($service->dashboard_earnings_total ?? 0, 2) }}
-                                        </strong>
-                                    </td>
-
-                                    <td>
                                         @if ($service->is_active)
                                             <span class="section--recent__status section--recent__status--active">
                                                 Active
@@ -376,7 +351,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="section--recent__empty">
+                                    <td colspan="6" class="section--recent__empty">
                                         No recent services found.
                                     </td>
                                 </tr>
@@ -574,20 +549,11 @@
                 labels: @json($chartLabels),
                 datasets: [
                     {
-                        label: 'Earnings',
-                        data: @json($analyticsEarnings),
-                        backgroundColor: '#2563EB',
-                        borderRadius: 6,
-                        barThickness: 12,
-                        yAxisID: 'yEarnings'
-                    },
-                    {
                         label: 'Bookings',
                         data: @json($analyticsBookings),
                         backgroundColor: '#FBBF24',
                         borderRadius: 6,
-                        barThickness: 12,
-                        yAxisID: 'yBookings'
+                        barThickness: 18,
                     }
                 ]
             },
@@ -601,10 +567,6 @@
                     tooltip: {
                         callbacks: {
                             label: function (ctx) {
-                                if (ctx.dataset.label === 'Earnings') {
-                                    return 'Earnings: ₱' + Number(ctx.raw).toLocaleString();
-                                }
-
                                 return 'Bookings: ' + Number(ctx.raw).toLocaleString();
                             }
                         }
@@ -616,24 +578,11 @@
                             display: false
                         }
                     },
-                    yEarnings: {
-                        type: 'linear',
-                        position: 'left',
+                    y: {
                         beginAtZero: true,
                         grid: {
                             borderDash: [4, 4],
                             color: '#E5E7EB'
-                        },
-                        ticks: {
-                            callback: value => '₱' + Number(value).toLocaleString()
-                        }
-                    },
-                    yBookings: {
-                        type: 'linear',
-                        position: 'right',
-                        beginAtZero: true,
-                        grid: {
-                            drawOnChartArea: false
                         },
                         ticks: {
                             callback: value => Number(value).toLocaleString()

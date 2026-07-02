@@ -13,6 +13,7 @@ class Customer extends Model
         'last_name', 
         'profile_image',
         'phone_number',
+        'house_number',
         'gender',
         'birth_date',
         'street_address',

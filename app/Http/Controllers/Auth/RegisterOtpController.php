@@ -147,6 +147,7 @@ class RegisterOtpController extends Controller
                     'first_name'     => $pendingCustomer['fname'],
                     'last_name'      => $pendingCustomer['lname'],
                     'phone_number'   => $pendingCustomer['phone_number'],
+                    'house_number'   => $pendingCustomer['house_number'],
                     'gender'         => $pendingCustomer['gender'],
                     'birth_date'     => $pendingCustomer['birthdate'],
                     'street_address' => $pendingCustomer['street_address'],

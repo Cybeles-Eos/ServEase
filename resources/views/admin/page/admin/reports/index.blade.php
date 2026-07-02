@@ -27,6 +27,27 @@
             pointer-events: none;
             opacity: .75;
         }
+
+        .admin-reports__table-head {
+            padding: 16px 18px 0;
+        }
+
+        .admin-reports__table-head .page-admin-bookings__table-title h4 {
+            margin: 0 0 4px;
+            font-size: 16px;
+            font-weight: 900;
+            color: #202020;
+        }
+
+        .admin-reports__table-head .page-admin-bookings__table-title p {
+            margin: 0;
+            color: #667085;
+            font-size: 12px;
+        }
+
+        .admin-reports__table-head .page-admin-bookings__filters {
+            padding-bottom: 16px;
+        }
     </style>
 @endpush
 
@@ -42,6 +63,16 @@
             </div>
 
             <form method="GET" action="{{ route('admin.reports') }}">
+                @if ($search)
+                    <input type="hidden" name="search" value="{{ $search }}">
+                @endif
+                @if ($dateFrom)
+                    <input type="hidden" name="date_from" value="{{ $dateFrom }}">
+                @endif
+                @if ($dateTo)
+                    <input type="hidden" name="date_to" value="{{ $dateTo }}">
+                @endif
+
                 <div class="admin-reports__status-select">
                     <select name="status" onchange="this.form.submit()">
                         <option value="">All Status</option>
@@ -170,9 +201,48 @@
         </section>
 
         <section class="admin-reports__table">
-            <div class="admin-reports__panel-head">
-                <h2>Report Records</h2>
-                <p>Latest customer reports with booking and service context.</p>
+            <div class="admin-reports__table-head page-admin-bookings__table-head page-admin-audit-logs__table-head">
+                <div class="page-admin-bookings__table-title">
+                    <h4>Report Records</h4>
+                    <p class="section__table--label">
+                        Latest customer reports with booking and service context.
+                    </p>
+                </div>
+
+                <form method="GET" action="{{ route('admin.reports') }}" class="page-admin-bookings__filters page-admin-audit-logs__filters" style="justify-content: flex-end !important">
+                    @if ($status)
+                        <input type="hidden" name="status" value="{{ $status }}">
+                    @endif
+
+                    <div class="page-admin-bookings__search page-admin-audit-logs__search">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                            <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                        <input type="text" name="search" value="{{ $search }}" placeholder="Search reports...">
+                    </div>
+
+                    <div class="page-admin-bookings__filter-group page-admin-audit-logs__filter-group">
+                        <input type="date" name="date_from" value="{{ $dateFrom }}" class="page-admin-audit-logs__date" aria-label="Date from">
+                        <input type="date" name="date_to" value="{{ $dateTo }}" class="page-admin-audit-logs__date" aria-label="Date to">
+                    </div>
+
+                    <div class="page-admin-bookings__filter-actions page-admin-audit-logs__actions">
+                        <button type="submit" class="page-admin-bookings__filter-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 3H2L10 12.46V19L14 21V12.46L22 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Filter
+                        </button>
+
+                        @if(request()->hasAny(['search', 'date_from', 'date_to', 'status']))
+                            <a href="{{ route('admin.reports') }}" class="page-admin-bookings__clear-btn">
+                                Clear
+                            </a>
+                        @endif
+                    </div>
+                </form>
             </div>
 
             <div class="admin-reports__table-wrap">

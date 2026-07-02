@@ -14,6 +14,9 @@ class AdminReportController extends Controller
     public function index(Request $request)
     {
         $status = $request->input('status');
+        $search = trim((string) $request->input('search', ''));
+        $dateFrom = (string) $request->input('date_from', '');
+        $dateTo = (string) $request->input('date_to', '');
 
         $reports = ServiceReport::with([
                 'customer',
@@ -22,6 +25,28 @@ class AdminReportController extends Controller
                 'bookingInfo',
             ])
             ->when($status, fn ($query) => $query->where('status', $status))
+            ->when($dateFrom !== '', fn ($query) => $query->whereDate('created_at', '>=', $dateFrom))
+            ->when($dateTo !== '', fn ($query) => $query->whereDate('created_at', '<=', $dateTo))
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('reason', 'like', "%{$search}%")
+                        ->orWhere('details', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhereHas('provider', function ($providerQuery) use ($search) {
+                            $providerQuery->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"])
+                                ->orWhereHas('user', fn ($userQuery) => $userQuery->where('email', 'like', "%{$search}%")
+                                    ->orWhere('name', 'like', "%{$search}%"));
+                        })
+                        ->orWhereHas('customer', function ($customerQuery) use ($search) {
+                            $customerQuery->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+                        })
+                        ->orWhereHas('service', fn ($serviceQuery) => $serviceQuery->where('title', 'like', "%{$search}%"));
+                });
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -64,6 +89,9 @@ class AdminReportController extends Controller
         return view('admin.page.admin.reports.index', compact(
             'reports',
             'status',
+            'search',
+            'dateFrom',
+            'dateTo',
             'totalReports',
             'openReports',
             'subjectProviderCount',

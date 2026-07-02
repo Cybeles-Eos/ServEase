@@ -511,16 +511,20 @@
                             <span class="admin-user-show__value">{{ $detail(ucwords(str_replace('_', ' ', (string) $profile->gender))) }}</span>
                         </div>
                         <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">House no.</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->house_number) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Street address</span>
                             <span class="admin-user-show__value">{{ $detail($profile->street_address) }}</span>
                         </div>
                         <div class="admin-user-show__row">
-                            <span class="admin-user-show__label">City</span>
-                            <span class="admin-user-show__value">{{ $detail($profile->city) }}</span>
-                        </div>
-                        <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Barangay</span>
                             <span class="admin-user-show__value">{{ $detail($profile->barangay) }}</span>
+                        </div>
+                        <div class="admin-user-show__row">
+                            <span class="admin-user-show__label">City</span>
+                            <span class="admin-user-show__value">{{ $detail($profile->city) }}</span>
                         </div>
                         <div class="admin-user-show__row">
                             <span class="admin-user-show__label">Zip code</span>
