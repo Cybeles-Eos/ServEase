@@ -460,7 +460,7 @@
                     <div>
                         <h1 class="admin-user-show__name">{{ $displayName }}</h1>
                         <p class="admin-user-show__sub">{{ $detail($user->email) }}</p>
-                        <span class="admin-user-show__role">{{ ucfirst($user->role) }}</span>
+                        <span class="admin-user-show__role">{{ $user->roleLabel() }}</span>
                     </div>
                 </div>
 
@@ -468,6 +468,15 @@
                     <a href="{{ route('admin.users') }}" class="admin-user-show__btn admin-user-show__btn--light">
                         Cancel
                     </a>
+
+                    @if(auth()->user()->isSuperAdmin() && \App\Support\AdminAuthorization::canPermanentlyDeleteUser($user))
+                    <button type="button"
+                        class="admin-user-show__btn force-delete-admin-user-btn"
+                        style="background:#D74646;color:#fff;border:none;cursor:pointer;"
+                        data-delete-url="{{ route('admin.users.force-destroy', $user) }}">
+                        Permanently Delete
+                    </button>
+                    @endif
 
                     <a href="{{ route('admin.users.edit', $user) }}" class="admin-user-show__btn admin-user-show__btn--primary">
                         Edit user
@@ -779,3 +788,54 @@
         </div>
     </main>
 @endsection
+
+@push('extrascripts')
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $(document).on('click', '.force-delete-admin-user-btn', function (e) {
+        e.preventDefault();
+
+        var url = $(this).data('delete-url');
+
+        Swal.fire({
+            title: 'Permanently delete user?',
+            text: 'This action cannot be undone. The account and related profile data will be removed permanently.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete permanently',
+            confirmButtonColor: '#D74646',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { _method: 'DELETE' },
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: response.message || 'User permanently deleted.',
+                        confirmButtonColor: '#FFBE42',
+                    }).then(function () {
+                        window.location.href = @json(route('admin.users'));
+                    });
+                },
+                error: function (xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message)
+                        ? xhr.responseJSON.message
+                        : 'Could not permanently delete user.';
+                    Swal.fire({ icon: 'error', title: 'Error', text: msg });
+                }
+            });
+        });
+    });
+</script>
+@endpush

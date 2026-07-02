@@ -24,6 +24,8 @@ use App\Services\AdminNotificationService;
 use App\Services\AuditLogService;
 use App\Services\OtpService;
 use App\Services\ProviderApplicationEmailService;
+use App\Services\UserPermanentDeleteService;
+use App\Support\AdminAuthorization;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -82,6 +84,8 @@ class AdminController extends Controller
         |--------------------------------------------------------------------------
         */
         $activeProviderBookingsQuery = $this->activeProviderBookingsQuery();
+        $earningsSql = $this->bookingEarningsSql();
+        $showEarnings = auth()->user()->isSuperAdmin();
 
         $totalBookings = (clone $activeProviderBookingsQuery)
             ->count('booking_requests.id');
@@ -94,6 +98,14 @@ class AdminController extends Controller
             ->where('booking_requests.status', 'PENDING')
             ->count('booking_requests.id');
 
+        $totalEarnings = 0;
+
+        if ($showEarnings) {
+            $totalEarnings = (clone $activeProviderBookingsQuery)
+                ->where('booking_requests.status', 'COMPLETED')
+                ->sum(DB::raw($earningsSql));
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Chart Data
@@ -103,17 +115,31 @@ class AdminController extends Controller
         */
         $chartLabels = [];
         $analyticsBookings = [];
+        $analyticsEarnings = [];
 
         if ($selectedMonth) {
             $startDate = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth();
             $endDate = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth();
 
+            $dailySelect = '
+                DAY(booking_infos.date) as day,
+                COUNT(booking_requests.id) as bookings_count
+            ';
+
+            if ($showEarnings) {
+                $dailySelect .= ',
+                    SUM(
+                        CASE
+                            WHEN booking_requests.status = "COMPLETED"
+                            THEN ' . $earningsSql . '
+                            ELSE 0
+                        END
+                    ) as earnings_total';
+            }
+
             $dailyStats = $this->activeProviderBookingsQuery()
                 ->whereBetween('booking_infos.date', [$startDate->toDateString(), $endDate->toDateString()])
-                ->selectRaw('
-                    DAY(booking_infos.date) as day,
-                    COUNT(booking_requests.id) as bookings_count
-                ')
+                ->selectRaw($dailySelect)
                 ->groupBy(DB::raw('DAY(booking_infos.date)'))
                 ->get()
                 ->keyBy('day');
@@ -123,14 +149,28 @@ class AdminController extends Controller
 
                 $chartLabels[] = $date->format('M d');
                 $analyticsBookings[] = (int) ($dailyStats[$day]->bookings_count ?? 0);
+                $analyticsEarnings[] = (float) ($dailyStats[$day]->earnings_total ?? 0);
             }
         } else {
+            $monthlySelect = '
+                MONTH(booking_infos.date) as month,
+                COUNT(booking_requests.id) as bookings_count
+            ';
+
+            if ($showEarnings) {
+                $monthlySelect .= ',
+                    SUM(
+                        CASE
+                            WHEN booking_requests.status = "COMPLETED"
+                            THEN ' . $earningsSql . '
+                            ELSE 0
+                        END
+                    ) as earnings_total';
+            }
+
             $monthlyStats = $this->activeProviderBookingsQuery()
                 ->whereYear('booking_infos.date', $selectedYear)
-                ->selectRaw('
-                    MONTH(booking_infos.date) as month,
-                    COUNT(booking_requests.id) as bookings_count
-                ')
+                ->selectRaw($monthlySelect)
                 ->groupBy(DB::raw('MONTH(booking_infos.date)'))
                 ->get()
                 ->keyBy('month');
@@ -138,6 +178,7 @@ class AdminController extends Controller
             for ($month = 1; $month <= 12; $month++) {
                 $chartLabels[] = Carbon::create()->month($month)->format('M');
                 $analyticsBookings[] = (int) ($monthlyStats[$month]->bookings_count ?? 0);
+                $analyticsEarnings[] = (float) ($monthlyStats[$month]->earnings_total ?? 0);
             }
         }
 
@@ -153,6 +194,25 @@ class AdminController extends Controller
 
         $serviceIds = $recentServices->getCollection()->pluck('id')->filter()->values();
 
+        $serviceStatsSelect = '
+                booking_infos.service_id,
+                COUNT(booking_requests.id) as bookings_count
+            ';
+
+        if ($showEarnings) {
+            $serviceStatsSelect = '
+                booking_infos.service_id,
+                COUNT(booking_requests.id) as bookings_count,
+                SUM(
+                    CASE
+                        WHEN booking_requests.status = "COMPLETED"
+                        THEN ' . $earningsSql . '
+                        ELSE 0
+                    END
+                ) as earnings_total
+            ';
+        }
+
         $serviceStats = DB::table('booking_infos')
             ->join('booking_requests', 'booking_requests.booking_info_id', '=', 'booking_infos.id')
             ->join('tbl_services', 'tbl_services.id', '=', 'booking_infos.service_id')
@@ -161,18 +221,18 @@ class AdminController extends Controller
             ->whereIn('booking_infos.service_id', $serviceIds)
             ->where('users.is_active', 1)
             ->where('tbl_providers.application_status', 'accepted')
-            ->selectRaw('
-                booking_infos.service_id,
-                COUNT(booking_requests.id) as bookings_count
-            ')
+            ->selectRaw($serviceStatsSelect)
             ->groupBy('booking_infos.service_id')
             ->get()
             ->keyBy('service_id');
 
-        $recentServices->getCollection()->transform(function ($service) use ($serviceStats) {
+        $recentServices->getCollection()->transform(function ($service) use ($serviceStats, $showEarnings) {
             $stats = $serviceStats[$service->id] ?? null;
 
             $service->dashboard_bookings_count = (int) ($stats->bookings_count ?? 0);
+            $service->dashboard_earnings_total = $showEarnings
+                ? (float) ($stats->earnings_total ?? 0)
+                : 0;
 
             return $service;
         });
@@ -243,10 +303,13 @@ class AdminController extends Controller
             'totalBookings',
             'completedBookings',
             'pendingBookings',
+            'totalEarnings',
+            'showEarnings',
             'selectedYear',
             'selectedMonth',
             'chartLabels',
             'analyticsBookings',
+            'analyticsEarnings',
             'recentServices',
             'recentUsers',
             'providerRankingMode',
@@ -437,6 +500,7 @@ class AdminController extends Controller
             ->where(function ($query) {
                 $query->where('role', 'customer')
                     ->orWhere('role', 'admin')
+                    ->orWhere('role', 'super_admin')
                     ->orWhere(function ($providerQuery) {
                         $providerQuery->where('role', 'provider')
                             ->whereHas('provider', function ($profileQuery) {
@@ -468,7 +532,7 @@ class AdminController extends Controller
             });
         }
 
-        if ($request->filled('role') && in_array($request->role, ['customer', 'provider', 'admin'], true)) {
+        if ($request->filled('role') && in_array($request->role, ['customer', 'provider', 'admin', 'super_admin'], true)) {
             $query->where('role', $request->role);
         }
 
@@ -712,9 +776,14 @@ class AdminController extends Controller
 
     public function destroyUser(Request $request, User $user)
     {
+        AdminAuthorization::requireSuperAdmin();
         $this->assertManagedUser($user);
 
         if ($user->id === auth()->id()) {
+            abort(403);
+        }
+
+        if ($user->isSuperAdmin()) {
             abort(403);
         }
 
@@ -745,9 +814,62 @@ class AdminController extends Controller
         ]);
     }
 
+    public function forceDestroyUser(Request $request, User $user, UserPermanentDeleteService $permanentDeleteService)
+    {
+        AdminAuthorization::requireSuperAdmin();
+
+        if (! AdminAuthorization::canPermanentlyDeleteUser($user)) {
+            abort(403);
+        }
+
+        $this->assertManagedUser($user);
+
+        $deletedName = $user->name ?: $user->email;
+        $deletedEmail = $user->email;
+        $deletedRole = $user->role;
+        $subjectLabel = ucfirst($deletedRole) . ' #' . $user->id;
+
+        try {
+            $permanentDeleteService->delete($user);
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => collect($exception->errors())->flatten()->first(),
+                ], 422);
+            }
+
+            return redirect()
+                ->back()
+                ->withErrors($exception->errors());
+        }
+
+        AuditLogService::record(
+            'Users',
+            'permanently deleted',
+            'Permanently deleted ' . $deletedRole . ' account for ' . $deletedName . ' by Super Admin.',
+            null,
+            $subjectLabel,
+            [
+                'email' => $deletedEmail,
+                'role' => $deletedRole,
+                'actor_role' => auth()->user()->role,
+            ]
+        );
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['message' => 'User permanently deleted.']);
+        }
+
+        return redirect()->route('admin.users')->with('flash_message', [
+            'title' => '',
+            'message' => 'User permanently deleted.',
+            'type' => 'success',
+        ]);
+    }
+
     private function assertManagedUser(User $user): void
     {
-        if (! in_array($user->role, ['provider', 'customer', 'admin'], true)) {
+        if (! in_array($user->role, ['provider', 'customer', 'admin', 'super_admin'], true)) {
             abort(404);
         }
 
@@ -1018,8 +1140,6 @@ class AdminController extends Controller
             'platform_name' => ['nullable', 'string', 'max:255'],
             'platform_tagline' => ['nullable', 'string', 'max:500'],
             'service_area' => ['nullable', 'string', 'max:255'],
-            'privacy_policy_url' => ['nullable', 'url', 'max:255'],
-            'terms_url' => ['nullable', 'url', 'max:255'],
         ]);
 
         PlatformSetting::current()->update($validated);
@@ -1027,7 +1147,7 @@ class AdminController extends Controller
         AuditLogService::record(
             'General Settings',
             'updated',
-            'Updated platform branding and legal settings.',
+            'Updated platform branding settings.',
             PlatformSetting::current(),
             'Platform branding settings',
             ['fields' => array_keys($validated)]
@@ -1035,13 +1155,88 @@ class AdminController extends Controller
 
         return redirect()->route('admin.setting')->with('flash_message', [
             'title' => '',
-            'message' => 'Platform branding and legal settings saved successfully.',
+            'message' => 'Platform branding settings saved successfully.',
+            'type' => 'success',
+        ]);
+    }
+
+    public function updatePlatformAppearance(Request $request)
+    {
+        AdminAuthorization::requireSuperAdmin();
+
+        $fileRules = [
+            'front_logo' => ['file', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'front_footer_logo' => ['file', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'front_favicon' => ['file', 'mimes:jpg,jpeg,png,webp,svg,ico', 'max:1024'],
+            'meta_image' => ['file', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+        ];
+
+        $rules = [
+            'privacy_policy_url' => ['nullable', 'url', 'max:255'],
+            'terms_url' => ['nullable', 'url', 'max:255'],
+            'remove_front_logo' => ['nullable', 'in:0,1'],
+            'remove_front_footer_logo' => ['nullable', 'in:0,1'],
+            'remove_front_favicon' => ['nullable', 'in:0,1'],
+            'remove_meta_image' => ['nullable', 'in:0,1'],
+        ];
+
+        foreach ($fileRules as $field => $fieldRules) {
+            if ($request->hasFile($field)) {
+                $rules[$field] = $fieldRules;
+            }
+        }
+
+        $validated = $request->validate($rules);
+
+        $settings = PlatformSetting::current();
+        $updates = [
+            'privacy_policy_url' => $validated['privacy_policy_url'] ?? null,
+            'terms_url' => $validated['terms_url'] ?? null,
+        ];
+
+        $fileFields = [
+            'front_logo' => 'front_logo_path',
+            'front_footer_logo' => 'front_footer_logo_path',
+            'front_favicon' => 'front_favicon_path',
+            'meta_image' => 'meta_image_path',
+        ];
+
+        foreach ($fileFields as $inputName => $column) {
+            $removeKey = 'remove_' . $inputName;
+
+            if ($request->hasFile($inputName)) {
+                $this->deletePlatformAsset($settings->{$column});
+                $updates[$column] = $request->file($inputName)->store('platform-logos', 'public');
+                continue;
+            }
+
+            if ($request->boolean($removeKey)) {
+                $this->deletePlatformAsset($settings->{$column});
+                $updates[$column] = null;
+            }
+        }
+
+        $settings->update($updates);
+
+        AuditLogService::record(
+            'General Settings',
+            'updated',
+            'Updated platform appearance and legal settings.',
+            $settings,
+            'Platform appearance settings',
+            ['fields' => array_keys($updates)]
+        );
+
+        return redirect()->route('admin.setting')->with('flash_message', [
+            'title' => '',
+            'message' => 'Platform appearance settings saved successfully.',
             'type' => 'success',
         ]);
     }
 
     public function updateOtpFeature(Request $request)
     {
+        AdminAuthorization::requireSuperAdmin();
         $validated = $request->validate([
             'otp_enabled' => ['nullable', 'in:1'],
         ]);
@@ -1186,5 +1381,16 @@ class AdminController extends Controller
             'message' => 'Service category deleted successfully.',
             'type' => 'success',
         ]);
+    }
+
+    private function deletePlatformAsset(?string $path): void
+    {
+        if (empty($path)) {
+            return;
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

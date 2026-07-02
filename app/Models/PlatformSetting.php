@@ -17,6 +17,10 @@ class PlatformSetting extends Model
         'service_area',
         'privacy_policy_url',
         'terms_url',
+        'front_logo_path',
+        'front_footer_logo_path',
+        'front_favicon_path',
+        'meta_image_path',
         'otp_enabled',
     ];
 

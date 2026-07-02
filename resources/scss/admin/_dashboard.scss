@@ -72,6 +72,14 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
+
+            &__earnings-card {
+                min-height: 115px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-width: 0;
+            }
         }
         &--analytics {
             width: 100%;

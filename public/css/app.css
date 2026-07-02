@@ -5160,6 +5160,13 @@ h4 span {
 .admin--dash .section--analytics__mini-card--earnings strong {
   color: #B7791F;
 }
+.admin--dash .section--header__earnings-card {
+  min-height: 115px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
 .admin--dash .section--recent {
   width: 100%;
   display: grid;

@@ -112,7 +112,7 @@ Route::middleware('auth')->group(function () {
         ->name('booking.receipt');
 
 
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware('role:admin,super_admin')->group(function () {
         
         Route::redirect('/admin', '/admin/dashboard');
         Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -126,6 +126,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/customers/{customer}/document/valid-id', [AdminController::class, 'showCustomerValidIdDocument'])->name('admin.customers.document.valid-id');
         Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+        Route::delete('/admin/users/{user}/force', [AdminController::class, 'forceDestroyUser'])->name('admin.users.force-destroy');
 
         // Applicants
         Route::get('/admin/applicants', [AdminController::class, 'applicants'])->name('admin.applicants');
@@ -155,6 +156,8 @@ Route::middleware('auth')->group(function () {
             ->name('admin.setting.platform-contact.update');
         Route::put('/admin/setting/platform-branding', [AdminController::class, 'updatePlatformBranding'])
             ->name('admin.setting.platform-branding.update');
+        Route::post('/admin/setting/platform-appearance', [AdminController::class, 'updatePlatformAppearance'])
+            ->name('admin.setting.platform-appearance.update');
         Route::put('/admin/setting/otp-feature', [AdminController::class, 'updateOtpFeature'])
             ->name('admin.setting.otp-feature.update');
 

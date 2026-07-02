@@ -87,7 +87,7 @@
             ->count();
     }
 
-    if ($authUser && $authUser->role === 'admin') {
+    if ($authUser && $authUser->isAdmin()) {
         $adminNotifications = AdminNotification::query()
             ->orderByRaw('read_at IS NULL DESC')
             ->latest()
@@ -99,9 +99,9 @@
             ->count();
     }
 
-    $notificationBadgeCount = match ($authUser?->role) {
-        'customer' => $customerUnreadNotificationCount,
-        'admin' => $adminUnreadNotificationCount,
+    $notificationBadgeCount = match (true) {
+        $authUser?->isCustomer() => $customerUnreadNotificationCount,
+        $authUser?->isAdmin() => $adminUnreadNotificationCount,
         default => $providerUnreadNotificationCount,
     };
 @endphp
@@ -159,12 +159,12 @@
                     $fname = explode(' ', $user->provider->first_name)[0] ?? '';
                     $lname = explode(' ', $user->provider->last_name)[0] ?? '';
                     $profileImage = $user->provider->profile_image ?? null;
-                } else if ($user->role === 'admin') {
+                } else if ($user->isAdmin()) {
                     $fullname = explode(' ', $user->name);
 
                     $fname = $fullname[0] ?? '';
                     $lname = $fullname[1] ?? '';
-                    $profileImage = null; // No Image For Admin | If We Have Default For Admin Add Hard Coded
+                    $profileImage = null;
                 }
             @endphp
             @if ($profileImage)
@@ -404,7 +404,7 @@
         </div>
     </div>
 @endif
-@if ($authUser && $authUser->role === 'admin')
+@if ($authUser && $authUser->isAdmin())
     <div class="provider-notification-modal" id="adminNotificationModal">
         <div class="provider-notification-modal__header">
             <div>
@@ -486,6 +486,9 @@
         {{-- <li><a href="{{ route('admin.profile') }}">Profile</a></li> --}}
         <div>
             <p>{{ auth()->user()->name }}</p>
+            @if (auth()->user()->isAdmin())
+                <small style="color:#8b95a1;font-size:11px;">{{ auth()->user()->roleLabel() }}</small>
+            @endif
         </div>
 
         {{-- <li><a href="">Profile Setting</a></li> --}}

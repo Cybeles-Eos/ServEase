@@ -36,3 +36,36 @@ function getPlatformSettings()
 {
     return \App\Models\PlatformSetting::current();
 }
+
+function platformAssetUrl(?string $storedPath, string $fallback): string
+{
+    if (empty($storedPath)) {
+        return asset($fallback);
+    }
+
+    if (str_starts_with($storedPath, 'http://') || str_starts_with($storedPath, 'https://')) {
+        return $storedPath;
+    }
+
+    return asset('storage/' . ltrim($storedPath, '/'));
+}
+
+function platformFrontLogoUrl(): string
+{
+    return platformAssetUrl(getPlatformSettings()->front_logo_path, 'images/new-logo-d.png');
+}
+
+function platformFrontFooterLogoUrl(): string
+{
+    return platformAssetUrl(getPlatformSettings()->front_footer_logo_path, 'images/new-logo-l.png');
+}
+
+function platformFaviconUrl(): string
+{
+    return platformAssetUrl(getPlatformSettings()->front_favicon_path, 'images/icons/favicon.svg');
+}
+
+function platformMetaImageUrl(): string
+{
+    return platformAssetUrl(getPlatformSettings()->meta_image_path, 'images/meta-cover.png');
+}

@@ -266,6 +266,63 @@
                     flex-direction: column;
                 }
             }
+
+            .platform-appearance-grid .p-a-gs-form-group small {
+                display: block;
+                margin-top: 6px;
+                font-size: 12px;
+                color: #6b7280;
+            }
+
+            .platform-appearance-grid .filepond--root {
+                font-family: inherit;
+                margin-bottom: 0;
+            }
+
+            .platform-appearance-grid .filepond--panel-root {
+                background-color: #ffffff !important;
+                border: 2px dashed #ddd;
+            }
+
+            .platform-appearance-grid .filepond--drop-label {
+                color: #666;
+            }
+
+            .platform-appearance-grid .filepond--file {
+                background: #f9f9f9 !important;
+            }
+
+            .platform-appearance-grid .filepond--image-preview-overlay {
+                background: transparent !important;
+            }
+
+            .platform-appearance-grid .filepond--drop-label label {
+                font-size: 12px !important;
+                opacity: 0.85 !important;
+            }
+
+            .platform-appearance-pond--dark .filepond--panel-root {
+                background-color: #1f2937 !important;
+                border-color: #374151;
+            }
+
+            .platform-appearance-pond--dark .filepond--drop-label {
+                color: #d1d5db;
+            }
+
+            .platform-appearance-pond-wrap {
+                width: 100%;
+            }
+
+            .platform-appearance-pond-wrap--icon {
+                width: 160px;
+                max-width: 100%;
+            }
+
+            .platform-appearance-pond-wrap--icon .filepond--root {
+                width: 100% !important;
+                max-width: 160px;
+            }
         </style>
     @endpush
 
@@ -289,6 +346,7 @@
                         @endunless
                     </div>
 
+                    @if (auth()->user()->isSuperAdmin())
                     <form action="{{ route('admin.setting.otp-feature.update') }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -305,6 +363,7 @@
                             <span>Use OTP</span>
                         </label>
                     </form>
+                    @endif
                 </div>
             </div>
 
@@ -666,8 +725,8 @@
         <section class="p-a-gs-card section platform-branding">
             <div class="p-a-gs-card-header">
                 <div>
-                    <h5>Platform Branding &amp; Legal</h5>
-                    <p class="p-a-gs-card-subtitle">Platform identity and legal links used in the footer, emails, and public pages.</p>
+                    <h5>Platform Branding</h5>
+                    <p class="p-a-gs-card-subtitle">Platform identity used in the footer, emails, and public pages.</p>
                 </div>
             </div>
 
@@ -723,12 +782,90 @@
                             <small class="mct-form-error">{{ $message }}</small>
                         @enderror
                     </div>
+                </div>
+
+                <div class="p-a-gs-form-actions">
+                    <button type="submit" class="p-a-gs-btn-save">
+                        Save Branding Settings
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        @if (auth()->user()->isSuperAdmin())
+        <section class="p-a-gs-card section platform-appearance">
+            <div class="p-a-gs-card-header">
+                <div>
+                    <h5>Platform Appearance</h5>
+                    <p class="p-a-gs-card-subtitle">Super Admin only. Front page logos, favicon, social share image, and legal URLs.</p>
+                </div>
+            </div>
+
+            <hr style="margin-bottom: 16px">
+
+            <form
+                id="platform-appearance-form"
+                action="{{ route('admin.setting.platform-appearance.update') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="p-a-gs-settings-form"
+            >
+                @csrf
+
+                <div class="p-a-gs-form-grid platform-appearance-grid">
+                    <div class="p-a-gs-form-group">
+                        <label for="front_logo">Front Header Logo <small>(2MB max)</small></label>
+                        <div class="platform-appearance-pond-wrap">
+                            <input type="hidden" name="remove_front_logo" id="remove_front_logo" value="0">
+                            <input type="file" name="front_logo" id="front_logo" accept="image/*">
+                        </div>
+                        <small>Used in the front site header. PNG, JPG, WebP, or SVG.</small>
+                        @error('front_logo')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
 
                     <div class="p-a-gs-form-group">
-                        <label for="privacy_policy_url">Privacy Policy URL</label>
+                        <label for="front_footer_logo">Front Footer Logo <small>(2MB max)</small></label>
+                        <div class="platform-appearance-pond-wrap platform-appearance-pond--dark">
+                            <input type="hidden" name="remove_front_footer_logo" id="remove_front_footer_logo" value="0">
+                            <input type="file" name="front_footer_logo" id="front_footer_logo" accept="image/*">
+                        </div>
+                        <small>Used in the front site footer (light version). Independent from the header logo.</small>
+                        @error('front_footer_logo')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="front_favicon">Favicon <small>(1MB max)</small></label>
+                        <div class="platform-appearance-pond-wrap platform-appearance-pond-wrap--icon">
+                            <input type="hidden" name="remove_front_favicon" id="remove_front_favicon" value="0">
+                            <input type="file" name="front_favicon" id="front_favicon" accept="image/*,.ico">
+                        </div>
+                        <small>Browser tab icon. PNG, SVG, ICO, or WebP.</small>
+                        @error('front_favicon')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="meta_image">Social Share Image <small>(3MB max)</small></label>
+                        <div class="platform-appearance-pond-wrap">
+                            <input type="hidden" name="remove_meta_image" id="remove_meta_image" value="0">
+                            <input type="file" name="meta_image" id="meta_image" accept="image/*">
+                        </div>
+                        <small>Open Graph / Twitter preview image. JPG, PNG, or WebP.</small>
+                        @error('meta_image')
+                            <small class="mct-form-error">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="p-a-gs-form-group">
+                        <label for="appearance_privacy_policy_url">Privacy Policy URL</label>
                         <input
                             type="url"
-                            id="privacy_policy_url"
+                            id="appearance_privacy_policy_url"
                             name="privacy_policy_url"
                             value="{{ old('privacy_policy_url', $platformSettings->privacy_policy_url) }}"
                             placeholder="https://yoursite.com/privacy"
@@ -739,10 +876,10 @@
                     </div>
 
                     <div class="p-a-gs-form-group">
-                        <label for="terms_url">Terms &amp; Conditions URL</label>
+                        <label for="appearance_terms_url">Terms &amp; Conditions URL</label>
                         <input
                             type="url"
-                            id="terms_url"
+                            id="appearance_terms_url"
                             name="terms_url"
                             value="{{ old('terms_url', $platformSettings->terms_url) }}"
                             placeholder="https://yoursite.com/terms"
@@ -755,11 +892,12 @@
 
                 <div class="p-a-gs-form-actions">
                     <button type="submit" class="p-a-gs-btn-save">
-                        Save Branding Settings
+                        Save Appearance Settings
                     </button>
                 </div>
             </form>
         </section>
+        @endif
 
 
     </main>
@@ -894,4 +1032,165 @@
             document.getElementById('viewCategoryModal').classList.remove('show');
         }
     </script>
+
+    @if (auth()->user()->isSuperAdmin())
+    <script>
+        FilePond.registerPlugin(
+            FilePondPluginImagePreview,
+            FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize
+        );
+
+        const platformAppearanceServer = {
+            load: (source, load, error) => {
+                fetch(source)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Unable to load image.');
+                        }
+
+                        return response.blob();
+                    })
+                    .then(load)
+                    .catch(() => error('Unable to load image.'));
+            }
+        };
+
+        const FILEPOND_INPUT_ORIGIN = (FilePond.FileOrigin && FilePond.FileOrigin.INPUT) || 1;
+
+        function isUserUploadedFile(pondFile) {
+            if (!pondFile || !(pondFile.file instanceof File)) {
+                return false;
+            }
+
+            return pondFile.origin === FILEPOND_INPUT_ORIGIN;
+        }
+
+        function createPlatformFilePond(inputSelector, removeInputId, existingUrl, isCustom, options) {
+            const input = document.querySelector(inputSelector);
+            const removeInput = document.getElementById(removeInputId);
+            const fieldName = input.getAttribute('name');
+
+            // Dedicated hidden native input that actually carries the picked file
+            // to the server. FilePond never touches this element.
+            const submitInput = document.createElement('input');
+            submitInput.type = 'file';
+            submitInput.name = fieldName;
+            submitInput.style.display = 'none';
+            input.removeAttribute('name');
+            input.parentNode.appendChild(submitInput);
+
+            const entry = { input, submitInput, pickedFile: null };
+
+            const pond = FilePond.create(input, Object.assign({
+                allowMultiple: false,
+                maxFiles: 1,
+                allowReplace: true,
+                storeAsFile: false,
+                server: platformAppearanceServer,
+                labelIdle: '<span style="color: #53a3ed">Upload</span> or Drop your image',
+                files: existingUrl ? [{
+                    source: existingUrl,
+                    options: { type: 'local' }
+                }] : []
+            }, options || {}));
+
+            pond.on('removefile', function () {
+                entry.pickedFile = null;
+
+                if (removeInput && isCustom) {
+                    removeInput.value = '1';
+                }
+            });
+
+            pond.on('addfile', function (error, fileItem) {
+                if (error) {
+                    return;
+                }
+
+                if (isUserUploadedFile(fileItem)) {
+                    entry.pickedFile = fileItem.file;
+
+                    if (removeInput) {
+                        removeInput.value = '0';
+                    }
+                }
+            });
+
+            entry.pond = pond;
+
+            return entry;
+        }
+
+        function applyPickedFileToSubmitInput(entry) {
+            if (!entry.submitInput) {
+                return;
+            }
+
+            if (entry.pickedFile instanceof File) {
+                const transfer = new DataTransfer();
+                transfer.items.add(entry.pickedFile);
+                entry.submitInput.files = transfer.files;
+                entry.submitInput.disabled = false;
+            } else {
+                entry.submitInput.value = '';
+                entry.submitInput.disabled = true;
+            }
+        }
+
+        const platformAppearancePonds = [
+            createPlatformFilePond(
+                '#front_logo',
+                'remove_front_logo',
+                @json(platformFrontLogoUrl()),
+                @json(! empty($platformSettings->front_logo_path)),
+                {
+                    acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'],
+                    maxFileSize: '2MB'
+                }
+            ),
+            createPlatformFilePond(
+                '#front_footer_logo',
+                'remove_front_footer_logo',
+                @json(platformFrontFooterLogoUrl()),
+                @json(! empty($platformSettings->front_footer_logo_path)),
+                {
+                    acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'],
+                    maxFileSize: '2MB'
+                }
+            ),
+            createPlatformFilePond(
+                '#front_favicon',
+                'remove_front_favicon',
+                @json(platformFaviconUrl()),
+                @json(! empty($platformSettings->front_favicon_path)),
+                {
+                    acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/vnd.microsoft.icon'],
+                    maxFileSize: '1MB',
+                    imagePreviewHeight: 64
+                }
+            ),
+            createPlatformFilePond(
+                '#meta_image',
+                'remove_meta_image',
+                @json(platformMetaImageUrl()),
+                @json(! empty($platformSettings->meta_image_path)),
+                {
+                    acceptedFileTypes: ['image/png', 'image/jpeg', 'image/webp'],
+                    maxFileSize: '3MB'
+                }
+            )
+        ];
+
+        const platformAppearanceForm = document.getElementById('platform-appearance-form');
+
+        if (platformAppearanceForm) {
+            platformAppearanceForm.addEventListener('submit', function () {
+                platformAppearancePonds.forEach(function (entry) {
+                    applyPickedFileToSubmitInput(entry);
+                });
+            });
+        }
+    </script>
+    @endif
 @endpush

@@ -68,18 +68,39 @@ class User extends Authenticatable
     // ---------------------
     // Helpers
     // ---------------------
-    public function isAdmin()
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'super_admin'], true);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isSystemAdmin(): bool
     {
         return $this->role === 'admin';
     }
 
-    public function isProvider()
+    public function isProvider(): bool
     {
         return $this->role === 'provider';
     }
 
-    public function isCustomer()
+    public function isCustomer(): bool
     {
         return $this->role === 'customer';
+    }
+
+    public function roleLabel(): string
+    {
+        return match ($this->role) {
+            'super_admin' => 'Super Admin',
+            'admin' => 'System Admin',
+            'provider' => 'Provider',
+            'customer' => 'Customer',
+            default => ucfirst((string) $this->role),
+        };
     }
 }

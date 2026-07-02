@@ -21,7 +21,7 @@
 <header class="header-desktop" style="border-bottom: 1px solid #E6E8EC">
     <div class="header-main m-padding m-width">
         <div class="h-con-links">
-            <a href="{{ url('/') }}"><img src="{{ asset('images/new-logo-d.png') }}" alt=""></a>
+            <a href="{{ url('/') }}"><img src="{{ platformFrontLogoUrl() }}" alt="{{ $platform->platform_name ?: 'ServEase' }}"></a>
             <div class="h-con-links__divider"></div>
             <ul>
                 <li><a href="{{ url('/') }}">Home</a></li>
@@ -100,7 +100,7 @@
 <header class="header-mobile" >
     <div class="text-left">
         <a href="{{ url('/') }}">
-            <img src="{{ asset('images/new-logo-d.png') }}" style="width: 80px" alt="Logo">
+            <img src="{{ platformFrontLogoUrl() }}" style="width: 80px" alt="{{ $platform->platform_name ?: 'ServEase' }}">
         </a>
     </div>
 

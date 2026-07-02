@@ -53,7 +53,8 @@
                 <option value="">All Roles</option>
                 <option value="customer" {{ request('role') === 'customer' ? 'selected' : '' }}>Customer</option>
                 <option value="provider" {{ request('role') === 'provider' ? 'selected' : '' }}>Provider</option>
-                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>System Admin</option>
+                <option value="super_admin" {{ request('role') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
             </select>
 
             <select name="status" class="page-admin-users__select">
@@ -110,7 +111,7 @@
                                 <div class="prvstble-mctb-serv">{{ $user->email }}</div>
                                 <div class="prvstble-mctb-date">{{ $barangay }}</div>
                                 <div class="prvstble-mctb-date">{{ $phone }}</div>
-                                <div class="prvstble-mctb-date">{{ ucfirst($user->role) }}</div>
+                                <div class="prvstble-mctb-date">{{ $user->roleLabel() }}</div>
                                 <div class="prvstble-mctb-date">{!! $user->is_active ? '<span class="badge bg-success text-white" style="font-size: 11px">Active</span>' : '<span class="badge bg-danger text-white" style="font-size: 11px">Disabled</span>' !!}</div>
                                 <div class="prvstble-mctb-act">
                                     <a href="{{ route('admin.users.show', $user) }}" title="View profile">
@@ -123,12 +124,14 @@
                                             <path d="M3 13V10.6389L10.3333 3.31944C10.4444 3.21759 10.5672 3.13889 10.7017 3.08333C10.8361 3.02778 10.9772 3 11.125 3C11.2728 3 11.4163 3.02778 11.5556 3.08333C11.6948 3.13889 11.8152 3.22222 11.9167 3.33333L12.6806 4.11111C12.7917 4.21296 12.8728 4.33333 12.9239 4.47222C12.975 4.61111 13.0004 4.75 13 4.88889C13 5.03704 12.9746 5.17833 12.9239 5.31278C12.8731 5.44722 12.792 5.56981 12.6806 5.68056L5.36111 13H3ZM11.1111 5.66667L11.8889 4.88889L11.1111 4.11111L10.3333 4.88889L11.1111 5.66667Z" fill="#535353"/>
                                         </svg>
                                     </a>
-                                    {{-- <a href="javascript:void(0);"
-                                    class="prvstble-mctb-act__remove delete-admin-user-btn"
-                                    data-delete-url="{{ route('admin.users.destroy', $user) }}"
-                                    data-id="{{ $user->id }}">
+                                    @if(auth()->user()->isSuperAdmin() && \App\Support\AdminAuthorization::canPermanentlyDeleteUser($user))
+                                    <a href="javascript:void(0);"
+                                    class="prvstble-mctb-act__remove force-delete-admin-user-btn"
+                                    data-delete-url="{{ route('admin.users.force-destroy', $user) }}"
+                                    title="Permanently delete">
                                         <i class="fa fa-times" style="color: #fff"></i>
-                                    </a> --}}
+                                    </a>
+                                    @endif
                                 </div>
                             </div>
                         @empty
@@ -154,19 +157,19 @@
             }
         });
 
-        $(document).on('click', '.delete-admin-user-btn', function (e) {
+        $(document).on('click', '.force-delete-admin-user-btn', function (e) {
             e.preventDefault();
 
             var url = $(this).data('delete-url');
             var button = $(this);
 
             Swal.fire({
-                title: 'Delete user?',
-                text: 'This removes the account and related profile data.',
+                title: 'Permanently delete user?',
+                text: 'This action cannot be undone. The account and related profile data will be removed permanently.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, delete',
-                confirmButtonColor: '#FFBE42',
+                confirmButtonText: 'Yes, delete permanently',
+                confirmButtonColor: '#D74646',
                 cancelButtonText: 'Cancel',
                 reverseButtons: true
             }).then(function (result) {
@@ -183,7 +186,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Deleted',
-                            text: response.message || 'User deleted successfully.',
+                            text: response.message || 'User permanently deleted.',
                             timer: 1500,
                             showConfirmButton: false
                         });
@@ -191,7 +194,7 @@
                     error: function (xhr) {
                         var msg = (xhr.responseJSON && xhr.responseJSON.message)
                             ? xhr.responseJSON.message
-                            : 'Could not delete user.';
+                            : 'Could not permanently delete user.';
                         Swal.fire({ icon: 'error', title: 'Error', text: msg });
                     }
                 });
