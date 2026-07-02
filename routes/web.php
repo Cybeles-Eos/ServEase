@@ -114,6 +114,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
         Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
         Route::get('/admin/users/{user}', [AdminController::class, 'showUser'])->name('admin.users.show');
+        Route::get('/admin/customers/{customer}/document/valid-id', [AdminController::class, 'showCustomerValidIdDocument'])->name('admin.customers.document.valid-id');
         Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 

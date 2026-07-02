@@ -214,6 +214,7 @@ class AuthManagerController extends Controller
             ],
             'privacy_accepted' => ['accepted'],
             'g-recaptcha-response' => ['required'],
+            'valid_id' => ['required', 'file', 'mimes:pdf', 'max:5120'],
         ], [
             'email.email' => 'Please enter a valid email address.',
             'email.unique' => 'This email address is already registered.',
@@ -229,6 +230,9 @@ class AuthManagerController extends Controller
             'password.min' => 'Password must be at least 8 characters.',
             'password.confirmed' => 'Password confirmation does not match.',
             'password.regex' => 'Password must include uppercase, lowercase, number, and special character.',
+            'valid_id.required' => 'Please upload your valid ID.',
+            'valid_id.mimes' => 'Valid ID must be a PDF file.',
+            'valid_id.max' => 'Valid ID must not exceed 5MB.',
         ]);
 
         $recaptcha = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
@@ -246,7 +250,9 @@ class AuthManagerController extends Controller
         $name = $validated['fname'] . ' ' . $validated['lname'];
 
         if (! $otpService->isEnabled()) {
-            DB::transaction(function () use ($validated, $name) {
+            $validIdPath = $request->file('valid_id')->store('customer-valid-ids', 'public');
+
+            DB::transaction(function () use ($validated, $name, $validIdPath) {
                 $user = User::create([
                     'name' => $name,
                     'email' => $validated['email'],
@@ -266,6 +272,7 @@ class AuthManagerController extends Controller
                     'city' => $validated['city'],
                     'barangay' => $validated['barangay'],
                     'zipcode' => $validated['zipcode'],
+                    'valid_id_path' => $validIdPath,
                 ]);
 
                 AdminNotificationService::newCustomer($user);
@@ -289,16 +296,18 @@ class AuthManagerController extends Controller
         if ($otpService->hasReachedDailyLimit()) {
             return redirect()
                 ->route('signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'valid_id'))
                 ->with('flash_message', $otpService->limitFlashMessage());
         }
 
         if ($otpService->hasReachedResendLimit($request, $validated['email'])) {
             return redirect()
                 ->route('signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'valid_id'))
                 ->withErrors(['email' => $otpService->resendLimitMessage($request, $validated['email'])]);
         }
+
+        $pendingValidIdPath = $request->file('valid_id')->store('pending-customer-valid-ids', 'public');
 
         session([
             'pending_customer_registration' => [
@@ -313,6 +322,7 @@ class AuthManagerController extends Controller
                 'city'           => $validated['city'],
                 'barangay'       => $validated['barangay'],
                 'zipcode'        => $validated['zipcode'],
+                'valid_id_path'  => $pendingValidIdPath,
                 'password'       => Hash::make($validated['password']),
             ],
             'otp_email' => $validated['email'],
@@ -325,6 +335,10 @@ class AuthManagerController extends Controller
                 name: $name
             );
         } catch (DailyOtpLimitReachedException $exception) {
+            if (!empty($pendingValidIdPath) && Storage::disk('public')->exists($pendingValidIdPath)) {
+                Storage::disk('public')->delete($pendingValidIdPath);
+            }
+
             session()->forget([
                 'pending_customer_registration',
                 'otp_email',
@@ -333,9 +347,13 @@ class AuthManagerController extends Controller
 
             return redirect()
                 ->route('signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'valid_id'))
                 ->with('flash_message', $otpService->limitFlashMessage());
         } catch (OtpDeliveryException $exception) {
+            if (!empty($pendingValidIdPath) && Storage::disk('public')->exists($pendingValidIdPath)) {
+                Storage::disk('public')->delete($pendingValidIdPath);
+            }
+
             session()->forget([
                 'pending_customer_registration',
                 'otp_email',
@@ -344,7 +362,7 @@ class AuthManagerController extends Controller
 
             return redirect()
                 ->route('signup')
-                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response'))
+                ->withInput($request->except('password', 'password_confirmation', 'g-recaptcha-response', 'valid_id'))
                 ->withErrors(['email' => $exception->getMessage()]);
         }
 

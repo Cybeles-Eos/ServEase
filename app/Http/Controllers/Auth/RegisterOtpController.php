@@ -128,6 +128,13 @@ class RegisterOtpController extends Controller
             }
 
             DB::transaction(function () use ($pendingCustomer, $record) {
+                $finalValidIdPath = $pendingCustomer['valid_id_path'] ?? null;
+
+                if (!empty($pendingCustomer['valid_id_path']) && Storage::disk('public')->exists($pendingCustomer['valid_id_path'])) {
+                    $finalValidIdPath = str_replace('pending-customer-valid-ids/', 'customer-valid-ids/', $pendingCustomer['valid_id_path']);
+                    Storage::disk('public')->move($pendingCustomer['valid_id_path'], $finalValidIdPath);
+                }
+
                 $user = User::create([
                     'name'              => $pendingCustomer['name'],
                     'email'             => $pendingCustomer['email'],
@@ -146,6 +153,7 @@ class RegisterOtpController extends Controller
                     'city'           => $pendingCustomer['city'],
                     'barangay'       => $pendingCustomer['barangay'],
                     'zipcode'        => $pendingCustomer['zipcode'],
+                    'valid_id_path'  => $finalValidIdPath,
                 ]);
 
                 $record->update([

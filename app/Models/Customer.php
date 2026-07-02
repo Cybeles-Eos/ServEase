@@ -19,6 +19,7 @@ class Customer extends Model
         'city',
         'barangay',
         'zipcode',
+        'valid_id_path',
     ];
 
     protected $casts = [

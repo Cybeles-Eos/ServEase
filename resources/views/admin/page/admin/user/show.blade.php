@@ -414,6 +414,7 @@
     @php
         $resumeUrl = null;
         $barangayClearanceUrl = null;
+        $validIdUrl = null;
 
         if ($user->role === 'provider' && $profile) {
             $resumeUrl = !empty($profile->resume_path)
@@ -423,6 +424,10 @@
             $barangayClearanceUrl = !empty($profile->barangay_clearance_path)
                 ? route('admin.applicants.document', [$profile, 'barangay-clearance'])
                 : null;
+        }
+
+        if ($user->role === 'customer' && $profile && !empty($profile->valid_id_path)) {
+            $validIdUrl = route('admin.customers.document.valid-id', $profile);
         }
     @endphp
     <main class="main-dash-uix page-admin-users dash-sp">
@@ -636,6 +641,39 @@
                                     </div>
                                 </div>
                             @endif
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            @if ($user->role === 'customer' && $profile && $validIdUrl)
+                <section class="admin-user-show__documents">
+                    <div class="admin-user-show__documents-card">
+                        <h5>Customer Documents</h5>
+
+                        <div class="admin-user-show__documents-grid">
+                            <div class="admin-user-show__document-block">
+                                <div class="admin-user-show__document-head">
+                                    <div class="admin-user-show__document-title">
+                                        <span>
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                                <path d="M14 2H6C5.45 2 4.98 2.2 4.59 2.59C4.2 2.98 4 3.45 4 4V20C4 20.55 4.2 21.02 4.59 21.41C4.98 21.8 5.45 22 6 22H18C18.55 22 19.02 21.8 19.41 21.41C19.8 21.02 20 20.55 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M9 13H15M9 17H15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                                            </svg>
+                                        </span>
+                                        <h6>Valid ID</h6>
+                                    </div>
+
+                                    <a href="{{ $validIdUrl }}" target="_blank">
+                                        Open in new tab
+                                    </a>
+                                </div>
+
+                                <div class="admin-user-show__document-viewer">
+                                    <iframe src="{{ $validIdUrl }}"></iframe>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

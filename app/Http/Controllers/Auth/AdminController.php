@@ -19,6 +19,7 @@ use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Provider;
+use App\Models\Customer;
 use App\Services\AdminNotificationService;
 use App\Services\AuditLogService;
 use App\Services\OtpService;
@@ -857,6 +858,25 @@ class AdminController extends Controller
             'Content-Disposition' => 'inline; filename="'.basename($path).'"',
         ]);
     }
+
+    public function showCustomerValidIdDocument(Customer $customer)
+    {
+        if (! auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $path = $customer->valid_id_path;
+
+        if (empty($path) || ! Storage::disk('public')->exists($path)) {
+            abort(404);
+        }
+
+        return response()->file(Storage::disk('public')->path($path), [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
+        ]);
+    }
+
     public function acceptApplicant(Provider $provider)
     {
         if (! auth()->user()->isAdmin()) {

@@ -64,7 +64,7 @@
             }
 
             .customer-register-page .register-grid--two {
-                grid-template-columns: repeat(2, 1fr) !important;
+                grid-template-columns: repeat(1, 1fr) !important;
             }
 
             .customer-register-page .plm-ff-group {
@@ -381,6 +381,54 @@
 .customer-register-page .password-strength-minimal.is-strong .password-strength-minimal__text strong {
     color: #16a34a !important;
 }
+
+            .customer-register-page .register-file-input {
+                width: 100% !important;
+                height: 42px !important;
+                border: 1px solid #d9dee7 !important;
+                border-radius: 7px !important;
+                background: #ffffff !important;
+                padding: 0 14px !important;
+                padding-left: 5px !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+            }
+
+            .customer-register-page .register-file-input:focus-within {
+                border-color: #ffb73e !important;
+            }
+
+            .customer-register-page .register-file-input .file-btn {
+                flex-shrink: 0 !important;
+                height: 28px !important;
+                padding: 0 10px !important;
+                border: 0 !important;
+                border-radius: 5px !important;
+                background: #f4f6f9 !important;
+                color: #202124 !important;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                cursor: pointer !important;
+            }
+
+            .customer-register-page .register-file-input .file-btn:hover {
+                background: #eef0f3 !important;
+            }
+
+            .customer-register-page .register-file-input .file-name {
+                flex: 1 !important;
+                /* min-width: 0 !important; */
+                font-size: 13px !important;
+                color: #b3bac5 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+
+            .customer-register-page .register-file-input .file-name.has-file {
+                color: #202124 !important;
+            }
         </style>
     @endpush
 
@@ -396,7 +444,7 @@
                     </p>
                 </div>
 
-                <form method="POST" action="{{ route('signup.post') }}" class="provider-login-main__form--fields">
+                <form method="POST" action="{{ route('signup.post') }}" class="provider-login-main__form--fields" enctype="multipart/form-data">
                     @csrf
 
                     <div class="register-grid">
@@ -582,7 +630,31 @@
                             </div>
                             @error('barangay') <small>{{ $message }}</small> @enderror
                         </div>
+
+                        <div class="register-grid register-grid--two">
+                        <div class="plm-ff-group">
+                            <label for="valid_id">Valid ID (PDF only) <span class="required">*</span></label>
+                            <div class="register-file-input">
+                                <input type="file" id="valid_id" name="valid_id" accept="application/pdf" hidden required>
+                                <button type="button" class="file-btn" data-target="valid_id">Choose File</button>
+                                <span class="file-name">No file chosen</span>
+                            </div>
+                            @error('valid_id') <small>{{ $message }}</small> @enderror
+                        </div>
                     </div>
+                    </div>
+
+                    <!-- <div class="register-grid register-grid--two">
+                        <div class="plm-ff-group">
+                            <label for="valid_id">Valid ID (PDF only) <span class="required">*</span></label>
+                            <div class="register-file-input">
+                                <input type="file" id="valid_id" name="valid_id" accept="application/pdf" hidden required>
+                                <button type="button" class="file-btn" data-target="valid_id">Choose File</button>
+                                <span class="file-name">No file chosen</span>
+                            </div>
+                            @error('valid_id') <small>{{ $message }}</small> @enderror
+                        </div>
+                    </div> -->
 
                     <div class="register-grid register-grid--two">
                         {{-- <div class="plm-ff-group">
@@ -819,6 +891,19 @@
             }
 
             setupAgePickers();
+
+            $('.file-btn').on('click', function () {
+                const target = $(this).data('target');
+                $('#' + target).click();
+            });
+
+            $('input[type="file"]').on('change', function () {
+                const fileName = this.files && this.files.length ? this.files[0].name : 'No file chosen';
+                const label = $(this).closest('.register-file-input').find('.file-name');
+
+                label.text(fileName);
+                label.toggleClass('has-file', this.files && this.files.length > 0);
+            });
 
             $('#show-pass').on('click', function () {
                 const input = $('#password');
