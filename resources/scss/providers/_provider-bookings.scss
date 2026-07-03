@@ -754,7 +754,7 @@ $fitcont: fit-content;
                                 line-height: 100%;
             
                             }
-                            button, a{ 
+                            button, a{
                                 width: fit-content;
                                 height: 22px;
                                 border-radius: 4px;
@@ -763,7 +763,7 @@ $fitcont: fit-content;
                                 color: #656565;
                                 font-size:12px;
                                 // justify-content: flex-start;
-                                padding: 0px 5px;   
+                                padding: 0px 5px;
                                 padding-right: 7px;
                                 text-decoration: none;
                                 background-color: #d2d2d2;
@@ -776,6 +776,36 @@ $fitcont: fit-content;
                                     width: 11px;
                                     height: 10px;
                                     margin-right: 5px;
+                                }
+                            }
+
+                            .provider-customer-actions{
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                flex-wrap: wrap;
+
+                                .provider-customer-action-btn{
+                                    cursor: pointer;
+
+                                    i{
+                                        margin-right: 4px;
+                                        font-size: 11px;
+                                    }
+
+                                    &.is-done{
+                                        opacity: .7;
+                                        cursor: default;
+                                    }
+
+                                    &--report{
+                                        background-color: #f8d7da;
+                                        color: #b02a37;
+
+                                        &:hover{
+                                            background-color: #f1c2c7;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1219,5 +1249,30 @@ $fitcont: fit-content;
             right: auto;
             left: 0;
         }
+    }
+}
+
+.provider-customer-rating{
+    margin: 3px 0 0;
+    font-size: 12px;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+
+    &__val{
+        margin-left: 4px;
+        color: #656565;
+        font-weight: 600;
+    }
+
+    &__none{
+        color: #9CA3AF;
+        font-style: italic;
+    }
+
+    &--inline{
+        display: block;
     }
 }

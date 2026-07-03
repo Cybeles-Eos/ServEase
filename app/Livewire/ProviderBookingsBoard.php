@@ -74,8 +74,11 @@ class ProviderBookingsBoard extends Component
             $bookRequests = BookingRequest::with([
                     'bookingInfo',
                     'bookingInfo.customer',
+                    'bookingInfo.customer.receivedRatings',
                     'bookingInfo.service',
                     'rating',
+                    'customerRating',
+                    'customerReport',
                 ])
                 ->where('provider_id', $providerId)
                 ->latest()
@@ -84,8 +87,11 @@ class ProviderBookingsBoard extends Component
             $historyRequests = BookingRequest::with([
                     'bookingInfo',
                     'bookingInfo.customer',
+                    'bookingInfo.customer.receivedRatings',
                     'bookingInfo.service',
                     'rating',
+                    'customerRating',
+                    'customerReport',
                 ])
                 ->where('provider_id', $providerId)
                 ->where('status', $this->historyStatus)

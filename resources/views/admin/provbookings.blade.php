@@ -108,5 +108,61 @@
     <script>console.log({{ auth()->user()->provider->id }});</script>
 @endsection
 @push('extrascripts')
+<script>
+    function openRatingModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            window.activeRatingModalId = modalId;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
 
+    function closeRatingModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            if (window.activeRatingModalId === modalId) {
+                window.activeRatingModalId = null;
+            }
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function restoreActiveRatingModal() {
+        if (!window.activeRatingModalId) {
+            return;
+        }
+
+        const modal = document.getElementById(window.activeRatingModalId);
+        if (modal && !modal.classList.contains('show')) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('rating-modal-overlay')) {
+            if (window.activeRatingModalId === e.target.id) {
+                window.activeRatingModalId = null;
+            }
+            e.target.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const bookingBoard = document.querySelector('.provider--bookings');
+
+        if (!bookingBoard || typeof MutationObserver === 'undefined') {
+            return;
+        }
+
+        const modalObserver = new MutationObserver(restoreActiveRatingModal);
+        modalObserver.observe(bookingBoard, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
 @endpush

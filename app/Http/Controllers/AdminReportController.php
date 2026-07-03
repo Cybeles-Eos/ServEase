@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
+use App\Models\CustomerReport;
 use App\Models\Provider;
 use App\Models\ServiceReport;
 use App\Services\AuditLogService;
@@ -86,6 +87,19 @@ class AdminReportController extends Controller
             ->limit(6)
             ->get();
 
+        $customerReports = CustomerReport::with([
+                'provider',
+                'customer.user',
+                'service',
+                'bookingInfo',
+            ])
+            ->latest()
+            ->paginate(10, ['*'], 'customer_reports_page')
+            ->withQueryString();
+
+        $totalCustomerReports = CustomerReport::count();
+        $openCustomerReports = CustomerReport::where('status', 'OPEN')->count();
+
         return view('admin.page.admin.reports.index', compact(
             'reports',
             'status',
@@ -98,7 +112,10 @@ class AdminReportController extends Controller
             'providerSummaries',
             'providerHealthById',
             'serviceSummaries',
-            'reasonBreakdown'
+            'reasonBreakdown',
+            'customerReports',
+            'totalCustomerReports',
+            'openCustomerReports'
         ));
     }
 

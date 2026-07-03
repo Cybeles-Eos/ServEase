@@ -10216,6 +10216,51 @@ h4 span {
   height: 10px;
   margin-right: 5px;
 }
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo .provider-customer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo .provider-customer-actions .provider-customer-action-btn {
+  cursor: pointer;
+}
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo .provider-customer-actions .provider-customer-action-btn i {
+  margin-right: 4px;
+  font-size: 11px;
+}
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo .provider-customer-actions .provider-customer-action-btn.is-done {
+  opacity: 0.7;
+  cursor: default;
+}
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo .provider-customer-actions .provider-customer-action-btn--report {
+  background-color: #f8d7da;
+  color: #b02a37;
+}
+.provider--bookings--main-d .pb-md-right .pb-md-right-completed__body .pbmdr-cb-box__foo .provider-customer-actions .provider-customer-action-btn--report:hover {
+  background-color: #f1c2c7;
+}
+.provider-customer-rating {
+  margin: 3px 0 0;
+  font-size: 12px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.provider-customer-rating .provider-customer-rating__val {
+  margin-left: 4px;
+  color: #656565;
+  font-weight: 600;
+}
+.provider-customer-rating .provider-customer-rating__none {
+  color: #9CA3AF;
+  font-style: italic;
+}
+.provider-customer-rating--inline {
+  display: block;
+}
 .provider--bookings--main-d .pb-md-right .pb-md-right-completed .provider-history-pagination {
   margin-top: 14px;
   padding-top: 12px;

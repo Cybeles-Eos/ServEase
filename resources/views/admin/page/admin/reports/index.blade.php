@@ -306,6 +306,72 @@
                 </div>
             @endif
         </section>
+        <br>
+        <br>
+        <section class="admin-reports__table">
+            <div class="admin-reports__table-head page-admin-bookings__table-head page-admin-audit-logs__table-head">
+                <div class="page-admin-bookings__table-title">
+                    <h4>Customer Reports</h4>
+                    <p class="section__table--label">
+                        Reports filed by providers against customers after completed bookings.
+                        <b>{{ number_format($totalCustomerReports) }}</b> total,
+                        <b>{{ number_format($openCustomerReports) }}</b> open.
+                    </p>
+                </div>
+            </div>
+
+            <div class="admin-reports__table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reported Customer</th>
+                            <th>Reported By (Provider)</th>
+                            <th>Service</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($customerReports as $customerReport)
+                            @php
+                                $reportedCustomerName = trim(($customerReport->customer->first_name ?? '') . ' ' . ($customerReport->customer->last_name ?? '')) ?: 'Customer';
+                                $reporterProviderName = trim(($customerReport->provider->first_name ?? '') . ' ' . ($customerReport->provider->last_name ?? '')) ?: 'Provider';
+                            @endphp
+
+                            <tr>
+                                <td>
+                                    <strong>{{ $reportedCustomerName }}</strong>
+                                    <span>{{ $customerReport->customer->user->email ?? 'No email' }}</span>
+                                </td>
+                                <td>{{ $reporterProviderName }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($customerReport->service->title ?? 'Service', 34, '...') }}</td>
+                                <td>
+                                    <strong>{{ $customerReport->reason }}</strong>
+                                    @if($customerReport->details)
+                                        <span>{{ \Illuminate\Support\Str::limit($customerReport->details, 80, '...') }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <em>{{ ucfirst(strtolower($customerReport->status)) }}</em>
+                                </td>
+                                <td>{{ $customerReport->created_at?->format('M d, Y') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="admin-reports__empty-cell">No customer reports found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if ($customerReports->hasPages())
+                <div class="admin-reports__pagination">
+                    {{ $customerReports->links() }}
+                </div>
+            @endif
+        </section>
     </main>
 @endsection
 

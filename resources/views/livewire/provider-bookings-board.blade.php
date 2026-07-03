@@ -45,6 +45,21 @@
                                     <a href="#" class="boxss-sd-bking__pfp-d__email">
                                         {{ $request->bookingInfo['email'] ?? '' }}
                                     </a>
+                                    @php
+                                        $custRatings = $request->bookingInfo?->customer?->receivedRatings ?? collect();
+                                        $custCount = $custRatings->count();
+                                        $custAvg = $custCount ? round($custRatings->avg('rating'), 1) : 0;
+                                    @endphp
+                                    <p class="provider-customer-rating">
+                                        @if($custCount > 0)
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span style="color: {{ $i <= round($custAvg) ? '#FFBE42' : '#D1D5DB' }};">★</span>
+                                            @endfor
+                                            <span class="provider-customer-rating__val">{{ number_format($custAvg, 1) }} ({{ $custCount }})</span>
+                                        @else
+                                            <span class="provider-customer-rating__none">No ratings yet</span>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
 
@@ -130,6 +145,19 @@
                                 <div class="pb-md-left-tblc-main-name">
                                     <p>{{ $request->bookingInfo['lname'] ?? '' }} {{ $request->bookingInfo['fname'] ?? '' }}</p>
                                     <small>{{ $request->bookingInfo['address'] ?? '' }}</small>
+                                    @php
+                                        $custRatings = $request->bookingInfo?->customer?->receivedRatings ?? collect();
+                                        $custCount = $custRatings->count();
+                                        $custAvg = $custCount ? round($custRatings->avg('rating'), 1) : 0;
+                                    @endphp
+                                    <small class="provider-customer-rating provider-customer-rating--inline">
+                                        @if($custCount > 0)
+                                            <span style="color: #FFBE42;">★</span>
+                                            {{ number_format($custAvg, 1) }} ({{ $custCount }})
+                                        @else
+                                            <span class="provider-customer-rating__none">No ratings yet</span>
+                                        @endif
+                                    </small>
                                 </div>
 
                                 <div class="pb-md-left-tblc-main-serv">
@@ -217,6 +245,21 @@
                                     <a href="#" class="pbmd-rabh-box__pfp-d__email">
                                         {{ $request->bookingInfo['email'] ?? '' }}
                                     </a>
+                                    @php
+                                        $custRatings = $request->bookingInfo?->customer?->receivedRatings ?? collect();
+                                        $custCount = $custRatings->count();
+                                        $custAvg = $custCount ? round($custRatings->avg('rating'), 1) : 0;
+                                    @endphp
+                                    <p class="provider-customer-rating">
+                                        @if($custCount > 0)
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span style="color: {{ $i <= round($custAvg) ? '#FFBE42' : '#D1D5DB' }};">★</span>
+                                            @endfor
+                                            <span class="provider-customer-rating__val">{{ number_format($custAvg, 1) }} ({{ $custCount }})</span>
+                                        @else
+                                            <span class="provider-customer-rating__none">No ratings yet</span>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
 
@@ -344,6 +387,21 @@
                                         <a href="#" class="pbmdr-cb-boxdet-p__pfp-d__email">
                                             {{ $request->bookingInfo['email'] ?? '' }}
                                         </a>
+                                        @php
+                                            $custRatings = $request->bookingInfo?->customer?->receivedRatings ?? collect();
+                                            $custCount = $custRatings->count();
+                                            $custAvg = $custCount ? round($custRatings->avg('rating'), 1) : 0;
+                                        @endphp
+                                        <p class="provider-customer-rating">
+                                            @if($custCount > 0)
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <span style="color: {{ $i <= round($custAvg) ? '#FFBE42' : '#D1D5DB' }};">★</span>
+                                                @endfor
+                                                <span class="provider-customer-rating__val">{{ number_format($custAvg, 1) }} ({{ $custCount }})</span>
+                                            @else
+                                                <span class="provider-customer-rating__none">No ratings yet</span>
+                                            @endif
+                                        </p>
                                     </div>
                                 </div>
 
@@ -401,6 +459,35 @@
                                         </span>
                                     @endif
                                 </p>
+
+                                <div class="provider-customer-actions">
+                                    @if($request->customerRating)
+                                        <button type="button" class="provider-customer-action-btn is-done" disabled
+                                                title="You rated this customer">
+                                            <i class="fas fa-star"></i> Rated
+                                        </button>
+                                    @else
+                                        <button type="button" class="provider-customer-action-btn"
+                                                onclick="openRatingModal('rate-customer-modal-{{ $request->id }}')"
+                                                title="Rate this customer">
+                                            <i class="far fa-star"></i> Rate Customer
+                                        </button>
+                                    @endif
+
+                                    @if($request->customerReport)
+                                        <button type="button" class="provider-customer-action-btn provider-customer-action-btn--report is-done" disabled
+                                                title="You reported this customer">
+                                            <i class="fas fa-flag"></i> Reported
+                                        </button>
+                                    @else
+                                        <button type="button" class="provider-customer-action-btn provider-customer-action-btn--report"
+                                                onclick="openRatingModal('report-customer-modal-{{ $request->id }}')"
+                                                title="Report this customer">
+                                            <i class="far fa-flag"></i> Report
+                                        </button>
+                                    @endif
+                                </div>
+
                                 <a href="{{ route('booking.receipt', $request->id) }}"
                                 target="_blank"
                                 class="download-receipt-btn">
@@ -423,6 +510,121 @@
                                 @endif
                             </div>
                         </div>
+
+                        @if($request->status === 'COMPLETED')
+                            @unless($request->customerRating)
+                                <div id="rate-customer-modal-{{ $request->id }}" class="rating-modal-overlay" wire:ignore.self>
+                                    <div class="rating-modal-box">
+                                        <div class="rating-modal-head">
+                                            <h3>Rate Customer</h3>
+                                            <button type="button" class="rating-modal-close"
+                                                    onclick="closeRatingModal('rate-customer-modal-{{ $request->id }}')">
+                                                x
+                                            </button>
+                                        </div>
+
+                                        <div class="rating-modal-body">
+                                            <p class="rating-modal-provider-name">
+                                                Customer:
+                                                <strong>
+                                                    {{ $request->bookingInfo['fname'] ?? '' }}
+                                                    {{ $request->bookingInfo['lname'] ?? '' }}
+                                                </strong>
+                                            </p>
+
+                                            <form method="POST"
+                                                action="{{ route('provider.booking.rate-customer', $request->id) }}"
+                                                class="customer-rating-form">
+                                                @csrf
+
+                                                <div class="star-rating">
+                                                    @for($i = 5; $i >= 1; $i--)
+                                                        <input type="radio"
+                                                            id="rate-customer-{{ $request->id }}-{{ $i }}"
+                                                            name="rating"
+                                                            value="{{ $i }}"
+                                                            required>
+                                                        <label for="rate-customer-{{ $request->id }}-{{ $i }}">★</label>
+                                                    @endfor
+                                                </div>
+
+                                                <textarea name="comment"
+                                                        class="customer-rating-comment"
+                                                        rows="3"
+                                                        placeholder="Optional comment"></textarea>
+
+                                                <div class="rating-modal-actions">
+                                                    <button type="button" class="rating-cancel-btn"
+                                                            onclick="closeRatingModal('rate-customer-modal-{{ $request->id }}')">
+                                                        Cancel
+                                                    </button>
+                                                    <button type="submit" class="customer-rating-submit">
+                                                        Submit Rating
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endunless
+
+                            @unless($request->customerReport)
+                                <div id="report-customer-modal-{{ $request->id }}" class="rating-modal-overlay" wire:ignore.self>
+                                    <div class="rating-modal-box">
+                                        <div class="rating-modal-head">
+                                            <h3>Report Customer</h3>
+                                            <button type="button" class="rating-modal-close"
+                                                    onclick="closeRatingModal('report-customer-modal-{{ $request->id }}')">
+                                                x
+                                            </button>
+                                        </div>
+
+                                        <div class="rating-modal-body">
+                                            <p class="rating-modal-provider-name">
+                                                Customer:
+                                                <strong>
+                                                    {{ $request->bookingInfo['fname'] ?? '' }}
+                                                    {{ $request->bookingInfo['lname'] ?? '' }}
+                                                </strong>
+                                            </p>
+
+                                            <form method="POST"
+                                                action="{{ route('provider.booking.report-customer', $request->id) }}"
+                                                class="customer-report-form">
+                                                @csrf
+
+                                                <label for="report-customer-reason-{{ $request->id }}">Reason</label>
+                                                <select id="report-customer-reason-{{ $request->id }}" name="reason" required>
+                                                    <option value="">Select a reason</option>
+                                                    <option value="Rude or abusive behavior">Rude or abusive behavior</option>
+                                                    <option value="No-show or unavailable">No-show or unavailable</option>
+                                                    <option value="Refused to pay">Refused to pay</option>
+                                                    <option value="Unsafe or suspicious conduct">Unsafe or suspicious conduct</option>
+                                                    <option value="Incorrect booking details">Incorrect booking details</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+
+                                                <label for="report-customer-details-{{ $request->id }}">Details</label>
+                                                <textarea id="report-customer-details-{{ $request->id }}"
+                                                        name="details"
+                                                        rows="4"
+                                                        placeholder="Describe what happened."></textarea>
+
+                                                <div class="rating-modal-actions">
+                                                    <button type="button" class="rating-cancel-btn"
+                                                            onclick="closeRatingModal('report-customer-modal-{{ $request->id }}')">
+                                                        Cancel
+                                                    </button>
+                                                    <button type="submit" class="customer-rating-submit">
+                                                        Submit Report
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endunless
+                        @endif
                     </div>
                 @empty
                     <div style="width: 100%; height: 100px; display: flex; justify-content: center; align-items: center;">

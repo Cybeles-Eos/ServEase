@@ -39,4 +39,20 @@ class Customer extends Model
     {
         return $this->hasMany(\App\Models\ServiceReport::class, 'customer_id');
     }
+    public function receivedRatings()
+    {
+        return $this->hasMany(\App\Models\CustomerRating::class, 'customer_id');
+    }
+    public function receivedReports()
+    {
+        return $this->hasMany(\App\Models\CustomerReport::class, 'customer_id');
+    }
+    public function averageRating()
+    {
+        return round($this->receivedRatings()->avg('rating') ?? 0, 1);
+    }
+    public function ratingsCount()
+    {
+        return $this->receivedRatings()->count();
+    }
 }

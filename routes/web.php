@@ -15,6 +15,8 @@ use App\Http\Controllers\ServiceRatingController;
 use App\Http\Controllers\ProviderServiceReviewController;
 use App\Http\Controllers\PsgcController;
 use App\Http\Controllers\ServiceReportController;
+use App\Http\Controllers\CustomerRatingController;
+use App\Http\Controllers\CustomerReportController;
 use App\Http\Controllers\AdminReportController;
 
 Route::get('/', function () {
@@ -205,6 +207,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/provider/booking-request/{id}/decline', [BookingRequestController::class, 'decline'])->name('provider.booking-request.decline');
             Route::post('/provider/booking-request/{id}/cancel', [BookingRequestController::class, 'cancel'])->name('provider.booking-request.cancel');
             Route::post('/provider/booking-request/{id}/complete', [BookingRequestController::class, 'markComplete'])->name('provider.booking-request.complete');
+
+            // Provider rate/report customer
+            Route::post('/provider/booking/{bookingRequest}/rate-customer', [CustomerRatingController::class, 'store'])->name('provider.booking.rate-customer');
+            Route::post('/provider/booking/{bookingRequest}/report-customer', [CustomerReportController::class, 'store'])->name('provider.booking.report-customer');
 
             // Notification
             Route::post('/provider/notifications/mark-read', [BookingRequestController::class, 'markProviderNotificationsRead'])->name('provider.notifications.mark-read');

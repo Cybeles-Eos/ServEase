@@ -10,6 +10,7 @@ use App\Models\ProviderDeletedRecord;
 use App\Models\Service;
 use App\Models\ServiceRating;
 use App\Models\ServiceReport;
+use App\Models\CustomerReport;
 use App\Models\User;
 
 class AdminNotificationService
@@ -147,6 +148,28 @@ class AdminNotificationService
             'new_report',
             'New Provider Report',
             "{$customerName} reported {$providerName} for \"" . ($service?->title ?? 'a service') . "\".",
+            route('admin.reports')
+        );
+    }
+
+    public static function newCustomerReport(CustomerReport $report): void
+    {
+        $service = $report->service;
+        $customer = $report->customer;
+        $provider = $report->provider;
+
+        $customerName = $customer
+            ? trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? ''))
+            : 'a customer';
+
+        $providerName = $provider
+            ? trim(($provider->first_name ?? '') . ' ' . ($provider->last_name ?? ''))
+            : 'A provider';
+
+        self::notify(
+            'new_customer_report',
+            'New Customer Report',
+            "{$providerName} reported {$customerName} for \"" . ($service?->title ?? 'a service') . "\".",
             route('admin.reports')
         );
     }

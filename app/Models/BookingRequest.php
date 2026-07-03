@@ -49,6 +49,16 @@ class BookingRequest extends Model
         return $this->hasOne(\App\Models\ServiceReport::class, 'booking_request_id');
     }
 
+    public function customerRating()
+    {
+        return $this->hasOne(\App\Models\CustomerRating::class, 'booking_request_id');
+    }
+
+    public function customerReport()
+    {
+        return $this->hasOne(\App\Models\CustomerReport::class, 'booking_request_id');
+    }
+
     public function getBillingTotalAttribute(): float
     {
         $service = $this->bookingInfo?->service;
