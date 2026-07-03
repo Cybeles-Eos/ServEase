@@ -48,6 +48,32 @@
         .admin-reports__table-head .page-admin-bookings__filters {
             padding-bottom: 16px;
         }
+
+        @media print {
+            .modal-mobile-nav,
+            .main-headerdash-uix,
+            .main-sidebar-uix,
+            .page-loading-bar,
+            .admin-reports__pagination {
+                display: none !important;
+            }
+
+            .admin-reports.main-dash-uix {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            .admin-reports__table {
+                border: none;
+                padding: 0;
+                page-break-inside: auto;
+            }
+
+            .admin-reports__table-wrap {
+                overflow: visible !important;
+            }
+        }
     </style>
 @endpush
 
@@ -241,6 +267,11 @@
                                 Clear
                             </a>
                         @endif
+
+                        <button type="button" class="page-admin-bookings__filter-btn" onclick="window.print()">
+                            <i class="fas fa-print"></i>
+                            Print Reports
+                        </button>
                     </div>
                 </form>
             </div>
