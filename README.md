@@ -1,8 +1,8 @@
-![Hero Image](https://raw.githubusercontent.com/Cybeles-Eos/ServEase/main/public/images/meta-cover.png)
+<!--![Hero Image](https://raw.githubusercontent.com/Cybeles-Eos/ServEase/main/public/images/meta-cover.png)-->
 
 
 ### Group 8 - ServEase
-Hello! We are **Group 8** 👋 Servease is a collaborative project by Group 8, aimed at delivering an efficient and user-friendly service management platform. The project combines innovative ideas and teamwork to create a functional solution that addresses real-world challenges. This repository contains the full source code, documentation, and resources for Servease.
+Servease is a collaborative project by Group 8, aimed at delivering an efficient and user-friendly service management platform. The project combines innovative ideas and teamwork to create a functional solution that addresses real-world challenges. This repository contains the full source code, documentation, and resources for Servease.
 
 
 
